@@ -1,0 +1,26 @@
+{
+    "name": "factorial-io/phabalicious",
+    "description": "A deployment helper cli",
+    "type": "project",
+    "require": {
+        "symfony/console": "^4.1",
+        "psr/log": "^1.0",
+        "symfony/event-dispatcher": "^4.1",
+        "symfony/http-kernel": "^4.1",
+        "symfony/dependency-injection": "^4.1",
+        "symfony/config": "^4.1",
+        "symfony/yaml": "^4.1"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {"Phabalicious\\": "src/"}
+    },
+    "authors": [
+        {
+            "name": "Stephan Maximilian Huber",
+            "email": "stephan@factorial.io"
+        }
+    ]
+}
