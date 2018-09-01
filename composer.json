@@ -10,7 +10,8 @@
         "symfony/dependency-injection": "^4.1",
         "symfony/config": "^4.1",
         "symfony/yaml": "^4.1",
-        "wikimedia/composer-merge-plugin": "^1.4"
+        "wikimedia/composer-merge-plugin": "^1.4",
+        "composer/semver": "^1.4"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.1",

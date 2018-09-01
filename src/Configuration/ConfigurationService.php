@@ -2,10 +2,13 @@
 
 namespace Phabalicious\Configuration;
 
+use Composer\Semver\Comparator;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MismatchedVersionException;
 use phpDocumentor\Reflection\Types\Mixed_;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Yaml\Yaml;
 use Wikimedia\Composer\Merge\NestedArray;
 
@@ -17,14 +20,17 @@ class ConfigurationService
      */
     private $logger;
 
+    private $application;
+
     private $fabfilePath;
 
     private $dockerHosts;
     private $hosts;
     private $settings;
 
-    public function __construct()
+    public function __construct(Application $application)
     {
+        $this->application = $application;
     }
 
     public function readConfiguration(string $path, string $override = ''): bool
@@ -85,14 +91,25 @@ class ConfigurationService
 
     protected function readFile(string $file)
     {
-        return Yaml::parseFile($file);
+        $data = Yaml::parseFile($file);
+        if ($data && isset($data['requires'])) {
+            $required_version = $data['requires'];
+            $app_version = $this->application->getVersion();
+            if (Comparator::greaterThan($required_version, $app_version)) {
+                throw new MismatchedVersionException('Could not read file ' . $file . ' because of version mismatch: ' . $app_version . '<' . $required_version);
+            }
+        }
+
+        return $data;
     }
 
-    private function setFabfilePath(string $path) {
+    private function setFabfilePath(string $path)
+    {
         $this->fabfilePath = $path;
     }
 
-    public function getFabfilePath() {
+    public function getFabfilePath()
+    {
         return $this->fabfilePath;
     }
 
