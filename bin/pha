@@ -6,10 +6,11 @@ require __DIR__.'/../vendor/autoload.php';
 
 use Phabalicious\AppKernel;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 $kernel = new AppKernel();
 $kernel->boot();
 $container = $kernel->getContainer();
 /** @var Application $application */
 $application = $container->get(Application::class);
-$application->run();
+$application->run(null, $container->get(ConsoleOutput::class));

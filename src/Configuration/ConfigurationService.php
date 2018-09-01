@@ -6,7 +6,7 @@ use Composer\Semver\Comparator;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MismatchedVersionException;
-use phpDocumentor\Reflection\Types\Mixed_;
+use Phabalicious\Exception\MissingHostConfigException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Yaml\Yaml;
@@ -28,9 +28,12 @@ class ConfigurationService
     private $hosts;
     private $settings;
 
-    public function __construct(Application $application)
+    private $cache;
+
+    public function __construct(Application $application, LoggerInterface $logger)
     {
         $this->application = $application;
+        $this->logger = $logger;
     }
 
     public function readConfiguration(string $path, string $override = ''): bool
@@ -65,7 +68,10 @@ class ConfigurationService
             $override_data = $this->readFile($local_override_file);
             $data = $this->mergeData($data, $override_data);
         }
-        $data = $this->resolveInheritance($data);
+
+        $this->settings = $this->resolveInheritance($data, $data);
+        $this->hosts = $this->getSetting('hosts', []);
+        $this->dockerHosts = $this->getSetting('dockerHosts', []);
 
         return true;
     }
@@ -91,6 +97,11 @@ class ConfigurationService
 
     protected function readFile(string $file)
     {
+        $cid = 'yaml:' . $file;
+        if (isset($this->cache[$cid])) {
+            return $this->cache[$cid];
+        }
+
         $data = Yaml::parseFile($file);
         if ($data && isset($data['requires'])) {
             $required_version = $data['requires'];
@@ -100,6 +111,7 @@ class ConfigurationService
             }
         }
 
+        $this->cache[$cid] = $data;
         return $data;
     }
 
@@ -118,9 +130,120 @@ class ConfigurationService
         return NestedArray::mergeDeep($data, $override_data);
     }
 
-    private function resolveInheritance(array $data): array
+    private function resolveInheritance(array $data, $lookup): array
     {
+        if (!isset($data['inheritsFrom'])) {
+            return $data;
+        }
+        $inheritsFrom = $data['inheritsFrom'];
+        if (!is_array($inheritsFrom)) {
+            $inheritsFrom = [ $inheritsFrom ];
+        }
+        unset($data['inheritsFrom']);
+
+        foreach (array_reverse($inheritsFrom) as $resource) {
+            $add_data = false;
+            if (isset($lookup[$resource])) {
+                $add_data = $lookup[$resource];
+            } elseif (strpos($resource, 'http') !== false) {
+                $add_data = Yaml::parse($this->readHttpResource($resource));
+            } elseif (file_exists($this->getFabfilePath() . '/' . $resource)) {
+                $add_data = $this->readFile($this->getFabfilePath() . '/' . $resource);
+            }
+            if ($add_data) {
+                if (isset($add_data['inheritsFrom'])) {
+                    $add_data = $this->resolveInheritance($add_data, $lookup);
+                }
+
+                $data = $this->mergeData($add_data, $data);
+            }
+        }
+
         return $data;
     }
 
+    public function getSetting(string $key, $default_value = null)
+    {
+        $value = $default_value;
+        $keys = explode('.', $key);
+        $data = $this->settings;
+        $first_run = true;
+        foreach ($keys as $sub_key) {
+            if ($first_run) {
+                $value = $data;
+                $first_run = false;
+            }
+            if (isset($value[$sub_key])) {
+                $value = $value[$sub_key];
+            } else {
+                return $default_value;
+            }
+        }
+
+        return $value;
+    }
+
+    public function readHttpResource(string $resource):string
+    {
+        $cid = 'resource:' . $resource;
+
+        if (isset($this->cache[$cid])) {
+            return $this->cache[$cid];
+        }
+        $contents = file_get_contents($resource);
+        $cache_file = getenv("HOME")
+            . '/.phabalicious/' . md5($resource)
+            . '.' . pathinfo($resource, PATHINFO_EXTENSION);
+
+        if (!is_dir(dirname($cache_file))) {
+            mkdir(dirname($cache_file), 0777, TRUE);
+        }
+
+        if ($contents === false && file_exists($cache_file)) {
+            $contents = file_get_contents($cache_file);
+        } elseif ($contents !== false) {
+            file_put_contents($cache_file, $contents);
+        }
+        $this->cache[$cid] = $contents;
+
+        return $contents;
+    }
+
+    public function getHostConfig(string $config_name)
+    {
+        $cid = 'host:' . $config_name;
+
+        if (!empty($this->cache[$cid])) {
+            return $this->cache[$cid];
+        }
+
+        if (empty($this->hosts[$config_name])) {
+            throw new MissingHostConfigException('Could not find host configuration for ' . $config_name);
+        }
+
+        $data = $this->hosts[$config_name];
+        $data = $this->resolveInheritance($data, $this->hosts);
+
+        $this->cache[$cid] = $data;
+        return $data;
+    }
+
+    public function getDockerConfig(string $config_name)
+    {
+        $cid = 'dockerhost:' . $config_name;
+
+        if (!empty($this->cache[$cid])) {
+            return $this->cache[$cid];
+        }
+
+        if (empty($this->dockerHosts[$config_name])) {
+            throw new MissingDockerHostConfigException('Could not find docker host configuration for ' . $config_name);
+        }
+
+        $data = $this->dockerHosts[$config_name];
+        $data = $this->resolveInheritance($data, $this->dockerHosts);
+
+        $this->cache[$cid] = $data;
+        return $data;
+    }
 }

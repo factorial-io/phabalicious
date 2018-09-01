@@ -27,7 +27,7 @@ abstract class BaseCommand extends Command
                 'f',
                 InputOption::VALUE_OPTIONAL,
                 'Override with a custom fabfile',
-                null
+                ''
             )
             ->addOption(
                 'config',
@@ -50,7 +50,7 @@ abstract class BaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->configuration->readConfiguration( getcwd(), $input->getOption('fabfile'));
+        $this->configuration->readConfiguration(getcwd(), $input->getOption('fabfile'));
 
     }
 

@@ -4,10 +4,16 @@ namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\Test\LoggerInterfaceTest;
 use Symfony\Component\Console\Application;
 
 class ConfigurationServiceTest extends TestCase
 {
+
+    /**
+     * @var ConfigurationService
+     */
     private $config;
 
     public function setUp() {
@@ -17,7 +23,8 @@ class ConfigurationServiceTest extends TestCase
         $application->expects($this->any())
             ->method('getVersion')
             ->will($this->returnValue('3.0.0'));
-        $this->config = new ConfigurationService($application);
+        $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+        $this->config = new ConfigurationService($application, $logger);
     }
 
     public function testCustomFabfile() {
@@ -76,7 +83,39 @@ class ConfigurationServiceTest extends TestCase
         $application->expects($this->any())
             ->method('getVersion')
             ->will($this->returnValue('2.4.1'));
-        $config = new ConfigurationService($application);
+
+        $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+
+        $config = new ConfigurationService($application, $logger);
         $result = $config->readConfiguration(getcwd() . '/assets/fabfile-hierarchy-tests');
+    }
+
+    public function testGlobalInheritance() {
+        $this->config->readConfiguration(getcwd() . '/assets/inherits');
+        $this->assertEquals(123, $this->config->getSetting('fromFile1.value1'));
+        $this->assertEquals(456, $this->config->getSetting('fromFile1.value2.value'));
+
+        $this->assertEquals(123, $this->config->getSetting('fromFile3.value1'));
+        $this->assertEquals(456, $this->config->getSetting('fromFile3.value2.value'));
+
+        $this->assertEquals('a value', $this->config->getSetting('fromFile2.value1'));
+        $this->assertEquals('another value', $this->config->getSetting('fromFile2.value2.value'));
+    }
+
+    public function testHostInheritance() {
+        $this->config->readConfiguration(getcwd() . '/assets/inherits');
+        $this->assertEquals('host-a', $this->config->getHostConfig('hostA')['host']);
+        $this->assertEquals('user-a', $this->config->getHostConfig('hostA')['user']);
+        $this->assertEquals('host-b', $this->config->getHostConfig('hostB')['host']);
+        $this->assertEquals('user-b', $this->config->getHostConfig('hostB')['user']);
+        $this->assertEquals(22, $this->config->getHostConfig('hostB')['port']);
+    }
+
+    public function testDockerHostInheritance() {
+        $this->config->readConfiguration(getcwd() . '/assets/inherits');
+        $this->assertEquals('dockerhost-a', $this->config->getDockerConfig('hostA')['host']);
+        $this->assertEquals('user-a', $this->config->getDockerConfig('hostA')['user']);
+        $this->assertEquals('dockerhost-b', $this->config->getDockerConfig('hostB')['host']);
+        $this->assertEquals('user-b', $this->config->getDockerConfig('hostB')['user']);
     }
 }
