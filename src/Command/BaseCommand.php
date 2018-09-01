@@ -23,6 +23,13 @@ abstract class BaseCommand extends Command
     {
         $this
             ->addOption(
+                'fabfile',
+                'f',
+                InputOption::VALUE_OPTIONAL,
+                'Override with a custom fabfile',
+                null
+            )
+            ->addOption(
                 'config',
                 null,
                 InputOption::VALUE_REQUIRED,
@@ -34,7 +41,7 @@ abstract class BaseCommand extends Command
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Which blueprint to use',
-                1
+                null
             );
     }
 
@@ -43,6 +50,8 @@ abstract class BaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->configuration->readConfiguration( getcwd(), $input->getOption('fabfile'));
+
     }
 
     /**

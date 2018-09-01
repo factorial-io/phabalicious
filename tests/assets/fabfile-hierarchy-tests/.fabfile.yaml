@@ -1,0 +1,10 @@
+name: Custom fab file
+
+requires: 3.0
+
+hosts:
+  local:
+    type: dev
+    needs:
+    - git
+    branch: develop
