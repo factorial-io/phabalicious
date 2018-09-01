@@ -11,6 +11,10 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 $kernel = new AppKernel();
 $kernel->boot();
 $container = $kernel->getContainer();
+
 /** @var Application $application */
 $application = $container->get(Application::class);
+$application->setVersion('3.0.0');
+$application->setName('phabalicious');
+
 $application->run(null, $container->get(ConsoleOutput::class));
