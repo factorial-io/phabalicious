@@ -23,6 +23,9 @@ class ConfigurationService
 
     private $application;
 
+    /**
+     * @var MethodFactory
+     */
     private $methods;
 
     private $fabfilePath;
@@ -259,15 +262,20 @@ class ConfigurationService
             'needs' => $this->getSetting('needs'),
             'config_name' => $config_name,
         ];
+        $data = $this->applyDefaults($data, $defaults);
 
         /**
          * @var \Phabalicious\Method\MethodInterface $method
          */
         foreach ($this->methods->all() as $method) {
-            $defaults = $this->mergeData($defaults, $method->getDefaultConfig($this));
+            $data = $this->mergeData($data, $method->getDefaultConfig($this, $data));
         }
 
-        $data = $this->applyDefaults($data, $defaults);
+        $validation_errors = new ValidationErrorBag();
+        foreach ($this->methods->all() as $method) {
+            $method->validateConfig($data, $validation_errors);
+        }
+
 
 
 

@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\ValidationErrorBagInterface;
 
 interface MethodInterface
 {
@@ -13,11 +14,11 @@ interface MethodInterface
 
     public function supports(string $method_name): bool;
 
-    public function validateConfig(array $config): bool;
-
     public function getGlobalSettings(): array;
 
-    public function getDefaultConfig(ConfigurationService $configuration): array;
+    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array;
+
+    public function validateConfig(array $config, ValidationErrorBagInterface $errors);
 
     public function preflightTask(string $task, array $config, TaskContextInterface $context);
 

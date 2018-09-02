@@ -3,6 +3,8 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\GitMethod;
+use Phabalicious\Method\MethodFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\Test\LoggerInterfaceTest;
@@ -15,6 +17,7 @@ class ConfigurationServiceTest extends TestCase
      * @var ConfigurationService
      */
     private $config;
+    private $logger;
 
     public function setUp() {
         $application = $this->getMockBuilder(Application::class)
@@ -24,6 +27,7 @@ class ConfigurationServiceTest extends TestCase
             ->method('getVersion')
             ->will($this->returnValue('3.0.0'));
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+        $this->logger = $logger;
         $this->config = new ConfigurationService($application, $logger);
     }
 
@@ -118,4 +122,5 @@ class ConfigurationServiceTest extends TestCase
         $this->assertEquals('dockerhost-b', $this->config->getDockerConfig('hostB')['host']);
         $this->assertEquals('user-b', $this->config->getDockerConfig('hostB')['user']);
     }
+
 }

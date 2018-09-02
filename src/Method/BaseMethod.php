@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
 
 abstract class BaseMethod implements MethodInterface
@@ -28,9 +29,8 @@ abstract class BaseMethod implements MethodInterface
         return false;
     }
 
-    public function validateConfig(array $config): bool
+    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
-        return true;
     }
 
     public function getGlobalSettings(): array
@@ -38,7 +38,7 @@ abstract class BaseMethod implements MethodInterface
         return [];
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         return [];
     }

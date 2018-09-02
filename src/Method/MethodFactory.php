@@ -153,7 +153,8 @@ class MethodFactory {
         }
     }
 
-    public function all() {
+    public function all()
+    {
         return $this->methods;
     }
 }
