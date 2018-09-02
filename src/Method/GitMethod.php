@@ -4,16 +4,16 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 
-class DockerMethod extends BaseMethod implements MethodInterface
+class GitMethod extends BaseMethod implements MethodInterface
 {
 
     public function getName(): string
     {
-        return 'docker';
+        return 'git';
     }
 
     public function supports(string $method_name): bool
     {
-        return $method_name === 'docker';
+        return $method_name === 'git';
     }
 }

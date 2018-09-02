@@ -256,7 +256,8 @@ class ConfigurationService
         $data = $this->resolveInheritance($data, $this->hosts);
 
         $defaults = [
-            'needs' => $this->getSetting('needs')
+            'needs' => $this->getSetting('needs'),
+            'config_name' => $config_name,
         ];
 
         /**

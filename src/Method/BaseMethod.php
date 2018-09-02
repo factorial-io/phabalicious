@@ -45,16 +45,16 @@ abstract class BaseMethod implements MethodInterface
 
     public function preflightTask(string $task, array $config, TaskContextInterface $context)
     {
-        $this->logger->debug('preflightTask ' . $task, [$config, $context]);
+        $this->logger->debug('preflightTask ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
     public function postflightTask(string $task, array $config, TaskContextInterface $context)
     {
-        $this->logger->debug('postflightTask ' . $task, [$config, $context]);
+        $this->logger->debug('postflightTask ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
     public function fallback(string $task, array $config, TaskContextInterface $context) {
-        // TODO: Implement fallback() method.
+        $this->logger->debug('fallback ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
 }

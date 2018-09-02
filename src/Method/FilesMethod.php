@@ -4,16 +4,16 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 
-class DockerMethod extends BaseMethod implements MethodInterface
+class FilesMethod extends BaseMethod implements MethodInterface
 {
 
     public function getName(): string
     {
-        return 'docker';
+        return 'files';
     }
 
     public function supports(string $method_name): bool
     {
-        return $method_name === 'docker';
+        return $method_name === 'files';
     }
 }

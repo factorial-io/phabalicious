@@ -71,7 +71,7 @@ class MethodFactory {
                 $this->runTask($next_task_name, $configuration, $context);
             }
         }
-        $this->runTaskImpl($task_name . 'Prepare', $configuration, $context, false);
+        $this->runTaskImpl($task_name . 'Finished', $configuration, $context, false);
         $this->preflight('postflight', $task_name, $configuration, $context);
 
         return $context;
