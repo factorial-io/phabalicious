@@ -1,0 +1,318 @@
+name: bi-france
+deploymentModule: bif_deploy
+
+requires: 2.0.0
+needs:
+  - ssh
+  - docker
+  - drush7
+  - git
+  - files
+
+dockerKeyFile: ./ssh-keys/docker-root-key
+dockerAuthorizedKeyFile: https://keys.factorial.io/keys/f5eca34f-f857-4e7b-829d-08f85244dd77
+dockerKnownHostsFile: ./ssh-keys/known_hosts
+
+# BI Repo.
+# repository: https://stephan@bitbucket.bi-scrum.com/scm/fr012/site-code.git
+
+# Gitlab Repo.
+repository: ssh://git@source.factorial.io:2222/BI/fr012/site-code.git
+
+inheritsFrom:
+  - https://config.factorial.io/docker/2.0/xdebug.yaml
+
+
+excludeFiles:
+  backup:
+    - "styles"
+    - "tmp"
+  copyFrom:
+    - "tmp"
+    - "styles"
+    - "php"
+    - "js"
+    - "css"
+    - "twig_cache"
+    - "xmlsitemap"
+
+scripts:
+  behatInstall:
+     - cd %host.gitRootFolder% && composer install --ignore-platform-reqs
+  behat:
+    - fail_on_error(0)
+    - cd %host.gitRootFolder%.tools/behat && %host.gitRootFolder%/vendor/bin/behat %arguments.combined%
+    - fail_on_error(1)
+  copyHtAccess:
+    - cd %host.gitRootFolder% && cp .tools/htaccess .htaccess
+  reindex-content:
+    - cd %host.siteFolder% && drush solr-delete-index; drush solr-mark-all; drush solr-index;
+  patternlab:
+    - cd %host.rootFolder%/sites/all/themes/custom/bif_frontend && php core/console --generate
+  setSolrUrlForDev:
+    - "drush vset apachesolr_default_environment solr"
+    - >
+      drush vset apachesolr_environments
+      --format=json
+      '{"solr": {"url": "http://solr:8983/solr/mycore" } }'
+  resetAdminUser:
+    - cd %host.siteFolder%; drush sql-query "update users set name='admin' where uid=1"
+
+common:
+  resetPrepare:
+    dev:
+      - execute(script, resetAdminUser)
+
+  copyDBFromFinished:
+    dev:
+      - execute(script, reindex-content)
+    stage:
+      - execute(script, reindex-content)
+    test:
+      - execute(script, reindex-content)
+    prod:
+      - execute(script, reindex-content)
+
+  reset:
+    dev:
+      - "drush vset devel_rebuild_theme_registry FALSE"
+      - "drush vdel -y googleanalytics_account"
+      - "drush vset -y --exact cache 0"
+      - "drush vset -y --exact preprocess_css 0"
+      - "drush vset -y --exact preprocess_js 0"
+      - "drush en shield -y"
+      - "drush vset -y shield_user rmh"
+      - "drush vset -y shield_pass rmh"
+      - "drush vset -y shield_print 'Enter security credentials to access'"
+      - "drush vset admin_menu_tweak_modules 1"
+      - "drush vset admin_menu_tweak_permissions 1"
+      - execute(script, patternlab)
+      - execute(script, setSolrUrlForDev)
+    test:
+      - execute(script, patternlab)
+    prod:
+      - execute(script, patternlab)
+
+dockerHosts:
+  default:
+    tasks:
+      start:
+        - docker start %name%
+      stop:
+        - docker stop %name%
+      logs:
+        - docker logs %name%
+      ps:
+        - docker ps
+  mbb:
+    environment:
+      VHOST: "%host.docker.vhost%"
+      COMPOSE_FILE: "docker-compose.yml:docker-compose-mbb.yml"
+    inheritsFrom:
+      - https://config.factorial.io/mbb/2.0/mbb-docker.yaml
+      - https://config.factorial.io/docker/2.0/docker-compose.yaml
+
+  clients.factorial.io:
+    environment:
+      VHOST: "%host.docker.vhost%"
+    inheritsFrom:
+      - https://config.factorial.io/clients.factorial.io/2.0/d8/docker.yaml
+
+hosts:
+  mbb:
+    adminUser: admin
+    host: bi-france.test
+    user: root
+    password: root
+    port: 36997
+    type: dev
+    rootFolder: /var/www/
+    gitRootFolder: /var/www/
+    siteFolder: /sites/default
+    filesFolder: /sites/default/files
+    backupFolder: /var/www/backups
+    branch: int
+    supportsInstalls: true
+    docker:
+      name: fr012-bi-france_web_1
+      configuration: mbb
+      vhost: >-
+        bi-france.test
+        cardiocity.bi-france.test
+        oncocity.bi-france.test
+        pneumocity.bi-france.test
+        spiolto.bi-france.test
+        pradaxa.bi-france.test
+        pradaxa-praxbind.bi-france.test
+        ofev-pharmacist.bi-france.test
+        ofev-pneumolog.bi-france.test
+      projectFolder: fr012-bi-france
+    database:
+      name: bifrance
+      user: root
+      pass: admin
+      host: mysql
+    reset:
+      - "drush vset -y error_level 2"
+      - "execute(script, copyHtAccess)"
+      - "drush vset -y file_public_path 'sites/default/files'"
+      - "drush vset -y file_private_path 'sites/default/files/private'"
+      - "drush vset -y file_temporary_path 'sites/default/files/private/tmp'"
+    xdebug:
+      php_version: 5
+    blueprint:
+      database:
+        name: bifrance_%slug%
+      inheritsFrom: mbb
+      configName: "mbb-%slug%"
+      siteFolder: /sites/%slug%
+      filesFolder: /sites/%slug%/files
+      reset:
+        - drush vset -y error_level 2
+        - execute(script, copyHtAccess)
+        - drush vset -y file_public_path 'sites/%slug%/files'
+        - drush vset -y file_private_path 'sites/%slug%/files/private'
+        - drush vset -y file_temporary_path 'sites/%slug%/files/private/tmp'
+
+  bi-france-int:
+    port: 22
+    branch: int
+    host: int-fr012.bi-customerhub.com
+    user: fr012d
+    type: stage
+    ignoreSubmodules: true
+    supportsInstalls: false
+    supportsCopyFrom: false
+    rootFolder: /home/fr012d/public_html
+    gitRootFolder: /home/fr012d/public_html
+    siteFolder: /sites/default
+    filesFolder: /sites/default/files
+    backupFolder: /home/fr012d/backups
+    gitOptions:
+      pull: []
+    needs:
+      - ssh
+      - drush7
+      - git
+      - files
+
+
+  bi-france-int-cardiocity:
+    # Do chmod -R 775 sites/fr012_j4x8/files when doing first time install.
+    inheritsFrom: bi-france-int
+    siteFolder: /sites/fr012_j4x8
+    filesFolder: /sites/fr012_j4x8/files
+
+  bi-france-int-pneumocity:
+    # Do chmod -R 775 sites/fr012_nnrs/files when doing first time install.
+    inheritsFrom: bi-france-int
+    siteFolder: /sites/fr012_nnrs
+    filesFolder: /sites/fr012_nnrs/files
+
+  bi-france-int-oncocity:
+    # Do chmod -R 775 sites/fr012_5i2p/files when doing first time install.
+    inheritsFrom: bi-france-int
+    siteFolder: /sites/fr012_5i2p
+    filesFolder: /sites/fr012_5i2p/files
+
+  bi-france-int-spiolto:
+    # Do chmod -R 775 sites/fr012_cwxy/files when doing first time install.
+    inheritsFrom: bi-france-int
+    siteFolder: /sites/fr012_cwxy
+    filesFolder: /sites/fr012_cwxy/files
+
+  bi-france-int-ofev-pneumo:
+    # Do chmod -R 775 sites/fr012_ssd8/files when doing first time install.
+    inheritsFrom: bi-france-int
+    siteFolder: /sites/fr012_ssd8
+    filesFolder: /sites/fr012_ssd8/files
+
+  bi-france-int-ofev-pharma:
+    # Do chmod -R 775 sites/fr012_veuy/files when doing first time install.
+    inheritsFrom: bi-france-int
+    siteFolder: /sites/fr012_veuy
+    filesFolder: /sites/fr012_veuy/files
+
+  bi-france-int-pradaxa:
+    # Do chmod -R 775 sites/fr012_e3zm/files when doing first time install.
+    inheritsFrom: bi-france-int
+    siteFolder: /sites/fr012_e3zm
+    filesFolder: /sites/fr012_e3zm/files
+
+  bi-france-int-pradaxa-praxabind:
+    # Do chmod -R 775 sites/fr012_d3e5/files when doing first time install.
+    inheritsFrom: bi-france-int
+    siteFolder: /sites/fr012_d3e5
+    filesFolder: /sites/fr012_d3e5/files
+
+  int.bifrance.hub-staging.hh.rmh.de:
+    branch: int
+    configName: int.bifrance.hub-staging.hh.rmh.de
+    ignoreSubmodules: true
+    database:
+      name: bifrance_int_mysql
+      host: mysql
+    docker:
+      configuration: clients.factorial.io
+      name: bifrancemultisiteint_web_1
+      projectFolder: bifrance-multisite--int
+      vhost: >-
+        int.bifrance.cardiocity.hub-staging.hh.rmh.de
+        int.bifrance.oncocity.hub-staging.hh.rmh.de
+        int.bifrance.pneumocity.hub-staging.hh.rmh.de
+        int.bifrance.spiolto.hub-staging.hh.rmh.de
+        int.bifrance.pradaxa.hub-staging.hh.rmh.de
+        int.bifrance.pradaxa-praxbind.hub-staging.hh.rmh.de
+        int.bifrance.ofev-pharmacist.hub-staging.hh.rmh.de
+        int.bifrance.ofev-pneumolog.hub-staging.hh.rmh.de
+    gitRootFolder: /var/www
+    inheritsFrom: http://config.factorial.io/clients.factorial.io/2.0/host.yaml
+    reset:
+      - "drush vset -y error_level 0"
+      - "execute(script, copyHtAccess)"
+      - "drush vset -y file_public_path 'sites/default/files'"
+      - "drush vset -y file_private_path 'sites/default/files/private'"
+      - "drush vset -y file_temporary_path 'sites/default/files/private/tmp'"
+    blueprint:
+      inheritsFrom: int.bifrance.hub-staging.hh.rmh.de
+      configName: int.bifrance.%slug%.hub-staging.hh.rmh.de
+      database:
+        name: bifrance%slug%_int_mysql
+        host: mysql
+      siteFolder: /sites/%slug%
+      filesFolder: /sites/%slug%/files
+      reset:
+        - "drush vset -y error_level 0"
+        - "execute(script, copyHtAccess)"
+        - "drush vset -y rmh_config_domain %slug%"
+        - "drush vset -y file_public_path 'sites/%slug%/files'"
+        - "drush vset -y file_private_path 'sites/%slug%/files/private'"
+        - "drush vset -y file_temporary_path 'sites/%slug%/files/private/tmp'"
+
+blueprints:
+  - configName: mbb
+    variants:
+      - pneumocity
+      - spiolto
+      - pradaxapraxbind
+      - cardiocity
+      - oncocity
+      - pradaxa
+      - ofevpharmacist
+      - ofevpneumolog
+  - configName: int.bifrance.hub-staging.hh.rmh.de
+    variants:
+      - pneumocity
+      - spiolto
+      - pradaxapraxbind
+      - cardiocity
+      - oncocity
+      - pradaxa
+      - ofevpharmacist
+      - ofevpneumolog
+
+
+# Currently installed:
+# Url : http://int.bifrance.pneumocity.hub-staging.hh.rmh.de/
+# Url : http://int.bifrance.spiolto.hub-staging.hh.rmh.de/
+# Url : http://int.bifrance.pradaxa-praxbind.hub-staging.hh.rmh.de/

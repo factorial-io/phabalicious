@@ -2,6 +2,7 @@
 namespace Phabalicious;
 
 use Phabalicious\DependencyInjection\CompilerPass\CollectCommandsToApplicationCompilerPass;
+use Phabalicious\DependencyInjection\CompilerPass\CollectMethodsToFactoryCompilerPass;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -43,5 +44,6 @@ class AppKernel extends Kernel
     protected function build(ContainerBuilder $containerBuilder): void
     {
         $containerBuilder->addCompilerPass(new CollectCommandsToApplicationCompilerPass());
+        $containerBuilder->addCompilerPass(new CollectMethodsToFactoryCompilerPass());
     }
 }

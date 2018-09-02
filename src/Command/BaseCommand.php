@@ -3,6 +3,8 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\MethodInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,8 +16,12 @@ abstract class BaseCommand extends Command
 
     private $configuration;
 
-    public function __construct(ConfigurationService $configuration, $name = null) {
+    private $methods;
+
+    public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
+    {
         $this->configuration = $configuration;
+        $this->methods = $method_factory;
         parent::__construct($name);
     }
 
@@ -51,7 +57,6 @@ abstract class BaseCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->configuration->readConfiguration(getcwd(), $input->getOption('fabfile'));
-
     }
 
     /**
@@ -64,5 +69,9 @@ abstract class BaseCommand extends Command
         return $this->configuration;
     }
 
+    protected function getMethods()
+    {
+        return $this->methods;
+    }
 
 }

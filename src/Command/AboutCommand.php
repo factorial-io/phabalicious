@@ -11,10 +11,6 @@ class AboutCommand extends BaseCommand
 {
     protected static $defaultName = 'about';
 
-    public function __construct(ConfigurationService $configuration, $name = null) {
-        parent::__construct($configuration, $name);
-    }
-
     protected function configure()
     {
         parent::configure();
@@ -40,9 +36,12 @@ class AboutCommand extends BaseCommand
             $output->writeln('<options=bold>Docker configuration of ' . $docker_config_name. '</>');
             $this->print($output, $docker_config, 2);
         }
+
+        $this->getMethods()->runTask('about', $host);
     }
 
-    private function print(OutputInterface $output, array $data, int $level = 0) {
+    private function print(OutputInterface $output, array $data, int $level = 0)
+    {
         ksort($data);
         foreach ($data as $key => $value) {
             if (is_numeric($key)) {
