@@ -3,6 +3,11 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\MethodInterface;
 use Symfony\Component\Console\Command\Command;
@@ -17,6 +22,10 @@ abstract class BaseCommand extends Command
     private $configuration;
 
     private $methods;
+
+    private $hostConfig;
+
+    private $dockerConfig;
 
     public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
     {
@@ -53,10 +62,33 @@ abstract class BaseCommand extends Command
 
     /**
      * {@inheritdoc}
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->configuration->readConfiguration(getcwd(), $input->getOption('fabfile'));
+        try {
+            $this->configuration->readConfiguration(getcwd(), $input->getOption('fabfile'));
+
+            $config_name = $input->getOption('config');
+            $this->hostConfig = $this->getConfiguration()->getHostConfig($config_name);
+
+            if (!empty($this->hostConfig['docker']['configuration'])) {
+                $docker_config_name = $this->hostConfig['docker']['configuration'];
+                $this->dockerConfig = $this->getConfiguration()->getDockerConfig($docker_config_name);
+            }
+        } catch (MissingHostConfigException $e) {
+            $output->writeln('<error>Could not find host-config named ' . $config_name . '</error>');
+            return 1;
+        } catch (ValidationFailedException $e) {
+            $output->writeln('<error>Could not validate config ' . $config_name . '</error>');
+            foreach ($e->getValidationErrors() as $error_msg) {
+                $output->writeln('<error>' . $error_msg . '</error>');
+            }
+            return 1;
+        }
     }
 
     /**
@@ -72,6 +104,16 @@ abstract class BaseCommand extends Command
     protected function getMethods()
     {
         return $this->methods;
+    }
+
+    protected function getHostConfig()
+    {
+        return $this->hostConfig;
+    }
+
+    protected function getDockerConfig()
+    {
+        return $this->dockerConfig;
     }
 
 }

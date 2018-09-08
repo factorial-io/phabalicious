@@ -6,8 +6,11 @@ use Composer\Semver\Comparator;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Validation\ValidationErrorBag;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Yaml\Yaml;
@@ -42,10 +45,22 @@ class ConfigurationService
         $this->logger = $logger;
     }
 
-    public function setMethodFactory(MethodFactory $method_factory) {
+    public function setMethodFactory(MethodFactory $method_factory)
+    {
         $this->methods = $method_factory;
     }
 
+    /**
+     * Read configuration from a file.
+     *
+     * @param string $path
+     * @param string $override
+     *
+     * @return bool
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     */
     public function readConfiguration(string $path, string $override = ''): bool
     {
         if (!empty($this->settings)) {
@@ -164,6 +179,15 @@ class ConfigurationService
         return $data;
     }
 
+    /**
+     * Resolve inheritance for given data.
+     *
+     * @param array $data
+     * @param $lookup
+     *
+     * @return array
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     */
     private function resolveInheritance(array $data, $lookup): array
     {
         if (!isset($data['inheritsFrom'])) {
@@ -230,7 +254,7 @@ class ConfigurationService
             . '.' . pathinfo($resource, PATHINFO_EXTENSION);
 
         if (!is_dir(dirname($cache_file))) {
-            mkdir(dirname($cache_file), 0777, TRUE);
+            mkdir(dirname($cache_file), 0777, true);
         }
 
         if ($contents === false && file_exists($cache_file)) {
@@ -243,6 +267,14 @@ class ConfigurationService
         return $contents;
     }
 
+    /**
+     * @param string $config_name
+     *
+     * @return array
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\ValidationFailedException
+     */
     public function getHostConfig(string $config_name)
     {
         $cid = 'host:' . $config_name;
@@ -275,6 +307,9 @@ class ConfigurationService
         foreach ($this->methods->all() as $method) {
             $method->validateConfig($data, $validation_errors);
         }
+        if ($validation_errors->hasErrors()) {
+            throw new ValidationFailedException($validation_errors);
+        }
 
 
 
@@ -283,6 +318,13 @@ class ConfigurationService
         return $data;
     }
 
+    /**
+     * @param string $config_name
+     *
+     * @return array
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     */
     public function getDockerConfig(string $config_name)
     {
         $cid = 'dockerhost:' . $config_name;

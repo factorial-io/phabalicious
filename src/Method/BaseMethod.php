@@ -3,7 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\ValidationErrorBagInterface;
+use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
 
 abstract class BaseMethod implements MethodInterface

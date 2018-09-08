@@ -1,6 +1,6 @@
 <?php
 
-namespace Phabalicious\Configuration;
+namespace Phabalicious\Validation;
 
 class ValidationErrorBag implements ValidationErrorBagInterface
 {
@@ -13,7 +13,7 @@ class ValidationErrorBag implements ValidationErrorBagInterface
 
     public function hasErrors(): bool
     {
-        return count($this->errors) === 0;
+        return count($this->errors) !== 0;
     }
 
     public function getErrors()

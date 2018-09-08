@@ -1,6 +1,6 @@
 <?php
 
-namespace Phabalicious\Configuration;
+namespace Phabalicious\Validation;
 
 interface ValidationErrorBagInterface
 {

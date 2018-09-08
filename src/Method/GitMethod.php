@@ -3,7 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\ValidationErrorBagInterface;
+use Phabalicious\Validation\ValidationErrorBagInterface;
 
 class GitMethod extends BaseMethod implements MethodInterface
 {
