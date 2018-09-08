@@ -120,6 +120,7 @@ dockerHosts:
 
 hosts:
   mbb:
+    runLocally: true
     adminUser: admin
     host: bi-france.test
     user: root

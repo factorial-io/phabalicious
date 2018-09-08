@@ -19,11 +19,6 @@ abstract class BaseMethod implements MethodInterface
         $this->logger = $logger;
     }
 
-    public function supports(string $method_name): bool
-    {
-        return false;
-    }
-
     public function getOverriddenMethod()
     {
         return false;
@@ -53,7 +48,8 @@ abstract class BaseMethod implements MethodInterface
         $this->logger->debug('postflightTask ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
-    public function fallback(string $task, array $config, TaskContextInterface $context) {
+    public function fallback(string $task, array $config, TaskContextInterface $context)
+    {
         $this->logger->debug('fallback ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 

@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Validation\ValidationErrorBagInterface;
+use Phabalicious\Validation\ValidationService;
 
 class GitMethod extends BaseMethod implements MethodInterface
 {
@@ -41,6 +42,7 @@ class GitMethod extends BaseMethod implements MethodInterface
 
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
-
+        $validation = new ValidationService($config, $errors, 'host-config');
+        $validation->hasKey('gitRootFolder', 'gitRootFolder should point to your gits root folder.');
     }
 }

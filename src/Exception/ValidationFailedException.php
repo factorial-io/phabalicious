@@ -18,8 +18,13 @@ class ValidationFailedException extends \Exception
         $this->validationErrors = $validation_errors;
     }
 
-    public function getValidationErrors() : ValidationErrorBagInterface
+    public function getValidationErrors()
     {
-        return $this->validationErrors;
+        return $this->validationErrors->getErrors();
+    }
+
+    public function __toString()
+    {
+        return implode("\n", $this->validationErrors->getErrors());
     }
 }

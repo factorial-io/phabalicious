@@ -11,7 +11,7 @@ class MethodFactory {
     /**
      * @var MethodInterface[]
      */
-    protected $methods;
+    protected $methods = [];
 
     /**
      * @var \Phabalicious\Configuration\ConfigurationService
@@ -156,5 +156,12 @@ class MethodFactory {
     public function all()
     {
         return $this->methods;
+    }
+
+    public function getSubset(array $needs)
+    {
+        return array_map(function ($elem) {
+            return $this->getMethod($elem);
+        }, $needs);
     }
 }

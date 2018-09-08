@@ -11,6 +11,7 @@ use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Validation\ValidationErrorBag;
+use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Yaml\Yaml;
@@ -134,6 +135,12 @@ class ConfigurationService
         return false;
     }
 
+    /**
+     * @param string $file
+     *
+     * @return mixed
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     */
     protected function readFile(string $file)
     {
         $cid = 'yaml:' . $file;
@@ -146,7 +153,13 @@ class ConfigurationService
             $required_version = $data['requires'];
             $app_version = $this->application->getVersion();
             if (Comparator::greaterThan($required_version, $app_version)) {
-                throw new MismatchedVersionException('Could not read file ' . $file . ' because of version mismatch: ' . $app_version . '<' . $required_version);
+                throw new MismatchedVersionException(
+                    'Could not read file ' .
+                    $file .
+                    ' because of version mismatch: ' .
+                    $app_version . '<' .
+                    $required_version
+                );
             }
         }
 
@@ -304,11 +317,20 @@ class ConfigurationService
         }
 
         $validation_errors = new ValidationErrorBag();
-        foreach ($this->methods->all() as $method) {
+        $validation = new ValidationService($data, $validation_errors, 'host-config');
+        $validation->isArray('needs', 'Please specify the needed methods as an array');
+        $validation->isOneOf('type', ['prod', 'stage', 'test', 'dev']);
+
+        foreach ($this->methods->getSubset($data['needs']) as $method) {
             $method->validateConfig($data, $validation_errors);
         }
         if ($validation_errors->hasErrors()) {
             throw new ValidationFailedException($validation_errors);
+        }
+        if ($validation_errors->getWarnings()) {
+            foreach ($validation_errors->getWarnings() as $key => $warning) {
+                $this->logger->warning('Found deprecated key `' . $key . '`: ' . $warning);
+            }
         }
 
 
