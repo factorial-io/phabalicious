@@ -1,0 +1,9 @@
+stages:
+  - test
+  
+ 
+runTests:
+  stage: test
+  script:
+    - docker pull phpunit/phpunit
+    - docker run -v $(pwd)/tests:/app --rm phpunit/phpunit run
