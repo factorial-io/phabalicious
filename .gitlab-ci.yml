@@ -5,7 +5,8 @@ stages:
   
 before_script:
   - curl --silent --show-error https://getcomposer.org/installer | php
-  - composer install
+  - chmod u+x composer.phar
+  - composer.phar install
  
 runTests:
   tags:
