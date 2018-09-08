@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\Test\LoggerInterfaceTest;
 use Symfony\Component\Console\Application;
 
-class ConfigurationServiceTest extends TestCase
+class ConfigurationServiceValidationTest extends TestCase
 {
 
     /**
@@ -19,7 +19,8 @@ class ConfigurationServiceTest extends TestCase
     private $config;
     private $logger;
 
-    public function setUp() {
+    public function setUp()
+    {
         $application = $this->getMockBuilder(Application::class)
             ->setMethods(['getVersion'])
             ->getMock();
@@ -41,13 +42,12 @@ class ConfigurationServiceTest extends TestCase
 
     public function testGlobalSettingsFromMethod()
     {
-
         $this->assertEquals($this->config->getSetting('gitOptions.pull'), ['--no-edit', '--rebase']);
     }
 
-    public function testMethodDefaultSettings() {
+    public function testMethodDefaultSettings()
+    {
        $host = $this->config->getHostConfig('mbb');
-
        $this->assertEquals($host['gitRootFolder'], $host['rootFolder']);
 
     }

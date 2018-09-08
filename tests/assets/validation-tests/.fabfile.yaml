@@ -2,11 +2,7 @@ name: validation-tests
 
 requires: 2.0.0
 needs:
-  - ssh
-  - docker
-  - drush7
   - git
-  - files
 
 inheritsFrom:
   - https://config.factorial.io/docker/2.0/xdebug.yaml

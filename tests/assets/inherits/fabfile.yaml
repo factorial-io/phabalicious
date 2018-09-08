@@ -1,4 +1,5 @@
 name: Test inherits
+needs: []
 
 inheritsFrom:
   - ./inherit-1.yml
@@ -17,8 +18,10 @@ dockerHosts:
 
 hosts:
   hostA:
+    type: dev
     inheritsFrom: ./hosts/host-a.yml
   hostB:
+    type: dev
     inheritsFrom:
       - hostA
       - ./hosts/host-b.yml
