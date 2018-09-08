@@ -3,7 +3,7 @@ image: php:7.1-cli-alpine
 stages:
   - test
   
-beforeScript:
+before_script:
   - curl --silent --show-error https://getcomposer.org/installer | php
   - composer install
  
