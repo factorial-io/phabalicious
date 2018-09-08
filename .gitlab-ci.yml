@@ -3,11 +3,13 @@ image: php:7.1-cli-alpine
 stages:
   - test
   
+beforeScript:
+  - curl --silent --show-error https://getcomposer.org/installer | php
+  - composer install
  
 runTests:
   tags:
     - docker
   stage: test
   script:
-    - composer install
     - cd tests; ../vendor/bin/phpunit .
