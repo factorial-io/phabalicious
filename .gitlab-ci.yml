@@ -5,5 +5,5 @@ stages:
 runTests:
   stage: test
   script:
-    - docker pull phpunit/phpunit
-    - docker run -v $(pwd)/tests:/app --rm phpunit/phpunit run
+    - composer install
+    - cd tests; ../vendor/bin/phpunit .
