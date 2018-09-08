@@ -5,6 +5,8 @@ stages:
   
  
 runTests:
+  tags:
+    - docker
   stage: test
   script:
     - composer install
