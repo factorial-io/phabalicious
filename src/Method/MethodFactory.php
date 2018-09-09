@@ -3,10 +3,12 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\MethodNotFoundException;
 use Psr\Log\LoggerInterface;
 
-class MethodFactory {
+class MethodFactory
+{
 
     /**
      * @var MethodInterface[]
@@ -25,6 +27,12 @@ class MethodFactory {
 
     protected $lookupCache = [];
 
+    /**
+     * MethodFactory constructor.
+     *
+     * @param \Phabalicious\Configuration\ConfigurationService $configuration
+     * @param \Psr\Log\LoggerInterface $logger
+     */
     public function __construct(ConfigurationService $configuration, LoggerInterface $logger)
     {
         $this->configuration = $configuration;
@@ -33,12 +41,25 @@ class MethodFactory {
         $this->logger = $logger;
     }
 
+    /**
+     * Add a method.
+     *
+     * @param \Phabalicious\Method\MethodInterface $method
+     */
     public function addMethod(MethodInterface $method)
     {
         $this->methods[$method->getName()] = $method;
     }
 
-    public function getMethod($name): MethodInterface
+    /**
+     * Get a method by name.
+     *
+     * @param string $name
+     *
+     * @return \Phabalicious\Method\MethodInterface
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     */
+    public function getMethod(string $name): MethodInterface
     {
         if (isset($this->lookupCache[$name])) {
             return $this->lookupCache[$name];
@@ -54,9 +75,20 @@ class MethodFactory {
         throw new MethodNotFoundException('Could not find implementation for method ' . $name);
     }
 
+    /**
+     * Run a task.
+     *
+     * @param string $task_name
+     * @param \Phabalicious\Configuration\HostConfig $configuration
+     * @param \Phabalicious\Method\TaskContextInterface|NULL $context
+     * @param array $nextTasks
+     *
+     * @return \Phabalicious\Method\TaskContext|\Phabalicious\Method\TaskContextInterface
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     */
     public function runTask(
         string $task_name,
-        array $configuration,
+        HostConfig $configuration,
         TaskContextInterface $context = null,
         $nextTasks = []
     ) {
@@ -78,17 +110,21 @@ class MethodFactory {
     }
 
     /**
-     * Run a task.
+     * Run a task (implementation).
      *
      * @param $task_name
-     * @param $configuration
+     * @param HostConfig $configuration
      * @param \Phabalicious\Method\TaskContextInterface $context
      * @param $fallback_allowed
      *
      * @throws \Phabalicious\Exception\MethodNotFoundException
      */
-    protected function runTaskImpl($task_name, $configuration, TaskContextInterface $context, $fallback_allowed)
-    {
+    protected function runTaskImpl(
+        string $task_name,
+        HostConfig $configuration,
+        TaskContextInterface $context,
+        $fallback_allowed
+    ) {
         $fn_called = false;
 
         if (!$context->get('quiet')) {
@@ -110,10 +146,20 @@ class MethodFactory {
         }
     }
 
+    /**
+     * Call a method (implementation).
+     *
+     * @param \Phabalicious\Method\MethodInterface $method
+     * @param string $task_name
+     * @param \Phabalicious\Configuration\HostConfig $configuration
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     *
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     */
     private function callImpl(
         MethodInterface $method,
         string $task_name,
-        array $configuration,
+        HostConfig $configuration,
         TaskContextInterface $context
     ) {
         $overrides = [];
@@ -136,7 +182,7 @@ class MethodFactory {
      *
      * @param string $step_name
      * @param string $task_name
-     * @param array $configuration
+     * @param HostConfig $configuration
      * @param \Phabalicious\Method\TaskContextInterface $context
      *
      * @throws \Phabalicious\Exception\MethodNotFoundException
@@ -144,7 +190,7 @@ class MethodFactory {
     private function preflight(
         string $step_name,
         string $task_name,
-        array $configuration,
+        HostConfig $configuration,
         TaskContextInterface $context
     ) {
         foreach ($configuration['needs'] as $method_name) {
@@ -153,11 +199,23 @@ class MethodFactory {
         }
     }
 
+    /**
+     * Get all registered methods.
+     *
+     * @return \Phabalicious\Method\MethodInterface[]
+     */
     public function all()
     {
         return $this->methods;
     }
 
+    /**
+     * Get a subset of methods.
+     *
+     * @param array $needs
+     *
+     * @return \Phabalicious\Method\MethodInterface[]
+     */
     public function getSubset(array $needs)
     {
         return array_map(function ($elem) {

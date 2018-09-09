@@ -3,6 +3,7 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,7 +30,7 @@ class AboutCommand extends BaseCommand
 
 
         $output->writeln('<options=bold>Configuration of ' . $this->getHostConfig()['config_name'] . '</>');
-        $this->print($output, $this->getHostConfig());
+        $this->print($output, $this->getHostConfig()->raw());
         if ($this->getDockerConfig()) {
             $output->writeln('<options=bold>Docker configuration:</>');
             $this->print($output, $this->getDockerConfig(), 2);

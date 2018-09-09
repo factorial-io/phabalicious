@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
 
@@ -38,17 +39,21 @@ abstract class BaseMethod implements MethodInterface
         return [];
     }
 
-    public function preflightTask(string $task, array $config, TaskContextInterface $context)
+    public function createShellProvider(array $host_config)
+    {
+    }
+
+    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
         $this->logger->debug('preflightTask ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
-    public function postflightTask(string $task, array $config, TaskContextInterface $context)
+    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
         $this->logger->debug('postflightTask ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
-    public function fallback(string $task, array $config, TaskContextInterface $context)
+    public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
     {
         $this->logger->debug('fallback ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }

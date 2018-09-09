@@ -14,10 +14,6 @@ class LocalShellProvider implements ShellProviderInterface
         return 'local';
     }
 
-    public function getGlobalSettings(): array
-    {
-        return [];
-    }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, $host_config): array
     {
@@ -28,7 +24,7 @@ class LocalShellProvider implements ShellProviderInterface
 
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
-        $validator = new ValidationService($config, $errors);
+        $validator = new ValidationService($config, $errors, 'host-config');
         $validator->hasKey('rootFolder', 'Missing rootFolder, should point to the root of your application');
     }
 }

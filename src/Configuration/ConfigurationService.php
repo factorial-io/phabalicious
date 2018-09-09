@@ -8,8 +8,10 @@ use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\Exception\TooManyShellProvidersException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
@@ -283,10 +285,11 @@ class ConfigurationService
     /**
      * @param string $config_name
      *
-     * @return array
+     * @return \Phabalicious\Configuration\HostConfig
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws \Phabalicious\Exception\TooManyShellProvidersException
      */
     public function getHostConfig(string $config_name)
     {
@@ -316,14 +319,43 @@ class ConfigurationService
             $data = $this->mergeData($data, $method->getDefaultConfig($this, $data));
         }
 
+        // Overall validation.
+
         $validation_errors = new ValidationErrorBag();
         $validation = new ValidationService($data, $validation_errors, 'host-config');
         $validation->isArray('needs', 'Please specify the needed methods as an array');
         $validation->isOneOf('type', ['prod', 'stage', 'test', 'dev']);
 
-        foreach ($this->methods->getSubset($data['needs']) as $method) {
+        // Validate data against used methods.
+
+        $used_methods = $this->methods->getSubset($data['needs']);
+        foreach ($used_methods as $method) {
             $method->validateConfig($data, $validation_errors);
         }
+
+        // Get shell-provider.
+
+        /** @var \Phabalicious\ShellProvider\ShellProviderInterface[] $shells */
+        $shells = array_filter(array_map(function ($method) use ($data) {
+            /** @var \Phabalicious\Method\MethodInterface $method */
+            return $method->createShellProvider($data);
+        }, $used_methods));
+
+
+        if (count($shells) > 1) {
+            throw new TooManyShellProvidersException('Found too many shell-providers for host-config ' . $config_name);
+        } elseif (count($shells) === 0) {
+            $this->logger->error('Could not find any shell provider for ' . $config_name . ', using local one.');
+             $shell_provider = new LocalShellProvider();
+        } else {
+            $shell_provider = $shells[0];
+        }
+
+        // Validate data against shell-provider.
+
+        $data = $this->mergeData($shell_provider->getDefaultConfig($this, $data), $data);
+        $shell_provider->validateConfig($data, $validation_errors);
+
         if ($validation_errors->hasErrors()) {
             throw new ValidationFailedException($validation_errors);
         }
@@ -333,8 +365,9 @@ class ConfigurationService
             }
         }
 
+        // Create host-config and return.
 
-
+        $data = new HostConfig($data, $shell_provider);
 
         $this->cache[$cid] = $data;
         return $data;
