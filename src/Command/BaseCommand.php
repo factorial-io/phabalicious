@@ -36,20 +36,23 @@ abstract class BaseCommand extends Command
 
     protected function configure()
     {
+        $default_conf = getenv('PHABALICIOUS_DEFAULT_CONFIG');
+        if (empty($default_conf)) {
+            $default_conf = null;
+        }
         $this
             ->addOption(
                 'fabfile',
                 'f',
                 InputOption::VALUE_OPTIONAL,
-                'Override with a custom fabfile',
-                ''
+                'Override with a custom fabfile'
             )
             ->addOption(
                 'config',
-                null,
+                'c',
                 InputOption::VALUE_REQUIRED,
                 'Which host-config should be worked on',
-                1
+                $default_conf
             )
             ->addOption(
                 'blueprint',
@@ -66,13 +69,15 @@ abstract class BaseCommand extends Command
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\TooManyShellProvidersException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->configuration->readConfiguration(getcwd(), $input->getOption('fabfile'));
+            $fabfile = !empty($input->getOption('fabfile')) ? $input->getOption('fabfile') : '';
+            $this->configuration->readConfiguration(getcwd(), $fabfile);
 
-            $config_name = $input->getOption('config');
+            $config_name = '' . $input->getOption('config');
             $this->hostConfig = $this->getConfiguration()->getHostConfig($config_name);
 
             if (!empty($this->hostConfig['docker']['configuration'])) {
@@ -80,10 +85,10 @@ abstract class BaseCommand extends Command
                 $this->dockerConfig = $this->getConfiguration()->getDockerConfig($docker_config_name);
             }
         } catch (MissingHostConfigException $e) {
-            $output->writeln('<error>Could not find host-config named ' . $config_name . '</error>');
+            $output->writeln('<error>Could not find host-config named `' . $config_name . '`</error>');
             return 1;
         } catch (ValidationFailedException $e) {
-            $output->writeln('<error>Could not validate config ' . $config_name . '</error>');
+            $output->writeln('<error>Could not validate config `' . $config_name . '`</error>');
             foreach ($e->getValidationErrors() as $error_msg) {
                 $output->writeln('<error>' . $error_msg . '</error>');
             }

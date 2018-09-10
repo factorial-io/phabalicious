@@ -179,7 +179,7 @@ class ConfigurationService
         return $this->fabfilePath;
     }
 
-    private function mergeData(array $data, array $override_data): array
+    public function mergeData(array $data, array $override_data): array
     {
         return NestedArray::mergeDeep($data, $override_data);
     }
@@ -346,9 +346,9 @@ class ConfigurationService
             throw new TooManyShellProvidersException('Found too many shell-providers for host-config ' . $config_name);
         } elseif (count($shells) === 0) {
             $this->logger->error('Could not find any shell provider for ' . $config_name . ', using local one.');
-             $shell_provider = new LocalShellProvider();
+             $shell_provider = new LocalShellProvider($this->logger);
         } else {
-            $shell_provider = $shells[0];
+            $shell_provider = reset($shells);
         }
 
         // Validate data against shell-provider.

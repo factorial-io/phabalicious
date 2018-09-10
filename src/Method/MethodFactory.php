@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Psr\Log\LoggerInterface;
 
 class MethodFactory
@@ -135,7 +136,7 @@ class MethodFactory
             $method = $this->getMethod($method_name);
             if (method_exists($method, $task_name)) {
                 $fn_called = true;
-                $this->callImpl($method, $task_name, $configuration, $context);
+                $this->callImpl($method, $task_name, $configuration, $context, true);
             }
         }
 
@@ -155,12 +156,14 @@ class MethodFactory
      * @param \Phabalicious\Method\TaskContextInterface $context
      *
      * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     private function callImpl(
         MethodInterface $method,
         string $task_name,
         HostConfig $configuration,
-        TaskContextInterface $context
+        TaskContextInterface $context,
+        bool $optional
     ) {
         $overrides = [];
         foreach ($configuration['needs'] as $method_name) {
@@ -173,8 +176,40 @@ class MethodFactory
             $this->logger->info('Use override ' . $overrides[$method_name] . ' for ' . $method_name);
             $method = $this->getMethod($overrides[$method_name]);
         }
+        $this->logger->debug('Call task ' . $task_name . ' on method' . $method_name);
 
-        $method->{$task_name}($configuration, $context);
+        if (method_exists($method, $task_name)) {
+            $method->{$task_name}($configuration, $context);
+        } elseif (!$optional) {
+            thrsow new TaskNotFoundInMethodException(
+                'Could not find task `' . $task_name . '` in method `' . $method_name . '`'
+            );
+        }
+    }
+
+    /**
+     * Call a task on a specifc method.
+     *
+     * @param string $method_name
+     * @param string $taks_name
+     * @param \Phabalicious\Configuration\HostConfig $configuration
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     *
+     * @return \Phabalicious\Method\TaskContextInterface
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     */
+    public function call(
+        string $method_name,
+        string $task_name,
+        HostConfig $configuration,
+        TaskContextInterface $context
+    ): TaskContextInterface {
+        $method = $this->getMethod($method_name);
+        $this->preflight('preflight', $task_name, $configuration, $context);
+        $this->callImpl($method, $task_name, $configuration, $context, false);
+        $this->preflight('postflight', $task_name, $configuration, $context);
+
+        return $context;
     }
 
     /**

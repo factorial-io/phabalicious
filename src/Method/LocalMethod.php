@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
@@ -39,6 +40,11 @@ class LocalMethod extends BaseMethod implements MethodInterface
         $validation->deprecate([
             'runLocally' => 'Please add `local` to your `needs`!'
         ]);
+    }
+
+    public function createShellProvider(array $host_config)
+    {
+        return new LocalShellProvider($this->logger);
     }
 
 

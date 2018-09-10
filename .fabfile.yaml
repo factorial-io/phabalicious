@@ -134,6 +134,11 @@ hosts:
     backupFolder: /var/www/backups
     branch: int
     supportsInstalls: true
+    scripts:
+      test:
+        - echo "Test"
+      test2:
+        - echo "Test2"
     docker:
       name: fr012-bi-france_web_1
       configuration: mbb
