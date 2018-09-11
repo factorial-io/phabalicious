@@ -137,6 +137,8 @@ hosts:
     scripts:
       test:
         - echo "Test"
+        - "%kkhkhkh%"
+        - cd %host.rootFolder%; echo "hello"
       test2:
         - echo "Test2"
     docker:

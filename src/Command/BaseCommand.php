@@ -101,7 +101,7 @@ abstract class BaseCommand extends Command
      *
      * @return ConfigurationService
      */
-    protected function getConfiguration()
+    public function getConfiguration()
     {
         return $this->configuration;
     }

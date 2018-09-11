@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\Utilities;
+use SebastianBergmann\CodeCoverage\Util;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -58,7 +59,7 @@ class ScriptCommand extends BaseCommand
                 $script_data = $script_data['script'];
             }
 
-            $context = new TaskContext($this->getConfiguration(), $output);
+            $context = new TaskContext($this, $input, $output);
             $context->set('variables', $script_arguments);
             $context->set('scriptData', $script_data);
 
@@ -91,7 +92,12 @@ class ScriptCommand extends BaseCommand
 
     private function parseScriptArguments($script_data, $arguments_string)
     {
+        $defaults = !empty($script_data['defaults']) ? $script_data['defaults'] : [];
         $args = explode(' ', $arguments_string);
+        if (empty(trim($arguments_string))) {
+            return $defaults;
+        }
+
         $unnamed_args = array_filter($args, function ($elem) {
             return strpos($elem, '=') === false;
         });
@@ -104,12 +110,13 @@ class ScriptCommand extends BaseCommand
             $named_args[$a[0]] = $a[1];
         }
 
-        $defaults = !empty($script_data['defaults']) ? $script_data['defaults'] : [];
+        $named_args = Utilities::mergeData($named_args, [
+            'combined' => implode(' ', $unnamed_args),
+            'unnamedArguments' => $unnamed_args,
+        ]);
 
         return [
             'arguments' => Utilities::mergeData($defaults, $named_args),
-            'combined' => implode(' ', $unnamed_args),
-            'unnamed_arguments' => $unnamed_args,
         ];
     }
 
