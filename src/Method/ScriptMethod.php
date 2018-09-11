@@ -39,13 +39,20 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $variables = $context->get('variables', []);
         $callbacks = $context->get('callbacks', []);
         $environment = $context->get('environment', []);
-        $root_folder = isset($host_config['siteFolder']) ? $host_config['siteFolder'] ? $host_config['rootFolder'] : '.';
+        $root_folder = isset($host_config['siteFolder'])
+            ? $host_config['siteFolder']
+            : isset($host_config['rootFolder'])
+                ? $host_config['rootFolder']
+                : '.';
 
         if (!empty($host_config['environment'])) {
             $environment = Utilities::mergeData($environment, $host_config['environment']);
         }
-        $variables['host'] = $host_config->raw();
-        $variables['settings'] = $context->getConfigurationService()->getAllSettings(['hosts', 'dockerHosts']);
+        $variables = [
+            'variables' => $variables,
+            'host' => $host_config->raw(),
+            'settings' => $context->getConfigurationService()->getAllSettings(['hosts', 'dockerHosts']),
+        ];
 
         $replacements = Utilities::expandVariables($variables);
         $commands = Utilities::expandStrings($commands, $replacements);
@@ -63,6 +70,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         array $callbacks = [],
         array $environment = [],
         array $replacements = []
+    )
     {
     }
 
