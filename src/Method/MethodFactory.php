@@ -181,7 +181,7 @@ class MethodFactory
         if (method_exists($method, $task_name)) {
             $method->{$task_name}($configuration, $context);
         } elseif (!$optional) {
-            thrsow new TaskNotFoundInMethodException(
+            throw new TaskNotFoundInMethodException(
                 'Could not find task `' . $task_name . '` in method `' . $method_name . '`'
             );
         }

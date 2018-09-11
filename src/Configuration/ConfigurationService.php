@@ -399,4 +399,13 @@ class ConfigurationService
         return $data;
     }
 
+    public function getAllSettings($without = ['hosts', 'dockerHosts'])
+    {
+        $copy = $this->settings;
+        foreach ($without as $key) {
+            unset($copy[$key]);
+        }
+        return $copy;
+    }
+
 }

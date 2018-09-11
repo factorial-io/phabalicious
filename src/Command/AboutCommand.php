@@ -4,6 +4,7 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,8 +37,8 @@ class AboutCommand extends BaseCommand
             $this->print($output, $this->getDockerConfig(), 2);
         }
 
-
-        $this->getMethods()->runTask('about', $this->getHostConfig());
+        $context = new TaskContext($this->getConfiguration(), $output);
+        $this->getMethods()->runTask('about', $this->getHostConfig(), $context);
     }
 
     private function print(OutputInterface $output, array $data, int $level = 0)
