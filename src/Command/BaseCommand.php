@@ -3,6 +3,7 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
@@ -73,11 +74,12 @@ abstract class BaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $config_name = '' . $input->getOption('config');
+
         try {
             $fabfile = !empty($input->getOption('fabfile')) ? $input->getOption('fabfile') : '';
             $this->configuration->readConfiguration(getcwd(), $fabfile);
 
-            $config_name = '' . $input->getOption('config');
             $this->hostConfig = $this->getConfiguration()->getHostConfig($config_name);
 
             if (!empty($this->hostConfig['docker']['configuration'])) {
@@ -111,6 +113,11 @@ abstract class BaseCommand extends Command
         return $this->methods;
     }
 
+    /**
+     * Get host config.
+     *
+     * @return HostConfig
+     */
     protected function getHostConfig()
     {
         return $this->hostConfig;

@@ -22,26 +22,35 @@ class AboutCommand extends BaseCommand
             ->setHelp('Shows a detailed view of all configuration of that specific host');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($result = parent::execute($input, $output)) {
             return $result;
         }
 
-
-
         $output->writeln('<options=bold>Configuration of ' . $this->getHostConfig()['config_name'] . '</>');
-        $this->print($output, $this->getHostConfig()->raw());
+        $this->write($output, $this->getHostConfig()->raw());
         if ($this->getDockerConfig()) {
             $output->writeln('<options=bold>Docker configuration:</>');
-            $this->print($output, $this->getDockerConfig(), 2);
+            $this->write($output, $this->getDockerConfig(), 2);
         }
 
-        $context = new TaskContext($this->getConfiguration(), $output);
+        $context = new TaskContext($this, $input, $output);
         $this->getMethods()->runTask('about', $this->getHostConfig(), $context);
     }
 
-    private function print(OutputInterface $output, array $data, int $level = 0)
+    private function write(OutputInterface $output, array $data, int $level = 0)
     {
         ksort($data);
         foreach ($data as $key => $value) {
@@ -50,7 +59,7 @@ class AboutCommand extends BaseCommand
             }
             if (is_array($value)) {
                 $output->writeln(str_pad('', $level) . str_pad($key, 30 - $level) . ' : ');
-                $this->print($output, $value, $level + 2);
+                $this->write($output, $value, $level + 2);
             } else {
                 $output->writeln(str_pad('', $level) . str_pad($key, 30 - $level) . ' : ' . $value);
             }

@@ -35,9 +35,13 @@ $kernel = new AppKernel($env, $debug);
 $kernel->boot();
 $container = $kernel->getContainer();
 
+/** @var \Symfony\Component\Console\Logger\ConsoleLogger $logger */
+$logger = $container->get(\Symfony\Component\Console\Logger\ConsoleLogger::class);
+$output = $container->get(ConsoleOutput::class);
+
 /** @var Application $application */
 $application = $container->get(Application::class);
 $application->setVersion('3.0.0');
 $application->setName('phabalicious');
 
-$application->run($input, $container->get(ConsoleOutput::class));
+$application->run($input, $output);
