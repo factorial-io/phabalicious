@@ -2,13 +2,10 @@
 
 namespace Phabalicious\ShellProvider;
 
-use MongoDB\Driver\Command;
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
 
@@ -33,7 +30,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $result = parent::getDefaultConfig($configuration_service, $host_config);
-        $result['shellExecutable'] = $configuration_service->getSetting('shellExecutable', '/bin/sh -i');
+        $result['shellExecutable'] = $configuration_service->getSetting('shellExecutable', '/bin/sh');
 
         return $result;
     }
@@ -49,10 +46,19 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         );
     }
 
+    /**
+     * Setup local shell.
+     *
+     * @throws \Exception
+     */
     public function setup()
     {
         if ($this->process) {
             return;
+        }
+
+        if (empty($this->hostConfig)) {
+            throw new \Exception('No host-config set for local shell provider');
         }
 
         $this->process = new Process([$this->hostConfig['shellExecutable']]);
@@ -60,13 +66,22 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->input = new InputStream();
         $this->process->setInput($this->input);
         $this->process->start(function ($type, $buffer) {
-            if ($type == \Symfony\Component\Process\Process::ERR) {
+            if ($type == Process::ERR) {
                 $this->logger->error($buffer);
             }
         });
     }
 
-    public function run(string $command, $capture_output = false): CommandResult
+    /**
+     * Run a command in the shell.
+     *
+     * @param string $command
+     * @param bool $capture_output
+     * @param OutputInterface|null $output
+     * @return CommandResult
+     * @throws \Exception
+     */
+    public function run(string $command, $capture_output = false, OutputInterface $output = null): CommandResult
     {
         $this->setup();
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $command);
@@ -76,20 +91,37 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->input->write($command . '; echo "' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL);
 
         // Get result.
-        $output = '';
-        while (strpos($output, self::RESULT_IDENTIFIER) === false) {
-            $output .= $this->process->getIncrementalOutput();
+        $result = '';
+        while (strpos($result, self::RESULT_IDENTIFIER) === false) {
+            $result .= $this->process->getIncrementalOutput();
         }
 
-        $lines = explode(PHP_EOL, $output);
+        $lines = explode(PHP_EOL, $result);
         do {
             $exit_code = array_pop($lines);
         } while (empty($exit_code));
 
         $exit_code = intval(str_replace(self::RESULT_IDENTIFIER, '', $exit_code), 10);
         foreach ($lines as $line) {
-            $this->logger->log($capture_output ? LogLevel::DEBUG : LogLevel::INFO, $line);
+            if (!$capture_output && $this->output) {
+                $this->output->writeln($line);
+            } elseif ($capture_output) {
+                $this->logger->debug($line);
+            }
         }
         return new CommandResult($exit_code, $lines);
+    }
+
+    /**
+     * Setup environment variables..
+     *
+     * @param array $environment
+     * @throws \Exception
+     */
+    public function applyEnvironment(array $environment)
+    {
+        foreach ($environment as $key => $value) {
+            $this->run("export $key=$value");
+        }
     }
 }

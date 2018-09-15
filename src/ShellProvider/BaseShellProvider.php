@@ -7,6 +7,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class BaseShellProvider implements ShellProviderInterface
 {
@@ -19,6 +20,9 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
+
+    /** @var OutputInterface */
+    protected $output;
 
     public function __construct(LoggerInterface $logger)
     {
@@ -52,6 +56,11 @@ abstract class BaseShellProvider implements ShellProviderInterface
     public function getWorkingDir(): string
     {
         return $this->workingDir;
+    }
+
+    public function setOutput(OutputInterface $output)
+    {
+        $this->output = $output;
     }
 
     public function cd(string $dir): ShellProviderInterface

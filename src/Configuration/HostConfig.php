@@ -14,6 +14,7 @@ class HostConfig implements \ArrayAccess
     {
         $this->data = $data;
         $this->shell = $shell;
+        $shell->setHostConfig($this);
     }
 
     public function shell(): ShellProviderInterface
@@ -99,4 +100,5 @@ class HostConfig implements \ArrayAccess
     {
          unset($this->data[$offset]);
     }
+
 }

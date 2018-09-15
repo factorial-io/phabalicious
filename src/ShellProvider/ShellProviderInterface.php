@@ -2,10 +2,10 @@
 
 namespace Phabalicious\ShellProvider;
 
-use Foo\DataProviderIssue2922\SecondHelloWorldTest;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Validation\ValidationErrorBagInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 interface ShellProviderInterface
 {
@@ -24,5 +24,9 @@ interface ShellProviderInterface
     public function cd(string $dir): ShellProviderInterface;
 
     public function run(string $command, $capture_output = false): CommandResult;
+
+    public function applyEnvironment(array $environment);
+
+    public function setOutput(OutputInterface $output);
 
 }

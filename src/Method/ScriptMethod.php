@@ -126,6 +126,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $context->set('break_on_first_error', true);
         $context->set('host_config', $host_config);
 
+        $host_config->shell()->cd($root_folder);
+        $host_config->shell()->applyEnvironment($environment);
+        $host_config->shell()->setOutput($context->getOutput());
+
         $result = $this->validateReplacements($commands);
         if ($result !== true) {
             throw new UnknownReplacementPatternException($result, $replacements);
@@ -144,8 +148,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             }
             if (!$callback_handled) {
                 $line = $this->expandCommand($line, $host_config);
-                $this->logger->debug($line);
-                $context->getOutput()->writeln($line);
+                $host_config->shell()->run($line);
             }
         }
     }
