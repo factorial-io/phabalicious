@@ -106,7 +106,7 @@ class ScriptCommand extends BaseCommand
         $defaults = !empty($script_data['defaults']) ? $script_data['defaults'] : [];
         $args = explode(' ', $arguments_string);
         if (empty(trim($arguments_string))) {
-            return $defaults;
+            return ['arguments' => $defaults];
         }
 
         $unnamed_args = array_filter($args, function ($elem) {
