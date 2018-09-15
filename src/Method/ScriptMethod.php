@@ -38,6 +38,11 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     }
 
 
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContext $context
+     * @throws MissingScriptCallbackImplementation
+     */
     public function runScript(HostConfig $host_config, TaskContext $context)
     {
         $commands = $context->get('scriptData', []);
@@ -101,12 +106,13 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param string $root_folder
      * @param array $commands
      * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param TaskContext $context
      * @param array $callbacks
      * @param array $environment
      * @param array $replacements
      *
-     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws MissingScriptCallbackImplementation
+     * @throws UnknownReplacementPatternException
      */
     private function runScriptImpl(
         string $root_folder,
@@ -131,10 +137,12 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
         foreach ($commands as $line) {
             $result = Utilities::extractCallback($line);
+            $callback_handled = false;
             if ($result) {
                 list($callback_name, $args) = $result;
-                $this->executeCallback($context, $callbacks, $callback_name, $args);
-            } else {
+                $callback_handled = $this->executeCallback($context, $callbacks, $callback_name, $args);
+            }
+            if (!$callback_handled) {
                 $line = $this->expandCommand($line, $host_config);
                 $this->logger->debug($line);
                 $context->getOutput()->writeln($line);
@@ -161,17 +169,24 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param $callback
      * @param $args
      *
+     * @return bool
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
     private function executeCallback(TaskContext $context, $callbacks, $callback, $args)
     {
-        if (!isset($callbacks[$callback]) || !is_callable($callbacks[$callback])) {
+        if (!isset($callbacks[$callback])) {
+            return false;
+        }
+
+        if (!is_callable($callbacks[$callback])) {
             throw new MissingScriptCallbackImplementation($callback, $callbacks);
         }
         $fn = $callbacks[$callback];
         $args_with_context = $args;
         array_unshift($args_with_context, $context);
         call_user_func_array($fn, $args_with_context);
+
+        return true;
     }
 
     private function expandCommand($line, HostConfig $host_config)
