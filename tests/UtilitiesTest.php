@@ -67,4 +67,19 @@ class UtilitiesTest extends TestCase
             '%two.three.three%' => 'Three',
         ], $result);
     }
+
+    public function testExtractCallback()
+    {
+        list($callback, $args) = Utilities::extractCallback('execute(docker, run)');
+        $this->assertEquals('execute', $callback);
+        $this->assertEquals(['docker', 'run'], $args, '', 0.0, 10, true);
+
+        list($callback, $args) = Utilities::extractCallback('execute(deploy)');
+        $this->assertEquals('execute', $callback);
+        $this->assertEquals(['deploy'], $args, '', 0.0, 10, true);
+
+        $result = Utilities::extractCallback('something is going on');
+        $this->assertFalse(false);
+    }
+
 }

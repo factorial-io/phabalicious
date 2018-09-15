@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Input\ArrayInput;
 
 abstract class BaseMethod implements MethodInterface
 {
@@ -56,6 +57,19 @@ abstract class BaseMethod implements MethodInterface
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
     {
         $this->logger->debug('fallback ' . $task . ' on ' . $this->getName(), [$config, $context]);
+    }
+
+    public function executeCommand(TaskContext $context, $command_name, $args)
+    {
+        /** @var \Symfony\Component\Console\Command\Command $command */
+        $command = $context->getCommand()->getApplication()->find($command_name);
+        if (isset($args[0])) {
+            $args[$command_name] = $args[0];
+            unset($args[0]);
+        }
+        $args['--config'] = $context->get('host_config')['config_name'];
+        $input = new ArrayInput($args);
+        $command->run($input, $context->getOutput());
     }
 
 }

@@ -137,10 +137,10 @@ hosts:
     scripts:
       test:
         - echo "Test"
-        - "%kkhkhkh%"
         - cd %host.rootFolder%; echo "hello"
       test2:
         - echo "Test2"
+        - execute(script, test)
     docker:
       name: fr012-bi-france_web_1
       configuration: mbb

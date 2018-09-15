@@ -48,5 +48,18 @@ class Utilities
         return $result;
     }
 
+    public static function extractCallback($line)
+    {
+        $p1 = strpos($line, '(');
+        $p2 = strpos($line, ')');
 
+        if (($p1 === false) && ($p2 === false)) {
+            return false;
+        }
+
+        $callback_name = substr($line, 0, $p1);
+        $args = substr($line, $p1+1, $p2 - $p1 - 1);
+        $args = array_map('trim', explode(',', $args));
+        return [ $callback_name, $args];
+    }
 }
