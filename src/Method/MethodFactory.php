@@ -191,12 +191,13 @@ class MethodFactory
      * Call a task on a specifc method.
      *
      * @param string $method_name
-     * @param string $taks_name
+     * @param string $task_name
      * @param \Phabalicious\Configuration\HostConfig $configuration
      * @param \Phabalicious\Method\TaskContextInterface $context
      *
      * @return \Phabalicious\Method\TaskContextInterface
      * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     public function call(
         string $method_name,
