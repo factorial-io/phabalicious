@@ -43,5 +43,6 @@ $output = $container->get(ConsoleOutput::class);
 $application = $container->get(Application::class);
 $application->setVersion('3.0.0');
 $application->setName('phabalicious');
+$application->setDefaultCommand('help');
 
 $application->run($input, $output);

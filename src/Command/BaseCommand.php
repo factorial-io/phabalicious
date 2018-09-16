@@ -5,16 +5,11 @@ namespace Phabalicious\Command;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Exception\FabfileNotFoundException;
-use Phabalicious\Exception\FabfileNotReadableException;
-use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Method\MethodFactory;
-use Phabalicious\Method\MethodInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class BaseCommand extends Command
@@ -74,6 +69,8 @@ abstract class BaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->checkAllRequiredOptionsAreNotEmpty($input);
+
         $config_name = '' . $input->getOption('config');
 
         try {
@@ -95,6 +92,29 @@ abstract class BaseCommand extends Command
                 $output->writeln('<error>' . $error_msg . '</error>');
             }
             return 1;
+        }
+
+        return 0;
+    }
+
+    private function checkAllRequiredOptionsAreNotEmpty(InputInterface $input)
+    {
+        $errors = [];
+        $options = $this->getDefinition()->getOptions();
+
+        /** @var InputOption $option */
+        foreach ($options as $option) {
+            $name = $option->getName();
+            /** @var InputOption $value */
+            $value = $input->getOption($name);
+
+            if ($option->isValueRequired() && ($value === null || $value === '' || ($option->isArray() && empty($value)))) {
+                $errors[] = sprintf('The required option --%s is not set or is empty', $name);
+            }
+        }
+
+        if (count($errors)) {
+            throw new \InvalidArgumentException(implode("\n\n", $errors));
         }
     }
 

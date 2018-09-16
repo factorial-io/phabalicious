@@ -2,11 +2,8 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\Utilities;
-use SebastianBergmann\CodeCoverage\Util;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -30,7 +27,7 @@ class ScriptCommand extends BaseCommand
             ->addOption(
                 'arguments',
                 'a',
-                InputArgument::OPTIONAL,
+                InputOption::VALUE_OPTIONAL,
                 'Pass optional arguments to the script'
             )
             ->setHelp(
@@ -49,6 +46,7 @@ class ScriptCommand extends BaseCommand
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -76,6 +74,8 @@ class ScriptCommand extends BaseCommand
 
             $this->getMethods()->call('script', 'runScript', $this->getHostConfig(), $context);
         }
+
+        return $context->get('exitCode', 0);
     }
 
     private function listAllScripts(OutputInterface $output)
