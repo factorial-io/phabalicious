@@ -6,7 +6,7 @@ class CommandResult
 {
 
     private $exitCode;
-    private $output;
+    private $lines;
 
     /**
      * CommandResult constructor.
@@ -33,5 +33,9 @@ class CommandResult
     public function getOutput(): array
     {
         return $this->lines;
+    }
+
+    public function getExitCode() {
+        return $this->exitCode;
     }
 }

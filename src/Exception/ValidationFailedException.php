@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Exception;
 
-use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 
 class ValidationFailedException extends \Exception
@@ -16,6 +15,7 @@ class ValidationFailedException extends \Exception
     public function __construct(ValidationErrorBagInterface $validation_errors)
     {
         $this->validationErrors = $validation_errors;
+        parent::__construct(implode("\n", $validation_errors->getErrors()));
     }
 
     public function getValidationErrors()

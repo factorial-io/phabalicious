@@ -4,7 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
-use Symfony\Component\Console\Input\Input;
+use Phabalicious\ShellProvider\CommandResult;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -29,6 +29,11 @@ interface TaskContextInterface
     public function setConfigurationService(ConfigurationService $service);
 
     public function getConfigurationService(): ConfigurationService;
+
+    public function setCommandResult(CommandResult $command_result);
+
+    public function getCommandResult(): ?CommandResult;
+
 
 }
 

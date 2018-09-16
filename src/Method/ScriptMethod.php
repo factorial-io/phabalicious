@@ -14,6 +14,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ScriptMethod extends BaseMethod implements MethodInterface
 {
 
+    private $breakOnFirstError = true;
+
     public function getName(): string
     {
         return 'script';
@@ -70,7 +72,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $environment = Utilities::expandStrings($environment, $replacements);
 
         $callbacks['execute'] = [$this, 'handleExecuteCallback'];
-        $callbacks['fail_on_error'] = [$this, 'handleFailOnErrorCallback'];
+        $callbacks['fail_on_error'] = [$this, 'handleFailOnErrorDeprecatedCallback'];
+        $callbacks['breakOnFirstError'] = [$this, 'handleFailOnErrorCallback'];
         $callbacks['fail_on_missing_directory'] = [
             $this,
             'handleFailOnMissingDirectoryCallback'
@@ -111,6 +114,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param array $environment
      * @param array $replacements
      *
+     * @return \Phabalicious\ShellProvider\CommandResult
      * @throws MissingScriptCallbackImplementation
      * @throws UnknownReplacementPatternException
      */
@@ -123,7 +127,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         array $environment = [],
         array $replacements = []
     ) {
-        $context->set('break_on_first_error', true);
+        $command_result = null;
+        $context->set('break_on_first_error', $this->getBreakOnFirstError());
         $context->set('host_config', $host_config);
 
         $host_config->shell()->cd($root_folder);
@@ -148,9 +153,16 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             }
             if (!$callback_handled) {
                 $line = $this->expandCommand($line, $host_config);
-                $host_config->shell()->run($line);
+                $command_result = $host_config->shell()->run($line);
+                $context->setCommandResult($command_result);
+
+                if ($command_result->failed() && $this->getBreakOnFirstError()) {
+                    return $command_result;
+                }
             }
         }
+
+        return $command_result;
     }
 
     private function validateReplacements($strings)
@@ -215,5 +227,26 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $task_name = array_shift($args);
 
         $this->executeCommand($context, $task_name, $args);
+    }
+
+    public function handleFaileOnErrorDeprecatedCallback(TaskContext $context, $flag) {
+        $this->logger->warning('`fail_on_error` is deprecated, please use `breakOnFirstError()`');
+        $this->handleFailOnErrorCallback($context, $flag);
+    }
+
+    public function handleFailOnErrorCallback(TaskContext $context, $flag)
+    {
+        $context->set('break_on_first_error', $flag);
+        $this->setBreakOnFirstError($flag);
+    }
+
+    public function getBreakOnFirstError(): bool
+    {
+        return $this->breakOnFirstError;
+    }
+
+    public function setBreakOnFirstError(bool $flag)
+    {
+        $this->breakOnFirstError = $flag;
     }
 }
