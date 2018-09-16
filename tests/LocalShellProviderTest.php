@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpParamsInspection */
 
 namespace Phabalicious\Tests;
 
@@ -13,6 +13,8 @@ class LocalShellProviderTest extends TestCase
 {
     /** @var \Phabalicious\ShellProvider\ShellProviderInterface */
     private $shellProvider;
+
+    private $config;
 
     public function setUp()
     {
@@ -45,7 +47,7 @@ class LocalShellProviderTest extends TestCase
     public function testRun()
     {
         $host_config = new HostConfig([
-            'shellExecutable' => '/bin/bash',
+            'shellExecutable' => '/bin/sh',
             'rootFolder' => dirname(__FILE__)
         ], $this->shellProvider);
 

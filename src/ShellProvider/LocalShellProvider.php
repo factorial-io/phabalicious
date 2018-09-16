@@ -92,8 +92,12 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
         // Get result.
         $result = '';
-        while (strpos($result, self::RESULT_IDENTIFIER) === false) {
+        while ((strpos($result, self::RESULT_IDENTIFIER) === false) && !$this->process->isTerminated()) {
             $result .= $this->process->getIncrementalOutput();
+        }
+        if ($this->process->isTerminated()) {
+            $this->logger->warning('Local shell terminated unexpected!');
+            return new CommandResult($this->process->getExitCode(), []);
         }
 
         $lines = explode(PHP_EOL, $result);
