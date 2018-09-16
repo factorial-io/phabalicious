@@ -26,7 +26,7 @@ class UtilitiesTest extends TestCase
             'Second %one.two% %one.two% example',
             'This %one.two% %one.three% example'
         ];
-        $result = Utilities::expandCommands($commands, $replacements);
+        $result = Utilities::expandStrings($commands, $replacements);
 
         $this->assertEquals([
             'First Example 1 example',
@@ -79,7 +79,7 @@ class UtilitiesTest extends TestCase
         $this->assertEquals(['deploy'], $args, '', 0.0, 10, true);
 
         $result = Utilities::extractCallback('something is going on');
-        $this->assertFalse(false);
+        $this->assertFalse($result);
     }
 
 }
