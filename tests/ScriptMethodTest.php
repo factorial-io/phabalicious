@@ -121,4 +121,74 @@ class ScriptMethodTest extends TestCase
         $this->assertNotNull($this->context->getCommandResult());
         $this->assertEquals(0, $this->context->getCommandResult()->getExitCode());
     }
+
+    /**
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ValidationFailedException
+     */
+    public function testEnvironmentVariables()
+    {
+        $this->context->set('environment', [
+            'TEST_VAR' => '42',
+        ]);
+        $this->context->set('scriptData', [
+            'echo $TEST_VAR',
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+
+        $this->method->runScript($host_config, $this->context);
+
+        $this->assertNotNull($this->context->getCommandResult());
+        $this->assertEquals(['42'], $this->context->getCommandResult()->getOutput());
+    }
+
+    /**
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ValidationFailedException
+     */
+    public function testExpandedEnvironmentVariables()
+    {
+        $this->context->set('environment', [
+            'TEST_VAR' => '%host.testEnvironmentVar%',
+        ]);
+        $this->context->set('scriptData', [
+            'echo "$TEST_VAR"',
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+
+        $this->method->runScript($host_config, $this->context);
+
+        $this->assertNotNull($this->context->getCommandResult());
+        $this->assertEquals(['testEnvironmentVar from hostA'], $this->context->getCommandResult()->getOutput());
+    }
+
+    /**
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ValidationFailedException
+     */
+    public function testExpandedEnvironmentVariablesFromHostConfig()
+    {
+        $this->context->set('scriptData', [
+            'echo "$ROOT_FOLDER"',
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+
+        $this->method->runScript($host_config, $this->context);
+
+        $this->assertNotNull($this->context->getCommandResult());
+        $this->assertEquals([getcwd() . '/assets/script-tests'], $this->context->getCommandResult()->getOutput());
+    }
+
 }

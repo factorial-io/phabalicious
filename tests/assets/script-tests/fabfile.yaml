@@ -9,6 +9,12 @@ hosts:
 
   hostA:
     inheritsFrom: base
+    testEnvironmentVar: "testEnvironmentVar from hostA"
+    test:
+      test:
+        testEnvironmentVar: "test.test.testEnvironmentVar from hostA"
+    environment:
+      ROOT_FOLDER: "%host.rootFolder%"
     scripts:
       test:
         - echo "Hello"
