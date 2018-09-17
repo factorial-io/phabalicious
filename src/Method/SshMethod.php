@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
@@ -71,5 +72,13 @@ class SshMethod extends BaseMethod implements MethodInterface
                 'localPort' => 'The local port to forward to the destination-host'
             ]);
         }
+        if (isset($config['strictHostKeyChecking'])) {
+            $errors->addWarning('strictHostKeyChecking', 'Please use `disableKnownHosts` instead.');
+        }
+    }
+
+    public function createShellProvider(array $host_config)
+    {
+        return new SshShellProvider($this->logger);
     }
 }

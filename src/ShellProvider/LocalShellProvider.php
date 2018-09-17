@@ -61,7 +61,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             throw new \Exception('No host-config set for local shell provider');
         }
 
-        $this->process = new Process([$this->hostConfig['shellExecutable']]);
+        $this->process = new Process($this->getShellCommand());
         $this->process->setTimeout(0);
         $this->input = new InputStream();
         $this->process->setInput($this->input);
@@ -127,5 +127,10 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         foreach ($environment as $key => $value) {
             $this->run("export \"$key\"=\"$value\"");
         }
+    }
+
+    protected function getShellCommand()
+    {
+        return [$this->hostConfig['shellExecutable']];
     }
 }
