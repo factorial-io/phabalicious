@@ -46,6 +46,7 @@ class ScriptMethodTest extends TestCase
 
         $method_factory = new MethodFactory($this->configurationService, $logger);
         $method_factory->addMethod(new LocalMethod($logger));
+        $method_factory->addMethod(new ScriptMethod($logger));
 
         $this->configurationService->readConfiguration(getcwd() . '/assets/script-tests/fabfile.yaml');
 
