@@ -23,7 +23,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
     public function supports(string $method_name): bool
     {
-        return $method_name = 'script';
+        return $method_name == 'script';
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
