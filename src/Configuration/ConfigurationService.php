@@ -308,15 +308,17 @@ class ConfigurationService
 
         $defaults = [
             'config_name' => $config_name,
-            'needs' => $this->getSetting('needs', []),
         ];
 
-        $data = $this->applyDefaults($defaults, $data);
+        if (empty($data['needs'])) {
+            $data['needs'] = $this->getSetting('needs', []);
+        }
 
         if (!in_array('script', $data['needs'])) {
             $data['needs'][] = 'script';
         }
 
+        $data = $this->applyDefaults($defaults, $data);
         /**
          * @var \Phabalicious\Method\MethodInterface $method
          */
