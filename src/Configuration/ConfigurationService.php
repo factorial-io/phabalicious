@@ -307,16 +307,21 @@ class ConfigurationService
         $data = $this->resolveInheritance($data, $this->hosts);
 
         $defaults = [
-            'needs' => $this->getSetting('needs'),
             'config_name' => $config_name,
+            'needs' => $this->getSetting('needs', []),
         ];
-        $data = $this->applyDefaults($data, $defaults);
+
+        $data = $this->applyDefaults($defaults, $data);
+
+        if (!in_array('script', $data['needs'])) {
+            $data['needs'][] = 'script';
+        }
 
         /**
          * @var \Phabalicious\Method\MethodInterface $method
          */
         foreach ($this->methods->all() as $method) {
-            $data = $this->mergeData($data, $method->getDefaultConfig($this, $data));
+            $data = $this->mergeData($method->getDefaultConfig($this, $data), $data);
         }
 
         // Overall validation.
