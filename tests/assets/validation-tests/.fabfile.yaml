@@ -7,6 +7,8 @@ needs:
 inheritsFrom:
   - https://config.factorial.io/docker/2.0/xdebug.yaml
 
+disableScripts: true
+
 
 excludeFiles:
   backup:
