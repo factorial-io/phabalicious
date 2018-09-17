@@ -314,8 +314,10 @@ class ConfigurationService
             $data['needs'] = $this->getSetting('needs', []);
         }
 
-        if (!in_array('script', $data['needs'])) {
-            $data['needs'][] = 'script';
+        if (!$this->getSetting('disableScripts', false)) {
+            if (!in_array('script', $data['needs'])) {
+                $data['needs'][] = 'script';
+            }
         }
 
         $data = $this->applyDefaults($defaults, $data);

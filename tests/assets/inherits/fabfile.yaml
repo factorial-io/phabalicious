@@ -6,6 +6,7 @@ inheritsFrom:
   - ./inherit-2.yml
   - https://config.factorial.io/docker/2.0/xdebug.yaml
 
+disableScripts: true
 
 dockerHosts:
   hostA:
