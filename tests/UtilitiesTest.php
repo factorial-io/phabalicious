@@ -82,4 +82,10 @@ class UtilitiesTest extends TestCase
         $this->assertFalse($result);
     }
 
+    public function testSlugify()
+    {
+        $this->assertEquals('asentencewithoutwords', Utilities::slugify('A sentence without Words'));
+        $this->assertEquals('a-sentence-without-words', Utilities::slugify('A sentence without Words', '-'));
+    }
+
 }

@@ -66,6 +66,7 @@ abstract class BaseCommand extends Command
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -77,7 +78,14 @@ abstract class BaseCommand extends Command
             $fabfile = !empty($input->getOption('fabfile')) ? $input->getOption('fabfile') : '';
             $this->configuration->readConfiguration(getcwd(), $fabfile);
 
-            $this->hostConfig = $this->getConfiguration()->getHostConfig($config_name);
+            if ($input->hasOption('blueprint')) {
+                $this->hostConfig = $this->getConfiguration()->getHostConfigFromBlueprint(
+                    $config_name,
+                    $input->getOption('blueprint')
+                );
+            } else {
+                $this->hostConfig = $this->getConfiguration()->getHostConfig($config_name);
+            }
 
             if (!empty($this->hostConfig['docker']['configuration'])) {
                 $docker_config_name = $this->hostConfig['docker']['configuration'];

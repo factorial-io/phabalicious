@@ -26,6 +26,7 @@ class AboutCommand extends BaseCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MethodNotFoundException
@@ -39,7 +40,7 @@ class AboutCommand extends BaseCommand
             return $result;
         }
 
-        $output->writeln('<options=bold>Configuration of ' . $this->getHostConfig()['config_name'] . '</>');
+        $output->writeln('<options=bold>Configuration of ' . $this->getHostConfig()['configName'] . '</>');
         $this->write($output, $this->getHostConfig()->raw());
         if ($this->getDockerConfig()) {
             $output->writeln('<options=bold>Docker configuration:</>');

@@ -41,7 +41,11 @@ class ConfigurationService
     private $hosts;
     private $settings;
 
+    /** @var array */
     private $cache;
+
+    /** @var BlueprintConfiguration */
+    private $blueprints;
 
     public function __construct(Application $application, LoggerInterface $logger)
     {
@@ -61,9 +65,11 @@ class ConfigurationService
      * @param string $override
      *
      * @return bool
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      */
     public function readConfiguration(string $path, string $override = ''): bool
     {
@@ -115,6 +121,11 @@ class ConfigurationService
         $this->settings = $this->resolveInheritance($data, $data);
         $this->hosts = $this->getSetting('hosts', []);
         $this->dockerHosts = $this->getSetting('dockerHosts', []);
+
+        $this->blueprints = new BlueprintConfiguration($this);
+        if (!empty($data['blueprints'])) {
+            $this->blueprints->expandVariants($data['blueprints']);
+        }
 
         return true;
     }
@@ -291,10 +302,52 @@ class ConfigurationService
         }
 
         $data = $this->hosts[$config_name];
+        $data = $this->validateHostConfig($config_name, $data);
+
+        $this->cache[$cid] = $data;
+        return $data;
+    }
+
+    /**
+     * @param string $blueprint
+     * @param string $identifier
+     * @return \Phabalicious\Configuration\HostConfig
+     * @throws MismatchedVersionException
+     * @throws TooManyShellProvidersException
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     */
+    public function getHostConfigFromBlueprint(string $blueprint, string $identifier)
+    {
+        $cid = 'blueprint:' . $blueprint . ':' . $identifier;
+
+        if (!empty($this->cache[$cid])) {
+            return $this->cache[$cid];
+        }
+
+        $template = $this->blueprints->getTemplate($blueprint);
+        $data = $template->expand($identifier);
+
+        $data = $this->validateHostConfig($data['configName'], $data);
+
+        $this->cache[$cid] = $data;
+        return $data;
+    }
+
+    /**
+     * @param $config_name
+     * @param $data
+     * @return HostConfig
+     * @throws MismatchedVersionException
+     * @throws TooManyShellProvidersException
+     * @throws ValidationFailedException
+     */
+    private function validateHostConfig($config_name, $data)
+    {
         $data = $this->resolveInheritance($data, $this->hosts);
 
         $defaults = [
-            'config_name' => $config_name,
+            'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
         ];
 
@@ -343,7 +396,7 @@ class ConfigurationService
             throw new TooManyShellProvidersException('Found too many shell-providers for host-config ' . $config_name);
         } elseif (count($shells) === 0) {
             $this->logger->error('Could not find any shell provider for ' . $config_name . ', using local one.');
-             $shell_provider = new LocalShellProvider($this->logger);
+            $shell_provider = new LocalShellProvider($this->logger);
         } else {
             $shell_provider = reset($shells);
         }
@@ -363,11 +416,7 @@ class ConfigurationService
         }
 
         // Create host-config and return.
-
-        $data = new HostConfig($data, $shell_provider);
-
-        $this->cache[$cid] = $data;
-        return $data;
+        return new HostConfig($data, $shell_provider);
     }
 
     /**
@@ -408,6 +457,21 @@ class ConfigurationService
     public function getAllHostConfigs()
     {
         return $this->hosts;
+    }
+
+    public function addHost($host_data)
+    {
+        $this->hosts[$host_data['configName']] = $host_data;
+    }
+
+    public function getAllDockerConfigs()
+    {
+        return $this->dockerHosts;
+    }
+
+    public function getBlueprints(): BlueprintConfiguration
+    {
+        return $this->blueprints;
     }
 
 }

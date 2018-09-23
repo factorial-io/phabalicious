@@ -34,12 +34,12 @@ class SshMethod extends BaseMethod implements MethodInterface
             if (!empty($host_config['port'])) {
                 $result['sshTunnel']['localPort'] = $host_config['port'];
             } else {
-                if (!empty($this->cachedSshPorts[$host_config['config_name']])) {
-                    $port = $this->cachedSshPorts[$host_config['config_name']];
+                if (!empty($this->cachedSshPorts[$host_config['configName']])) {
+                    $port = $this->cachedSshPorts[$host_config['configName']];
                 } else {
                     $port = rand(1025, 65535);
                 }
-                $this->cachedSshPorts[$host_config['config_name']] = $port;
+                $this->cachedSshPorts[$host_config['configName']] = $port;
                 $result['port'] = $port;
                 $result['sshTunnel']['localPort'] = $port;
             }
