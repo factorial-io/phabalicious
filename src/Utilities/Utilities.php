@@ -62,4 +62,24 @@ class Utilities
         $args = array_map('trim', explode(',', $args));
         return [ $callback_name, $args];
     }
+
+    public static function getProperty($data, string $key, $default_value = null)
+    {
+        $value = $default_value;
+        $keys = explode('.', $key);
+        $first_run = true;
+        foreach ($keys as $sub_key) {
+            if ($first_run) {
+                $value = $data;
+                $first_run = false;
+            }
+            if (isset($value[$sub_key])) {
+                $value = $value[$sub_key];
+            } else {
+                return $default_value;
+            }
+        }
+
+        return $value;
+    }
 }

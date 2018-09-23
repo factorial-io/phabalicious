@@ -12,6 +12,7 @@ use Phabalicious\Exception\TooManyShellProvidersException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
@@ -237,23 +238,9 @@ class ConfigurationService
 
     public function getSetting(string $key, $default_value = null)
     {
-        $value = $default_value;
-        $keys = explode('.', $key);
-        $data = $this->settings;
-        $first_run = true;
-        foreach ($keys as $sub_key) {
-            if ($first_run) {
-                $value = $data;
-                $first_run = false;
-            }
-            if (isset($value[$sub_key])) {
-                $value = $value[$sub_key];
-            } else {
-                return $default_value;
-            }
-        }
+        return Utilities::getProperty($this->settings, $key, $default_value);
 
-        return $value;
+
     }
 
     public function readHttpResource(string $resource):string
