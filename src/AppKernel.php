@@ -2,6 +2,7 @@
 namespace Phabalicious;
 
 use Phabalicious\DependencyInjection\CompilerPass\CollectCommandsToApplicationCompilerPass;
+use Phabalicious\DependencyInjection\CompilerPass\CollectMethodsToFactoryCompilerPass;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -9,11 +10,6 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
 {
-    public function __construct()
-    {
-        // these values allows container rebuild when config changes
-        parent::__construct('dev', true);
-    }
     /**
      * @return BundleInterface[]
      */
@@ -40,8 +36,9 @@ class AppKernel extends Kernel
         return sys_get_temp_dir() . '/phabalicious' . md5(self::class);
     }
 
-    protected function build(ContainerBuilder $containerBuilder): void
+    protected function build(ContainerBuilder $containerBuilder)
     {
         $containerBuilder->addCompilerPass(new CollectCommandsToApplicationCompilerPass());
+        $containerBuilder->addCompilerPass(new CollectMethodsToFactoryCompilerPass());
     }
 }

@@ -1,0 +1,28 @@
+name: Test inherits
+needs: []
+
+inheritsFrom:
+  - ./inherit-1.yml
+  - ./inherit-2.yml
+  - https://config.factorial.io/docker/2.0/xdebug.yaml
+
+disableScripts: true
+
+dockerHosts:
+  hostA:
+    inheritsFrom: ./dockerHosts/host-a.yml
+
+  hostB:
+    inheritsFrom:
+      - hostA
+      - ./dockerHosts/host-b.yml
+
+hosts:
+  hostA:
+    type: dev
+    inheritsFrom: ./hosts/host-a.yml
+  hostB:
+    type: dev
+    inheritsFrom:
+      - hostA
+      - ./hosts/host-b.yml

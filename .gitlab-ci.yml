@@ -1,0 +1,17 @@
+image: php:7.1-cli-alpine
+
+stages:
+  - test
+  
+before_script:
+  - curl --silent --show-error https://getcomposer.org/installer | php
+  - php composer.phar install
+ 
+runTests:
+  artifacts:
+    expire_in: 1 hour
+  tags:
+    - docker
+  stage: test
+  script:
+    - cd tests; ../vendor/bin/phpunit .

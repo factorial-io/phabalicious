@@ -6,6 +6,15 @@ services:
     resource: '../src'
 
   Symfony\Component\Console\Application:
-    # why public? so we can get it from container in bin file
-    # via "$container->get(Application::class)"
     public: true
+  Symfony\Component\Console\Output\ConsoleOutput:
+    public: true
+  Symfony\Component\Console\Logger\ConsoleLogger:
+    public: true
+
+
+  Psr\Log\LoggerInterface:
+    alias: Symfony\Component\Console\Logger\ConsoleLogger
+
+  Symfony\Component\Console\Output\OutputInterface:
+    alias: Symfony\Component\Console\Output\ConsoleOutput
