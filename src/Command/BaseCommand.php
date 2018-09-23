@@ -83,6 +83,10 @@ abstract class BaseCommand extends Command
                 $docker_config_name = $this->hostConfig['docker']['configuration'];
                 $this->dockerConfig = $this->getConfiguration()->getDockerConfig($docker_config_name);
             }
+
+            if ($this->hostConfig->shell()) {
+                $this->hostConfig->shell()->setOutput($output);
+            }
         } catch (MissingHostConfigException $e) {
             $output->writeln('<error>Could not find host-config named `' . $config_name . '`</error>');
             return 1;
@@ -108,7 +112,9 @@ abstract class BaseCommand extends Command
             /** @var InputOption $value */
             $value = $input->getOption($name);
 
-            if ($option->isValueRequired() && ($value === null || $value === '' || ($option->isArray() && empty($value)))) {
+            if ($option->isValueRequired() &&
+                ($value === null || $value === '' || ($option->isArray() && empty($value)))
+            ) {
                 $errors[] = sprintf('The required option --%s is not set or is empty', $name);
             }
         }

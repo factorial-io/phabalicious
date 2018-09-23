@@ -61,15 +61,23 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             throw new \Exception('No host-config set for local shell provider');
         }
 
-        $this->process = new Process($this->getShellCommand());
+        $this->process = new Process(
+            $this->getShellCommand(),
+            getcwd(),
+            [
+                'LANG' => '',
+                'LC_CTYPE' => 'POSIX',
+            ]
+        );
+
         $this->process->setTimeout(0);
         $this->input = new InputStream();
         $this->process->setInput($this->input);
         $this->process->start(function ($type, $buffer) {
             if ($type == Process::ERR) {
-                $this->logger->error(trim($buffer));
+                $this->logger->info(trim($buffer));
             } else {
-                fwrite(STDOUT, $buffer);
+                ; //fwrite(STDOUT, $buffer);
             }
         });
     }
@@ -87,7 +95,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         $this->setup();
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
-        $this->logger->debug('Run ' . $command);
+        $this->logger->notice($command);
 
         // Send to shell.
         $this->input->write($command . '; echo "' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL);
