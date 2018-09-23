@@ -1,6 +1,19 @@
 name: script-tests
 
 
+common:
+  deployPrepare:
+    dev:
+      - debug(deployPrepare on dev)
+  deploy:
+    dev:
+      - debug(deploy on dev)
+  deployFinished:
+    dev:
+      - debug(deployFinished on dev)
+
+
+
 hosts:
   base:
     type: dev

@@ -42,10 +42,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
     /**
      * @param HostConfig $host_config
-     * @param TaskContext $context
+     * @param TaskContextInterface $context
      * @throws MissingScriptCallbackImplementation
      */
-    public function runScript(HostConfig $host_config, TaskContext $context)
+    public function runScript(HostConfig $host_config, TaskContextInterface $context)
     {
         $commands = $context->get('scriptData', []);
         $variables = $context->get('variables', []);
@@ -165,6 +165,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         return $command_result;
     }
 
+    /**
+     * @param $strings
+     * @return bool
+     */
     private function validateReplacements($strings)
     {
         foreach ($strings as $line) {
@@ -179,15 +183,15 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     /**
      * Execute callback.
      *
-     * @param \Phabalicious\Method\TaskContext $context
+     * @param TaskContextInterface $context
      * @param $callbacks
      * @param $callback
      * @param $args
      *
      * @return bool
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws MissingScriptCallbackImplementation
      */
-    private function executeCallback(TaskContext $context, $callbacks, $callback, $args)
+    private function executeCallback(TaskContextInterface $context, $callbacks, $callback, $args)
     {
         if (!isset($callbacks[$callback])) {
             return false;
@@ -204,6 +208,11 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         return true;
     }
 
+    /**
+     * @param $line
+     * @param HostConfig $host_config
+     * @return null|string|string[]
+     */
     private function expandCommand($line, HostConfig $host_config)
     {
         if (empty($host_config['executables'])) {
@@ -220,6 +229,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         return $cmd;
     }
 
+    /**
+     *
+     */
     public function handleExecuteCallback()
     {
         $args = func_get_args();
@@ -229,24 +241,103 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $this->executeCommand($context, $task_name, $args);
     }
 
-    public function handleFaileOnErrorDeprecatedCallback(TaskContext $context, $flag) {
+    /**
+     * @param TaskContextInterface $context
+     * @param $flag
+     */
+    public function handleFaileOnErrorDeprecatedCallback(TaskContextInterface $context, $flag) {
         $this->logger->warning('`fail_on_error` is deprecated, please use `breakOnFirstError()`');
         $this->handleFailOnErrorCallback($context, $flag);
     }
 
-    public function handleFailOnErrorCallback(TaskContext $context, $flag)
+    /**
+     * @param TaskContextInterface $context
+     * @param $flag
+     */
+    public function handleFailOnErrorCallback(TaskContextInterface $context, $flag)
     {
         $context->set('break_on_first_error', $flag);
         $this->setBreakOnFirstError($flag);
     }
 
+    /**
+     * @return bool
+     */
     public function getBreakOnFirstError(): bool
     {
         return $this->breakOnFirstError;
     }
 
+    /**
+     * @param bool $flag
+     */
     public function setBreakOnFirstError(bool $flag)
     {
         $this->breakOnFirstError = $flag;
+    }
+
+    /**
+     * @param HostConfig $config
+     * @param string $task
+     * @param TaskContextInterface $context
+     * @throws MissingScriptCallbackImplementation
+     */
+    protected function runTaskSpecificScripts(HostConfig $config, string $task, TaskContextInterface $context)
+    {
+        $common_scripts = $context->getConfigurationService()->getSetting('common', []);
+        $type = $config['type'];
+        if (!empty($common_scripts[$type]) && is_array($common_scripts[$type])) {
+            $this->logger->warning('Found old-style common scripts! Please regroup by common > taskName > type > commands.');
+            return;
+        }
+
+        if (!empty($common_scripts[$task][$type])) {
+            $script = $common_scripts[$task][$type];
+            $this->logger->info('Running common script for task `' . $task . '` and type `' . $type . '`');
+            $context->set('scriptData', $script);
+            $this->runScript($config, $context);
+        }
+    }
+
+    /**
+     * Run fallback scripts.
+     *
+     * @param string $task
+     * @param HostConfig $config
+     * @param TaskContextInterface $context
+     * @throws MissingScriptCallbackImplementation
+     */
+    public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
+    {
+        parent::fallback($task, $config, $context);
+        $this->runTaskSpecificScripts($config, $task, $context);
+    }
+
+    /**
+     * Run preflight scripts.
+     *
+     * @param string $task
+     * @param HostConfig $config
+     * @param TaskContextInterface $context
+     * @throws MissingScriptCallbackImplementation
+     */
+    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    {
+        parent::preflightTask($task, $config, $context);
+        $this->runTaskSpecificScripts($config, $task . 'Prepare', $context);
+    }
+
+    /**
+     * Run postflight scripts.
+     *
+     * @param string $task
+     * @param HostConfig $config
+     * @param TaskContextInterface $context
+     * @throws MissingScriptCallbackImplementation
+     */
+    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    {
+        parent::postflightTask($task, $config, $context);
+        $this->runTaskSpecificScripts($config, $task . 'Finished', $context);
     }
 }

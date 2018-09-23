@@ -15,6 +15,7 @@ use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Method\TaskContextInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
@@ -190,6 +191,55 @@ class ScriptMethodTest extends TestCase
 
         $this->assertNotNull($this->context->getCommandResult());
         $this->assertEquals([getcwd() . '/assets/script-tests'], $this->context->getCommandResult()->getOutput());
+    }
+
+
+    /**
+     * @expectedException \Phabalicious\Exception\MissingScriptCallbackImplementation
+     */
+    public function testMissinCallbackImplementation()
+    {
+        $this->context->set('callbacks', [
+            'debug' => [$this, 'missingScriptDebugCallback'],
+        ]);
+
+        $this->context->set('scriptData', [
+            'debug(hello world)',
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+        $this->method->runScript($host_config, $this->context);
+    }
+
+
+    public function testTaskSpecificScripts()
+    {
+        $this->context->set('callbacks',[
+            'debug' => [$this, 'scriptDebugCallback'],
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+
+        $this->method->preflightTask('deploy', $host_config, $this->context);
+        $this->method->fallback('deploy', $host_config, $this->context);
+        $this->method->postflightTask('deploy', $host_config, $this->context);
+
+        $this->assertEquals([
+            'deployPrepare on dev',
+            'deploy on dev',
+            'deployFinished on dev'
+        ], $this->context->get('debug'));
+
+    }
+
+    public function scriptDebugCallback(TaskContextInterface $context, $message)
+    {
+        $debug =  $context->get('debug');
+        if (empty($debug)) {
+            $debug = [];
+        }
+        $debug[] = $message;
+        $context->set('debug', $debug);
     }
 
 }
