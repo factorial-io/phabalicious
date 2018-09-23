@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
@@ -28,6 +29,9 @@ class GitMethod extends BaseMethod implements MethodInterface
                     '--rebase'
                 ],
             ],
+            'executables' => [
+                'git' => 'git',
+            ],
         ];
     }
 
@@ -36,7 +40,7 @@ class GitMethod extends BaseMethod implements MethodInterface
         return [
             'gitRootFolder' => $host_config['rootFolder'],
             'ignoreSubmodules' => false,
-            'gitOptions' => $configuration_service->getSetting('gitOptions', [])
+            'gitOptions' => $configuration_service->getSetting('gitOptions', []),
         ];
     }
 
@@ -45,4 +49,31 @@ class GitMethod extends BaseMethod implements MethodInterface
         $validation = new ValidationService($config, $errors, 'host-config');
         $validation->hasKey('gitRootFolder', 'gitRootFolder should point to your gits root folder.');
     }
+
+    public function getVersion(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $host_config->shell()->cd($host_config['gitRootFolder']);
+        $result = $host_config->shell()->run('#!git describe --always');
+        return $result->succeeded() ? $result->getOutput()[0] : '';
+    }
+
+    public function getCommitHash(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $host_config->shell()->cd($host_config['gitRootFolder']);
+        $result = $host_config->shell()->run('#!git rev-parse HEAD');
+        return $result->getOutput()[0];
+    }
+
+    public function isWorkingcopyClean(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $host_config->shell()->cd($host_config['gitRootFolder']);
+        $result = $host_config->shell()->run('#!git diff --exit-code --quiet');
+        return $result->succeeded();
+    }
+
+    public function version(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $context->set('version', $this->getVersion($host_config, $context));
+    }
+
 }

@@ -18,7 +18,7 @@ class ScriptCommand extends BaseCommand
         parent::configure();
         $this
             ->setName('script')
-            ->setDescription('runs a script from the global section or from a given host-config')
+            ->setDescription('Runs a script from the global section or from a given host-config')
             ->addArgument(
                 'script',
                 InputArgument::OPTIONAL,

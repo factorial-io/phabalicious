@@ -152,7 +152,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $callback_handled = $this->executeCallback($context, $callbacks, $callback_name, $args);
             }
             if (!$callback_handled) {
-                $line = $this->expandCommand($line, $host_config);
                 $command_result = $host_config->shell()->run($line);
                 $context->setCommandResult($command_result);
 
@@ -208,26 +207,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         return true;
     }
 
-    /**
-     * @param $line
-     * @param HostConfig $host_config
-     * @return null|string|string[]
-     */
-    private function expandCommand($line, HostConfig $host_config)
-    {
-        if (empty($host_config['executables'])) {
-            return $line;
-        }
-        $pattern = implode('|', array_map(function ($elem) {
-            return preg_quote('#!' . $elem) . '|' . preg_quote('$$' . $elem);
-        }, array_keys($host_config['executables'])));
 
-        $cmd = preg_replace_callback('/' . $pattern . '/g', function ($elem) use ($host_config) {
-            return $host_config['executables'][substr($elem, 2)];
-        }, $line);
-
-        return $cmd;
-    }
 
     /**
      *
@@ -245,7 +225,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @param $flag
      */
-    public function handleFaileOnErrorDeprecatedCallback(TaskContextInterface $context, $flag) {
+    public function handleFaileOnErrorDeprecatedCallback(TaskContextInterface $context, $flag)
+    {
         $this->logger->warning('`fail_on_error` is deprecated, please use `breakOnFirstError()`');
         $this->handleFailOnErrorCallback($context, $flag);
     }

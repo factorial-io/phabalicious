@@ -71,5 +71,27 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $this;
     }
 
+    /**
+     * Expand a command.
+     *
+     * @param $line
+     * @return null|string|string[]
+     */
+    protected function expandCommand($line)
+    {
+        if (empty($this->hostConfig['executables'])) {
+            return $line;
+        }
+        $pattern = implode('|', array_map(function ($elem) {
+            return preg_quote('#!' . $elem) . '|' . preg_quote('$$' . $elem);
+        }, array_keys($this->hostConfig['executables'])));
+
+        $cmd = preg_replace_callback('/' . $pattern . '/', function ($elem) {
+            return $this->hostConfig['executables'][substr($elem[0], 2)];
+        }, $line);
+
+        return $cmd;
+    }
+
 
 }

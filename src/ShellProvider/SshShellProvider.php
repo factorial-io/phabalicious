@@ -29,7 +29,7 @@ class SshShellProvider extends LocalShellProvider
             '-p',
             $this->hostConfig['port'],
             ];
-       if ($this->hostConfig['disableKnownHosts']) {
+        if ($this->hostConfig['disableKnownHosts']) {
             $command[] = '-o';
             $command[] = 'StrictHostKeyChecking=no';
             $command[] = '-o';

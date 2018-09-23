@@ -18,7 +18,7 @@ class AboutCommand extends BaseCommand
         parent::configure();
         $this
             ->setName('about')
-            ->setDescription('shows the configuration')
+            ->setDescription('Shows the configuration')
             ->setHelp('Shows a detailed view of all configuration of that specific host');
     }
 

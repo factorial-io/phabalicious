@@ -308,6 +308,7 @@ class ConfigurationService
 
         $defaults = [
             'config_name' => $config_name,
+            'executables' => $this->getSetting('executables', []),
         ];
 
         if (empty($data['needs'])) {
@@ -415,6 +416,11 @@ class ConfigurationService
             unset($copy[$key]);
         }
         return $copy;
+    }
+
+    public function getAllHostConfigs()
+    {
+        return $this->hosts;
     }
 
 }

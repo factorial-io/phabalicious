@@ -67,7 +67,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->process->setInput($this->input);
         $this->process->start(function ($type, $buffer) {
             if ($type == Process::ERR) {
-                $this->logger->error($buffer);
+                $this->logger->error(trim($buffer));
+            } else {
+                fwrite(STDOUT, $buffer);
             }
         });
     }
@@ -84,7 +86,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     public function run(string $command, $capture_output = false, OutputInterface $output = null): CommandResult
     {
         $this->setup();
-        $command = sprintf("cd %s && %s", $this->getWorkingDir(), $command);
+        $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
         $this->logger->debug('Run ' . $command);
 
         // Send to shell.
