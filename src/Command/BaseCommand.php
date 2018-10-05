@@ -78,10 +78,10 @@ abstract class BaseCommand extends Command
             $fabfile = !empty($input->getOption('fabfile')) ? $input->getOption('fabfile') : '';
             $this->configuration->readConfiguration(getcwd(), $fabfile);
 
-            if ($input->hasOption('blueprint')) {
+            if ($input->hasOption('blueprint') && $blueprint = $input->getOption('blueprint')) {
                 $this->hostConfig = $this->getConfiguration()->getHostConfigFromBlueprint(
                     $config_name,
-                    $input->getOption('blueprint')
+                    $blueprint
                 );
             } else {
                 $this->hostConfig = $this->getConfiguration()->getHostConfig($config_name);
