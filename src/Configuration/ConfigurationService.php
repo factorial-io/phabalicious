@@ -145,6 +145,7 @@ class ConfigurationService
         $depth = 0;
         while ($depth <= 3) {
             foreach ($candidates as $candidate) {
+                $this->logger->debug('trying ' . $path . '/' . $candidate);
                 if (file_exists($path . '/' . $candidate)) {
                     return $path . '/' . $candidate;
                 }
@@ -190,7 +191,7 @@ class ConfigurationService
 
     private function setFabfilePath(string $path)
     {
-        $this->fabfilePath = $path;
+        $this->fabfilePath = realpath($path);
     }
 
     public function getFabfilePath()
