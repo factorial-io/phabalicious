@@ -143,4 +143,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         return [$this->hostConfig['shellExecutable']];
     }
+
+    public function exists($file): bool
+    {
+        return file_exists($file);
+    }
 }

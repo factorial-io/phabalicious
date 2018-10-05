@@ -21,6 +21,8 @@ interface ShellProviderInterface
 
     public function getWorkingDir(): string;
 
+    public function exists($file): bool;
+
     public function cd(string $dir): ShellProviderInterface;
 
     public function run(string $command, $capture_output = false): CommandResult;
