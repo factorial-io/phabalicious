@@ -153,18 +153,19 @@ class MethodFactory
      * @param \Phabalicious\Method\MethodInterface $method
      * @param string $task_name
      * @param \Phabalicious\Configuration\HostConfig $configuration
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     *
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @param \Phabalicious\Method\TaskContextInterface $in_context
+     * @param bool $optional
+     * @throws MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     private function callImpl(
         MethodInterface $method,
         string $task_name,
         HostConfig $configuration,
-        TaskContextInterface $context,
+        TaskContextInterface $in_context,
         bool $optional
     ) {
+        $context = clone $in_context;
         $overrides = [];
         foreach ($configuration['needs'] as $method_name) {
             if ($overridden_name = $this->getMethod($method_name)->getOverriddenMethod()) {
