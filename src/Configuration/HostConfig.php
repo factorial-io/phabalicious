@@ -101,4 +101,12 @@ class HostConfig implements \ArrayAccess
          unset($this->data[$offset]);
     }
 
+
+    public function get($key, $default = null) {
+        if (empty($this->data[$key])) {
+            return $default;
+        }
+        return $this->data[$key];
+    }
+
 }

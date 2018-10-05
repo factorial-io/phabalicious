@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -51,11 +52,16 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $variables = $context->get('variables', []);
         $callbacks = $context->get('callbacks', []);
         $environment = $context->get('environment', []);
+        if (!$context->getShell()) {
+            $context->setShell($host_config->shell());
+        }
+
         $root_folder = isset($host_config['siteFolder'])
             ? $host_config['siteFolder']
             : isset($host_config['rootFolder'])
                 ? $host_config['rootFolder']
                 : '.';
+        $root_folder = $context->get('rootFolder', $root_folder);
 
         if (!empty($host_config['environment'])) {
             $environment = Utilities::mergeData($environment, $host_config['environment']);
@@ -79,11 +85,12 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             'handleFailOnMissingDirectoryCallback'
         ];
 
+        $context->set('host_config', $host_config);
+
         try {
             $this->runScriptImpl(
                 $root_folder,
                 $commands,
-                $host_config,
                 $context,
                 $callbacks,
                 $environment,
@@ -106,10 +113,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     }
 
     /**
+     * @param ShellProviderInterface $shell
      * @param string $root_folder
      * @param array $commands
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param TaskContext $context
+     * @param TaskContextInterface $context
      * @param array $callbacks
      * @param array $environment
      * @param array $replacements
@@ -121,19 +128,18 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     private function runScriptImpl(
         string $root_folder,
         array $commands,
-        HostConfig $host_config,
-        TaskContext $context,
+        TaskContextInterface $context,
         array $callbacks = [],
         array $environment = [],
         array $replacements = []
     ) {
         $command_result = null;
         $context->set('break_on_first_error', $this->getBreakOnFirstError());
-        $context->set('host_config', $host_config);
 
-        $host_config->shell()->cd($root_folder);
-        $host_config->shell()->applyEnvironment($environment);
-        $host_config->shell()->setOutput($context->getOutput());
+        $shell = $context->getShell();
+        $shell->setOutput($context->getOutput());
+        $shell->cd($root_folder);
+        $shell->applyEnvironment($environment);
 
         $result = $this->validateReplacements($commands);
         if ($result !== true) {
@@ -152,7 +158,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $callback_handled = $this->executeCallback($context, $callbacks, $callback_name, $args);
             }
             if (!$callback_handled) {
-                $command_result = $host_config->shell()->run($line);
+                $command_result = $shell->run($line);
                 $context->setCommandResult($command_result);
 
                 if ($command_result->failed() && $this->getBreakOnFirstError()) {
@@ -225,7 +231,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @param $flag
      */
-    public function handleFaileOnErrorDeprecatedCallback(TaskContextInterface $context, $flag)
+    public function handleFailOnErrorDeprecatedCallback(TaskContextInterface $context, $flag)
     {
         $this->logger->warning('`fail_on_error` is deprecated, please use `breakOnFirstError()`');
         $this->handleFailOnErrorCallback($context, $flag);
@@ -239,6 +245,12 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     {
         $context->set('break_on_first_error', $flag);
         $this->setBreakOnFirstError($flag);
+    }
+
+    public function handleFailOnMissingDirectoryCallback(TaskContextInterface $context, $dir) {
+        if (!$context->getShell()->exists($dir)) {
+            throw new \Exception('`' . $dir . '` . does not exist!');
+        }
     }
 
     /**
@@ -268,7 +280,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $common_scripts = $context->getConfigurationService()->getSetting('common', []);
         $type = $config['type'];
         if (!empty($common_scripts[$type]) && is_array($common_scripts[$type])) {
-            $this->logger->warning('Found old-style common scripts! Please regroup by common > taskName > type > commands.');
+            $this->logger->warning(
+                'Found old-style common scripts! Please regroup by common > taskName > type > commands.'
+            );
             return;
         }
 

@@ -59,6 +59,12 @@ abstract class BaseMethod implements MethodInterface
         $this->logger->debug('fallback ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
+    /**
+     * @param TaskContext $context
+     * @param $command_name
+     * @param $args
+     * @throws \Exception
+     */
     public function executeCommand(TaskContext $context, $command_name, $args)
     {
         /** @var \Symfony\Component\Console\Command\Command $command */

@@ -44,7 +44,7 @@ class AboutCommand extends BaseCommand
         $this->write($output, $this->getHostConfig()->raw());
         if ($this->getDockerConfig()) {
             $output->writeln('<options=bold>Docker configuration:</>');
-            $this->write($output, $this->getDockerConfig(), 2);
+            $this->write($output, $this->getDockerConfig()->raw(), 2);
         }
 
         $context = new TaskContext($this, $input, $output);

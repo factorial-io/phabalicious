@@ -12,6 +12,7 @@ use Phabalicious\Exception\TooManyShellProvidersException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
@@ -58,6 +59,11 @@ class ConfigurationService
         $this->methods = $method_factory;
     }
 
+    public function getMethodFactory()
+    {
+        return $this->methods;
+    }
+
     /**
      * Read configuration from a file.
      *
@@ -99,7 +105,7 @@ class ConfigurationService
             throw new FabfileNotReadableException("Could not read from '" . $fabfile . "'");
         }
 
-        if ($local_override_file = $this->findFabfilePath(['fabfile_local.yaml', 'fabfile_local.yml'])) {
+        if ($local_override_file = $this->findFabfilePath(['fabfile.local.yaml', 'fabfile.local.yml'])) {
             $override_data = $this->readFile($local_override_file);
             $data = $this->mergeData($data, $override_data);
         }
@@ -226,7 +232,7 @@ class ConfigurationService
         }
         unset($data['inheritsFrom']);
 
-        foreach (array_reverse($inheritsFrom) as $resource) {
+        foreach ($inheritsFrom as $resource) {
             $add_data = false;
             if (isset($lookup[$resource])) {
                 $add_data = $lookup[$resource];
@@ -261,7 +267,13 @@ class ConfigurationService
         if (isset($this->cache[$cid])) {
             return $this->cache[$cid];
         }
-        $contents = file_get_contents($resource);
+        try {
+            $this->logger->info('Read remote file from ' . $resource . '`');
+            $contents = file_get_contents($resource);
+        } catch (\Exception $e) {
+            $this->logger->warning('Could not load resource from `' . $resource . '`: ' . $e->getMessage());
+            $contents = false;
+        }
         $cache_file = getenv("HOME")
             . '/.phabalicious/' . md5($resource)
             . '.' . pathinfo($resource, PATHINFO_EXTENSION);
@@ -271,6 +283,7 @@ class ConfigurationService
         }
 
         if ($contents === false && file_exists($cache_file)) {
+            $this->logger->info('Using cached version for `' . $resource .'`');
             $contents = file_get_contents($cache_file);
         } elseif ($contents !== false) {
             file_put_contents($cache_file, $contents);
@@ -328,6 +341,12 @@ class ConfigurationService
         $template = $this->blueprints->getTemplate($blueprint);
         $data = $template->expand($identifier);
 
+        $errors = new ValidationErrorBag();
+        $validation = new ValidationService($data, $errors, 'blueprint');
+        $validation->hasKey('configName', 'The blueprint needs a `configName` property');
+        if ($errors->hasErrors()) {
+            throw new ValidationFailedException($errors);
+        }
         $data = $this->validateHostConfig($data['configName'], $data);
 
         $this->cache[$cid] = $data;
@@ -347,6 +366,7 @@ class ConfigurationService
         $data = $this->resolveInheritance($data, $this->hosts);
 
         $defaults = [
+            'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
         ];
@@ -422,9 +442,10 @@ class ConfigurationService
     /**
      * @param string $config_name
      *
-     * @return array
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @return DockerConfig
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ValidationFailedException
      */
     public function getDockerConfig(string $config_name)
     {
@@ -440,6 +461,31 @@ class ConfigurationService
 
         $data = $this->dockerHosts[$config_name];
         $data = $this->resolveInheritance($data, $this->dockerHosts);
+
+        $data = $this->validateDockerConfig($data);
+
+        switch ($data['shellProvider']) {
+            case 'local':
+                $shell_provider = new LocalShellProvider($this->logger);
+                break;
+            case 'ssh':
+                $shell_provider = new SshShellProvider($this->logger);
+                break;
+
+            default:
+                $shell_provider = false;
+        }
+        $errors = new ValidationErrorBag();
+        if (!$shell_provider) {
+            $errors->addError('shellProvider', 'Unhandled shell-provider: `' . $data['shellProvider'] . '`');
+        } else {
+            $data = Utilities::mergeData($shell_provider->getDefaultConfig($this, $data), $data);
+            $shell_provider->validateConfig($data, $errors);
+        }
+        if ($errors->hasErrors()) {
+            throw new ValidationFailedException($errors);
+        }
+        $data = new DockerConfig($data, $shell_provider);
 
         $this->cache[$cid] = $data;
         return $data;
@@ -472,6 +518,32 @@ class ConfigurationService
     public function getBlueprints(): BlueprintConfiguration
     {
         return $this->blueprints;
+    }
+
+    private function validateDockerConfig(array $data)
+    {
+        if (!empty($data['runLocally'])) {
+            $data['shellProvider'] = 'local';
+        }
+
+        if (empty($data['shellProvider'])) {
+            $data['shellProvider'] = 'ssh';
+        }
+        $errors = new ValidationErrorBag();
+        $validation = new ValidationService($data, $errors, 'dockerHost');
+        $validation->deprecate(['runLocally']);
+        $validation->hasKey('shellProvider', 'The name of the shell-provider to use');
+        $validation->hasKey('rootFolder', 'The rootFolder to start with');
+
+        if ($errors->hasErrors()) {
+            throw new ValidationFailedException($errors);
+        }
+
+        foreach ($errors->getWarnings() as $warning) {
+            $this->logger->warning($warning);
+        }
+
+        return $data;
     }
 
 }
