@@ -3,7 +3,9 @@
 namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationService;
+use Symfony\Component\Process\Process;
 
 class SshShellProvider extends LocalShellProvider
 {
@@ -66,6 +68,15 @@ class SshShellProvider extends LocalShellProvider
         }
     }
 
+    protected function addCommandOptions(&$command) {
+        if ($this->hostConfig['disableKnownHosts']) {
+            $command[] = '-o';
+            $command[] = 'StrictHostKeyChecking=no';
+            $command[] = '-o';
+            $command[] = 'UserKnownHostsFile=/dev/null';
+        }
+    }
+
     protected function getShellCommand()
     {
         $command = [
@@ -74,12 +85,7 @@ class SshShellProvider extends LocalShellProvider
             '-p',
             $this->hostConfig['port'],
             ];
-        if ($this->hostConfig['disableKnownHosts']) {
-            $command[] = '-o';
-            $command[] = 'StrictHostKeyChecking=no';
-            $command[] = '-o';
-            $command[] = 'UserKnownHostsFile=/dev/null';
-        }
+        $this->addCommandOptions($command);
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'];
         $command[] = '/bin/sh';
 
@@ -95,5 +101,33 @@ class SshShellProvider extends LocalShellProvider
     {
         $result = $this->run('stat ' . $dir);
         return $result->succeeded();
+    }
+
+    public function putFile($source, $dest, TaskContextInterface $context): bool
+    {
+        $command = [
+            '/usr/bin/scp',
+            '-P',
+            $this->hostConfig['port']
+        ];
+
+        $this->addCommandOptions($command);
+
+        $command[] = $source;
+        $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'] . ':' . $dest;
+
+        return $this->runCommand($command, $context);
+    }
+
+    protected function runCommand($cmd, TaskContextInterface $context):bool
+    {
+        $this->logger->notice(implode(' ', $cmd));
+        $process = new Process($cmd, $context->getConfigurationService()->getFabfilePath());
+        $process->run();
+        if ($process->getExitCode() != 0) {
+            $this->logger->error($process->getErrorOutput());
+            return false;
+        }
+        return true;
     }
 }

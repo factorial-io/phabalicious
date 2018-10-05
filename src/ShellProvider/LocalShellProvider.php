@@ -3,6 +3,7 @@
 namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -151,5 +152,12 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     public function exists($file): bool
     {
         return file_exists($file);
+    }
+
+    public function putFile($source, $dest, TaskContextInterface $context): bool
+    {
+        $this->cd($context->getConfigurationService()->getFabfilePath());
+        $result = $this->run(sprintf('cp -r "%s" "%s"', $source, $dest));
+        return $result->succeeded();
     }
 }

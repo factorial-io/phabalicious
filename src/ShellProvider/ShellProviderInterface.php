@@ -4,6 +4,7 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -30,5 +31,7 @@ interface ShellProviderInterface
     public function applyEnvironment(array $environment);
 
     public function setOutput(OutputInterface $output);
+
+    public function putFile($source, $dest, TaskContextInterface $context): bool;
 
 }
