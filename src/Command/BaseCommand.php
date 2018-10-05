@@ -12,23 +12,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class BaseCommand extends Command
+abstract class BaseCommand extends BaseOptionsCommand
 {
-
-    private $configuration;
-
-    private $methods;
-
     private $hostConfig;
 
     private $dockerConfig;
 
-    public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
-    {
-        $this->configuration = $configuration;
-        $this->methods = $method_factory;
-        parent::__construct($name);
-    }
 
     protected function configure()
     {
@@ -37,12 +26,6 @@ abstract class BaseCommand extends Command
             $default_conf = null;
         }
         $this
-            ->addOption(
-                'fabfile',
-                'f',
-                InputOption::VALUE_OPTIONAL,
-                'Override with a custom fabfile'
-            )
             ->addOption(
                 'config',
                 'c',
@@ -57,6 +40,8 @@ abstract class BaseCommand extends Command
                 'Which blueprint to use',
                 null
             );
+
+        parent::configure();
     }
 
     /**
@@ -75,8 +60,7 @@ abstract class BaseCommand extends Command
         $config_name = '' . $input->getOption('config');
 
         try {
-            $fabfile = !empty($input->getOption('fabfile')) ? $input->getOption('fabfile') : '';
-            $this->configuration->readConfiguration(getcwd(), $fabfile);
+            $this->readConfiguration($input);
 
             if ($input->hasOption('blueprint') && $blueprint = $input->getOption('blueprint')) {
                 $this->hostConfig = $this->getConfiguration()->getHostConfigFromBlueprint(

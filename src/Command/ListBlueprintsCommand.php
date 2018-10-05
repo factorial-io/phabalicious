@@ -14,16 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ListBlueprintsCommand extends Command
+class ListBlueprintsCommand extends BaseOptionsCommand
 {
-
-    private $configuration;
-
-    public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
-    {
-        $this->configuration = $configuration;
-        parent::__construct($name);
-    }
 
     protected function configure()
     {
@@ -31,13 +23,8 @@ class ListBlueprintsCommand extends Command
             ->setName('list:blueprints')
             ->setDescription('List all blueprints')
             ->setHelp('Displays a list of all found blueprints from a fabfile');
-        $this
-            ->addOption(
-                'fabfile',
-                'f',
-                InputOption::VALUE_OPTIONAL,
-                'Override with a custom fabfile'
-            );
+
+        parent::configure();
     }
 
     /**

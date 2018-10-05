@@ -47,6 +47,7 @@ class ConfigurationService
 
     /** @var BlueprintConfiguration */
     private $blueprints;
+    private $offlineMode = false;
 
     public function __construct(Application $application, LoggerInterface $logger)
     {
@@ -263,17 +264,22 @@ class ConfigurationService
     public function readHttpResource(string $resource):string
     {
         $cid = 'resource:' . $resource;
+        $contents = false;
 
         if (isset($this->cache[$cid])) {
             return $this->cache[$cid];
         }
-        try {
-            $this->logger->info('Read remote file from ' . $resource . '`');
-            $contents = file_get_contents($resource);
-        } catch (\Exception $e) {
-            $this->logger->warning('Could not load resource from `' . $resource . '`: ' . $e->getMessage());
-            $contents = false;
+
+        if (!$this->offlineMode) {
+            try {
+                $this->logger->info('Read remote file from ' . $resource . '`');
+                $contents = file_get_contents($resource);
+            } catch (\Exception $e) {
+                $this->logger->warning('Could not load resource from `' . $resource . '`: ' . $e->getMessage());
+                $contents = false;
+            }
         }
+
         $cache_file = getenv("HOME")
             . '/.phabalicious/' . md5($resource)
             . '.' . pathinfo($resource, PATHINFO_EXTENSION);
@@ -544,6 +550,11 @@ class ConfigurationService
         }
 
         return $data;
+    }
+
+    public function setOffline($offline)
+    {
+        $this->offlineMode = $offline;
     }
 
 }

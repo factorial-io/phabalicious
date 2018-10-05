@@ -14,16 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ListCommand extends Command
+class ListCommand extends BaseOptionsCommand
 {
-
-    private $configuration;
-
-    public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
-    {
-        $this->configuration = $configuration;
-        parent::__construct($name);
-    }
 
     protected function configure()
     {
@@ -31,27 +23,23 @@ class ListCommand extends Command
             ->setName('list:hosts')
             ->setDescription('List all configurations')
             ->setHelp('Displays a list of all found confgurations from a fabfile');
-        $this
-            ->addOption(
-                'fabfile',
-                'f',
-                InputOption::VALUE_OPTIONAL,
-                'Override with a custom fabfile'
-            );
+
+        parent::configure();
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $fabfile = !empty($input->getOption('fabfile')) ? $input->getOption('fabfile') : '';
-        $this->configuration->readConfiguration(getcwd(), $fabfile);
+        $this->readConfiguration($input);
 
         $hosts = array_keys($this->configuration->getAllHostConfigs());
 
