@@ -14,7 +14,8 @@
         "composer/semver": "^1.4",
         "symfony/process": "^4.1",
         "symfony/flex": "^1.1",
-        "symfony/dotenv": "^4.1"
+        "symfony/dotenv": "^4.1",
+        "ext-json": "*"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.1",
