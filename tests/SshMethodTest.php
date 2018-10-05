@@ -26,10 +26,12 @@ class SshMethodTest extends TestCase
     {
         $errors = new ValidationErrorBag();
 
-        $this->method->validateConfig([
+        $this->method->createShellProvider([])->validateConfig([
             'user' => 'testuser',
             'host' => 'localhost',
             'port' => 22,
+            'rootFolder' => '/',
+            'shellExecutable' => '/usr/bin/ssh'
         ], $errors);
         $this->assertEquals($errors->hasErrors(), false);
 
@@ -39,28 +41,44 @@ class SshMethodTest extends TestCase
     {
         $errors = new ValidationErrorBag();
 
-        $this->method->validateConfig([
+        $this->method->createShellProvider([])->validateConfig([
             'host' => 'localhost'
         ], $errors);
         $this->assertEquals($errors->hasErrors(), true);
-        $this->assertEquals(['user', 'port'], $errors->getKeysWithErrors(), '', 0.0, 10, true);
+        $this->assertEquals(
+            ['user', 'port', 'rootFolder', 'shellExecutable'],
+            $errors->getKeysWithErrors(),
+            '',
+            0.0,
+            10,
+            true
+        );
     }
 
     public function testInValidTunnelConfig()
     {
         $errors = new ValidationErrorBag();
 
-        $this->method->validateConfig([
+        $this->method->createShellProvider([])->validateConfig([
             'host' => 'localhost',
             'user' => 'user',
             'port' => '22',
+            'rootFolder' => '/',
+            'shellExecutable' => '/usr/bin/ssh',
             'sshTunnel' => [
                 'bridgeHost' => 'localhost',
                 'bridgeUser' => 'user',
             ],
         ], $errors);
         $this->assertEquals(true, $errors->hasErrors());
-        $this->assertEquals(['bridgePort', 'destPort', 'destHost', 'localPort'], $errors->getKeysWithErrors(), '', 0.0, 10, true);
+        $this->assertEquals(
+            ['bridgePort', 'destPort', 'destHost', 'localPort'],
+            $errors->getKeysWithErrors(),
+            '',
+            0.0,
+            10,
+            true
+        );
     }
 
 
@@ -72,13 +90,14 @@ class SshMethodTest extends TestCase
             ->getMock();
 
         $config = [
-            'config_name' => 'test',
+            'configName' => 'test',
             'user' => 'user',
             'host' => 'host',
             'sshTunnel' => [
             ]
         ];
-        $result = $this->method->getDefaultConfig($configuration_service, $config);
+        $shell_provider = $this->method->createShellProvider([]);
+        $result = $shell_provider->getDefaultConfig($configuration_service, $config);
         $this->assertArrayHasKey('port', $result);
         $this->assertArrayHasKey('disableKnownHosts', $result);
         $this->assertArrayHasKey('sshTunnel', $result);
@@ -86,7 +105,7 @@ class SshMethodTest extends TestCase
         $this->assertEquals($result['port'], $result['sshTunnel']['localPort']);
 
         // Running it again should give the same SSH-Port
-        $result2 = $this->method->getDefaultConfig($configuration_service, $config);
+        $result2 = $shell_provider->getDefaultConfig($configuration_service, $config);
         $this->assertEquals($result['port'], $result2['port']);
 
     }
