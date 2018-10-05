@@ -3,14 +3,13 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Exception\EarlyTaskExitException;
+use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\Utilities;
-use Phabalicious\Validation\ValidationErrorBag;
-use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -59,26 +58,30 @@ class DockerCommand extends BaseCommand
         if (!is_array($tasks)) {
             $tasks = [$tasks];
         }
-
-        foreach ($tasks as $task) {
-            $errors = new ValidationErrorBag();
-            $validation = new ValidationService($docker_config['tasks'], $errors, 'dockerConfig');
-            $validation->hasKey($task, 'Could not find task!');
-            if ($errors->hasErrors()) {
-                $this->printAvailableTasks($input, $output, $docker_config['tasks']);
-                throw new ValidationFailedException($errors);
-            }
-            try {
+        try {
+            foreach ($tasks as $task) {
+                $tasks = $docker_config['tasks'];
+                /** @var DockerMethod $method */
+                $method = $this->getConfiguration()->getMethodFactory()->getMethod('docker');
+                $tasks = Utilities::mergeData($tasks, array_combine(
+                    $method->getInternalTasks(),
+                    $method->getInternalTasks()
+                ));
+                if (empty($tasks[$task])) {
+                    $this->printAvailableTasks($input, $output, $tasks);
+                    throw new MethodNotFoundException('Missing task `' . $task . '`');
+                }
                 $context->set('docker_task', $task);
 
                 $this->getMethods()
                     ->runTask('docker', $this->getHostConfig(), $context);
-            } catch (EarlyTaskExitException $e) {
-                return 1;
             }
-        }
 
-        return $context->get('exitCode', 0);
+            return $context->get('exitCode', 0);
+
+        } catch (EarlyTaskExitException $e) {
+            return 1;
+        }
     }
 
     private function printAvailableTasks(InputInterface $input, OutputInterface $output, $tasks)

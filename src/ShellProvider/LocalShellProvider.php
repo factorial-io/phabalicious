@@ -60,9 +60,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         if (empty($this->hostConfig)) {
             throw new \Exception('No host-config set for local shell provider');
         }
+        $shell_command = $this->getShellCommand();
+        $this->logger->info('Starting shell with ' . implode(' ', $shell_command));
 
         $this->process = new Process(
-            $this->getShellCommand(),
+            $shell_command,
             getcwd(),
             [
                 'LANG' => '',
@@ -107,7 +109,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
         if ($this->process->isTerminated()) {
             $this->logger->warning('Local shell terminated unexpected!');
-            return new CommandResult($this->process->getExitCode(), []);
+            $exit_code = $this->process->getExitCode();
+            $this->process = null;
+            return new CommandResult($exit_code, []);
         }
 
         $lines = explode(PHP_EOL, $result);
