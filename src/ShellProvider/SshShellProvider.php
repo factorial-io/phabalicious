@@ -5,7 +5,6 @@ namespace Phabalicious\ShellProvider;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationService;
-use Symfony\Component\Process\Process;
 
 class SshShellProvider extends LocalShellProvider
 {
@@ -68,7 +67,8 @@ class SshShellProvider extends LocalShellProvider
         }
     }
 
-    protected function addCommandOptions(&$command) {
+    protected function addCommandOptions(&$command)
+    {
         if ($this->hostConfig['disableKnownHosts']) {
             $command[] = '-o';
             $command[] = 'StrictHostKeyChecking=no';
@@ -103,7 +103,7 @@ class SshShellProvider extends LocalShellProvider
         return $result->succeeded();
     }
 
-    public function putFile($source, $dest, TaskContextInterface $context): bool
+    public function putFile(string $source, string $dest, TaskContextInterface $context): bool
     {
         $command = [
             '/usr/bin/scp',
@@ -119,15 +119,5 @@ class SshShellProvider extends LocalShellProvider
         return $this->runCommand($command, $context);
     }
 
-    protected function runCommand($cmd, TaskContextInterface $context):bool
-    {
-        $this->logger->notice(implode(' ', $cmd));
-        $process = new Process($cmd, $context->getConfigurationService()->getFabfilePath());
-        $process->run();
-        if ($process->getExitCode() != 0) {
-            $this->logger->error($process->getErrorOutput());
-            return false;
-        }
-        return true;
-    }
+
 }

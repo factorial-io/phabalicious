@@ -4,10 +4,12 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 abstract class BaseShellProvider implements ShellProviderInterface
 {
@@ -93,5 +95,29 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $cmd;
     }
 
-
+    protected function runCommand(array $cmd, TaskContextInterface $context, $interactive = false):bool
+    {
+        $stdin = $interactive ? fopen('php://stdin', 'r') : null;
+        $this->logger->notice(implode(' ', $cmd));
+        $process = new Process($cmd, $context->getConfigurationService()->getFabfilePath(), [], $stdin);
+        if ($interactive) {
+            $process->setTimeout(0);
+            $process->setTty(true);
+            $process->start();
+            $process->wait(function ($type, $buffer) {
+                if ($type == Process::ERR) {
+                    fwrite(STDERR, $buffer);
+                } else {
+                    fwrite(STDOUT, $buffer);
+                }
+            });
+        } else {
+            $process->run();
+        }
+        if ($process->getExitCode() != 0) {
+            $this->logger->error($process->getErrorOutput());
+            return false;
+        }
+        return true;
+    }
 }

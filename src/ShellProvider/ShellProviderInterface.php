@@ -32,6 +32,15 @@ interface ShellProviderInterface
 
     public function setOutput(OutputInterface $output);
 
-    public function putFile($source, $dest, TaskContextInterface $context): bool;
+    public function putFile(string $source, string $dest, TaskContextInterface $context): bool;
+
+    public function startRemoteAccess(
+        string $ip,
+        int $port,
+        string $public_ip,
+        int $public_port,
+        HostConfig $config,
+        TaskContextInterface $context
+    );
 
 }
