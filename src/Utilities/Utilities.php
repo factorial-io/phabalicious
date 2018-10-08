@@ -9,7 +9,21 @@ class Utilities
 
     public static function mergeData(array $data, array $override_data): array
     {
-        return NestedArray::mergeDeep($data, $override_data);
+        $result = $data;
+        foreach ($override_data as $key => $value) {
+            if (isset($data[$key])) {
+                // Do a merge
+                if (self::isAssocArray($data[$key]) && self::isAssocArray($value)) {
+                    $result[$key] = self::mergeData($data[$key], $value);
+                } else {
+                    $result[$key] = $value;
+                }
+            } else {
+                // Just copy it.
+                $result[$key] = $value;
+            }
+        }
+        return $result;
     }
 
     public static function expandVariables(array $variables): array
@@ -86,5 +100,13 @@ class Utilities
     public static function slugify($str, $replacement = '')
     {
         return preg_replace('/\s|\.|\,|_|\-|\//', $replacement, strtolower($str));
+    }
+
+    public static function isAssocArray($arr)
+    {
+        if (!is_array($arr) || array() === $arr) {
+            return false;
+        }
+        return array_keys($arr) !== range(0, count($arr) - 1);
     }
 }
