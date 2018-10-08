@@ -3,9 +3,9 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Validation\ValidationErrorBagInterface;
-use Phabalicious\Validation\ValidationService;
 
 class SshMethod extends BaseMethod implements MethodInterface
 {
@@ -34,5 +34,10 @@ class SshMethod extends BaseMethod implements MethodInterface
     public function createShellProvider(array $host_config)
     {
         return new SshShellProvider($this->logger);
+    }
+
+    public function startRemoteAccess(HostConfig $host_config, TaskContextInterface $context)
+    {
+
     }
 }

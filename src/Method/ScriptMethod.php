@@ -214,9 +214,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     }
 
 
-
     /**
      *
+     * @throws \Exception
      */
     public function handleExecuteCallback()
     {
@@ -247,7 +247,13 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $this->setBreakOnFirstError($flag);
     }
 
-    public function handleFailOnMissingDirectoryCallback(TaskContextInterface $context, $dir) {
+    /**
+     * @param TaskContextInterface $context
+     * @param $dir
+     * @throws \Exception
+     */
+    public function handleFailOnMissingDirectoryCallback(TaskContextInterface $context, $dir)
+    {
         if (!$context->getShell()->exists($dir)) {
             throw new \Exception('`' . $dir . '` . does not exist!');
         }

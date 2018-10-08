@@ -5,7 +5,6 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\DockerConfig;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -47,15 +46,27 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @return DockerConfig
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     */
+    public function getDockerConfig(HostConfig $host_config, TaskContextInterface $context) {
+        return $context->getConfigurationService()->getDockerConfig($host_config['docker']['configuration']);
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws MethodNotFoundException
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
     public function docker(HostConfig $host_config, TaskContextInterface $context)
     {
-        $docker_config = $context->get('docker_config');
         $task = $context->get('docker_task');
-
-        $tasks = $docker_config['tasks'];
 
         $this->runTaskImpl($host_config, $context, $task . 'Prepare', true);
         $this->runTaskImpl($host_config, $context, $task, false);
@@ -66,7 +77,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @param $task
-     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @param $silent
+     * @throws MethodNotFoundException
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
     private function runTaskImpl(HostConfig $host_config, TaskContextInterface $context, $task, $silent)
@@ -79,7 +94,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
 
         /** @var DockerConfig $docker_config */
-        $docker_config = $context->get('docker_config');
+        $docker_config = $this->getDockerConfig($host_config, $context);
         $tasks = $docker_config['tasks'];
 
         if ($silent && empty($tasks[$task])) {
@@ -121,7 +136,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $hostconfig
      * @param TaskContextInterface $context
      */
-    private function waitForServices(HostConfig $hostconfig, TaskContextInterface $context)
+    public function waitForServices(HostConfig $hostconfig, TaskContextInterface $context)
     {
         if ($hostconfig['executables']['supervisorctl'] === false) {
             return;
@@ -205,7 +220,68 @@ class DockerMethod extends BaseMethod implements MethodInterface
         foreach ($temp_files as $temp_file) {
             @unlink($temp_file);
         }
+    }
 
+    public function isContainerRunning(HostConfig $docker_config, $container_name)
+    {
+        $shell = $docker_config->shell();
+        $result = $shell->run(sprintf(
+            'docker inspect -f {{.State.Running}} %s',
+            $container_name
+        ), true);
+
+        $output = $result->getOutput();
+        $last_line = array_pop($output);
+        if (strtolower(trim($last_line)) !== 'true') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @return bool|string
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     */
+    public function getIpAddress(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $docker_config = $this->getDockerConfig($host_config, $context);
+        $shell = $docker_config->shell();
+        $container_name = $host_config['docker']['name'];
+
+        if (!$this->isContainerRunning($docker_config, $container_name)) {
+            return false;
+        }
+
+        $result = $shell->run(sprintf(
+            'docker inspect --format "{{range .NetworkSettings.Networks}}{{.IPAddress}}\n{{end}}" %s',
+            $container_name
+        ), true);
+
+        if ($result->getExitCode() === 0) {
+            return str_replace(array("\\r", "\\n"), '', $result->getOutput()[0]);
+        }
+        return false;
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     */
+    public function startRemoteAccess(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $docker_config = $this->getDockerConfig($host_config, $context);
+        $context->setResult('ip', $this->getIpAddress($host_config, $context));
+        if (is_a($docker_config->shell(), 'SshShellProvider')) {
+            $context->setResult('config', $this->getDockerConfig($host_config, $context));
+        }
     }
 
 }

@@ -42,7 +42,7 @@ class DockerCommand extends BaseCommand
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\TooManyShellProvidersException
-     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -77,7 +77,7 @@ class DockerCommand extends BaseCommand
                     ->runTask('docker', $this->getHostConfig(), $context);
             }
 
-            return $context->get('exitCode', 0);
+            return $context->getResult('exitCode', 0);
 
         } catch (EarlyTaskExitException $e) {
             return 1;

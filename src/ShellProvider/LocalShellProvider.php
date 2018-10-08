@@ -3,6 +3,7 @@
 namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -154,10 +155,36 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         return file_exists($file);
     }
 
-    public function putFile($source, $dest, TaskContextInterface $context): bool
+    /**
+     * @param string $source
+     * @param string $dest
+     * @param TaskContextInterface $context
+     * @return bool
+     * @throws \Exception
+     */
+    public function putFile(string $source, string $dest, TaskContextInterface $context): bool
     {
         $this->cd($context->getConfigurationService()->getFabfilePath());
         $result = $this->run(sprintf('cp -r "%s" "%s"', $source, $dest));
         return $result->succeeded();
+    }
+
+    public function startRemoteAccess(
+        string $ip,
+        int $port,
+        string $public_ip,
+        int $public_port,
+        HostConfig $config,
+        TaskContextInterface $context
+    ) {
+        $cmd = [
+            '/usr/bin/ssh',
+            '-A',
+            "-L$public_ip:$public_port:$ip:$port",
+            '-p',
+            $config['port'],
+            $config['user'] . '@' . $config['host']
+        ];
+        $this->runCommand($cmd, $context, true);
     }
 }
