@@ -13,6 +13,6 @@ hosts:
     host: getproperty-test-host.b
   testBlueprint:
     blueprint:
-      config_name: testBlueprint-%slug%
+      configName: testBlueprint-%slug%
       type: dev
       host: getproperty-test-%slug%

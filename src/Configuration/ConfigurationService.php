@@ -201,7 +201,7 @@ class ConfigurationService
 
     public function mergeData(array $data, array $override_data): array
     {
-        return NestedArray::mergeDeep($data, $override_data);
+        return Utilities::mergeData($data, $override_data);
     }
 
     private function applyDefaults(array $data, array $defaults)
@@ -234,7 +234,7 @@ class ConfigurationService
         }
         unset($data['inheritsFrom']);
 
-        foreach ($inheritsFrom as $resource) {
+        foreach (array_reverse($inheritsFrom) as $resource) {
             $add_data = false;
             if (isset($lookup[$resource])) {
                 $add_data = $lookup[$resource];

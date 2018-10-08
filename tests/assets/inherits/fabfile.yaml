@@ -10,6 +10,7 @@ disableScripts: true
 
 dockerHosts:
   hostA:
+    rootFolder: /var/www
     inheritsFrom: ./dockerHosts/host-a.yml
 
   hostB:
