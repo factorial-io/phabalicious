@@ -16,11 +16,13 @@
             - git
             - drush
 * new global settings `disableScripts` which will not add the `script`-method to the needs. 
+* there's a new command to list all blueprints: `list:blueprints`
 
 ### Changed
 
 * Phabalicious is a symfony console app and uses more unix-style arguments and options. E.g. instead of `config:<name-of-config>` use `--config=<name-of-config>`
-
+* `docker:startRemoteAccess` is now the command `start-remote-access` as it makes more sense.
+* the `list`-command needed to be renamed to `list:hosts`.
 
 ### Deprecated
 
