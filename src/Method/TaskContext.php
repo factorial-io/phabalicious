@@ -6,12 +6,15 @@ use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TaskContext implements TaskContextInterface
 {
     private $data = [];
+
+    private $result = [];
 
     private $input;
 
@@ -106,5 +109,25 @@ class TaskContext implements TaskContextInterface
     public function setShell(ShellProviderInterface $shell)
     {
         $this->shell = $shell;
+    }
+
+    public function setResult($key, $value)
+    {
+        $this->result[$key] = $value;
+    }
+
+    public function getResult($key, $default = null)
+    {
+        return isset($this->result[$key]) ? $this->result[$key] : $default;
+    }
+
+    public function getResults(): array
+    {
+        return $this->result;
+    }
+
+    public function mergeResults(TaskContextInterface $context)
+    {
+        $this->result = Utilities::mergeData($this->result, $context->getResults());
     }
 }

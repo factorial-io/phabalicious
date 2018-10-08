@@ -35,6 +35,11 @@ interface TaskContextInterface
 
     public function getCommandResult(): ?CommandResult;
 
+    public function setResult($key, $value);
+
+    public function getResult($key, $default = null);
+
+    public function getResults(): array;
 
     /**
      * @return ShellProviderInterface
@@ -42,6 +47,8 @@ interface TaskContextInterface
     public function getShell();
 
     public function setShell(ShellProviderInterface $shell);
+
+    public function mergeResults(TaskContextInterface $context);
 
 
 }

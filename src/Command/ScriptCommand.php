@@ -40,13 +40,14 @@ class ScriptCommand extends BaseCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
      * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws \Phabalicious\Exception\TooManyShellProvidersException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -75,7 +76,7 @@ class ScriptCommand extends BaseCommand
             $this->getMethods()->call('script', 'runScript', $this->getHostConfig(), $context);
         }
 
-        return $context->get('exitCode', 0);
+        return $context->getResult('exitCode', 0);
     }
 
     private function listAllScripts(OutputInterface $output)

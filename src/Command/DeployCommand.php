@@ -26,19 +26,20 @@ class DeployCommand extends BaseCommand
             ->setHelp('Deploys the current application to a given host-configuration.');
     }
 
-  /**
-   * @param InputInterface $input
-   * @param OutputInterface $output
-   *
-   * @return int|null
-   * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-   * @throws \Phabalicious\Exception\FabfileNotFoundException
-   * @throws \Phabalicious\Exception\FabfileNotReadableException
-   * @throws \Phabalicious\Exception\MethodNotFoundException
-   * @throws \Phabalicious\Exception\MismatchedVersionException
-   * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-   * @throws \Phabalicious\Exception\TooManyShellProvidersException
-   */
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int|null
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($result = parent::execute($input, $output)) {
@@ -57,7 +58,7 @@ class DeployCommand extends BaseCommand
             return 1;
         }
 
-        return $context->get('exitCode', 0);
+        return $context->getResult('exitCode', 0);
     }
 
 }

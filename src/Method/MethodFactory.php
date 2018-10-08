@@ -86,6 +86,7 @@ class MethodFactory
      *
      * @return \Phabalicious\Method\TaskContext|\Phabalicious\Method\TaskContextInterface
      * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     public function runTask(
         string $task_name,
@@ -93,9 +94,6 @@ class MethodFactory
         TaskContextInterface $context = null,
         $nextTasks = []
     ) {
-        if (!$context) {
-            $context = new TaskContext();
-        }
         $this->preflight('preflight', $task_name, $configuration, $context);
         $this->runTaskImpl($task_name . 'Prepare', $configuration, $context, false);
         $this->runTaskImpl($task_name, $configuration, $context, true);
@@ -119,6 +117,7 @@ class MethodFactory
      * @param $fallback_allowed
      *
      * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     protected function runTaskImpl(
         string $task_name,
@@ -181,6 +180,7 @@ class MethodFactory
 
         if (method_exists($method, $task_name)) {
             $method->{$task_name}($configuration, $context);
+            $in_context->mergeResults($context);
         } elseif (!$optional) {
             throw new TaskNotFoundInMethodException(
                 'Could not find task `' . $task_name . '` in method `' . $method_name . '`'
