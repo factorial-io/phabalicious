@@ -47,7 +47,7 @@ class ScriptCommand extends BaseCommand
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

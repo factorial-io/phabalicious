@@ -55,7 +55,7 @@ class StartRemoteAccessCommand extends BaseCommand
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

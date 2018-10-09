@@ -25,6 +25,7 @@ class LocalMethod extends BaseMethod implements MethodInterface
     {
         $result = [
             'rootFolder' => $configuration_service->getFabfilePath(),
+            'shellProvider' => LocalShellProvider::PROVIDER_NAME,
         ];
 
         if (!empty($host_config['runLocally'])) {
@@ -44,8 +45,7 @@ class LocalMethod extends BaseMethod implements MethodInterface
 
     public function createShellProvider(array $host_config)
     {
-        return new LocalShellProvider($this->logger);
+        return ShellProviderFactory::create(LocalShellProvider::PROVIDER_NAME, $this->logger);
     }
-
 
 }

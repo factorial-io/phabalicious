@@ -15,6 +15,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 {
 
     const RESULT_IDENTIFIER = '##RESULT:';
+    const PROVIDER_NAME = 'local';
 
     /** @var Process */
     private $process;

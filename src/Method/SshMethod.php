@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 
@@ -23,7 +24,9 @@ class SshMethod extends BaseMethod implements MethodInterface
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         // Implementation found in SShSellProvider.
-        return [];
+        return [
+            'shellProvider' => SshShellProvider::PROVIDER_NAME,
+        ];
     }
 
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
@@ -33,11 +36,7 @@ class SshMethod extends BaseMethod implements MethodInterface
 
     public function createShellProvider(array $host_config)
     {
-        return new SshShellProvider($this->logger);
+        return ShellProviderFactory::create(SshShellProvider::PROVIDER_NAME, $this->logger);
     }
 
-    public function startRemoteAccess(HostConfig $host_config, TaskContextInterface $context)
-    {
-
-    }
 }

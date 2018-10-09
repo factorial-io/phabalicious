@@ -50,7 +50,7 @@ abstract class BaseCommand extends BaseOptionsCommand
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      */
     protected function execute(InputInterface $input, OutputInterface $output)

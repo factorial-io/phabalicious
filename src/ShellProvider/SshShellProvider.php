@@ -8,6 +8,7 @@ use Phabalicious\Validation\ValidationService;
 
 class SshShellProvider extends LocalShellProvider
 {
+    const PROVIDER_NAME = 'ssh';
 
     static protected $cachedSshPorts = [];
 

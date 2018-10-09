@@ -37,7 +37,7 @@ class DeployCommand extends BaseCommand
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output)

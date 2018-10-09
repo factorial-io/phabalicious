@@ -8,10 +8,11 @@ use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingHostConfigException;
-use Phabalicious\Exception\TooManyShellProvidersException;
+use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -299,7 +300,7 @@ class ConfigurationService
             $this->logger->error(
                 'Could not get needed data from offline-cache for `' .
                 $resource . '`, proceed with caution!'
-            );
+             );
         }
         $this->cache[$cid] = $contents;
 
@@ -313,7 +314,7 @@ class ConfigurationService
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\ValidationFailedException
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      */
     public function getHostConfig(string $config_name)
     {
@@ -339,7 +340,7 @@ class ConfigurationService
      * @param string $identifier
      * @return \Phabalicious\Configuration\HostConfig
      * @throws MismatchedVersionException
-     * @throws TooManyShellProvidersException
+     * @throws ShellProviderNotFoundException
      * @throws ValidationFailedException
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      */
@@ -371,7 +372,7 @@ class ConfigurationService
      * @param $data
      * @return HostConfig
      * @throws MismatchedVersionException
-     * @throws TooManyShellProvidersException
+     * @throws ShellProviderNotFoundException
      * @throws ValidationFailedException
      */
     private function validateHostConfig($config_name, $data)
@@ -382,6 +383,7 @@ class ConfigurationService
             'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
+            'shellProvider' => 'local',
         ];
 
         if (empty($data['needs'])) {
@@ -398,7 +400,8 @@ class ConfigurationService
         /**
          * @var \Phabalicious\Method\MethodInterface $method
          */
-        foreach ($this->methods->all() as $method) {
+        $used_methods = $this->methods->getSubset($data['needs']);
+        foreach ($used_methods as $method) {
             $data = $this->mergeData($method->getDefaultConfig($this, $data), $data);
         }
 
@@ -411,27 +414,25 @@ class ConfigurationService
 
         // Validate data against used methods.
 
-        $used_methods = $this->methods->getSubset($data['needs']);
         foreach ($used_methods as $method) {
             $method->validateConfig($data, $validation_errors);
         }
 
+        $validation->hasKey('shellProvider', 'The shell-provider to use to interact with this installation.');
+
         // Get shell-provider.
-
-        /** @var \Phabalicious\ShellProvider\ShellProviderInterface[] $shells */
-        $shells = array_filter(array_map(function ($method) use ($data) {
-            /** @var \Phabalicious\Method\MethodInterface $method */
-            return $method->createShellProvider($data);
-        }, $used_methods));
-
-
-        if (count($shells) > 1) {
-            throw new TooManyShellProvidersException('Found too many shell-providers for host-config ' . $config_name);
-        } elseif (count($shells) === 0) {
-            $this->logger->error('Could not find any shell provider for ' . $config_name . ', using local one.');
-            $shell_provider = new LocalShellProvider($this->logger);
-        } else {
-            $shell_provider = reset($shells);
+        $shell_provider = false;
+        $shell_provider_name = $data['shellProvider'];
+        if (!empty($shell_provider_name)) {
+            $shell_provider = ShellProviderFactory::create($shell_provider_name, $this->logger);
+        }
+        if (!$shell_provider) {
+            throw new ShellProviderNotFoundException(
+                'Could not find any shell provider `' .
+                $shell_provider_name.
+                '` for `' . $config_name .
+                '`!'
+            );
         }
 
         // Validate data against shell-provider.
@@ -476,18 +477,9 @@ class ConfigurationService
         $data = $this->resolveInheritance($data, $this->dockerHosts);
 
         $data = $this->validateDockerConfig($data);
+        $shell_provider = ShellProviderFactory::create($data['shellProvider'], $this->logger);
 
-        switch ($data['shellProvider']) {
-            case 'local':
-                $shell_provider = new LocalShellProvider($this->logger);
-                break;
-            case 'ssh':
-                $shell_provider = new SshShellProvider($this->logger);
-                break;
 
-            default:
-                $shell_provider = false;
-        }
         $errors = new ValidationErrorBag();
         if (!$shell_provider) {
             $errors->addError('shellProvider', 'Unhandled shell-provider: `' . $data['shellProvider'] . '`');

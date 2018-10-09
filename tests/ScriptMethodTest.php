@@ -62,7 +62,7 @@ class ScriptMethodTest extends TestCase
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function testRunScript()
@@ -84,7 +84,7 @@ class ScriptMethodTest extends TestCase
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function testExitOnExitCode()
@@ -104,7 +104,7 @@ class ScriptMethodTest extends TestCase
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function testIgnoreExitCode()
@@ -128,7 +128,7 @@ class ScriptMethodTest extends TestCase
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function testEnvironmentVariables()
@@ -152,7 +152,7 @@ class ScriptMethodTest extends TestCase
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function testExpandedEnvironmentVariables()
@@ -176,7 +176,7 @@ class ScriptMethodTest extends TestCase
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\TooManyShellProvidersException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function testExpandedEnvironmentVariablesFromHostConfig()
