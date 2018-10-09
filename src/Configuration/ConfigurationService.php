@@ -383,7 +383,6 @@ class ConfigurationService
             'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
-            'shellProvider' => 'local',
         ];
 
         if (empty($data['needs'])) {
@@ -418,7 +417,10 @@ class ConfigurationService
             $method->validateConfig($data, $validation_errors);
         }
 
-        $validation->hasKey('shellProvider', 'The shell-provider to use to interact with this installation.');
+        if (empty($data['shellProvider'])) {
+            $this->logger->warning('No shell-provider definded, using `local` for now!');
+            $data['shellProvider'] = 'local';
+        }
 
         // Get shell-provider.
         $shell_provider = false;
