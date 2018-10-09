@@ -127,7 +127,8 @@ class SshMethodTest extends TestCase
             'sshTunnel' => [
             ]
         ];
-        $result = $this->method->getDefaultConfig($configuration_service, $config);
+        $shell_provider = $this->method->createShellProvider([]);
+        $result = $shell_provider->getDefaultConfig($configuration_service, $config);
         $this->assertArrayHasKey('destHostFromDockerContainer', $result['sshTunnel']);
         $this->assertEquals($config['docker']['name'], $result['sshTunnel']['destHostFromDockerContainer']);
 
