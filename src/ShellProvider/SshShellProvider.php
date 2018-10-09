@@ -57,10 +57,12 @@ class SshShellProvider extends LocalShellProvider
                 'bridgeHost' => 'The hostname of the bridge-host',
                 'bridgeUser' => 'The username to use to connect to the bridge-host',
                 'bridgePort' => 'The port to use to connect to the bridge-host',
-                'destHost' => 'The hostname of the destination host',
                 'destPort' => 'The port of the destination host',
                 'localPort' => 'The local port to forward to the destination-host'
             ]);
+            if (empty($config['sshTunnel']['destHostFromDockerContainer'])) {
+                $tunnel_validation->hasKey('destHost', 'The hostname of the destination host');
+            }
         }
         if (isset($config['strictHostKeyChecking'])) {
             $errors->addWarning('strictHostKeyChecking', 'Please use `disableKnownHosts` instead.');
