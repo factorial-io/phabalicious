@@ -295,6 +295,12 @@ class ConfigurationService
         } elseif ($contents !== false) {
             file_put_contents($cache_file, $contents);
         }
+        if ($this->offlineMode && !$contents) {
+            $this->logger->error(
+                'Could not get needed data from offline-cache for `' .
+                $resource . '`, proceed with caution!'
+            );
+        }
         $this->cache[$cid] = $contents;
 
         return $contents;
