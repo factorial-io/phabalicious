@@ -88,7 +88,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $context->set('host_config', $host_config);
 
         try {
-            $this->runScriptImpl(
+            $result = $this->runScriptImpl(
                 $root_folder,
                 $commands,
                 $context,
@@ -96,6 +96,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $environment,
                 $replacements
             );
+
+            $context->setResult('exitCode', $result->getExitCode());
+
         } catch (UnknownReplacementPatternException $e) {
             $context->getOutput()
                 ->writeln('<error>Unknown replacement in line ' . $e->getOffendingLine() . '</error>');
@@ -113,7 +116,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param ShellProviderInterface $shell
      * @param string $root_folder
      * @param array $commands
      * @param TaskContextInterface $context
