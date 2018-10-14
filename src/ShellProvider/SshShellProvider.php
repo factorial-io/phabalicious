@@ -3,8 +3,11 @@
 namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\SshTunnelFailedException;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationService;
+use Symfony\Component\Process\Process;
 
 class SshShellProvider extends LocalShellProvider
 {
@@ -70,9 +73,9 @@ class SshShellProvider extends LocalShellProvider
         }
     }
 
-    protected function addCommandOptions(&$command)
+    protected function addCommandOptions(&$command, $override = false)
     {
-        if ($this->hostConfig['disableKnownHosts']) {
+        if ($override || $this->hostConfig['disableKnownHosts']) {
             $command[] = '-o';
             $command[] = 'StrictHostKeyChecking=no';
             $command[] = '-o';
@@ -121,5 +124,87 @@ class SshShellProvider extends LocalShellProvider
         return $this->runCommand($command, $context);
     }
 
+    public function getSshTunnelCommand(
+        string $ip,
+        int $port,
+        string $public_ip,
+        int $public_port,
+        $config
+    ) {
+        $cmd = [
+            '/usr/bin/ssh',
+            '-A',
+            "-L$public_ip:$public_port:$ip:$port",
+            '-p',
+            $config['port'],
+            $config['user'] . '@' . $config['host']
+        ];
+        $this->addCommandOptions($cmd, true);
+        return $cmd;
+    }
+
+    public function startRemoteAccess(
+        string $ip,
+        int $port,
+        string $public_ip,
+        int $public_port,
+        HostConfig $config,
+        TaskContextInterface $context
+    ) {
+        $this->runCommand(
+            $this->getSshTunnelCommand($ip, $port, $public_ip, $public_port, $config),
+            $context,
+            true
+        );
+    }
+
+    /**
+     * @param HostConfig $target_config
+     * @return Process
+     * @throws SshTunnelFailedException
+     */
+    public function createTunnelProcess(HostConfig $target_config)
+    {
+        $config = $this->getHostConfig();
+        $tunnel = $target_config['sshTunnel'];
+        $bridge = [
+            'host' => $tunnel['bridgeHost'],
+            'port' => $tunnel['bridgePort'],
+            'user' => $tunnel['bridgeUser'],
+        ];
+        $cmd = $this->getSshTunnelCommand(
+            $tunnel['destHost'],
+            $tunnel['destPort'],
+            $config['host'],
+            $config['port'],
+            $bridge
+        );
+
+        $cmd[] = '-v';
+        $cmd[] = '-N';
+        $cmd[] = '-o';
+        $cmd[] = 'PasswordAuthentication=no';
+
+        $this->logger->info('Starting tunnel with ' . implode(' ', $cmd));
+
+        $process = new Process(
+            $cmd
+        );
+        $process->setTimeout(0);
+        $process->start(function ($type, $buffer) {
+            $buffer = trim($buffer);
+            $this->logger->debug($buffer);
+        });
+
+        $result = '';
+        while ((strpos($result, 'Entering interactive session') === false) && !$process->isTerminated()) {
+            $result .= $process->getIncrementalErrorOutput();
+        }
+        if ($process->isTerminated() && $process->getExitCode() != 0) {
+            throw new SshTunnelFailedException("SSH-Tunnel creation failed with \n" . $result);
+        }
+
+        return $process;
+    }
 
 }

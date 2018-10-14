@@ -46,4 +46,6 @@ interface ShellProviderInterface
 
     public function createShellProcess(array $command = []): Process;
 
+    public function createTunnelProcess(HostConfig $target_config);
+
 }

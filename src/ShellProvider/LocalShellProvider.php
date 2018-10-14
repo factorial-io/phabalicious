@@ -182,6 +182,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         return $result->succeeded();
     }
 
+
     public function startRemoteAccess(
         string $ip,
         int $port,
@@ -190,14 +191,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         HostConfig $config,
         TaskContextInterface $context
     ) {
-        $cmd = [
-            '/usr/bin/ssh',
-            '-A',
-            "-L$public_ip:$public_port:$ip:$port",
-            '-p',
-            $config['port'],
-            $config['user'] . '@' . $config['host']
-        ];
-        $this->runCommand($cmd, $context, true);
+        throw new \InvalidArgumentException('Local shells cannot handle startRemoteAccess!');
+    }
+
+    public function createTunnelProcess(HostConfig $target_config)
+    {
+        throw new \InvalidArgumentException('Local shells cannot handle tunnels!');
     }
 }
