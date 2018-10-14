@@ -16,6 +16,7 @@ class StartRemoteAccessCommand extends BaseCommand
     protected function configure()
     {
         parent::configure();
+        $this->setAliases(['startRemoteAccess']);
         $this
             ->setName('start-remote-access')
             ->setDescription('starts remote access')
@@ -56,6 +57,7 @@ class StartRemoteAccessCommand extends BaseCommand
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

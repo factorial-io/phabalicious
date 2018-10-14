@@ -14,8 +14,9 @@ class GetPropertyCommand extends BaseCommand
     {
         parent::configure();
 
+        $this->setAliases(['getProperty']);
         $this
-            ->setName('getProperty')
+            ->setName('get-property')
             ->setDescription('Get a property from a host-configuration')
             ->setHelp('Get a property from a host-configuration')
             ->addArgument(
