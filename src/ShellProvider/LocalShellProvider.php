@@ -49,6 +49,28 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         );
     }
 
+    public function createShellProcess(array $command = []): Process
+    {
+        $shell_command = $this->getShellCommand();
+        if (count($command) > 0) {
+            $shell_command = array_merge($shell_command, $command);
+        }
+        $this->logger->info('Starting shell with ' . implode(' ', $shell_command));
+
+        $process = new Process(
+            $shell_command,
+            getcwd(),
+            [
+                'LANG' => '',
+                'LC_CTYPE' => 'POSIX',
+            ]
+        );
+
+        $process->setTimeout(0);
+
+        return $process;
+    }
+
     /**
      * Setup local shell.
      *
@@ -63,19 +85,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         if (empty($this->hostConfig)) {
             throw new \Exception('No host-config set for local shell provider');
         }
-        $shell_command = $this->getShellCommand();
-        $this->logger->info('Starting shell with ' . implode(' ', $shell_command));
 
-        $this->process = new Process(
-            $shell_command,
-            getcwd(),
-            [
-                'LANG' => '',
-                'LC_CTYPE' => 'POSIX',
-            ]
-        );
+        $this->process = $this->createShellProcess(['/bin/sh']);
 
-        $this->process->setTimeout(0);
         $this->input = new InputStream();
         $this->process->setInput($this->input);
         $this->process->start(function ($type, $buffer) {
@@ -148,7 +160,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
     protected function getShellCommand()
     {
-        return [$this->hostConfig['shellExecutable']];
+        return [];
     }
 
     public function exists($file): bool

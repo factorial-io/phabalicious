@@ -41,7 +41,6 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
             'exec',
             '-i',
             $this->hostConfig['docker']['name'],
-            '/bin/sh'
         ];
 
         return $command;

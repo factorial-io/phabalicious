@@ -90,7 +90,6 @@ class SshShellProvider extends LocalShellProvider
             ];
         $this->addCommandOptions($command);
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'];
-        $command[] = '/bin/sh';
 
         return $command;
     }

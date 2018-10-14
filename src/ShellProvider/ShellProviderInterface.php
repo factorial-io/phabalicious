@@ -7,6 +7,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 interface ShellProviderInterface
 {
@@ -42,5 +43,7 @@ interface ShellProviderInterface
         HostConfig $config,
         TaskContextInterface $context
     );
+
+    public function createShellProcess(array $command = []): Process;
 
 }
