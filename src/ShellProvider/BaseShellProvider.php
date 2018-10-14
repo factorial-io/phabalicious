@@ -52,7 +52,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     public function getHostConfig(): HostConfig
     {
-        return $this->getHostConfig();
+        return $this->hostConfig;
     }
 
     public function getWorkingDir(): string
