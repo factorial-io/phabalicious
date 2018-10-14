@@ -5,9 +5,12 @@ namespace Phabalicious\ShellProvider;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\ScopedLogLevel\LogLevelStack;
+use Phabalicious\ScopedLogLevel\LoglevelStackInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
@@ -26,9 +29,18 @@ abstract class BaseShellProvider implements ShellProviderInterface
     /** @var OutputInterface */
     protected $output;
 
+    /** @var LogLevelStack */
+    protected $loglevel;
+
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
+        $this->loglevel = new LogLevelStack(LogLevel::NOTICE);
+    }
+
+    public function getLogLevelStack(): LoglevelStackInterface
+    {
+        return $this->loglevel;
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
@@ -98,7 +110,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     public function runCommand(array $cmd, TaskContextInterface $context, $interactive = false):bool
     {
         $stdin = $interactive ? fopen('php://stdin', 'r') : null;
-        $this->logger->notice('running command: ' . implode(' ', $cmd));
+        $this->logger->log($this->loglevel->get(), 'running command: ' . implode(' ', $cmd));
         $process = new Process($cmd, $context->getConfigurationService()->getFabfilePath(), [], $stdin);
         if ($interactive) {
             $process->setTimeout(0);

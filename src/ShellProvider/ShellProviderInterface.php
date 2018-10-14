@@ -5,11 +5,12 @@ namespace Phabalicious\ShellProvider;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\ScopedLogLevel\LogLevelStackGetterInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-interface ShellProviderInterface
+interface ShellProviderInterface extends LogLevelStackGetterInterface
 {
     public function getName(): string;
 

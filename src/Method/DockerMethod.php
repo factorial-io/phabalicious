@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnusedLocalVariableInspection */
 
 namespace Phabalicious\Method;
 
@@ -7,8 +7,10 @@ use Phabalicious\Configuration\DockerConfig;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\ScopedLogLevel\ScopedLogLevel;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Psr\Log\LogLevel;
 
 class DockerMethod extends BaseMethod implements MethodInterface
 {
@@ -235,6 +237,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
     public function isContainerRunning(HostConfig $docker_config, $container_name)
     {
         $shell = $docker_config->shell();
+        $scoped_loglevel = new ScopedLogLevel($shell, LogLevel::DEBUG);
         $result = $shell->run(sprintf(
             'docker inspect -f {{.State.Running}} %s',
             $container_name
@@ -264,6 +267,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
         $docker_config = $this->getDockerConfig($host_config, $context);
         $shell = $docker_config->shell();
+        $scoped_loglevel = new ScopedLogLevel($shell, LogLevel::DEBUG);
         $container_name = $host_config['docker']['name'];
 
         if (!$this->isContainerRunning($docker_config, $container_name)) {
