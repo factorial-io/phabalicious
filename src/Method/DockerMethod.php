@@ -13,6 +13,8 @@ use Phabalicious\Validation\ValidationService;
 class DockerMethod extends BaseMethod implements MethodInterface
 {
 
+    protected $cache = [];
+
     public function getName(): string
     {
         return 'docker';
@@ -257,6 +259,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
      */
     public function getIpAddress(HostConfig $host_config, TaskContextInterface $context)
     {
+        if (!empty($this->cache[$host_config['configName']])) {
+            return $this->cache[$host_config['configName']];
+        }
         $docker_config = $this->getDockerConfig($host_config, $context);
         $shell = $docker_config->shell();
         $container_name = $host_config['docker']['name'];
@@ -271,7 +276,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
         ), true);
 
         if ($result->getExitCode() === 0) {
-            return str_replace(array("\\r", "\\n"), '', $result->getOutput()[0]);
+            $ip = str_replace(array("\\r", "\\n"), '', $result->getOutput()[0]);
+            $this->cache[$host_config['configName']] = $ip;
+            return $ip;
         }
         return false;
     }
@@ -286,10 +293,22 @@ class DockerMethod extends BaseMethod implements MethodInterface
     public function startRemoteAccess(HostConfig $host_config, TaskContextInterface $context)
     {
         $docker_config = $this->getDockerConfig($host_config, $context);
-        $context->setResult('ip', $this->getIpAddress($host_config, $context));
+        $this->getIp($host_config, $context);
         if (is_a($docker_config->shell(), 'SshShellProvider')) {
             $context->setResult('config', $this->getDockerConfig($host_config, $context));
         }
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     */
+    public function getIp(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $context->setResult('ip', $this->getIpAddress($host_config, $context));
     }
 
 }
