@@ -95,10 +95,10 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $cmd;
     }
 
-    protected function runCommand(array $cmd, TaskContextInterface $context, $interactive = false):bool
+    public function runCommand(array $cmd, TaskContextInterface $context, $interactive = false):bool
     {
         $stdin = $interactive ? fopen('php://stdin', 'r') : null;
-        $this->logger->notice(implode(' ', $cmd));
+        $this->logger->notice('running command: ' . implode(' ', $cmd));
         $process = new Process($cmd, $context->getConfigurationService()->getFabfilePath(), [], $stdin);
         if ($interactive) {
             $process->setTimeout(0);
@@ -120,4 +120,5 @@ abstract class BaseShellProvider implements ShellProviderInterface
         }
         return true;
     }
+
 }

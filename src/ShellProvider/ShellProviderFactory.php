@@ -15,6 +15,10 @@ class ShellProviderFactory
                 $shell_provider = new SshShellProvider($logger);
                 break;
 
+            case DockerExecShellProvider::PROVIDER_NAME:
+                $shell_provider = new DockerExecShellProvider($logger);
+                break;
+
             default:
                 $shell_provider = false;
         }
