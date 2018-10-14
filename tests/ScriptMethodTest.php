@@ -34,9 +34,11 @@ class ScriptMethodTest extends TestCase
     private $context;
 
     /**
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function setUp()
     {
@@ -197,7 +199,7 @@ class ScriptMethodTest extends TestCase
     /**
      * @expectedException \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
-    public function testMissinCallbackImplementation()
+    public function testMissingCallbackImplementation()
     {
         $this->context->set('callbacks', [
             'debug' => [$this, 'missingScriptDebugCallback'],
@@ -214,7 +216,7 @@ class ScriptMethodTest extends TestCase
 
     public function testTaskSpecificScripts()
     {
-        $this->context->set('callbacks',[
+        $this->context->set('callbacks', [
             'debug' => [$this, 'scriptDebugCallback'],
         ]);
 
