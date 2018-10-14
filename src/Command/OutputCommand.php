@@ -36,7 +36,7 @@ class OutputCommand extends BaseCommand
         $config = $input->getOption('config');
         $blueprint = $input->getOption('blueprint');
         if (empty($blueprint)) {
-            throw new \InvalidArgumentException('Missing blueprint option!');
+            throw new \InvalidArgumentException('The required option --blueprint is not set or is empty');
         }
 
         if ($result = parent::execute($input, $output)) {
