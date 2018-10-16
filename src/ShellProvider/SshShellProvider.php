@@ -83,7 +83,7 @@ class SshShellProvider extends LocalShellProvider
         }
     }
 
-    protected function getShellCommand()
+    protected function getShellCommand($options = [])
     {
         $command = [
             $this->hostConfig['shellExecutable'],
@@ -108,7 +108,7 @@ class SshShellProvider extends LocalShellProvider
         return $result->succeeded();
     }
 
-    public function putFile(string $source, string $dest, TaskContextInterface $context): bool
+    public function putFile(string $source, string $dest, TaskContextInterface $context, $verbose = false): bool
     {
         $command = [
             '/usr/bin/scp',
@@ -121,7 +121,7 @@ class SshShellProvider extends LocalShellProvider
         $command[] = $source;
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'] . ':' . $dest;
 
-        return $this->runCommand($command, $context);
+        return $this->runCommand($command, $context, false, true);
     }
 
     public function getSshTunnelCommand(

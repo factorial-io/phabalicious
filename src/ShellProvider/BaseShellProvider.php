@@ -107,8 +107,21 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $cmd;
     }
 
-    public function runCommand(array $cmd, TaskContextInterface $context, $interactive = false):bool
+    public static function outputCallback($type, $buffer)
     {
+        if ($type == Process::ERR) {
+            fwrite(STDERR, $buffer);
+        } else {
+            fwrite(STDOUT, $buffer);
+
+        }
+    }
+
+    public function runCommand(array $cmd, TaskContextInterface $context, $interactive = false, $verbose = false):bool
+    {
+        $cb = ($verbose | $interactive)
+            ? [BaseShellProvider::Class, 'outputCallback']
+            : null;
         $stdin = $interactive ? fopen('php://stdin', 'r') : null;
         $this->logger->log($this->loglevel->get(), 'running command: ' . implode(' ', $cmd));
         $process = new Process($cmd, $context->getConfigurationService()->getFabfilePath(), [], $stdin);
@@ -116,15 +129,11 @@ abstract class BaseShellProvider implements ShellProviderInterface
             $process->setTimeout(0);
             $process->setTty(true);
             $process->start();
-            $process->wait(function ($type, $buffer) {
-                if ($type == Process::ERR) {
-                    fwrite(STDERR, $buffer);
-                } else {
-                    fwrite(STDOUT, $buffer);
-                }
-            });
+            $process->wait($cb);
         } else {
-            $process->run();
+            $process->setTimeout(10*60);
+            //$process->setTty($verbose);
+            $process->run($cb);
         }
         if ($process->getExitCode() != 0) {
             $this->logger->error($process->getErrorOutput());

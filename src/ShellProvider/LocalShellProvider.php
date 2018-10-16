@@ -49,9 +49,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         );
     }
 
-    public function createShellProcess(array $command = []): Process
+    public function createShellProcess(array $command = [], $options = []): Process
     {
-        $shell_command = $this->getShellCommand();
+        $shell_command = $this->getShellCommand($options);
         if (count($command) > 0) {
             $shell_command = array_merge($shell_command, $command);
         }
@@ -158,7 +158,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
     }
 
-    protected function getShellCommand()
+    protected function getShellCommand($options = [])
     {
         return [];
     }
@@ -172,10 +172,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      * @param string $source
      * @param string $dest
      * @param TaskContextInterface $context
+     * @param bool $verbose
      * @return bool
      * @throws \Exception
      */
-    public function putFile(string $source, string $dest, TaskContextInterface $context): bool
+    public function putFile(string $source, string $dest, TaskContextInterface $context, $verbose = false): bool
     {
         $this->cd($context->getConfigurationService()->getFabfilePath());
         $result = $this->run(sprintf('cp -r "%s" "%s"', $source, $dest));

@@ -34,14 +34,18 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     }
 
 
-    protected function getShellCommand()
+    protected function getShellCommand($options = [])
     {
         $command = [
             $this->hostConfig['shellExecutable'],
             'exec',
-            '-i',
+            (empty($options['tty']) ? '-i' : '-it'),
             $this->hostConfig['docker']['name'],
         ];
+        if (!empty($options['tty'])) {
+            $command[] = '/bin/sh';
+        }
+
 
         return $command;
     }
@@ -57,10 +61,17 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
         return $result->succeeded();
     }
 
-    public function putFile(string $source, string $dest, TaskContextInterface $context): bool
+    public function putFile(string $source, string $dest, TaskContextInterface $context, $verbose = false): bool
     {
-        // @todo implement logic.
-        return false;
+        $command = [
+            'docker',
+            'cp',
+            $source,
+            $this->hostConfig['docker']['name'] . ':' . $dest
+        ];
+
+        return $this->runCommand($command, $context, false, true);
     }
+
 
 }
