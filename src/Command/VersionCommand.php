@@ -25,12 +25,14 @@ class VersionCommand extends BaseCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -49,8 +51,5 @@ class VersionCommand extends BaseCommand
 
         $output->writeln('<error>Could not determine the current version</error>');
         return 1;
-
     }
-
-
 }
