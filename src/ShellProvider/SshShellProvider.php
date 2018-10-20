@@ -83,7 +83,7 @@ class SshShellProvider extends LocalShellProvider
         }
     }
 
-    protected function getShellCommand($options = [])
+    public function getShellCommand(array $options = []): array
     {
         $command = [
             $this->hostConfig['shellExecutable'],

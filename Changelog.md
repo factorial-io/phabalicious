@@ -69,6 +69,8 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 
       pha --offline=1 --config=mbb about
       
+*  the task `logLevel` is replaced by the builtin `-v`-option
+
 ### Deprecated
 
 * script-function `fail_on_error` is deprecated, use `breakOnFirstError(<bool>)`
@@ -76,3 +78,5 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * `strictHostKeyChecking` is deprecated, use `disableKnownHosts` instead. 
 * `getProperty` is deprecated and got renamed to `get-property`
 * `ssh` is deprecated and got renamed to `shell` as some implementations might not use ssh.
+* `sshCommand` is deprecated and got renamed to `shell:command` and will return the command to run a shell with the given configuration
+

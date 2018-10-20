@@ -34,7 +34,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     }
 
 
-    protected function getShellCommand($options = [])
+    public function getShellCommand(array $options = []): array
     {
         $command = [
             $this->hostConfig['shellExecutable'],

@@ -158,7 +158,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
     }
 
-    protected function getShellCommand($options = [])
+    public function getShellCommand(array $options = []):array
     {
         return [];
     }
