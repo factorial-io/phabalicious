@@ -108,7 +108,7 @@ class SshShellProvider extends LocalShellProvider
         return $result->succeeded();
     }
 
-    public function putFile(string $source, string $dest, TaskContextInterface $context, $verbose = false): bool
+    public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $command = [
             '/usr/bin/scp',
@@ -120,6 +120,22 @@ class SshShellProvider extends LocalShellProvider
 
         $command[] = $source;
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'] . ':' . $dest;
+
+        return $this->runCommand($command, $context, false, true);
+    }
+
+    public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
+    {
+        $command = [
+            '/usr/bin/scp',
+            '-P',
+            $this->hostConfig['port']
+        ];
+
+        $this->addCommandOptions($command);
+
+        $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'] . ':' . $source;
+        $command[] = $dest;
 
         return $this->runCommand($command, $context, false, true);
     }

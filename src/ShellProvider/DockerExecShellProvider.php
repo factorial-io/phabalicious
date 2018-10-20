@@ -61,7 +61,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
         return $result->succeeded();
     }
 
-    public function putFile(string $source, string $dest, TaskContextInterface $context, $verbose = false): bool
+    public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $command = [
             'docker',
@@ -73,5 +73,16 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
         return $this->runCommand($command, $context, false, true);
     }
 
+    public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
+    {
+        $command = [
+            'docker',
+            'cp',
+            $this->hostConfig['docker']['name'] . ':' . $source,
+            $dest,
+        ];
+
+        return $this->runCommand($command, $context, false, true);
+    }
 
 }

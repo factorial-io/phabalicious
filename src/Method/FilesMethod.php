@@ -30,4 +30,17 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $shell = $context->get('shell', $config->shell());
         $shell->putFile($source, $config['rootFolder'], $context, true);
     }
+
+    public function getFile(HostConfig $config, TaskContextInterface $context)
+    {
+        $source = $context->get('sourceFile', false);
+        $dest = $context->get('destFile', false);
+        if (!$source || !$dest) {
+            $context->setResult('exitCode', 1);
+            return;
+        }
+        /** @var ShellProviderInterface $shell */
+        $shell = $context->get('shell', $config->shell());
+        $shell->getFile($source, $dest, $context, true);
+    }
 }

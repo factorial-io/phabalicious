@@ -176,11 +176,24 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      * @return bool
      * @throws \Exception
      */
-    public function putFile(string $source, string $dest, TaskContextInterface $context, $verbose = false): bool
+    public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $this->cd($context->getConfigurationService()->getFabfilePath());
         $result = $this->run(sprintf('cp -r "%s" "%s"', $source, $dest));
         return $result->succeeded();
+    }
+
+    /**
+     * @param string $source
+     * @param string $dest
+     * @param TaskContextInterface $context
+     * @param bool $verbose
+     * @return bool
+     * @throws \Exception
+     */
+    public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
+    {
+        return $this->putFile($source, $dest, $context, $verbose);
     }
 
 

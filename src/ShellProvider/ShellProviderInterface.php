@@ -34,7 +34,9 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function setOutput(OutputInterface $output);
 
-    public function putFile(string $source, string $dest, TaskContextInterface $context, $verbose = false): bool;
+    public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool;
+
+    public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool;
 
     public function startRemoteAccess(
         string $ip,
