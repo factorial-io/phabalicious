@@ -4,10 +4,15 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
-use Phabalicious\Method\MethodFactory;
-use Symfony\Component\Console\Command\Command;
+use Psr\Log\NullLogger;
+use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,6 +47,21 @@ abstract class BaseCommand extends BaseOptionsCommand
             );
 
         parent::configure();
+    }
+
+    public function completeOptionValues($optionName, CompletionContext $context)
+    {
+        if ($optionName == 'config') {
+            $config = new ConfigurationService($this->getApplication(), new NullLogger());
+            $config->setOffline(true);
+            try {
+                $config->readConfiguration(getcwd());
+            } catch (\Exception $e) {
+                return [];
+            }
+            return array_keys($config->getAllHostConfigs());
+        }
+        return parent::completeOptionValues($optionName, $context);
     }
 
     /**

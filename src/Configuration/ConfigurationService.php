@@ -11,16 +11,13 @@ use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
-use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\ShellProvider\ShellProviderFactory;
-use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Yaml\Yaml;
-use Wikimedia\Composer\Merge\NestedArray;
 
 class ConfigurationService
 {
@@ -122,8 +119,10 @@ class ConfigurationService
         /**
          * @var \Phabalicious\Method\MethodInterface $method
          */
-        foreach ($this->methods->all() as $method) {
-            $data = $this->mergeData($data, $method->getGlobalSettings());
+        if ($this->methods) {
+            foreach ($this->methods->all() as $method) {
+                $data = $this->mergeData($data, $method->getGlobalSettings());
+            }
         }
 
         $this->settings = $this->resolveInheritance($data, $data);

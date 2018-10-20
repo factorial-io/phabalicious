@@ -70,6 +70,7 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
       pha --offline=1 --config=mbb about
       
 *  the task `logLevel` is replaced by the builtin `-v`-option
+* autocompletion works now differently than before, but now bash and zsh are supported. Please have a look into the documentation how to install it. 
 
 ### Deprecated
 

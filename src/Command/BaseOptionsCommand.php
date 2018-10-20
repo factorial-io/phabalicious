@@ -4,11 +4,13 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\MethodFactory;
+use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-abstract class BaseOptionsCommand extends Command
+abstract class BaseOptionsCommand extends Command implements CompletionAwareInterface
 {
     protected $configuration;
 
@@ -43,6 +45,17 @@ abstract class BaseOptionsCommand extends Command
                 'Do not try to load data from remote hosts, use cached versions if possible',
                 false
             );
+    }
+
+    public function completeOptionValues($optionName, CompletionContext $context)
+    {
+        if ($optionName == 'offline') {
+            return ['1', '0'];
+        }
+    }
+
+    public function completeArgumentValues($argumentName, CompletionContext $context)
+    {
     }
 
     /**
