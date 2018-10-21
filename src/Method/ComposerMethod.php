@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\EarlyTaskExitException;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -46,6 +47,14 @@ class ComposerMethod extends BaseMethod implements MethodInterface
         $validation->hasKey('composerRootFolder', 'composerRootFolder should point to your composer root folder.');
     }
 
+    private function runCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
+    {
+        /** @var ShellProviderInterface $shell */
+        $shell = $context->get('shell', $host_config->shell());
+        $shell->cd($host_config['composerRootFolder']);
+        $result = $shell->run('#!composer ' . $command);
+        $context->setResult('exitCode', $result->getExitCode());
+    }
 
     /**
      * @param HostConfig $host_config
@@ -53,13 +62,17 @@ class ComposerMethod extends BaseMethod implements MethodInterface
      */
     public function resetPrepare(HostConfig $host_config, TaskContextInterface $context)
     {
-        $shell = $host_config->shell();
-        $shell->cd($host_config['composerRootFolder']);
-        $options = '';
+        $command = 'install ';
         if (!in_array($host_config['type'], array('dev', 'test'))) {
-            $options = ' --no-dev --optimize-autoloader';
+            $command .= ' --no-dev --optimize-autoloader';
         }
-        $shell->run('#!composer install ' . $options);
+        $this->runCommand($host_config, $context, $command);
+    }
+
+    public function composer(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $command = $context->get('command');
+        $this->runCommand($host_config, $context, $command);
     }
 
 }
