@@ -47,8 +47,8 @@ class DeployCommand extends BaseCommand
         }
 
         $context = new TaskContext($this, $input, $output);
-        if ($input->hasArgument('script')) {
-            $branch = $input->getArgument('script');
+        if ($input->hasArgument('branch')) {
+            $branch = $input->getArgument('branch');
             $context->set('branch', $branch);
         }
 
