@@ -92,7 +92,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->process->setInput($this->input);
         $this->process->start(function ($type, $buffer) {
             if ($type == Process::ERR) {
-                $this->logger->info(trim($buffer));
+                $this->logger->debug(trim($buffer));
             } else {
                 ; //fwrite(STDOUT, $buffer);
             }
@@ -123,7 +123,8 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             $result .= $this->process->getIncrementalOutput();
         }
         if ($this->process->isTerminated()) {
-            $this->logger->warning('Local shell terminated unexpected!');
+            $this->logger->error('Local shell terminated unexpected!');
+            $this->logger->error(trim($this->process->getErrorOutput()));
             $exit_code = $this->process->getExitCode();
             $this->process = null;
             return new CommandResult($exit_code, []);
