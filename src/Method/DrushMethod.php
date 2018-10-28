@@ -81,6 +81,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         $config['drupalVersion'] = in_array('drush7', $host_config['needs']) ? 7 : 8;
         $config['drushVersion'] = in_array('drush9', $host_config['needs']) ? 9 : 8;
+        $config['supportsZippedBackups'] = true;
 
         return $config;
     }
@@ -95,6 +96,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $service->hasKey('drupalVersion', 'the major version of the drupal-instance');
         $service->hasKey('siteFolder', 'drush needs a site-folder to locate the drupal-instance');
         $service->hasKey('filesFolder', 'drush needs to know where files are stored for this drupal instance');
+        $service->hasKey('backupFolder', 'drush needs to know where to store backups into');
+        $service->hasKey('tmpFolder', 'drush needs to know where to store temporary files');
 
         if (!empty($config['database'])) {
             $service = new ValidationService($config['database'], $errors, 'host.database');
@@ -151,7 +154,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
     public function reset(HostConfig $host_config, TaskContextInterface $context)
     {
         /** @var ShellProviderInterface $shell */
-        $shell = $context->get('shell', $host_config->shell());
+        $shell = $this->getShell($host_config, $context);
         $shell->cd($host_config['siteFolder']);
 
         /** @var ScriptMethod $script_method */
@@ -221,7 +224,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $command = $context->get('command');
 
         /** @var ShellProviderInterface $shell */
-        $shell = $context->get('shell', $host_config->shell());
+        $shell = $this->getShell($host_config, $context);
         $shell->cd($host_config['siteFolder']);
         $result = $shell->run('#!drush ' . $command);
         $context->setResult('exitCode', $result->getExitCode());
@@ -268,7 +271,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
 
         /** @var ShellProviderInterface $shell */
-        $shell = $context->get('shell', $host_config->shell());
+        $shell = $this->getShell($host_config, $context);
 
         $shell->cd($host_config['rootFolder']);
         $shell->run(sprintf('mkdir -p %s', $host_config['siteFolder']));
@@ -317,6 +320,48 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $cmd_options .= ' --db-url=mysql://' . $o['user'] . ':' . $o['pass'] . '@' . $o['host'] . '/' . $o['name'];
         $cmd_options.= ' ' . $host_config['installOptions']['options'];
         $this->runDrush($shell, 'site-install %s %s', $host_config['installOptions']['distribution'], $cmd_options);
+    }
+
+    protected function backupSQL(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        string $backup_file_name
+    ) {
+        $shell->cd($host_config['siteFolder']);
+        $dump_options = '';
+        if ($skip_tables = $context->getConfigurationService()->getSetting('sqlSkipTables')) {
+            $dump_options .= ' --structure-tables-list=' . implode(',', $skip_tables);
+        }
+        $shell->run(sprintf('mkdir -p %s', dirname($backup_file_name)));
+
+        if ($host_config['supportsZippedBackups']) {
+            $shell->run(sprintf('rm -f %s.gz', $backup_file_name));
+            $dump_options .= ' --gzip';
+            $return = $backup_file_name . '.gz';
+        } else {
+            $shell->run(sprintf('rm -f %s', $backup_file_name));
+            $return = $backup_file_name;
+        }
+
+        $this->runDrush($shell, 'sql-dump %s --result-file=%s', $dump_options, $backup_file_name);
+        return $return;
+    }
+
+    public function backup(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $shell = $this->getShell($host_config, $context);
+        $what = $context->get('what', []);
+        if (!in_array('db', $what)) {
+            return;
+        }
+
+        $basename = $context->getResult('basename');
+        $backup_file_name = $host_config['backupFolder'] . '/' . implode('--', $basename) . '.sql';
+
+        $backup_file_name = $this->backupSQL($host_config, $context, $shell, $backup_file_name);
+
+        $this->logger->notice('Database dumped to `' . $backup_file_name . '`');
     }
 
 }

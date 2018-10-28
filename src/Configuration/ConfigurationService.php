@@ -381,6 +381,7 @@ class ConfigurationService
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
             'supportsInstalls' => (isset($data['type']) && $data['type'] != HostType::PROD) ? true : false,
+            'tmpFolder' => '/tmp',
         ];
 
         if (empty($data['needs'])) {

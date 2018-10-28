@@ -50,7 +50,7 @@ class ComposerMethod extends BaseMethod implements MethodInterface
     private function runCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
     {
         /** @var ShellProviderInterface $shell */
-        $shell = $context->get('shell', $host_config->shell());
+        $shell = $this->getShell($host_config, $context);
         $shell->cd($host_config['composerRootFolder']);
         $result = $shell->run('#!composer ' . $command);
         $context->setResult('exitCode', $result->getExitCode());

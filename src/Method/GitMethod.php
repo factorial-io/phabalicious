@@ -57,21 +57,21 @@ class GitMethod extends BaseMethod implements MethodInterface
     public function getVersion(HostConfig $host_config, TaskContextInterface $context)
     {
         $host_config->shell()->cd($host_config['gitRootFolder']);
-        $result = $host_config->shell()->run('#!git describe --always');
-        return $result->succeeded() ? $result->getOutput()[0] : '';
+        $result = $host_config->shell()->run('#!git describe --always --tags', true);
+        return $result->succeeded() ? str_replace('/', '-', $result->getOutput()[0]) : '';
     }
 
     public function getCommitHash(HostConfig $host_config, TaskContextInterface $context)
     {
         $host_config->shell()->cd($host_config['gitRootFolder']);
-        $result = $host_config->shell()->run('#!git rev-parse HEAD');
+        $result = $host_config->shell()->run('#!git rev-parse HEAD', true);
         return $result->getOutput()[0];
     }
 
     public function isWorkingcopyClean(HostConfig $host_config, TaskContextInterface $context)
     {
         $host_config->shell()->cd($host_config['gitRootFolder']);
-        $result = $host_config->shell()->run('#!git diff --exit-code --quiet');
+        $result = $host_config->shell()->run('#!git diff --exit-code --quiet', true);
         return $result->succeeded();
     }
 
@@ -108,6 +108,17 @@ class GitMethod extends BaseMethod implements MethodInterface
             $shell->run('#!git submodule init');
             $shell->run('#!git submodule update');
             $shell->run('#!git submodule sync');
+        }
+    }
+
+
+    public function backupPrepare(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $hash = $this->getVersion($host_config, $context);
+        if ($hash) {
+            $basename = $context->getResult('basename', []);
+            $basename[] = $hash;
+            $context->setResult('basename', $basename);
         }
     }
 
