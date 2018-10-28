@@ -102,11 +102,17 @@ class HostConfig implements \ArrayAccess
     }
 
 
-    public function get($key, $default = null) {
+    public function get($key, $default = null)
+    {
         if (empty($this->data[$key])) {
             return $default;
         }
         return $this->data[$key];
+    }
+
+    public function isType(string $type)
+    {
+        return $this['type'] == $type;
     }
 
 }

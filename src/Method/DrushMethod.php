@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\HostType;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
@@ -27,6 +28,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
     public function getGlobalSettings(): array
     {
         return [
+            'adminUser' => 'admin',
             'executables' => [
                 'drush' => 'drush',
                 'mysql' => 'mysql',
@@ -67,7 +69,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
     {
         $config  = parent::getDefaultConfig($configuration_service, $host_config);
 
-        $keys = ['revertFeatures', 'replaceSettingsFile', 'configurationManagement', 'installOptions'];
+        $keys = ['adminUser', 'revertFeatures', 'replaceSettingsFile', 'configurationManagement', 'installOptions'];
         foreach ($keys as $key) {
             $config[$key] = $configuration_service->getSetting($key);
         }
@@ -132,20 +134,105 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    private function runDrush(ShellProviderInterface $shell, $cmd, ...$args)
+    {
+        array_unshift($args, '#!drush ' . $cmd);
+        $command = call_user_func_array('sprintf', $args);
+        return $shell->run($command);
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     */
+    public function reset(HostConfig $host_config, TaskContextInterface $context)
+    {
+        /** @var ShellProviderInterface $shell */
+        $shell = $context->get('shell', $host_config->shell());
+        $shell->cd($host_config['siteFolder']);
+
+        /** @var ScriptMethod $script_method */
+        $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
+
+        if ($host_config->isType(HostType::DEV)) {
+            $admin_user = $host_config['adminUser'];
+
+            if ($context->get('withPasswordReset', true)) {
+                if ($host_config['drushVersion'] >= 9) {
+                    $command = sprintf('user:password %s "admin"', $admin_user);
+                } else {
+                    $command = sprintf('user-password %s --password="admin"', $admin_user);
+                }
+                $this->runDrush($shell, $command);
+            }
+
+            $shell->run(sprintf('chmod -R 777 %s', $host_config['filesFolder']));
+        }
+
+        if ($deployment_module = $context->getConfigurationService()->getSetting('deploymentModule')) {
+            $this->runDrush($shell, 'en -y %s', $deployment_module);
+        }
+
+        $this->handleModules($host_config, $context, $shell, 'modules_enabled.txt');
+        $this->handleModules($host_config, $context, $shell, 'modules_disabled.txt');
+
+        // Database updates
+        if ($host_config['drupalVersion'] >= 8) {
+            $this->runDrush($shell, 'cr -y');
+            $this->runDrush($shell, 'updb --entity-updates -y');
+        } else {
+            $this->runDrush($shell, 'updb -y ');
+        }
+
+        // CMI / Features
+        if ($host_config['drupalVersion'] >= 8) {
+            $uuid = $context->getConfigurationService()->getSetting('uuid');
+            $this->runDrush($shell, 'cset system.site uuid %s -y', $uuid);
+
+            if (!empty($host_config['configurationManagement'])) {
+                $script_context = clone $context;
+                foreach ($host_config['configurationManagement'] as $key => $cmds) {
+                    $script_context->set('scriptData', $cmds);
+                    $script_context->set('rootFolder', $host_config['siteFolder']);
+                    $script_method->runScript($host_config, $script_context);
+                }
+            }
+        } else {
+            if ($host_config['revertFeatures']) {
+                $this->runDrush($shell, 'fra -y');
+            }
+        }
+
+        $script_method->runTaskSpecificScripts($host_config, 'reset', $context);
+
+        // Keep calm and clear the cache.
+        if ($host_config['drupalVersion'] >= 8) {
+            $this->runDrush($shell, 'cr -y');
+        } else {
+            $this->runDrush($shell, 'cc all -y');
+        }
+    }
 
     public function drush(HostConfig $host_config, TaskContextInterface $context)
     {
         $command = $context->get('command');
-        $this->runDrush($host_config, $context, $command);
-    }
 
-    private function runDrush(HostConfig $host_config, TaskContextInterface $context, $command)
-    {
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('shell', $host_config->shell());
         $shell->cd($host_config['siteFolder']);
         $result = $shell->run('#!drush ' . $command);
         $context->setResult('exitCode', $result->getExitCode());
     }
+
+    private function handleModules(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        string $file_name
+    ) {
+    }
+
 
 }

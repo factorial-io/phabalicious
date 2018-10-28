@@ -406,7 +406,7 @@ class ConfigurationService
         $validation_errors = new ValidationErrorBag();
         $validation = new ValidationService($data, $validation_errors, 'host-config');
         $validation->isArray('needs', 'Please specify the needed methods as an array');
-        $validation->isOneOf('type', ['prod', 'stage', 'test', 'dev']);
+        $validation->isOneOf('type', HostType::getAll());
 
         // Validate data against used methods.
 

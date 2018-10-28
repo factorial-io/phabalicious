@@ -283,7 +283,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @throws MissingScriptCallbackImplementation
      */
-    protected function runTaskSpecificScripts(HostConfig $config, string $task, TaskContextInterface $context)
+    public function runTaskSpecificScripts(HostConfig $config, string $task, TaskContextInterface $context)
     {
         $common_scripts = $context->getConfigurationService()->getSetting('common', []);
         $type = $config['type'];
