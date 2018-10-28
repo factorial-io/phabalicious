@@ -64,6 +64,9 @@ class ListBackupsCommand extends BaseCommand
         });
         uasort($files, function ($a, $b) {
             if ($a['date'] == $b['date']) {
+                if ($a['time'] == $b['time']) {
+                    return strcmp($a['type'], $b['type']);
+                }
                 return strcmp($b['time'], $a['time']);
             }
             return strcmp($b['date'], $a['date']);
@@ -71,11 +74,12 @@ class ListBackupsCommand extends BaseCommand
         $io = new SymfonyStyle($input, $output);
         $io->title('List of backups');
         $io->table(
-            ['Date', 'Time', 'Hash', 'File'],
+            ['Date', 'Time', 'Type', 'Hash', 'File'],
             array_map(function ($file) {
                 return [
                     $file['date'],
                     $file['time'],
+                    $file['type'],
                     $file['hash'],
                     $file['file']
                 ];
