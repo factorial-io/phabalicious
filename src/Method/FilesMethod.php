@@ -87,7 +87,6 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
         $this->tarFiles($host_config, $context, $shell, $source_folders, $backup_file_name, 'backup');
         return $backup_file_name;
-
     }
 
     private function tarFiles(
@@ -107,6 +106,23 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $cmd .= ' -czPf ' . $backup_file_name;
         $cmd .= ' ' . implode(' ', $source_folders);
         $result = $shell->run($cmd);
+    }
 
+    public function listBackups(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $shell = $this->getShell($host_config, $context);
+        $files = $this->getRemoteFiles($shell, $host_config['backupFolder'], ['*.tgz']);
+        $result = [];
+        foreach ($files as $file) {
+            $hash = str_replace('.tgz', '', $file);
+            $tokens = $this->parseBackupFile($host_config, $file, $hash, 'files');
+            if ($tokens) {
+                $result[] = $tokens;
+            }
+
+        }
+
+        $existing = $context->getResult('files', []);
+        $context->setResult('files', array_merge($existing, $result));
     }
 }

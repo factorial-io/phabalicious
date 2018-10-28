@@ -364,4 +364,21 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $this->logger->notice('Database dumped to `' . $backup_file_name . '`');
     }
 
+    public function listBackups(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $shell = $this->getShell($host_config, $context);
+        $files = $this->getRemoteFiles($shell, $host_config['backupFolder'], ['*.sql.gz', '*.sql']);
+        $result = [];
+        foreach ($files as $file) {
+            $hash = str_replace(['.sql.gz', '.sql'], '', $file);
+            $tokens = $this->parseBackupFile($host_config, $file, $hash, 'db');
+            if ($tokens) {
+                $result[] = $tokens;
+            }
+
+        }
+
+        $existing = $context->getResult('files', []);
+        $context->setResult('files', array_merge($existing, $result));
+    }
 }

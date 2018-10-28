@@ -4,6 +4,8 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\ShellProvider\ShellProviderFactory;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -86,6 +88,52 @@ abstract class BaseMethod implements MethodInterface
     public function getShell(HostConfig $host_config, TaskContextInterface $context)
     {
         return $context->get('shell', $host_config->shell());
+    }
+
+    protected function getRemoteFiles(ShellProviderInterface $shell, string $folder, array $patterns)
+    {
+        $pwd = $shell->getWorkingDir();
+        $shell->cd($folder);
+
+        $result = [];
+        foreach ($patterns as $pattern) {
+            $return = $shell->run('ls -l ' . $pattern . ' 2>/dev/null', true);
+            foreach ($return->getOutput() as $line) {
+                $a = explode(' ', $line);
+                if (count($a) >= 8) {
+                    $result[] = $a[8];
+                }
+            }
+        }
+        $shell->cd($pwd);
+
+        return $result;
+    }
+
+    protected function parseBackupFile(HostConfig $host_config, string $file, string $hash, string $type)
+    {
+        $tokens = explode('--', $hash);
+        if (count($tokens) < 3) {
+            return false;
+        }
+
+        if ($tokens[0] != $host_config['configName']) {
+            list($tokens[1], $tokens[0]) = $tokens;
+        }
+
+        if ($tokens[0] != $host_config['configName']) {
+            return false;
+        }
+
+        return [
+            'config' => $tokens[0],
+            'commit' => $tokens[1],
+            'date' => $tokens[2],
+            'time' => $tokens[3],
+            'type' => $type,
+            'hash' => $hash,
+            'file' => $file
+        ];
     }
 
 }

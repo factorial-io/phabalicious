@@ -117,7 +117,7 @@ class GitMethod extends BaseMethod implements MethodInterface
         $hash = $this->getVersion($host_config, $context);
         if ($hash) {
             $basename = $context->getResult('basename', []);
-            $basename[] = $hash;
+            array_splice($basename, 1, 0, $hash);
             $context->setResult('basename', $basename);
         }
     }
