@@ -68,17 +68,19 @@ class ListBackupsCommand extends BaseCommand
             }
             return strcmp($b['date'], $a['date']);
         });
-        $table = new Table($output);
-        $table->setHeaders(['Date', 'Time', 'Hash', 'File'])
-            ->setRows(array_map(function ($file) {
+        $io = new SymfonyStyle($input, $output);
+        $io->title('List of backups');
+        $io->table(
+            ['Date', 'Time', 'Hash', 'File'],
+            array_map(function ($file) {
                 return [
                     $file['date'],
                     $file['time'],
                     $file['hash'],
                     $file['file']
                 ];
-            }, $files));
-        $table->render();
+            }, $files)
+        );
 
         return $context->getResult('exitCode', 0);
     }
