@@ -7,6 +7,7 @@ use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class BackupCommand extends BaseCommand
 {
@@ -60,6 +61,15 @@ class BackupCommand extends BaseCommand
         } catch (EarlyTaskExitException $e) {
             return 1;
         }
+
+        $files = $context->getResult('files', []);
+
+        $io = new SymfonyStyle($input, $output);
+        $io->title('Latest backup');
+        $io->table(
+            ['Type', 'File'],
+            $files
+        );
 
         return $context->getResult('exitCode', 0);
     }

@@ -37,6 +37,8 @@ interface TaskContextInterface
 
     public function setResult($key, $value);
 
+    public function addResult(string $key, array $rows);
+
     public function getResult($key, $default = null);
 
     public function getResults(): array;
@@ -49,6 +51,7 @@ interface TaskContextInterface
     public function setShell(ShellProviderInterface $shell);
 
     public function mergeResults(TaskContextInterface $context);
+
 
 
 }

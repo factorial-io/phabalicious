@@ -69,6 +69,12 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $backup_file_name = $this->backupFiles($host_config, $context, $shell, $backup_file_name);
 
         $this->logger->notice('Files dumped to `' . $backup_file_name . '`');
+
+        $context->addResult('files', [[
+            'type' => 'files',
+            'file' => $backup_file_name
+        ]]);
+
     }
 
     private function backupFiles(

@@ -130,4 +130,11 @@ class TaskContext implements TaskContextInterface
     {
         $this->result = Utilities::mergeData($this->result, $context->getResults());
     }
+
+    public function addResult(string $key, array $rows)
+    {
+        $result = $this->getResult($key, []);
+        $result = array_merge($result, $rows);
+        $this->setResult($key, $result);
+    }
 }

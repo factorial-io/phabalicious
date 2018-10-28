@@ -361,6 +361,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         $backup_file_name = $this->backupSQL($host_config, $context, $shell, $backup_file_name);
 
+        $context->addResult('files', [[
+            'type' => 'db',
+            'file' => $backup_file_name
+        ]]);
+
         $this->logger->notice('Database dumped to `' . $backup_file_name . '`');
     }
 
