@@ -80,6 +80,8 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
   
         source <(pha _completion --generate-hook)
 
+* `listBackups` got renamed to `list:backups`
+
 ### Deprecated
 
 * script-function `fail_on_error` is deprecated, use `breakOnFirstError(<bool>)`
@@ -88,4 +90,5 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * `getProperty` is deprecated and got renamed to `get-property`
 * `ssh` is deprecated and got renamed to `shell` as some implementations might not use ssh.
 * `sshCommand` is deprecated and got renamed to `shell:command` and will return the command to run a shell with the given configuration
+* the needs `drush7`, `drush8` and `drush9` are deprecated, use the need `drush` and the newly introduced options `drupalVersion` and `drushVersion` instead,
 

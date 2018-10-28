@@ -26,6 +26,7 @@ class ListBackupsCommand extends BaseCommand
             ['files', 'db']
         );
 
+        $this->setAliases(['listBackups']);
         parent::configure();
     }
 
