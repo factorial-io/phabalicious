@@ -176,8 +176,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $this->runDrush($shell, 'en -y %s', $deployment_module);
         }
 
-        $this->handleModules($host_config, $context, $shell, 'modules_enabled.txt');
-        $this->handleModules($host_config, $context, $shell, 'modules_disabled.txt');
+        $this->handleModules($host_config, $context, $shell, 'modules_enabled.txt', true);
+        $this->handleModules($host_config, $context, $shell, 'modules_disabled.txt', false);
 
         // Database updates
         if ($host_config['drupalVersion'] >= 8) {
@@ -231,9 +231,34 @@ class DrushMethod extends BaseMethod implements MethodInterface
         HostConfig $host_config,
         TaskContextInterface $context,
         ShellProviderInterface $shell,
-        string $file_name
+        string $file_name,
+        bool $should_enable
     ) {
+        $file = $host_config['rootFolder'] . '/' . $file_name;
+        if (!$shell->exists($file)) {
+            return;
+        }
+        $content = $shell->run('cat ' . $file, true);
 
+        $modules = array_filter($content->getOutput(), 'trim');
+        $key = $should_enable ? 'modulesEnabledIgnore' : 'modulesDisabledIgnore';
+
+        $to_ignore = $context->getConfigurationService()->getSetting($key, []);
+        if (count($to_ignore) > 0) {
+            $this->logger->warning(sprintf(
+                'Ignoring %s while %s modules from %s',
+                implode(' ', $to_ignore),
+                $should_enable ? 'enabling' : 'disabling',
+                $host_config['configName']
+            ));
+
+            $modules = array_diff($modules, $to_ignore);
+        }
+        if ($should_enable) {
+            $this->runDrush($shell, 'en -y %s', implode(' ', $modules));
+        } else {
+            $this->runDrush($shell, 'dis -y %s', implode(' ', $modules));
+        }
     }
 
     public function install(HostConfig $host_config, TaskContextInterface $context)
