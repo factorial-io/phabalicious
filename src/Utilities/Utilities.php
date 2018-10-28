@@ -109,4 +109,13 @@ class Utilities
         }
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
+
+    public static function prependRootFolder($rootFolder, $subfolder)
+    {
+        if (strpos($rootFolder, $subfolder) === false) {
+            return $rootFolder . $subfolder;
+        }
+
+        return $subfolder;
+    }
 }

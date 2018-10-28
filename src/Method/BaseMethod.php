@@ -40,6 +40,11 @@ abstract class BaseMethod implements MethodInterface
         return [];
     }
 
+    public function alterConfig(ConfigurationService $configuration_service, array &$data)
+    {
+        // Intentionally left blank.
+    }
+
     public function createShellProvider(array $host_config)
     {
     }

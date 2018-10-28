@@ -21,6 +21,8 @@ interface MethodInterface
 
     public function validateConfig(array $config, ValidationErrorBagInterface $errors);
 
+    public function alterConfig(ConfigurationService $configuration_service, array &$data);
+
     public function createShellProvider(array $host_config);
 
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context);
@@ -28,5 +30,6 @@ interface MethodInterface
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context);
 
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context);
+
 
 }

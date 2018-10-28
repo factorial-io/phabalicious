@@ -258,8 +258,6 @@ class ConfigurationService
     public function getSetting(string $key, $default_value = null)
     {
         return Utilities::getProperty($this->settings, $key, $default_value);
-
-
     }
 
     public function readHttpResource(string $resource):string
@@ -299,7 +297,7 @@ class ConfigurationService
             $this->logger->error(
                 'Could not get needed data from offline-cache for `' .
                 $resource . '`, proceed with caution!'
-             );
+            );
         }
         $this->cache[$cid] = $contents;
 
@@ -414,6 +412,11 @@ class ConfigurationService
 
         foreach ($used_methods as $method) {
             $method->validateConfig($data, $validation_errors);
+        }
+
+        // Give methods a chance to alter the config.
+        foreach ($used_methods as $method) {
+            $method->alterConfig($this, $data);
         }
 
         if (empty($data['shellProvider'])) {

@@ -34,9 +34,11 @@ class GitMethodTest extends TestCase
     private $context;
 
     /**
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function setUp()
     {
