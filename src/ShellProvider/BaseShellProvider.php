@@ -93,6 +93,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
      */
     protected function expandCommand($line)
     {
+        $line = trim($line);
         if (empty($this->hostConfig['executables'])) {
             return $line;
         }
