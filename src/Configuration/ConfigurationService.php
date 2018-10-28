@@ -380,6 +380,7 @@ class ConfigurationService
             'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
+            'supportsInstalls' => (isset($data['type']) && $data['type'] != HostType::PROD) ? true : false,
         ];
 
         if (empty($data['needs'])) {

@@ -2,26 +2,23 @@
 
 namespace Phabalicious\Command;
 
+use Phabalicious\Configuration\HostType;
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class DrushCommand extends BaseCommand
+class InstallCommand extends BaseCommand
 {
     protected function configure()
     {
         parent::configure();
         $this
-            ->setName('drush')
-            ->setDescription('Runs drush')
-            ->setHelp('Runs a drush command against the given host-config');
-        $this->addArgument(
-            'drush',
-            InputArgument::REQUIRED | InputArgument::IS_ARRAY,
-            'The drush-command to run'
-        );
+            ->setName('install')
+            ->setDescription('Install an instance')
+            ->setHelp('Runs all tasks necessary to install an instance on a existing code-base');
     }
 
     /**
@@ -44,15 +41,30 @@ class DrushCommand extends BaseCommand
             return $result;
         }
 
+        $host_config = $this->getHostConfig();
+        if ($host_config->isType(HostType::PROD) || !$host_config['supportsInstalls']) {
+            throw new \InvalidArgumentException('This configuration disallows installs!');
+        }
+
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion(
+            'Install new database for configuration `' . $this->getHostConfig()['configName'] . '`?',
+            false
+        );
+
+        if (!$helper->ask($input, $output, $question)) {
+            return 1;
+        }
+
         $context = new TaskContext($this, $input, $output);
-        $context->set('command', implode(' ', $input->getArgument('drush')));
 
         try {
-            $this->getMethods()->runTask('drush', $this->getHostConfig(), $context);
+            $this->getMethods()->runTask('install', $this->getHostConfig(), $context, ['reset']);
         } catch (EarlyTaskExitException $e) {
             return 1;
         }
 
         return $context->getResult('exitCode', 0);
     }
+
 }

@@ -76,6 +76,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         if (isset($host_config['database'])) {
             $config['database']['host'] = 'localhost';
             $config['database']['skipCreateDatabase'] = false;
+            $config['database']['prefix'] = false;
         }
 
         $config['drupalVersion'] = in_array('drush7', $host_config['needs']) ? 7 : 8;
@@ -232,7 +233,65 @@ class DrushMethod extends BaseMethod implements MethodInterface
         ShellProviderInterface $shell,
         string $file_name
     ) {
+
     }
 
+    public function install(HostConfig $host_config, TaskContextInterface $context)
+    {
+        if (empty($host_config['database'])) {
+            throw new \InvalidArgumentException('Missing database confiuration!');
+        }
+
+        /** @var ShellProviderInterface $shell */
+        $shell = $context->get('shell', $host_config->shell());
+
+        $shell->cd($host_config['rootFolder']);
+        $shell->run(sprintf('mkdir -p %s', $host_config['siteFolder']));
+
+        // Create DB.
+        $shell->cd($host_config['siteFolder']);
+        $o = $host_config['database'];
+        if (!$host_config['database']['skipCreateDatabase']) {
+            $cmd = 'CREATE DATABASE IF NOT EXISTS ' . $o['name'] . '; ' .
+                'GRANT ALL PRIVILEGES ON ' . $o['name'] . '.* ' .
+                'TO \'' . $o['user'] . '\'@\'%\' ' .
+                'IDENTIFIED BY \'' . $o['pass'] . '\';' .
+                'FLUSH PRIVILEGES;';
+            $shell->run('#!mysql' .
+                ' -h ' . $o['host'] .
+                ' -u ' . $o['user'] .
+                ' --password=' . $o['pass'] .
+                ' -e "' . $cmd . '"');
+        }
+
+        // Prepare settings.php
+        $shell->run(sprintf('#!chmod u+w %s', $host_config['siteFolder']));
+
+        if ($shell->exists($host_config['siteFolder'] . '/settings.php')) {
+            $shell->run(sprintf('#!chmod u+w %s/settings.php', $host_config['siteFolder']));
+            if ($host_config['replaceSettingsFile']) {
+                $shell->run(sprintf('rm -f %s/settings.php.old', $host_config['siteFolder']));
+                $shell->run(sprintf(
+                    'mv %s/settings.php %s/settings.php.old 2>/dev/null',
+                    $host_config['siteFolder'],
+                    $host_config['siteFolder']
+                ));
+            }
+        }
+
+        // Install drupal.
+        $cmd_options = '';
+        $cmd_options .= ' -y';
+        $cmd_options .= ' --sites-subdir=' . basename($host_config['siteFolder']);
+        $cmd_options .= ' --account-name=' . $host_config['adminUser'];
+        $cmd_options .= ' --account-pass=admin';
+        $cmd_options .= ' --locale=' . $host_config['installOptions']['locale'];
+        if ($host_config['database']['prefix']) {
+            $cmd_options .= ' --db-prefix=' . $host_config['database']['prefix'];
+        }
+        $cmd_options .= ' --db-url=mysql://' . $o['user'] . ':' . $o['pass'] . '@' . $o['host'] . '/' . $o['name'];
+        $cmd_options.= ' ' . $host_config['installOptions']['options'];
+        $this->runDrush($shell, 'site-install %s %s', $host_config['installOptions']['distribution'], $cmd_options);
+    }
 
 }
