@@ -214,6 +214,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
         if (count($files) > 0) {
             $shell = $hostconfig->shell();
+            $shell->run('mkdir -p ~/.ssh');
+
             foreach ($files as $dest => $data) {
                 if ((substr($data['source'], 0, 7) == 'http://') ||
                     (substr($data['source'], 0, 8) == 'https://')) {
@@ -222,7 +224,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
                     file_put_contents($temp_file, $content);
                     $data['source'] = $temp_file;
                     $temp_files[] = $temp_file;
+                } else if ($data['source'][0] !== '/') {
+                      $data['source'] = realpath($context->getConfigurationService()->getFabfilePath() . '/' . $data['source']);
                 }
+
                 $shell->putFile($data['source'], $dest, $context);
                 $shell->run('#!chmod ' . $data['permissions'] . ' ' . $dest);
             }
