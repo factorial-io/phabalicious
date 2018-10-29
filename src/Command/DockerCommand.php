@@ -76,9 +76,10 @@ class DockerCommand extends BaseCommand
             $tasks = [$tasks];
         }
         try {
+            $all_tasks = $this->getAllTasks($docker_config);
             foreach ($tasks as $task) {
-                if (empty($tasks[$task])) {
-                    $this->printAvailableTasks($input, $output, $this->getAllTasks());
+                if (empty($all_tasks[$task])) {
+                    $this->printAvailableTasks($input, $output, $all_tasks);
                     throw new MethodNotFoundException('Missing task `' . $task . '`');
                 }
                 $context->set('docker_task', $task);
