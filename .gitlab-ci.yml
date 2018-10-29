@@ -1,4 +1,4 @@
-image: php:7.1-cli-alpine
+image: lucor/php7-cli
 
 stages:
   - test
