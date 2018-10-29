@@ -21,7 +21,8 @@
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^2.8|^3|^4.1",
-        "phpunit/phpunit": "^7.3"
+        "phpunit/phpunit": "^7.3",
+        "macfja/phar-builder": "dev-sf4-compatibility"
     },
     "autoload": {
         "psr-4": {"Phabalicious\\": "src/"}
@@ -35,6 +36,25 @@
     "scripts": {
         "auto-scripts": {
 
+        },
+        "build-phar": "php -d phar.readonly=0 vendor/bin/phar-builder package"
+    },
+    "extra": {
+      "phar-builder": {
+        "compression": "GZip",
+        "name": "phabalicious.phar",
+        "output-dir": "./build",
+        "entry-point": "./bin/pha",
+        "include": ["bin","config"],
+        "include-dev": false,
+        "skip-shebang": false,
+        "events": {
+          "build.before" : "git describe --tags > bin/version.txt",
+          "build.after": [
+            "rm bin/version.txt",
+            "chmod +x ../phabalicious.phar"
+          ]
         }
     }
+  }
 }
