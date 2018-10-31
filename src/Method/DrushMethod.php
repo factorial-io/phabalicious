@@ -11,6 +11,7 @@ use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use webignition\ReadableDuration\ReadableDuration;
 
 class DrushMethod extends BaseMethod implements MethodInterface
 {
@@ -375,8 +376,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $files = $this->getRemoteFiles($shell, $host_config['backupFolder'], ['*.sql.gz', '*.sql']);
         $result = [];
         foreach ($files as $file) {
-            $hash = str_replace(['.sql.gz', '.sql'], '', $file);
-            $tokens = $this->parseBackupFile($host_config, $file, $hash, 'db');
+            $tokens = $this->parseBackupFile($host_config, $file, 'db');
             if ($tokens) {
                 $result[] = $tokens;
             }
@@ -385,5 +385,49 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         $existing = $context->getResult('files', []);
         $context->setResult('files', array_merge($existing, $result));
+    }
+
+    public function restore(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $shell = $this->getShell($host_config, $context);
+        $what = $context->get('what', []);
+        if (!in_array('db', $what)) {
+            return;
+        }
+
+        $backup_set = $context->get('backup_set', []);
+        foreach ($backup_set as $elem) {
+            if ($elem['type'] != 'db') {
+                continue;
+            }
+
+            $result = $this->importSqlFromFile($shell, $host_config['backupFolder'] . '/' . $elem['file']);
+            if (!$result->succeeded()) {
+                $result->throwRuntimeException('Could not restore backup from ' . $elem['file']);
+            }
+            $context->addResult('files', [[
+                'type' => 'db',
+                'file' => $elem['file']
+            ]]);
+        }
+    }
+
+    /**
+     * @param ShellProviderInterface $shell
+     * @param string $file
+     * @param bool $drop_db
+     * @return \Phabalicious\ShellProvider\CommandResult
+     */
+    private function importSqlFromFile(ShellProviderInterface $shell, string $file, $drop_db = false)
+    {
+        $this->logger->notice('Restoring db from ' . $file);
+        if ($drop_db) {
+            $this->runDrush($shell, 'sql-drop -y');
+        }
+
+        if (substr($file, strrpos($file, '.') + 1) == 'gz') {
+            return $shell->run(sprintf('#!gunzip %s | $(#!drush sql-connect)', $file));
+        }
+        return $this->runDrush($shell, 'sql-cli < %s', $file);
     }
 }

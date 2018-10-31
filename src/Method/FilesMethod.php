@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 
 class FilesMethod extends BaseMethod implements MethodInterface
@@ -64,33 +65,37 @@ class FilesMethod extends BaseMethod implements MethodInterface
         }
 
         $basename = $context->getResult('basename');
-        $backup_file_name = $host_config['backupFolder'] . '/' . implode('--', $basename) . '.tgz';
+        $keys = $context->get('backupFolderKeys', []);
+        $keys = array_merge($keys, [
+            'public' => 'filesFolder',
+            'private' => 'privateFilesFolder'
+        ]);
 
-        $backup_file_name = $this->backupFiles($host_config, $context, $shell, $backup_file_name);
+        foreach ($keys as $key => $folder) {
+            if (empty($host_config[$folder])) {
+                continue;
+            }
+            $backup_file_name = $host_config['backupFolder'] . '/' . implode('--', $basename) .'.' . $key . '.tgz';
+            $source_folders = [ $host_config[$folder] ];
 
-        $this->logger->notice('Files dumped to `' . $backup_file_name . '`');
+            $backup_file_name = $this->backupFiles($host_config, $context, $shell, $source_folders, $backup_file_name);
 
-        $context->addResult('files', [[
-            'type' => 'files',
-            'file' => $backup_file_name
-        ]]);
+            $this->logger->notice('Files dumped to `' . $backup_file_name . '`');
 
+            $context->addResult('files', [[
+                'type' => 'files',
+                'file' => $backup_file_name
+            ]]);
+        }
     }
 
     private function backupFiles(
         HostConfig $host_config,
         TaskContextInterface $context,
         ShellProviderInterface $shell,
+        array $source_folders,
         string $backup_file_name
     ) {
-        $source_folders = $context->get('sourceFolders', []);
-        $keys = ['filesFolder', 'privateFilesFolder'];
-        foreach ($keys as $key) {
-            if (!empty($host_config[$key])) {
-                $source_folders[]= $host_config[$key];
-            }
-        }
-
         $this->tarFiles($host_config, $context, $shell, $source_folders, $backup_file_name, 'backup');
         return $backup_file_name;
     }
@@ -120,15 +125,86 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $files = $this->getRemoteFiles($shell, $host_config['backupFolder'], ['*.tgz']);
         $result = [];
         foreach ($files as $file) {
-            $hash = str_replace('.tgz', '', $file);
-            $tokens = $this->parseBackupFile($host_config, $file, $hash, 'files');
+            $tokens = $this->parseBackupFile($host_config, $file, 'files');
             if ($tokens) {
                 $result[] = $tokens;
             }
 
         }
 
-        $existing = $context->getResult('files', []);
-        $context->setResult('files', array_merge($existing, $result));
+        $context->addResult('files', $result);
     }
+
+    public function restore(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $shell = $this->getShell($host_config, $context);
+        $what = $context->get('what', []);
+        if (!in_array('files', $what)) {
+            return;
+        }
+
+        $backup_set = $context->get('backup_set', []);
+        foreach ($backup_set as $elem) {
+            if ($elem['type'] != 'files') {
+                continue;
+            }
+            $file_type = $this->getFileTypeFromFileName($elem['file']);
+            if (empty($host_config[$file_type])) {
+                $this->logger->error(
+                    'Could not find configuration for file-type `' . $file_type . '`, skipping restore'
+                );
+                continue;
+            }
+
+            $target_dir = $host_config[$file_type];
+            $result = $this->extractFiles($shell, $host_config['backupFolder'] . '/' . $elem['file'], $target_dir);
+            if (!$result->succeeded()) {
+                $result->throwRuntimeException('Could not restore backup from ' . $elem['file']);
+            }
+            $context->addResult('files', [[
+                'type' => 'files',
+                'file' => $elem['file']
+            ]]);
+        }
+    }
+
+    private function extractFiles(
+        ShellProviderInterface $shell,
+        string $archive,
+        string $target_dir
+    ) {
+        $this->logger->notice('Extracting ' . $archive . ' to ' . $target_dir);
+
+        if ($shell->exists($target_dir)) {
+            // Rename and move away.
+            $backup = $target_dir . date('YmdHms');
+            $shell->run(sprintf('chmod u+w %s', $target_dir));
+            $shell->run(sprintf('mv %s %s', $target_dir, $backup));
+        }
+        $shell->run(sprintf('mkdir -p %s', $target_dir));
+        $saved = $shell->getWorkingDir();
+        $shell->cd($target_dir);
+        $result = $shell->run(sprintf('#!tar -xzPf %s', $archive));
+        $shell->cd($saved);
+
+        return $result;
+    }
+
+    private function getFileTypeFromFileName($file)
+    {
+        $mapping = [
+            'private' => 'privateFilesFolder',
+            'public' => 'filesFolder',
+            'tgz' => 'filesFolder',
+        ];
+        $p = strrpos($file, '--');
+        $p2 = strpos(substr($file, $p + 2), '.');
+        $temp = substr($file, $p + 2 + $p2 + 1);
+        $a = explode('.', $temp);
+        $type = $a[0];
+
+        return isset($mapping[$type]) ? $mapping[$type] : $type;
+    }
+
+
 }

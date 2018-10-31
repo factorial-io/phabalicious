@@ -35,7 +35,13 @@ class CommandResult
         return $this->lines;
     }
 
-    public function getExitCode() {
+    public function getExitCode()
+    {
         return $this->exitCode;
+    }
+
+    public function throwRuntimeException($message)
+    {
+        throw new \RuntimeException($message . "\n" . implode("\n", $this->getOutput()));
     }
 }

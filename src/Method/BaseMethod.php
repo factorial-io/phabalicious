@@ -99,7 +99,7 @@ abstract class BaseMethod implements MethodInterface
         foreach ($patterns as $pattern) {
             $return = $shell->run('ls -l ' . $pattern . ' 2>/dev/null', true);
             foreach ($return->getOutput() as $line) {
-                $a = explode(' ', $line);
+                $a = preg_split('/\s+/', $line);
                 if (count($a) >= 8) {
                     $result[] = $a[8];
                 }
@@ -110,8 +110,11 @@ abstract class BaseMethod implements MethodInterface
         return $result;
     }
 
-    protected function parseBackupFile(HostConfig $host_config, string $file, string $hash, string $type)
+    protected function parseBackupFile(HostConfig $host_config, string $file, string $type)
     {
+        $p = strrpos($file, '--');
+        $p2 = strpos($file, '.', $p+2);
+        $hash = substr($file, 0, $p2);
         $tokens = explode('--', $hash);
         if (count($tokens) < 3) {
             return false;
