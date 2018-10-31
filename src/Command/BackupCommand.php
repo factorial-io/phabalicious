@@ -65,7 +65,7 @@ class BackupCommand extends BaseCommand
         $files = $context->getResult('files', []);
 
         $io = new SymfonyStyle($input, $output);
-        $io->title('Latest backup');
+        $io->title('Created backup files');
         $io->table(
             ['Type', 'File'],
             $files
