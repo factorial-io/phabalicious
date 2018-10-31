@@ -104,7 +104,7 @@ class SshShellProvider extends LocalShellProvider
      */
     public function exists($dir):bool
     {
-        $result = $this->run('stat ' . $dir);
+        $result = $this->run(sprintf('stat %s > /dev/null', $dir));
         return $result->succeeded();
     }
 
