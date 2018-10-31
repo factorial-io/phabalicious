@@ -81,6 +81,8 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
         source <(pha _completion --generate-hook)
 
 * `listBackups` got renamed to `list:backups`
+* `backupDB` and `backupFiles` got removed, use `pha backup files` or `pha backup db`, the same mechanism works for restoring a backup.
+
 
 ### Deprecated
 
