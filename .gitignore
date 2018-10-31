@@ -11,3 +11,4 @@
 ###< symfony/phpunit-bridge ###
 /bin/console
 /bin/phpunit
+/build/phabalicious.phar
