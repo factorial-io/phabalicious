@@ -2,36 +2,31 @@
 
 namespace Phabalicious\Command;
 
+use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
-use Phabalicious\Utilities\Utilities;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
-class GetFileCommand extends BaseCommand
+class GetSqlDumpCommand extends BaseCommand
 {
 
     protected function configure()
     {
-        parent::configure();
         $this
-            ->setName('get:file')
-            ->setDescription('Get a file from a remote instance')
-            ->setHelp('Copies a remote file to your local');
-        $this->addArgument(
-            'file',
-            InputArgument::REQUIRED,
-            'The file to copy from the remote instance'
-        );
-
-        $this->setAliases(['getFile']);
+            ->setName('get:sql-dump')
+            ->setDescription('Get a current dump of the database')
+            ->setHelp('Gets a dump of the database and copies it to your local computer');
+        $this->setAliases(['getSQLDump']);
+        parent::configure();
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null
+     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -46,17 +41,34 @@ class GetFileCommand extends BaseCommand
         if ($result = parent::execute($input, $output)) {
             return $result;
         }
-        $file = $input->getArgument('file');
-
 
         $context = new TaskContext($this, $input, $output);
-        $context->set('sourceFile', $file);
-        $context->set('destFile', getcwd());
 
-        $output->writeln('<info>Get file `' . $file . '` from `' . $this->getHostConfig()['configName']. '`');
+        $this->getMethods()->runTask('getSQLDump', $this->getHostConfig(), $context);
+        $to_copy = $context->getResult('files');
 
-        $this->getMethods()->runTask('getFile', $this->getHostConfig(), $context);
 
-        return $context->getResult('exitCode', 0);
+        $shell = $context->get('shell', $this->getHostConfig()->shell());
+        $files = [];
+        foreach ($to_copy as $file) {
+            if ($shell->getFile(
+                $file,
+                getcwd(),
+                $context
+            )) {
+                $files[] = basename($file);
+            }
+            $shell->run(sprintf('rm %s', $file));
+        }
+
+
+        if (count($files) > 0) {
+            $io = new SymfonyStyle($input, $output);
+            $io->title('Copied dumps to:');
+            $io->listing($files);
+        }
+
+        return 0;
     }
+
 }

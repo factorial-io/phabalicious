@@ -16,7 +16,7 @@ class GetBackupCommand extends BaseCommand
     protected function configure()
     {
         $this
-            ->setName('get-backup')
+            ->setName('get:backup')
             ->setDescription('Get a specific backup-set')
             ->setHelp('Copies a backup-set to the local computer');
         $this->addArgument(

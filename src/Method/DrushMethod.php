@@ -334,7 +334,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
         if ($skip_tables = $context->getConfigurationService()->getSetting('sqlSkipTables')) {
             $dump_options .= ' --structure-tables-list=' . implode(',', $skip_tables);
         }
-        $shell->run(sprintf('mkdir -p %s', dirname($backup_file_name)));
+        if (!$shell->exists(dirname($backup_file_name))) {
+            $shell->run(sprintf('mkdir -p %s', dirname($backup_file_name)));
+        }
 
         if ($host_config['supportsZippedBackups']) {
             $shell->run(sprintf('rm -f %s.gz', $backup_file_name));
@@ -368,6 +370,15 @@ class DrushMethod extends BaseMethod implements MethodInterface
         ]]);
 
         $this->logger->notice('Database dumped to `' . $backup_file_name . '`');
+    }
+
+    public function getSQLDump(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $filename = $host_config['tmpFolder'] . '/' . $host_config['configName']. '.' . date('YmdHms') . '.sql';
+        $shell = $this->getShell($host_config, $context);
+        $filename = $this->backupSQL($host_config, $context, $shell, $filename);
+
+        $context->addResult('files', [$filename]);
     }
 
     public function listBackups(HostConfig $host_config, TaskContextInterface $context)
