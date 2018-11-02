@@ -16,7 +16,7 @@ class PutFileCommand extends BaseCommand
     {
         parent::configure();
         $this
-            ->setName('put-file')
+            ->setName('put:file')
             ->setDescription('Put a file to a remote instance')
             ->setHelp('Copies a local file to a remote instance');
         $this->addArgument(
