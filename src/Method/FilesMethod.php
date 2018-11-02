@@ -10,6 +10,11 @@ use Phabalicious\ShellProvider\ShellProviderInterface;
 class FilesMethod extends BaseMethod implements MethodInterface
 {
 
+    const DEFAULT_FILE_SOURCES = [
+        'public' => 'filesFolder',
+        'private' => 'privateFilesFolder'
+    ];
+
     public function getName(): string
     {
         return 'files';
@@ -66,10 +71,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
         $basename = $context->getResult('basename');
         $keys = $context->get('backupFolderKeys', []);
-        $keys = array_merge($keys, [
-            'public' => 'filesFolder',
-            'private' => 'privateFilesFolder'
-        ]);
+        $keys = array_merge($keys, self::DEFAULT_FILE_SOURCES);
 
         foreach ($keys as $key => $folder) {
             if (empty($host_config[$folder])) {
@@ -80,12 +82,17 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
             $backup_file_name = $this->backupFiles($host_config, $context, $shell, $source_folders, $backup_file_name);
 
-            $this->logger->notice('Files dumped to `' . $backup_file_name . '`');
+            if (!$backup_file_name) {
+                $this->logger->error('Could not backup files ' . implode(' ', $source_folders));
+            }
+            else {
+                $this->logger->notice('Files dumped to `' . $backup_file_name . '`');
 
-            $context->addResult('files', [[
-                'type' => 'files',
-                'file' => $backup_file_name
-            ]]);
+                $context->addResult('files', [[
+                    'type' => 'files',
+                    'file' => $backup_file_name
+                ]]);
+            }
         }
     }
 
@@ -96,8 +103,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
         array $source_folders,
         string $backup_file_name
     ) {
-        $this->tarFiles($host_config, $context, $shell, $source_folders, $backup_file_name, 'backup');
-        return $backup_file_name;
+        return $this->tarFiles($host_config, $context, $shell, $source_folders, $backup_file_name, 'backup');
     }
 
     private function tarFiles(
@@ -117,6 +123,8 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $cmd .= ' -czPf ' . $backup_file_name;
         $cmd .= ' ' . implode(' ', $source_folders);
         $result = $shell->run($cmd);
+
+        return $result->succeeded() ? $backup_file_name : false;
     }
 
     public function listBackups(HostConfig $host_config, TaskContextInterface $context)
@@ -206,5 +214,25 @@ class FilesMethod extends BaseMethod implements MethodInterface
         return isset($mapping[$type]) ? $mapping[$type] : $type;
     }
 
+    public function getFilesDump(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $shell = $this->getShell($host_config, $context);
+        $keys = $context->get('backupFolderKeys', []);
+        $keys = array_merge($keys, self::DEFAULT_FILE_SOURCES);
+        foreach ($keys as $key => $name) {
+            if (!empty($host_config[$name])) {
+                $filename = $host_config['tmpFolder'] .
+                    '/' . $host_config['configName'] .
+                    '.' . $key . '.'
+                    . date('YmdHms') . '.tgz';
+                $filename = $this->tarFiles($host_config, $context, $shell, [$host_config[$name]], $filename, $key);
+
+                if ($filename) {
+                    $context->addResult('files', [$filename]);
+                }
+
+            }
+        }
+    }
 
 }
