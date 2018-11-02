@@ -7,6 +7,7 @@ use Phabalicious\Configuration\DockerConfig;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\ScopedLogLevel\ScopedErrorLogLevel;
 use Phabalicious\ScopedLogLevel\ScopedLogLevel;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -158,7 +159,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $shell = $hostconfig->shell();
 
         while ($tries < $max_tries) {
+            $error_log_level = new ScopedErrorLogLevel($shell, LogLevel::NOTICE);
             $result = $shell->run('#!supervisorctl status', true);
+            $error_log_level = null;
 
             $count_running = 0;
             $count_services = 0;
@@ -171,7 +174,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 }
             }
             if ($result->getExitCode() !== 0) {
-                throw new \RuntimeException('Error running supervisorctl, check the logs');
+                $this->logger->notice('Error running supervisorctl, check the logs');
             }
             if ($result->getExitCode() == 0 && ($count_running == $count_services)) {
                 $this->logger->notice('Services up and running!');

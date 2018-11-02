@@ -32,15 +32,24 @@ abstract class BaseShellProvider implements ShellProviderInterface
     /** @var LogLevelStack */
     protected $loglevel;
 
+    /** @var LogLevelStack */
+    protected $errorLogLevel;
+
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
         $this->loglevel = new LogLevelStack(LogLevel::NOTICE);
+        $this->errorLogLevel = new LogLevelStack(LogLevel::ERROR);
     }
 
     public function getLogLevelStack(): LoglevelStackInterface
     {
         return $this->loglevel;
+    }
+
+    public function getErrorLogLevelStack(): LoglevelStackInterface
+    {
+        return $this->errorLogLevel;
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
@@ -137,7 +146,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
             $process->run($cb);
         }
         if ($process->getExitCode() != 0) {
-            $this->logger->error($process->getErrorOutput());
+            $this->logger->log($this->errorLogLevel->get(), $process->getErrorOutput());
             return false;
         }
         return true;

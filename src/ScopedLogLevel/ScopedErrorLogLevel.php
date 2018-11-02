@@ -2,13 +2,13 @@
 
 namespace Phabalicious\ScopedLogLevel;
 
-class ScopedLogLevel
+class ScopedErrorLogLevel
 {
     private $stack;
 
     public function __construct(LogLevelStackGetterInterface $decorated, string $new_log_level)
     {
-        $this->stack = $decorated->getLogLevelStack();
+        $this->stack = $decorated->getErrorLogLevelStack();
         $this->stack->pushLoglevel($new_log_level);
     }
 
