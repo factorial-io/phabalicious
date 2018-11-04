@@ -5,6 +5,15 @@
     "doctrine/instantiator": {
         "version": "1.1.0"
     },
+    "guzzlehttp/guzzle": {
+        "version": "6.3.3"
+    },
+    "guzzlehttp/promises": {
+        "version": "v1.3.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.4.2"
+    },
     "hoa/consistency": {
         "version": "1.17.05.02"
     },
@@ -85,6 +94,9 @@
     },
     "psr/container": {
         "version": "1.0.0"
+    },
+    "psr/http-message": {
+        "version": "1.0.1"
     },
     "psr/log": {
         "version": "1.0.2"
@@ -196,6 +208,9 @@
     },
     "theseer/tokenizer": {
         "version": "1.1.0"
+    },
+    "thibaud-dauce/mattermost-php": {
+        "version": "1.2.1"
     },
     "webignition/readable-duration": {
         "version": "0.2"

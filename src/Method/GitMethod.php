@@ -122,4 +122,12 @@ class GitMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    public function getMetaInformation(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $context->addResult('meta', [
+            new MetaInformation('Version', $this->getVersion($host_config, $context), true),
+            new MetaInformation('Commit', $this->getCommitHash($host_config, $context), true),
+        ]);
+    }
+
 }

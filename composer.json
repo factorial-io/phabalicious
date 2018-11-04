@@ -18,7 +18,8 @@
         "symfony/dotenv": "^2.8|^3|^4.1",
         "ext-json": "*",
         "stecman/symfony-console-completion": "^0.8.0",
-        "symfony/finder": "^4.1"
+        "symfony/finder": "^4.1",
+        "thibaud-dauce/mattermost-php": "^1.2"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^2.8|^3|^4.1",
