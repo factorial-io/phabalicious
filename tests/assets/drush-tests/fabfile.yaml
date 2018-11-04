@@ -10,6 +10,7 @@ hosts:
     rootFolder: /var/www
     siteFolder: /sites/default
     filesFolder: /sites/default/files
+    backupFolder: /var/www/backups
     revertFeatures: false
     type: dev
     database:
