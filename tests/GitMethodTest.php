@@ -68,6 +68,7 @@ class GitMethodTest extends TestCase
         $shell->cd($host_config['gitRootFolder']);
         $shell->run('rm -rf .git');
         $shell->run('git init . ');
+        $shell->run('git config user.email "phabalicious@factorial.io"');
         $shell->run('git add fabfile.yaml');
         $shell->run('git commit -m "initial commit"');
         $shell->run('git tag -a 1.0.0 -m "Tagging version 1.0.0"');
