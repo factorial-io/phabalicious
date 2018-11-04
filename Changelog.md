@@ -82,7 +82,13 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 
 * `listBackups` got renamed to `list:backups`
 * `backupDB` and `backupFiles` got removed, use `pha backup files` or `pha backup db`, the same mechanism works for restoring a backup.
-
+* `getFile` got renamed to `get:file`
+* `putFile` got renamed to `put:file`
+* `getBackup` got renamed to `get:backup`
+* `getFilesDump` got renamed to `get:files-backup`
+* `getProperty` got renamed to `get:property`
+* `getSQLDump` got renamed to `get:sql-dump`
+* `restoreSQLFromFile` got renamed to `restore:sql-from-file`
 
 ### Deprecated
 
@@ -93,4 +99,4 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * `ssh` is deprecated and got renamed to `shell` as some implementations might not use ssh.
 * `sshCommand` is deprecated and got renamed to `shell:command` and will return the command to run a shell with the given configuration
 * the needs `drush7`, `drush8` and `drush9` are deprecated, use the need `drush` and the newly introduced options `drupalVersion` and `drushVersion` instead,
-
+* the `slack`-configuration got removed and got replaced by a general notification solution, currently only with a mattermost implementation.
