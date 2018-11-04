@@ -4,7 +4,7 @@ stages:
   - test
   
 before_script:
-  - php composer.phar install
+  - php /composer.phar install
  
 runTests:
   artifacts:
