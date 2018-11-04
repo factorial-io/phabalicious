@@ -1,8 +1,9 @@
 image: factorial/phabalicious-test-runner
 
 stages:
+  - build
   - test
-  
+
 before_script:
   - php /composer.phar install
  
@@ -13,4 +14,6 @@ runTests:
     - docker
   stage: test
   script:
-    - cd tests; ../vendor/bin/phpunit .
+  - cd tests; ../vendor/bin/phpunit --test-suite=ci .
+
+
