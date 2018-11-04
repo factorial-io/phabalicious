@@ -441,4 +441,17 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
         return $this->runDrush($shell, 'sql-cli < %s', $file);
     }
+
+
+    public function restoreSqlFromFile(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $file = $context->get('source', false);
+        if (!$file) {
+            throw new \InvalidArgumentException('Missing file parameter');
+        }
+        $shell = $this->getShell($host_config, $context);
+        $result = $this->importSqlFromFile($shell, $file);
+
+        $context->setResult('exitCode', $result->getExitCode());
+    }
 }
