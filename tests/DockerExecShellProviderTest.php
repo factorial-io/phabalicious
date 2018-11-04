@@ -78,6 +78,9 @@ class DockerExecShellProviderTest extends TestCase
         sleep(5);
     }
 
+    /**
+     * @group docker
+     */
     public function testSimpleCommand()
     {
 

@@ -3,10 +3,6 @@
         <testsuite name="tests">
             <directory>.</directory>
         </testsuite>
-        <testsuite name="ci">
-            <directory>.</directory>
-            <exclude>DockerExecShellProviderTest.php</exclude>
-        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">

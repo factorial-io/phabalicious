@@ -14,6 +14,6 @@ runTests:
     - docker
   stage: test
   script:
-  - cd tests; ../vendor/bin/phpunit --test-suite=ci .
+  - cd tests; ../vendor/bin/phpunit --exclude-group docker .
 
 
