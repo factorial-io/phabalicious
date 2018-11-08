@@ -20,7 +20,7 @@ As fabric (the underlying lib we used for fabalicious) is quite different to sym
 
 ```shell
 fab config:mbb docker:run reset ssh
-``` 
+```
 
 This is not possible anymore with phabalicious, you need to run the commands in sequence. If you need that on a regular basis, a `script` might be a good workaround.
 
@@ -28,13 +28,13 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 
 
 #### Some examples
-    
+
 | Old syntax | New syntax |
 |---|---|
-| `fab config:mbb about` | `pha about --config mbb` |
-| `fab config:mbb about` | `pha --config=mbb about` |
-| `fab config:mbb blueprint:de deploy` | `pha deploy --config mbb --blueprint de` |
-| `fab config:mbb blueprint:de deploy` | `pha --config=mbb --blueprint=de mbb` |
+| `fab config:mbb about` | `phab about --config mbb` |
+| `fab config:mbb about` | `phab --config=mbb about` |
+| `fab config:mbb blueprint:de deploy` | `phab deploy --config mbb --blueprint de` |
+| `fab config:mbb blueprint:de deploy` | `phab --config=mbb --blueprint=de mbb` |
 
 ### New features
 
@@ -44,21 +44,21 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
     * `ssh`, runs the shell-commands on a remote host.
 
     Every shell-provider can have different required options. Currently add the needed shell-provider to your list of needs, e.g.
-  
+
           needs:
             - local
             - git
             - drush
 
-* new global settings `disableScripts` which will not add the `script`-method to the needs. 
+* new global settings `disableScripts` which will not add the `script`-method to the needs.
 * there's a new command to list all blueprints: `list:blueprints`
-* new shell-provider `dockerExec` which will start a shell with the help of `docker exec` instead of ssh. 
+* new shell-provider `dockerExec` which will start a shell with the help of `docker exec` instead of ssh.
 * new config-option `shellProvider`, where you can override the shell-provider to your liking.
-      
+
       hosts:
         mbb:
           shellProvider: docker-exec
-* You can get help for a specific task via `pha help <task>`. It will show all possible options and some help.
+* You can get help for a specific task via `phab help <task>`. It will show all possible options and some help.
 
 ### Changed
 
@@ -67,21 +67,21 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * the `--list` task (which was built into fabric) is now `list`.
 * the `offline`-task got removed, instead add the `-offline`-option and set it to 1, e.g.
 
-      pha --offline=1 --config=mbb about
-      
+      phab --offline=1 --config=mbb about
+
 * the task `logLevel` is replaced by the builtin `-v`-option
-* autocompletion works now differently than before, but now bash and zsh are supported. Please have a look into the documentation how to install it. 
-  
+* autocompletion works now differently than before, but now bash and zsh are supported. Please have a look into the documentation how to install it.
+
   * for fish-shells
-  
-        pha _completion --generate-hook --shell-type fish | source
-        
+
+        phab _completion --generate-hook --shell-type fish | source
+
   * for zsh/bash-shells
-  
-        source <(pha _completion --generate-hook)
+
+        source <(phab _completion --generate-hook)
 
 * `listBackups` got renamed to `list:backups`
-* `backupDB` and `backupFiles` got removed, use `pha backup files` or `pha backup db`, the same mechanism works for restoring a backup.
+* `backupDB` and `backupFiles` got removed, use `phab backup files` or `phab backup db`, the same mechanism works for restoring a backup.
 * `getFile` got renamed to `get:file`
 * `putFile` got renamed to `put:file`
 * `getBackup` got renamed to `get:backup`
@@ -94,7 +94,7 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 
 * script-function `fail_on_error` is deprecated, use `breakOnFirstError(<bool>)`
 * `runLocally` is deprecated, add a new need `local` to the lists of needs.
-* `strictHostKeyChecking` is deprecated, use `disableKnownHosts` instead. 
+* `strictHostKeyChecking` is deprecated, use `disableKnownHosts` instead.
 * `getProperty` is deprecated and got renamed to `get-property`
 * `ssh` is deprecated and got renamed to `shell` as some implementations might not use ssh.
 * `sshCommand` is deprecated and got renamed to `shell:command` and will return the command to run a shell with the given configuration
