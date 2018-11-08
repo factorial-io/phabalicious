@@ -375,12 +375,17 @@ class ConfigurationService
     private function validateHostConfig($config_name, $data)
     {
         $data = $this->resolveInheritance($data, $this->hosts);
-
+        $type = isset($data['type']) ? $data['type'] : false;
         $defaults = [
             'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
-            'supportsInstalls' => (isset($data['type']) && $data['type'] != HostType::PROD) ? true : false,
+            'supportsInstalls' => $data['type'] != HostType::PROD
+                ? true
+                : false,
+            'backupBeforeDeploy' => in_array($data['type'], [HostType::STAGE, HostType::PROD])
+                ? true
+                : false,
             'tmpFolder' => '/tmp',
         ];
 
@@ -451,7 +456,7 @@ class ConfigurationService
         }
         if ($validation_errors->getWarnings()) {
             foreach ($validation_errors->getWarnings() as $key => $warning) {
-                $this->logger->warning('Found deprecated key `' . $key . '`: ' . $warning);
+                $this->logger->warning('Found deprecated key in `' . $config_name .'`, `' . $key . '`: ' . $warning);
             }
         }
 
