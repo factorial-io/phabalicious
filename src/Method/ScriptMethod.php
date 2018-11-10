@@ -160,7 +160,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $callback_handled = $this->executeCallback($context, $callbacks, $callback_name, $args);
             }
             if (!$callback_handled) {
-                $command_result = $shell->run($line);
+                $command_result = $shell->run($line, false, false);
                 $context->setCommandResult($command_result);
 
                 if ($command_result->failed() && $this->getBreakOnFirstError()) {

@@ -167,7 +167,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
             $target_dir = $host_config[$file_type];
             $result = $this->extractFiles($shell, $host_config['backupFolder'] . '/' . $elem['file'], $target_dir);
             if (!$result->succeeded()) {
-                $result->throwRuntimeException('Could not restore backup from ' . $elem['file']);
+                $result->throwException('Could not restore backup from ' . $elem['file']);
             }
             $context->addResult('files', [[
                 'type' => 'files',

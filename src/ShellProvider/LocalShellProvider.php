@@ -104,11 +104,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      *
      * @param string $command
      * @param bool $capture_output
-     * @param OutputInterface|null $output
+     * @param bool $throw_exception_on_error
      * @return CommandResult
      * @throws \Exception
      */
-    public function run(string $command, $capture_output = false, OutputInterface $output = null): CommandResult
+    public function run(string $command, $capture_output = false, $throw_exception_on_error = true): CommandResult
     {
         $this->setup();
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
@@ -124,10 +124,15 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
         if ($this->process->isTerminated()) {
             $this->logger->error('Local shell terminated unexpected!');
-            $this->logger->error(trim($this->process->getErrorOutput()));
+            $error_output = trim($this->process->getErrorOutput());
+            $this->logger->error($error_output);
             $exit_code = $this->process->getExitCode();
             $this->process = null;
-            return new CommandResult($exit_code, []);
+            $cr = new CommandResult($exit_code, explode(PHP_EOL, $error_output));
+            if ($throw_exception_on_error) {
+                $cr->throwException(sprintf('`%s` failed!', $command));
+            }
+            return $cr;
         }
 
         $lines = explode(PHP_EOL, $result);
@@ -143,7 +148,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                 $this->logger->debug($line);
             }
         }
-        return new CommandResult($exit_code, $lines);
+        $cr = new CommandResult($exit_code, $lines);
+        if ($cr->failed() && !$capture_output && $throw_exception_on_error) {
+            $cr->throwException(sprintf('`%s` failed!', $command));
+        }
+        return $cr;
     }
 
     /**

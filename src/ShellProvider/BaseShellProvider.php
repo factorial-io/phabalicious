@@ -152,4 +152,15 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return true;
     }
 
+    public function copyFileFrom(
+        ShellProviderInterface $from_shell,
+        string $source_file_name,
+        string $target_file_name,
+        TaskContextInterface $context,
+        bool $verbose = false
+    ): bool {
+
+        return false;
+    }
+
 }

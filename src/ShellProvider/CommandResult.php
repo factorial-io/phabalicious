@@ -2,6 +2,8 @@
 
 namespace Phabalicious\ShellProvider;
 
+use Phabalicious\Exception\FailedShellCommandException;
+
 class CommandResult
 {
 
@@ -40,8 +42,14 @@ class CommandResult
         return $this->exitCode;
     }
 
-    public function throwRuntimeException($message)
+    /**
+     * @param $message
+     * @throws FailedShellCommandException
+     */
+    public function throwException($message)
     {
-        throw new \RuntimeException($message . "\n" . implode("\n", $this->getOutput()));
+        throw new FailedShellCommandException(
+            $message . "\n" . implode("\n", $this->getOutput())
+        );
     }
 }
