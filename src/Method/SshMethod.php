@@ -117,9 +117,18 @@ class SshMethod extends BaseMethod implements MethodInterface
             return;
         }
         $this->creatingTunnel = true;
-        if (!in_array($task, ['about', 'doctor', 'sshCommand']) && !empty($config['sshTunnel'])) {
-            $this->createLocalToHostTunnel($config, $context);
+        if (!in_array($task, ['about', 'doctor', 'sshCommand'])) {
+            if (!empty($config['sshTunnel'])) {
+                $this->createLocalToHostTunnel($config, $context);
+            }
+        }
+        if (in_array($task, ['copyFrom'])) {
+            $from_config = $context->get('from', false);
+            if ($from_config && !empty($from_config['sshTunnel'])) {
+                $this->createLocalToHostTunnel($from_config, $context);
+            }
         }
         $this->creatingTunnel = false;
     }
+
 }
