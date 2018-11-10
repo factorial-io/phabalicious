@@ -414,7 +414,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
             $result = $this->importSqlFromFile($shell, $host_config['backupFolder'] . '/' . $elem['file']);
             if (!$result->succeeded()) {
-                $result->throwRuntimeException('Could not restore backup from ' . $elem['file']);
+                $result->throwException('Could not restore backup from ' . $elem['file']);
             }
             $context->addResult('files', [[
                 'type' => 'db',
@@ -453,5 +453,47 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $result = $this->importSqlFromFile($shell, $file);
 
         $context->setResult('exitCode', $result->getExitCode());
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     */
+    public function copyFrom(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $what = $context->get('what');
+        if (!in_array('db', $what)) {
+            return;
+        }
+
+        /** @var HostConfig $from_config */
+        /** @var ShellProviderInterface $shell */
+        /** @var ShellProviderInterface $from_shell */
+        $from_config = $context->get('from', false);
+        $shell = $this->getShell($host_config, $context);
+        $from_shell = $context->get('fromShell', $from_config->shell());
+
+        $from_filename = $from_config['tmpFolder'] . '/' . $from_config['configName']. '.' . date('YmdHms') . '.sql';
+        $from_filename = $this->backupSQL($from_config, $context, $from_shell, $from_filename);
+
+        $to_filename = $host_config['tmpFolder'] . '/' . basename($from_filename);
+
+        // Copy filename to host
+        $result = $shell->copyFileFrom($from_shell, $from_filename, $to_filename, $context, true);
+        if (!$result) {
+            throw new \RuntimeException(
+                sprintf('Could not copy file from `%s` to `%s`', $from_filename, $to_filename)
+            );
+        }
+        $from_shell->run(sprintf(' rm %s', $from_filename));
+
+        // Import db.
+        $result = $this->importSqlFromFile($shell, $to_filename, true);
+        if (!$result->succeeded()) {
+            $result->throwException('Could not import DB from file `' . $to_filename . '`');
+        }
+
+        $shell->run(sprintf('rm %s', $to_filename));
     }
 }
