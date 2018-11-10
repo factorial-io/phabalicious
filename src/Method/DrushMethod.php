@@ -437,7 +437,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
 
         if (substr($file, strrpos($file, '.') + 1) == 'gz') {
-            return $shell->run(sprintf('#!gunzip %s | $(#!drush sql-connect)', $file));
+            return $shell->run(sprintf('#!gunzip -c %s | $(#!drush sql-connect)', $file));
         }
         return $this->runDrush($shell, 'sql-cli < %s', $file);
     }
