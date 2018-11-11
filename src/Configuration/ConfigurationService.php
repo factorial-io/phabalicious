@@ -383,6 +383,7 @@ class ConfigurationService
             'supportsInstalls' => $data['type'] != HostType::PROD
                 ? true
                 : false,
+            'supportsCopyFrom' => true,
             'backupBeforeDeploy' => in_array($data['type'], [HostType::STAGE, HostType::PROD])
                 ? true
                 : false,
