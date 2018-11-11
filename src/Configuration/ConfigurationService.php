@@ -487,7 +487,7 @@ class ConfigurationService
         $data = $this->dockerHosts[$config_name];
         $data = $this->resolveInheritance($data, $this->dockerHosts);
 
-        $data = $this->validateDockerConfig($data);
+        $data = $this->validateDockerConfig($data, $config_name);
         $shell_provider = ShellProviderFactory::create($data['shellProvider'], $this->logger);
 
 
@@ -536,7 +536,7 @@ class ConfigurationService
         return $this->blueprints;
     }
 
-    private function validateDockerConfig(array $data)
+    private function validateDockerConfig(array $data, $config_name)
     {
         if (!empty($data['runLocally'])) {
             $data['shellProvider'] = 'local';
@@ -546,7 +546,7 @@ class ConfigurationService
             $data['shellProvider'] = 'ssh';
         }
         $errors = new ValidationErrorBag();
-        $validation = new ValidationService($data, $errors, 'dockerHost');
+        $validation = new ValidationService($data, $errors, 'dockerHost:' . $config_name);
         $validation->deprecate(['runLocally']);
         $validation->hasKey('shellProvider', 'The name of the shell-provider to use');
         $validation->hasKey('rootFolder', 'The rootFolder to start with');
