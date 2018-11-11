@@ -28,7 +28,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function cd(string $dir): ShellProviderInterface;
 
-    public function run(string $command, $capture_output = false): CommandResult;
+    public function run(string $command, $capture_output = false, $throw_exception_on_error = false): CommandResult;
 
     public function applyEnvironment(array $environment);
 
@@ -37,6 +37,14 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool;
 
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool;
+
+    public function copyFileFrom(
+        ShellProviderInterface $from_shell,
+        string $source_file_name,
+        string $target_file_name,
+        TaskContextInterface $context,
+        bool $verbose = false
+    ): bool;
 
     public function startRemoteAccess(
         string $ip,
@@ -51,6 +59,6 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function createShellProcess(array $command = []): Process;
 
-    public function createTunnelProcess(HostConfig $target_config);
+    public function createTunnelProcess(HostConfig $target_config, array $prefix = []);
 
 }

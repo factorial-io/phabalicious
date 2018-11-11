@@ -227,8 +227,12 @@ class DockerMethod extends BaseMethod implements MethodInterface
                     file_put_contents($temp_file, $content);
                     $data['source'] = $temp_file;
                     $temp_files[] = $temp_file;
-                } else if ($data['source'][0] !== '/') {
-                      $data['source'] = realpath($context->getConfigurationService()->getFabfilePath() . '/' . $data['source']);
+                } elseif ($data['source'][0] !== '/') {
+                      $data['source'] = realpath(
+                          $context->getConfigurationService()->getFabfilePath() .
+                          '/' .
+                          $data['source']
+                      );
                 }
 
                 $shell->putFile($data['source'], $dest, $context);

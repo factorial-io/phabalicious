@@ -104,7 +104,7 @@ class SshShellProvider extends LocalShellProvider
      */
     public function exists($dir):bool
     {
-        $result = $this->run(sprintf('stat %s > /dev/null', $dir));
+        $result = $this->run(sprintf('stat %s > /dev/null', $dir), false, false);
         return $result->succeeded();
     }
 
@@ -176,12 +176,12 @@ class SshShellProvider extends LocalShellProvider
 
     /**
      * @param HostConfig $target_config
+     * @param array $prefix
      * @return Process
      * @throws SshTunnelFailedException
      */
-    public function createTunnelProcess(HostConfig $target_config)
+    public function createTunnelProcess(HostConfig $target_config, array $prefix = [])
     {
-        $config = $this->getHostConfig();
         $tunnel = $target_config['sshTunnel'];
         $bridge = [
             'host' => $tunnel['bridgeHost'],
@@ -191,8 +191,8 @@ class SshShellProvider extends LocalShellProvider
         $cmd = $this->getSshTunnelCommand(
             $tunnel['destHost'],
             $tunnel['destPort'],
-            $config['host'],
-            $config['port'],
+            $target_config['host'],
+            $target_config['port'],
             $bridge
         );
 
@@ -200,6 +200,11 @@ class SshShellProvider extends LocalShellProvider
         $cmd[] = '-N';
         $cmd[] = '-o';
         $cmd[] = 'PasswordAuthentication=no';
+
+        if (count($prefix)) {
+            $prefix[] = implode(' ', $cmd);
+            $cmd = $prefix;
+        }
 
         $this->logger->info('Starting tunnel with ' . implode(' ', $cmd));
 
@@ -221,6 +226,39 @@ class SshShellProvider extends LocalShellProvider
         }
 
         return $process;
+    }
+
+    public function copyFileFrom(
+        ShellProviderInterface $from_shell,
+        string $source_file_name,
+        string $target_file_name,
+        TaskContextInterface $context,
+        bool $verbose = false
+    ): bool {
+        if ($from_shell instanceof SshShellProvider) {
+            $from_host_config = $from_shell->getHostConfig();
+            $command = [
+                '/usr/bin/scp',
+                '-o',
+                'PasswordAuthentication=no',
+                '-P',
+                $from_host_config['port']
+            ];
+
+            $this->addCommandOptions($command, true);
+
+            $command[] = $from_host_config['user'] . '@' . $from_host_config['host'] . ':' .$source_file_name;
+            $command[] = $target_file_name;
+
+            $cr = $this->run(implode(' ', $command), false, false);
+            if ($cr->succeeded()) {
+                return true;
+            } else {
+                $this->logger->warning('Could not copy file via SSH, try fallback');
+            }
+
+        }
+        return parent::copyFileFrom($from_shell, $source_file_name, $target_file_name, $context, $verbose);
     }
 
 }

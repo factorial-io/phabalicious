@@ -152,4 +152,33 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return true;
     }
 
+    public function copyFileFrom(
+        ShellProviderInterface $from_shell,
+        string $source_file_name,
+        string $target_file_name,
+        TaskContextInterface $context,
+        bool $verbose = false
+    ): bool {
+        $this->logger->notice(sprintf(
+            'Copy from `%s` (%s) to `%s` (%s)',
+            $source_file_name,
+            get_class($from_shell),
+            $target_file_name,
+            get_class($this)
+        ));
+
+        // This is a naive implementation, copying the file from source to local and
+        // then from local to target.
+
+        $immediate_file_name = $context->getConfigurationService()->getFabfilePath() .
+            '/' . basename($source_file_name);
+
+        $result = $from_shell->getFile($source_file_name, $immediate_file_name, $context, $verbose);
+        if (!$result) {
+            return false;
+        }
+
+        return $this->putFile($immediate_file_name, $target_file_name, $context, $verbose);
+    }
+
 }

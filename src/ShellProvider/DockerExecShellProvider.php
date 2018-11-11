@@ -57,7 +57,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
      */
     public function exists($dir):bool
     {
-        $result = $this->run('stat ' . $dir);
+        $result = $this->run(sprintf('stat %s > /dev/null', $dir), false, false);
         return $result->succeeded();
     }
 

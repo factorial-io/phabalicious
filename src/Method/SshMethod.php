@@ -56,6 +56,27 @@ class SshMethod extends BaseMethod implements MethodInterface
     }
 
     /**
+     * @param HostConfig $config
+     * @param HostConfig $source_config
+     * @param TaskContextInterface $context
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     */
+    private function createRemoteToHostTunnel(
+        HostConfig $config,
+        HostConfig $source_config,
+        TaskContextInterface $context
+    ) {
+        $this->logger->notice(
+            'Creating ssh-tunnel from `' .
+            $config['configName'] .
+            '` to `' .
+            $source_config['configName'] . '` ...'
+        );
+        $this->createTunnel($config, $source_config, true, $context);
+    }
+
+    /**
      * @param HostConfig $source_config
      * @param HostConfig $target_config
      * @param bool $remote
@@ -95,7 +116,18 @@ class SshMethod extends BaseMethod implements MethodInterface
             $target_config['sshTunnel'] = $tunnel;
         }
 
-        $process = $source_config->shell()->createTunnelProcess($target_config);
+        $prefix = [];
+        if ($remote) {
+            $prefix = [
+                'ssh',
+                '-p',
+                $source_config['port'],
+                $source_config['user'] . '@' . $source_config['host'],
+                '-A'
+            ];
+        }
+
+        $process = $source_config->shell()->createTunnelProcess($target_config, $prefix);
 
 
         $this->tunnels[$key]['creating'] = false;
@@ -117,9 +149,19 @@ class SshMethod extends BaseMethod implements MethodInterface
             return;
         }
         $this->creatingTunnel = true;
-        if (!in_array($task, ['about', 'doctor', 'sshCommand']) && !empty($config['sshTunnel'])) {
-            $this->createLocalToHostTunnel($config, $context);
+        if (!in_array($task, ['about', 'doctor', 'sshCommand'])) {
+            if (!empty($config['sshTunnel'])) {
+                $this->createLocalToHostTunnel($config, $context);
+            }
+        }
+        if (in_array($task, ['copyFrom'])) {
+            $from_config = $context->get('from', false);
+            if ($from_config && !empty($from_config['sshTunnel'])) {
+                $this->createLocalToHostTunnel($from_config, $context);
+                $this->createRemoteToHostTunnel($config, $from_config, $context);
+            }
         }
         $this->creatingTunnel = false;
     }
+
 }

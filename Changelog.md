@@ -89,6 +89,8 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * `getProperty` got renamed to `get:property`
 * `getSQLDump` got renamed to `get:sql-dump`
 * `restoreSQLFromFile` got renamed to `restore:sql-from-file`
+* `copyDBFrom` got renamed to `copy-from <config> db`
+* `copyFilesFrom` got renamed to `copy-from <config> files`
 
 ### Deprecated
 
