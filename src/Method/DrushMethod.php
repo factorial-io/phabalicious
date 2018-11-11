@@ -143,7 +143,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
     {
         array_unshift($args, '#!drush ' . $cmd);
         $command = call_user_func_array('sprintf', $args);
-        return $shell->run($command);
+        return $shell->run($command, false, false);
     }
 
     /**
