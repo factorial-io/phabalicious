@@ -5,6 +5,7 @@ namespace Phabalicious\ShellProvider;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Utilities\SetAndRestoreObjProperty;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,6 +23,8 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
     /** @var InputStream */
     private $input;
+
+    protected $captureOutput = false;
 
 
     public function getName(): string
@@ -93,7 +96,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->process->start(function ($type, $buffer) {
             if ($type == Process::ERR) {
                 $this->logger->debug(trim($buffer));
-                fwrite(STDERR, $buffer);
+                if (!$this->captureOutput) {
+                    fwrite(STDERR, $buffer);
+                }
             } else {
                 ; //fwrite(STDOUT, $buffer);
             }
@@ -111,6 +116,8 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      */
     public function run(string $command, $capture_output = false, $throw_exception_on_error = true): CommandResult
     {
+        $scoped_capture_output = new SetAndRestoreObjProperty('captureOutput', $this, $capture_output);
+
         $this->setup();
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
         $this->logger->log($this->loglevel->get(), $command);
@@ -124,9 +131,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             $result .= $this->process->getIncrementalOutput();
         }
         if ($this->process->isTerminated()) {
-            $this->logger->error('Local shell terminated unexpected!');
+            $this->logger->log($this->errorLogLevel->get(), 'Local shell terminated unexpected!');
             $error_output = trim($this->process->getErrorOutput());
-            $this->logger->error($error_output);
+            $this->logger->log($this->errorLogLevel->get(), $error_output);
             $exit_code = $this->process->getExitCode();
             $this->process = null;
             $cr = new CommandResult($exit_code, explode(PHP_EOL, $error_output));

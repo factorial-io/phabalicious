@@ -160,7 +160,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         while ($tries < $max_tries) {
             $error_log_level = new ScopedErrorLogLevel($shell, LogLevel::NOTICE);
-            $result = $shell->run('#!supervisorctl status', true);
+            $result = $shell->run('#!supervisorctl status', true, false);
             $error_log_level = null;
 
             $count_running = 0;
@@ -181,7 +181,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 return;
             }
             $tries++;
-            $this->logger->notice('Waiting for 5 secs and try again ...');
+            $this->logger->notice(sprintf(
+                'Waiting for 5 secs and try again (%d/%d)...',
+                $tries,
+                $max_tries
+            ));
             sleep(5);
         }
         $this->logger->error('Supervisord not coming up at all!');
