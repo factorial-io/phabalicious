@@ -218,8 +218,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         throw new \InvalidArgumentException('Local shells cannot handle startRemoteAccess!');
     }
 
-    public function createTunnelProcess(HostConfig $target_config)
+    public function createTunnelProcess(HostConfig $target_config, array $prefix = [])
     {
         throw new \InvalidArgumentException('Local shells cannot handle tunnels!');
     }
+
 }
