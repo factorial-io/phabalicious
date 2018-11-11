@@ -81,16 +81,6 @@ common:
       - execute(script, patternlab)
 
 dockerHosts:
-  default:
-    tasks:
-      start:
-        - docker start %name%
-      stop:
-        - docker stop %name%
-      logs:
-        - docker logs %name%
-      ps:
-        - docker ps
   mbb:
     environment:
       VHOST: "%host.docker.vhost%"
