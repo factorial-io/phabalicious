@@ -27,10 +27,11 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
-        $return =  parent::getDefaultConfig($configuration_service, $host_config);
+        $return = parent::getDefaultConfig($configuration_service, $host_config);
         $return['tmpFolder'] = '/tmp';
         $return['executables'] = [
-            'tar' => 'tar'
+            'tar' => 'tar',
+            'rsync' => 'rsync'
         ];
 
         return $return;
@@ -77,15 +78,14 @@ class FilesMethod extends BaseMethod implements MethodInterface
             if (empty($host_config[$folder])) {
                 continue;
             }
-            $backup_file_name = $host_config['backupFolder'] . '/' . implode('--', $basename) .'.' . $key . '.tgz';
-            $source_folders = [ $host_config[$folder] ];
+            $backup_file_name = $host_config['backupFolder'] . '/' . implode('--', $basename) . '.' . $key . '.tgz';
+            $source_folders = [$host_config[$folder]];
 
             $backup_file_name = $this->backupFiles($host_config, $context, $shell, $source_folders, $backup_file_name);
 
             if (!$backup_file_name) {
                 $this->logger->error('Could not backup files ' . implode(' ', $source_folders));
-            }
-            else {
+            } else {
                 $this->logger->notice('Files dumped to `' . $backup_file_name . '`');
 
                 $context->addResult('files', [[
@@ -233,6 +233,64 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
             }
         }
+    }
+
+    public function copyFrom(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $what = $context->get('what');
+        if (!in_array('files', $what)) {
+            return;
+        }
+
+        /** @var HostConfig $from_config */
+        /** @var ShellProviderInterface $shell */
+        /** @var ShellProviderInterface $from_shell */
+        $from_config = $context->get('from', false);
+        $shell = $this->getShell($host_config, $context);
+
+        $keys = ['filesFolder', 'privateFilesFolder'];
+        foreach ($keys as $key) {
+            if (!empty($host_config[$key]) && !empty($from_config[$key])) {
+                $this->rsync($host_config, $from_config, $context, $key);
+            }
+        }
+    }
+
+
+    private function rsync(HostConfig $to_config, HostConfig $from_config, TaskContextInterface $context, string $key)
+    {
+        $from_path = $from_config[$key];
+        $to_path = $to_config[$key];
+
+        $this->logger->notice(sprintf(
+            'Syncing files from `%s` to `%s`',
+            $from_config['configName'],
+            $to_config['configName']
+        ));
+        $exclude_settings = $context->getConfigurationService()->getSetting('excludeFiles.copyFrom', false);
+        $rsync_args = '';
+        if ($exclude_settings) {
+            $rsync_args .= ' --exclude "' . implode('" --exclude "', $exclude_settings) . '"';
+        }
+        $rsync_args .= ' -rav --no-o --no-g -e "' . sprintf(
+            'ssh -T -o Compression=no ' .
+            '-o PasswordAuthentication=no ' .
+            '-o StrictHostKeyChecking=no ' .
+            '-o UserKnownHostsFile=/dev/null ' .
+            '-p %s',
+            $from_config['port']
+        ) . '"';
+        $rsync_args .= sprintf(
+            ' %s@%s:%s/* %s',
+            $from_config['user'],
+            $from_config['host'],
+            $from_path,
+            $to_path
+        );
+
+        /** @var ShellProviderInterface $shell */
+        $shell = $this->getShell($to_config, $context);
+        return $shell->run('#!rsync ' . $rsync_args);
     }
 
 }
