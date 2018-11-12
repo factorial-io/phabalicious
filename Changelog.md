@@ -91,6 +91,7 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * `restoreSQLFromFile` got renamed to `restore:sql-from-file`
 * `copyDBFrom` got renamed to `copy-from <config> db`
 * `copyFilesFrom` got renamed to `copy-from <config> files`
+* `installFrom` got renamed to `install:from`
 
 ### Deprecated
 
