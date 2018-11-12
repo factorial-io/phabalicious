@@ -7,6 +7,7 @@ use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -19,6 +20,20 @@ class InstallCommand extends BaseCommand
             ->setName('install')
             ->setDescription('Install an instance')
             ->setHelp('Runs all tasks necessary to install an instance on a existing code-base');
+        $this->addOption(
+            'skip-reset',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Skip the reset-task if set to true',
+            false
+        );
+        $this->addOption(
+            'yes',
+            'y',
+            InputOption::VALUE_OPTIONAL,
+            'Skip confirmation step, install without question',
+            false
+        );
     }
 
     /**
@@ -46,20 +61,23 @@ class InstallCommand extends BaseCommand
             throw new \InvalidArgumentException('This configuration disallows installs!');
         }
 
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion(
-            'Install new database for configuration `' . $this->getHostConfig()['configName'] . '`?',
-            false
-        );
+        if (!$input->getOption('yes')) {
+            $helper = $this->getHelper('question');
+            $question = new ConfirmationQuestion(
+                'Install new database for configuration `' . $this->getHostConfig()['configName'] . '`? ',
+                false
+            );
 
-        if (!$helper->ask($input, $output, $question)) {
-            return 1;
+            if (!$helper->ask($input, $output, $question)) {
+                return 1;
+            }
         }
 
         $context = new TaskContext($this, $input, $output);
 
+        $next_tasks = $input->getOption('skip-reset') ? [] : ['reset'];
         try {
-            $this->getMethods()->runTask('install', $this->getHostConfig(), $context, ['reset']);
+            $this->getMethods()->runTask('install', $this->getHostConfig(), $context, $next_tasks);
         } catch (EarlyTaskExitException $e) {
             return 1;
         }

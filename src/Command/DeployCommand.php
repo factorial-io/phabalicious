@@ -4,10 +4,8 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DeployCommand extends BaseCommand
@@ -69,16 +67,7 @@ class DeployCommand extends BaseCommand
 
     private function runBackup(InputInterface $original_input, OutputInterface $output)
     {
-        $args =[
-            'command' => 'backup',
-            'what' => ['db'],
-        ];
-
-        foreach ($original_input->getOptions() as $key => $value) {
-            $args['--' . $key] = $value;
-        };
-        $input = new ArrayInput($args);
-        $this->getApplication()->find('backup')->run($input, $output);
+        return $this->runCommand('backup', [ 'what' => ['db'] ], $original_input, $output);
     }
 
 }

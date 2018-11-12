@@ -13,6 +13,7 @@ use Phabalicious\Exception\MissingHostConfigException;
 use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -164,6 +165,18 @@ abstract class BaseCommand extends BaseOptionsCommand
     protected function getDockerConfig()
     {
         return $this->dockerConfig;
+    }
+
+    public function runCommand(string $command, array $args, InputInterface $original_input, OutputInterface $output)
+    {
+        $args['command'] = $command;
+
+        foreach ($original_input->getOptions() as $key => $value) {
+            $args['--' . $key] = $value;
+        };
+        print_r($args);
+        $input = new ArrayInput($args);
+        return $this->getApplication()->find($command)->run($input, $output);
     }
 
 }
