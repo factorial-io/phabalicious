@@ -36,7 +36,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $result = parent::getDefaultConfig($configuration_service, $host_config);
-        $result['shellExecutable'] = $configuration_service->getSetting('shellExecutable', '/bin/sh');
+        $result['shellExecutable'] = $configuration_service->getSetting('shellExecutable', '/bin/bash');
 
         return $result;
     }
