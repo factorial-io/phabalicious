@@ -3,8 +3,10 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\GitMethod;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\ScriptMethod;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\Test\LoggerInterfaceTest;
@@ -145,4 +147,13 @@ class ConfigurationServiceTest extends TestCase
         $this->assertEquals('user-b', $this->config->getDockerConfig('hostB')['user']);
     }
 
+    public function testExecutables()
+    {
+        $this->config->getMethodFactory()->addMethod(new DrushMethod($this->logger));
+        $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
+        $this->config->readConfiguration(getcwd() . '/assets/executables-tests');
+        $this->assertEquals('/usr/bin/drush', $this->config->getHostConfig('unaltered')['executables']['drush']);
+      $this->assertEquals('/usr/local/bin/drush', $this->config->getHostConfig('altered')['executables']['drush']);
+        $this->assertEquals('/usr/bin/mysql', $this->config->getHostConfig('altered')['executables']['mysql']);
+    }
 }

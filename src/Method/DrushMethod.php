@@ -83,6 +83,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $config['drupalVersion'] = in_array('drush7', $host_config['needs']) ? 7 : 8;
         $config['drushVersion'] = in_array('drush9', $host_config['needs']) ? 9 : 8;
         $config['supportsZippedBackups'] = true;
+        $config['siteFolder'] = 'sites/default';
+        $config['filesFolder'] = 'sites/default/files';
 
         return $config;
     }

@@ -145,9 +145,10 @@ class ConfigurationService
         $depth = 0;
         while ($depth <= 3) {
             foreach ($candidates as $candidate) {
-                $this->logger->debug('trying ' . $path . '/' . $candidate);
-                if (file_exists($path . '/' . $candidate)) {
-                    return $path . '/' . $candidate;
+                $p = $path . '/' . $candidate;
+                $this->logger->debug('trying ' . $p);
+                if (file_exists($p)) {
+                    return $p;
                 }
             }
             $depth++;
@@ -206,9 +207,13 @@ class ConfigurationService
 
     private function applyDefaults(array $data, array $defaults)
     {
+        $merge_keys = ['executables'];
+
         foreach ($defaults as $key => $value) {
             if (!isset($data[$key])) {
                 $data[$key] = $value;
+            } elseif (in_array($key, $merge_keys)) {
+                $data[$key] = $this->mergeData($defaults[$key], $data[$key]);
             }
         }
         return $data;
@@ -400,7 +405,7 @@ class ConfigurationService
             }
         }
 
-        $data = $this->applyDefaults($defaults, $data);
+        $data = $this->applyDefaults($data, $defaults);
         /**
          * @var \Phabalicious\Method\MethodInterface $method
          */
