@@ -107,7 +107,7 @@ class SshMethod extends BaseMethod implements MethodInterface
         }
         $this->tunnels[$key]['creating'] = true;
 
-        if (empty($target_config['destHost'])) {
+        if (empty($target_config['sshTunnel']['destHost'])) {
             $this->logger->notice('Getting ip for config `' . $target_config['configName'] . '`...');
             $ctx = clone $context;
             $context->getConfigurationService()->getMethodFactory()->runTask('getIp', $target_config, $ctx);
