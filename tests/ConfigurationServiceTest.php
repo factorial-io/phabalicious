@@ -7,6 +7,7 @@ use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\GitMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
+use Phabalicious\Method\SshMethod;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\Test\LoggerInterfaceTest;
@@ -155,5 +156,17 @@ class ConfigurationServiceTest extends TestCase
         $this->assertEquals('/usr/bin/drush', $this->config->getHostConfig('unaltered')['executables']['drush']);
       $this->assertEquals('/usr/local/bin/drush', $this->config->getHostConfig('altered')['executables']['drush']);
         $this->assertEquals('/usr/bin/mysql', $this->config->getHostConfig('altered')['executables']['mysql']);
+    }
+
+    public function testSshTunnelConfiguration()
+    {
+        $this->config->getMethodFactory()->addMethod(new SshMethod($this->logger));
+        $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
+        $this->config->readConfiguration(getcwd() . '/assets/sshtunnel-tests');
+        $ssh_tunnel = $this->config->getHostConfig('unaltered')['sshTunnel'];
+        $this->assertEquals('1.2.3.4', $ssh_tunnel['destHost']);
+        $this->assertEquals('1234', $ssh_tunnel['destPort']);
+        $this->assertEquals('2.3.4.5', $ssh_tunnel['bridgeHost']);
+        $this->assertEquals('5432', $ssh_tunnel['bridgePort']);
     }
 }

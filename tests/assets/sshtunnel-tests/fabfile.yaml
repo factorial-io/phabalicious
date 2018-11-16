@@ -1,0 +1,22 @@
+name: executables-test
+
+uuid: 1-2-3-4
+
+
+needs:
+  - ssh
+
+hosts:
+  unaltered:
+    type: dev
+    backupFolder: /var/www
+    host: localhost
+    port: 6666
+    user: user_a
+    sshTunnel:
+      destHost: 1.2.3.4
+      destPort: 1234
+      bridgeUser: user
+      bridgeHost: 2.3.4.5
+      bridgePort: 5432
+
