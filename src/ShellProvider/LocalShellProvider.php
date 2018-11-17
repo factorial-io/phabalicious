@@ -37,6 +37,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         $result = parent::getDefaultConfig($configuration_service, $host_config);
         $result['shellExecutable'] = $configuration_service->getSetting('shellExecutable', '/bin/bash');
+        $result['shellProviderExecutable'] = $configuration_service->getSetting('shellProviderExecutable', '/bin/bash');
 
         return $result;
     }
@@ -89,7 +90,8 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             throw new \Exception('No host-config set for local shell provider');
         }
 
-        $this->process = $this->createShellProcess(['/bin/sh']);
+        $shell_executable = $this->hostConfig['shellExecutable'];
+        $this->process = $this->createShellProcess([$shell_executable]);
 
         $this->input = new InputStream();
         $this->process->setInput($this->input);
@@ -99,8 +101,8 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                 if (!$this->captureOutput) {
                     fwrite(STDERR, $buffer);
                 }
-            } else {
-                ; //fwrite(STDOUT, $buffer);
+            } elseif ((!$this->captureOutput) && strpos($buffer, self::RESULT_IDENTIFIER) === false) {
+                fwrite(STDOUT, $buffer);
             }
         });
     }

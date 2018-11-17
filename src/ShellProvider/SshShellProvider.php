@@ -18,7 +18,7 @@ class SshShellProvider extends LocalShellProvider
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $result =  parent::getDefaultConfig($configuration_service, $host_config);
-        $result['shellExecutable'] = '/usr/bin/ssh';
+        $result['shellProviderExecutable'] = '/usr/bin/ssh';
         $result['disableKnownHosts'] = $configuration_service->getSetting('disableKnownHosts', false);
         $result['port'] = 22;
 
@@ -86,7 +86,7 @@ class SshShellProvider extends LocalShellProvider
     public function getShellCommand(array $options = []): array
     {
         $command = [
-            $this->hostConfig['shellExecutable'],
+            $this->hostConfig['shellProviderExecutable'],
             '-A',
             '-p',
             $this->hostConfig['port'],
