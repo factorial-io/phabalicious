@@ -71,7 +71,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
             $this->hostConfig['docker']['name'] . ':' . $dest
         ];
 
-        return $this->runCommand($command, $context, false, true);
+        return $this->runProcess($command, $context, false, true);
     }
 
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
@@ -83,7 +83,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
             $dest,
         ];
 
-        return $this->runCommand($command, $context, false, true);
+        return $this->runProcess($command, $context, false, true);
     }
 
 }

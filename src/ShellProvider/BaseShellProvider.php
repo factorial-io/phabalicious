@@ -100,7 +100,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
      * @param $line
      * @return null|string|string[]
      */
-    protected function expandCommand($line)
+    public function expandCommand($line)
     {
         $line = trim($line);
         if (empty($this->hostConfig['executables'])) {
@@ -127,7 +127,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         }
     }
 
-    public function runCommand(array $cmd, TaskContextInterface $context, $interactive = false, $verbose = false):bool
+    public function runProcess(array $cmd, TaskContextInterface $context, $interactive = false, $verbose = false):bool
     {
         $cb = ($verbose | $interactive)
             ? [BaseShellProvider::Class, 'outputCallback']

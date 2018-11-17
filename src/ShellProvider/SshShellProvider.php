@@ -121,7 +121,7 @@ class SshShellProvider extends LocalShellProvider
         $command[] = $source;
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'] . ':' . $dest;
 
-        return $this->runCommand($command, $context, false, true);
+        return $this->runProcess($command, $context, false, true);
     }
 
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
@@ -137,7 +137,7 @@ class SshShellProvider extends LocalShellProvider
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'] . ':' . $source;
         $command[] = $dest;
 
-        return $this->runCommand($command, $context, false, true);
+        return $this->runProcess($command, $context, false, true);
     }
 
     public function getSshTunnelCommand(
@@ -167,7 +167,7 @@ class SshShellProvider extends LocalShellProvider
         HostConfig $config,
         TaskContextInterface $context
     ) {
-        $this->runCommand(
+        $this->runProcess(
             $this->getSshTunnelCommand($ip, $port, $public_ip, $public_port, $config),
             $context,
             true

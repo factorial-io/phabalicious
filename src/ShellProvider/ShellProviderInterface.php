@@ -55,6 +55,10 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
         TaskContextInterface $context
     );
 
+    public function expandCommand($line);
+
+    public function runProcess(array $cmd, TaskContextInterface $context, $interactive = false, $verbose = false):bool;
+
     public function getShellCommand(array $options = []): array;
 
     public function createShellProcess(array $command = []): Process;
