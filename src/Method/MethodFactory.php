@@ -168,7 +168,7 @@ class MethodFactory
         $overrides = [];
         foreach ($configuration['needs'] as $method_name) {
             if ($overridden_name = $this->getMethod($method_name)->getOverriddenMethod()) {
-                $overrides[$method_name] = $overridden_name;
+                $overrides[$overridden_name] = $method_name;
             }
         }
         $method_name = $method->getName();
