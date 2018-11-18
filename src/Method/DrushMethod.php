@@ -498,4 +498,38 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         $shell->run(sprintf('rm %s', $to_filename));
     }
+
+    public function appUpdate(HostConfig $host_config, TaskContextInterface $context)
+    {
+        if (in_array('composer', $host_config['needs'])) {
+            // Project is handled by composer, will handle the update.
+            return;
+        }
+
+
+        $this->logger->notice('Updating drupal core');
+        $shell = $this->getShell($host_config, $context);
+        $pwd = $shell->getWorkingDir();
+        $install_dir = $host_config['tmpFolder'] . '/drupal-update';
+        $shell->run(sprintf('rm -rf %s', $install_dir));
+        $shell->run(sprintf('mkdir -p %s', $install_dir));
+        $result = $this->runDrush(
+            $shell,
+            'dl --destination="%s" --default-major="%d" drupal',
+            $install_dir,
+            $host_config['drupalVersion']
+        );
+
+        if ($result->failed()) {
+            throw new \RuntimeException('Could not download drupal via drush!');
+        }
+
+        $shell->cd($install_dir);
+        $result = $shell->run('ls ', true);
+        $drupal_folder = trim($result->getOutput()[0]);
+        $shell->run(sprintf('#!rsync -rav --no-o --no-g %s/* %s', $drupal_folder, $host_config['rootFolder']));
+        $shell->run(sprintf('rm -rf %s', $install_dir));
+
+        $shell->cd($pwd);
+    }
 }

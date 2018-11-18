@@ -56,6 +56,14 @@ class ComposerMethod extends BaseMethod implements MethodInterface
         $context->setResult('exitCode', $result->getExitCode());
     }
 
+    private function prepareCommand(HostConfig $host_config, string $command)
+    {
+        if (!in_array($host_config['type'], array('dev', 'test'))) {
+            $command .= ' --no-dev --optimize-autoloader';
+        }
+        return $command;
+    }
+
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
@@ -63,9 +71,7 @@ class ComposerMethod extends BaseMethod implements MethodInterface
     public function resetPrepare(HostConfig $host_config, TaskContextInterface $context)
     {
         $command = 'install ';
-        if (!in_array($host_config['type'], array('dev', 'test'))) {
-            $command .= ' --no-dev --optimize-autoloader';
-        }
+        $command = $this->prepareCommand($host_config, $command);
         $this->runCommand($host_config, $context, $command);
     }
 
@@ -74,5 +80,15 @@ class ComposerMethod extends BaseMethod implements MethodInterface
         $command = $context->get('command');
         $this->runCommand($host_config, $context, $command);
     }
+
+    public function appUpdate(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $this->runCommand(
+            $host_config,
+            $context,
+            $this->prepareCommand($host_config, 'update')
+        );
+    }
+
 
 }
