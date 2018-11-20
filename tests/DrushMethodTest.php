@@ -104,4 +104,19 @@ class DrushMethodTest extends TestCase
         $this->assertEquals('/var/www/sites/default', $host_config['siteFolder']);
         $this->assertEquals('/var/www/sites/default/files', $host_config['filesFolder']);
     }
+
+    public function testConfigurationManagementSettings()
+    {
+        $configuration_management = $this->configurationService->getHostConfig('unaltered')['configurationManagement'];
+
+        $this->assertEquals('drush status', $configuration_management['sync'][0]);
+        $this->assertEquals('drush status', $configuration_management['prod'][0]);
+        $this->assertArrayNotHasKey('staging', $configuration_management);
+
+        $configuration_management = $this->configurationService->getHostConfig('altered')['configurationManagement'];
+
+        $this->assertEquals('drush status', $configuration_management['staging'][0]);
+        $this->assertArrayNotHasKey('sync', $configuration_management);
+        $this->assertArrayNotHasKey('prod', $configuration_management);
+    }
 }

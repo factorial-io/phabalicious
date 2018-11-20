@@ -32,6 +32,11 @@ abstract class BaseMethod implements MethodInterface
     {
     }
 
+    public function getKeysForDisallowingDeepMerge(): array
+    {
+        return [];
+    }
+
     public function getGlobalSettings(): array
     {
         return [];

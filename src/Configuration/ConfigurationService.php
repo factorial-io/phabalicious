@@ -46,6 +46,7 @@ class ConfigurationService
     /** @var BlueprintConfiguration */
     private $blueprints;
     private $offlineMode = false;
+    private $disallowDeepMergeForKeys = [];
 
     public function __construct(Application $application, LoggerInterface $logger)
     {
@@ -114,16 +115,32 @@ class ConfigurationService
             'common' => [],
         ];
 
-        $data = $this->applyDefaults($data, $defaults);
+        $disallow_deep_merge_for_keys = ['needs'];
+
+        $data = $this->applyDefaults($data, $defaults, $disallow_deep_merge_for_keys);
 
         /**
          * @var \Phabalicious\Method\MethodInterface $method
          */
+
         if ($this->methods) {
             foreach ($this->methods->all() as $method) {
-                $data = $this->mergeData($data, $method->getGlobalSettings());
+                $disallow_deep_merge_for_keys = array_merge(
+                    $disallow_deep_merge_for_keys,
+                    $method->getKeysForDisallowingDeepMerge()
+                );
+
+            }
+            foreach ($this->methods->all() as $method) {
+                $data = $this->applyDefaults(
+                    $data,
+                    $method->getGlobalSettings(),
+                    $disallow_deep_merge_for_keys
+                );
             }
         }
+
+        $this->disallowDeepMergeForKeys = $disallow_deep_merge_for_keys;
 
         $this->settings = $this->resolveInheritance($data, $data);
         $this->hosts = $this->getSetting('hosts', []);
@@ -205,14 +222,12 @@ class ConfigurationService
         return Utilities::mergeData($data, $override_data);
     }
 
-    private function applyDefaults(array $data, array $defaults)
+    private function applyDefaults(array $data, array $defaults, array $disallowed_keys = [])
     {
-        $merge_keys = ['executables'];
-
         foreach ($defaults as $key => $value) {
             if (!isset($data[$key])) {
                 $data[$key] = $value;
-            } elseif (in_array($key, $merge_keys)) {
+            } elseif (is_array($data[$key]) && !in_array($key, $disallowed_keys)) {
                 $data[$key] = $this->mergeData($defaults[$key], $data[$key]);
             }
         }
@@ -405,13 +420,17 @@ class ConfigurationService
             }
         }
 
-        $data = $this->applyDefaults($data, $defaults);
+        $data = $this->applyDefaults($data, $defaults, $this->disallowDeepMergeForKeys);
         /**
          * @var \Phabalicious\Method\MethodInterface $method
          */
         $used_methods = $this->methods->getSubset($data['needs']);
         foreach ($used_methods as $method) {
-            $data = $this->mergeData($method->getDefaultConfig($this, $data), $data);
+            $data = $this->applyDefaults(
+                $data,
+                $method->getDefaultConfig($this, $data),
+                $this->disallowDeepMergeForKeys
+            );
         }
 
         // Overall validation.

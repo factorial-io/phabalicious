@@ -66,6 +66,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
         ];
     }
 
+    public function getKeysForDisallowingDeepMerge(): array
+    {
+        return ['configurationManagement'];
+    }
+
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $config  = parent::getDefaultConfig($configuration_service, $host_config);

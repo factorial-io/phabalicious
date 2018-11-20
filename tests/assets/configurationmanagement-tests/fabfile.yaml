@@ -1,0 +1,29 @@
+name: configurationmanagement-test
+
+uuid: 1-2-3-4
+
+configurationManagement:
+  sync:
+    - drush status
+  prod:
+    - drush status
+
+
+needs:
+  - drush
+
+hosts:
+  unaltered:
+    type: dev
+    backupFolder: /var/www
+    host: localhost
+    port: 6666
+    user: user_a
+
+  altered:
+    type: dev
+    backupFolder: /var/www
+    configurationManagement:
+      staging:
+        - drush status
+

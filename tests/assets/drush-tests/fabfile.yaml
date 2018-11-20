@@ -5,6 +5,12 @@ needs:
 
 uuid: 1234-5678-1234-5678
 
+configurationManagement:
+  sync:
+  - drush status
+  prod:
+  - drush status
+
 hosts:
   test:
     rootFolder: /var/www
@@ -17,3 +23,17 @@ hosts:
       user: drupal
       pass: drupal
       name: drupal
+
+  unaltered:
+    type: dev
+    backupFolder: /var/www
+    host: localhost
+    port: 6666
+    user: user_a
+
+  altered:
+    type: dev
+    backupFolder: /var/www
+    configurationManagement:
+      staging:
+      - drush status

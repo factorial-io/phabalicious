@@ -169,4 +169,6 @@ class ConfigurationServiceTest extends TestCase
         $this->assertEquals('2.3.4.5', $ssh_tunnel['bridgeHost']);
         $this->assertEquals('5432', $ssh_tunnel['bridgePort']);
     }
+
+
 }

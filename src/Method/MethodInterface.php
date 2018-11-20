@@ -15,6 +15,8 @@ interface MethodInterface
 
     public function supports(string $method_name): bool;
 
+    public function getKeysForDisallowingDeepMerge(): array;
+
     public function getGlobalSettings(): array;
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array;
@@ -30,6 +32,7 @@ interface MethodInterface
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context);
 
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context);
+
 
 
 }
