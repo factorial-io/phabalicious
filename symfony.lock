@@ -212,6 +212,9 @@
     "thibaud-dauce/mattermost-php": {
         "version": "1.2.1"
     },
+    "twig/twig": {
+        "version": "v2.5.0"
+    },
     "webignition/readable-duration": {
         "version": "0.2"
     },

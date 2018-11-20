@@ -30,7 +30,11 @@ class Utilities
     {
         $result = [];
         foreach ($variables as $key => $value) {
-            self::expandVariablesImpl($key, $value, $result);
+            if (is_array($value)) {
+                self::expandVariablesImpl($key, $value, $result);
+            } else {
+                $result["%$key%"] = (string) ($value);
+            }
         }
         return $result;
     }
@@ -117,5 +121,24 @@ class Utilities
         }
 
         return $subfolder;
+    }
+
+    public static function cleanupString($identifier)
+    {
+        $identifier = trim($identifier);
+
+        $filter = [
+            ' ' => '-',
+            '_' => '-',
+            '/' => '-',
+            '[' => '-',
+            ']' => '',
+        ];
+        $identifier = strtr($identifier, $filter);
+
+        $identifier = preg_replace('/[^\\x{002D}\\x{0030}-\\x{0039}\\x{0041}-\\x{005A}\\x{005F}\\x{0061}-\\x{007A}\\x{00A1}-\\x{FFFF}]/u', '', $identifier);
+
+        // Convert everything to lower case.
+        return strtolower($identifier);
     }
 }

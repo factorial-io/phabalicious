@@ -1,0 +1,6 @@
+<?php
+
+/**
+ * loosely modelled after the concepts found at
+ * http://dcycleproject.org/blog/44/what-site-deployment-module
+ */

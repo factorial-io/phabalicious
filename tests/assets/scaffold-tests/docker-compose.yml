@@ -1,0 +1,27 @@
+version: '2'
+services:
+  web:
+    image: factorial/drupal-docker:php-71
+    volumes:
+      - .:/var/www:cached
+    links:
+      - mysql:mysql
+    environment:
+      VHOST: $VHOST
+      WEB_ROOT: $WEB_ROOT
+    network_mode: bridge
+
+  mysql:
+    image: mysql:5
+    volumes:
+      - "db-data:/var/lib/mysql"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: "admin"
+    command:
+      - mysqld
+      - --innodb_use_native_aio=0
+    network_mode: bridge
+
+volumes:
+  db-data:

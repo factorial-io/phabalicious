@@ -1,0 +1,26 @@
+assets:
+  - .fabfile.yaml
+  - docker-compose.yml
+  - docker-compose-mbb.yml
+
+deployModuleAssets:
+  - deployModule/%shortName%_deploy.info.yml
+  - deployModule/%shortName%_deploy.module
+  - deployModule/%shortName%_deploy.install
+
+sshKeys:
+  - ssh-keys/docker-root-key
+  - ssh-keys/docker-root-key.pub
+  - ssh-keys/known_hosts
+
+scaffold:
+  - rm -rf %rootFolder%
+  - composer create-project drupal-composer/drupal-project:8.x-dev %rootFolder% --stability dev --no-interaction
+  - cd %rootFolder%; composer require drupal/coffee
+  - cd %rootFolder%; composer require drupal/devel
+  - copy_assets(%rootFolder%)
+  - copy_assets(%rootFolder%/web/modules/custom/%shortName%_deploy, deployModuleAssets)
+  - copy_assets(%rootFolder%/ssh-keys, sshKeys)
+  - cd %rootFolder%; git init .
+  - cd %rootFolder%; git add .
+  - cd %rootFolder%; git commit -m "Initial commit by phabalicious"

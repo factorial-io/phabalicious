@@ -1,0 +1,17 @@
+  <?php
+    /**
+    * @file
+    * Custom install hooks.
+    */
+
+    /**
+    * Implements hook_install().
+    */
+    function {{shortName}}_deploy_install() {
+      for ($i = 8001; $i < 9000; $i++) {
+        $candidate = '{{shortName}}_deploy_update_' . $i;
+        if (function_exists($candidate)) {
+          $candidate();
+        }
+      }
+    }
