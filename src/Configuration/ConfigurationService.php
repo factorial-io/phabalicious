@@ -64,6 +64,11 @@ class ConfigurationService
         return $this->methods;
     }
 
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger;
+    }
+
     /**
      * Read configuration from a file.
      *
@@ -243,11 +248,15 @@ class ConfigurationService
      * @return array
      * @throws \Phabalicious\Exception\MismatchedVersionException
      */
-    private function resolveInheritance(array $data, $lookup): array
+    public function resolveInheritance(array $data, $lookup, $root_folder = false): array
     {
         if (!isset($data['inheritsFrom'])) {
             return $data;
         }
+        if (!$root_folder) {
+            $root_folder = $this->getFabfilePath();
+        }
+
         $inheritsFrom = $data['inheritsFrom'];
         if (!is_array($inheritsFrom)) {
             $inheritsFrom = [ $inheritsFrom ];
@@ -260,12 +269,12 @@ class ConfigurationService
                 $add_data = $lookup[$resource];
             } elseif (strpos($resource, 'http') !== false) {
                 $add_data = Yaml::parse($this->readHttpResource($resource));
-            } elseif (file_exists($this->getFabfilePath() . '/' . $resource)) {
-                $add_data = $this->readFile($this->getFabfilePath() . '/' . $resource);
+            } elseif (file_exists($root_folder . '/' . $resource)) {
+                $add_data = $this->readFile($root_folder . '/' . $resource);
             }
             if ($add_data) {
                 if (isset($add_data['inheritsFrom'])) {
-                    $add_data = $this->resolveInheritance($add_data, $lookup);
+                    $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder);
                 }
 
                 $data = $this->mergeData($add_data, $data);

@@ -83,6 +83,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         }
 
         $data['base_path'] = dirname($url);
+        $data = $this->configuration->resolveInheritance($data, [], dirname($url));
 
         $helper = $this->getHelper('question');
 
@@ -107,6 +108,10 @@ class AppScaffoldCommand extends BaseOptionsCommand
             'rootFolder' => $input->getOption('output') . '/' . Utilities::cleanupString($name),
             'uuid' => $this->fakeUUID(),
         ];
+
+        if (!empty($data['variables'])) {
+            $tokens = Utilities::mergeData($data['variables'], $tokens);
+        }
 
 
         $errors = new ValidationErrorBag();
