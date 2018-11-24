@@ -35,6 +35,9 @@
     "hoa/stream": {
         "version": "1.17.02.21"
     },
+    "jakeasmith/http_build_url": {
+        "version": "1.0.1"
+    },
     "league/event": {
         "version": "2.1.2"
     },

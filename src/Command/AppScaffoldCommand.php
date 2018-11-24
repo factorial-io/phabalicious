@@ -55,10 +55,17 @@ class AppScaffoldCommand extends BaseOptionsCommand
 
         $this->addOption(
             'output',
-            '',
+            null,
             InputOption::VALUE_OPTIONAL,
             'the folder where to create the new project',
             getcwd()
+        );
+        $this->addOption(
+            'override',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Set to true if you want to override existing folders',
+            false
         );
     }
 
@@ -68,6 +75,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
      *
      * @return int
      * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -75,8 +83,11 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $url = $input->getArgument('scaffold-url');
         if (substr($url, 0, 4) !== 'http') {
             $data = Yaml::parseFile($url);
+            $twig_loader_base = dirname($url);
         } else {
             $data = $this->configuration->readHttpResource($url);
+            $data = Yaml::parse($data);
+            $twig_loader_base = '/tmp';
         }
         if (!$data) {
             throw new \InvalidArgumentException('Could not read yaml from ' . $url);
@@ -145,13 +156,13 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $context->set('tokens', $tokens);
 
         // Setup twig
-        $loader = new \Twig_Loader_Filesystem($data['base_path']);
+        $loader = new \Twig_Loader_Filesystem($twig_loader_base);
         $this->twig = new \Twig_Environment($loader, array(
         ));
 
         $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
-        if (is_dir($tokens['rootFolder'])) {
+        if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
             $question = new ConfirmationQuestion('Target-folder exists? Continue anyways? ', false);
             if (!$helper->ask($input, $output, $question)) {
                 return 1;
@@ -162,14 +173,19 @@ class AppScaffoldCommand extends BaseOptionsCommand
         return 0;
     }
 
+    /**
+     * @param TaskContextInterface $context
+     * @param $target_folder
+     * @param string $data_key
+     */
     public function copyAssets(TaskContextInterface $context, $target_folder, $data_key = 'assets')
     {
         if (!is_dir($target_folder)) {
             mkdir($target_folder, 0777, true);
         }
-
         $data = $context->get('scaffoldData');
         $tokens = $context->get('tokens');
+        $is_remote = substr($data['base_path'], 0, 4) == 'http';
         $replacements = [];
         foreach ($tokens as $key => $value) {
             $replacements['%' . $key . '%'] = $value;
@@ -180,7 +196,22 @@ class AppScaffoldCommand extends BaseOptionsCommand
         }
 
         foreach ($data[$data_key] as $file_name) {
+            $tmp_target_file = false;
+            if ($is_remote) {
+                $tmpl = $this->configuration->readHttpResource($data['base_path'] . '/' . $file_name);
+                if (empty($tmpl)) {
+                    throw new \RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
+                }
+                $tmp_target_file = '/tmp/' . $file_name;
+                if (!is_dir(dirname($tmp_target_file))) {
+                    mkdir(dirname($tmp_target_file), 0777, true);
+                }
+                file_put_contents('/tmp/' . $file_name, $tmpl);
+            }
             $converted = $this->twig->render($file_name, $tokens);
+            if ($tmp_target_file) {
+                unlink($tmp_target_file);
+            }
 
             $target_file_name = $target_folder. '/' . strtr(basename($file_name), $replacements);
             $context->getOutput()->writeln(sprintf('Creating %s ...', $target_file_name));

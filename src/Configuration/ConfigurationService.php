@@ -303,6 +303,9 @@ class ConfigurationService
         if (!$this->offlineMode) {
             try {
                 $this->logger->info('Read remote file from ' . $resource . '`');
+                $url = parse_url($resource);
+                $url['path'] = urlencode($url['path']);
+                $resource =  http_build_url($url);
                 $contents = file_get_contents($resource);
             } catch (\Exception $e) {
                 $this->logger->warning('Could not load resource from `' . $resource . '`: ' . $e->getMessage());

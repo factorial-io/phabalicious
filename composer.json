@@ -21,7 +21,8 @@
         "symfony/finder": "^4.1",
         "thibaud-dauce/mattermost-php": "^1.2",
         "twig/twig": "^2.5",
-      "ext-openssl": "*"
+      "ext-openssl": "*",
+        "jakeasmith/http_build_url": "^1.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^2.8|^3|^4.1",
