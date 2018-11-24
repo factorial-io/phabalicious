@@ -17,8 +17,9 @@ class ValidationService
      *
      * @param array $config
      * @param \Phabalicious\Validation\ValidationErrorBagInterface $errors
+     * @param string $prefix_message
      */
-    public function __construct(array $config, ValidationErrorBagInterface $errors, $prefix_message)
+    public function __construct(array $config, ValidationErrorBagInterface $errors, string $prefix_message)
     {
         $this->config = $config;
         $this->errors = $errors;

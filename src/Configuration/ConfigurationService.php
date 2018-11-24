@@ -277,6 +277,8 @@ class ConfigurationService
                     $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder);
                 }
 
+                // Clear inheritOnly from to be merged data, so it does not bleed into final data.
+                unset($add_data['inheritOnly']);
                 $data = $this->mergeData($add_data, $data);
             }
         }
@@ -382,7 +384,7 @@ class ConfigurationService
         $data = $template->expand($identifier);
 
         $errors = new ValidationErrorBag();
-        $validation = new ValidationService($data, $errors, 'blueprint');
+        $validation = new ValidationService($data, $errors, 'blueprint: `' . $identifier . '`');
         $validation->hasKey('configName', 'The blueprint needs a `configName` property');
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
@@ -406,14 +408,15 @@ class ConfigurationService
         $data = $this->resolveInheritance($data, $this->hosts);
         $type = isset($data['type']) ? $data['type'] : false;
         $defaults = [
+            'type' => $type ? $type : 'dev',
             'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
-            'supportsInstalls' => $data['type'] != HostType::PROD
+            'supportsInstalls' => $type != HostType::PROD
                 ? true
                 : false,
             'supportsCopyFrom' => true,
-            'backupBeforeDeploy' => in_array($data['type'], [HostType::STAGE, HostType::PROD])
+            'backupBeforeDeploy' => in_array($type, [HostType::STAGE, HostType::PROD])
                 ? true
                 : false,
             'tmpFolder' => '/tmp',
@@ -445,7 +448,7 @@ class ConfigurationService
         // Overall validation.
 
         $validation_errors = new ValidationErrorBag();
-        $validation = new ValidationService($data, $validation_errors, 'host-config');
+        $validation = new ValidationService($data, $validation_errors, 'host-config: `' . $config_name . '`');
         $validation->isArray('needs', 'Please specify the needed methods as an array');
         $validation->isOneOf('type', HostType::getAll());
 
@@ -520,6 +523,9 @@ class ConfigurationService
 
         $data = $this->dockerHosts[$config_name];
         $data = $this->resolveInheritance($data, $this->dockerHosts);
+        if (!empty($data['inheritOnly'])) {
+            return $data;
+        }
 
         $data = $this->validateDockerConfig($data, $config_name);
         $shell_provider = ShellProviderFactory::create($data['shellProvider'], $this->logger);
@@ -572,6 +578,8 @@ class ConfigurationService
 
     private function validateDockerConfig(array $data, $config_name)
     {
+        $data['configName'] = 'dockerHosts.' . $config_name;
+
         if (!empty($data['runLocally'])) {
             $data['shellProvider'] = 'local';
         }
@@ -580,7 +588,7 @@ class ConfigurationService
             $data['shellProvider'] = 'ssh';
         }
         $errors = new ValidationErrorBag();
-        $validation = new ValidationService($data, $errors, 'dockerHost:' . $config_name);
+        $validation = new ValidationService($data, $errors, 'dockerHost: `' . $config_name . '`');
         $validation->deprecate(['runLocally']);
         $validation->hasKey('shellProvider', 'The name of the shell-provider to use');
         $validation->hasKey('rootFolder', 'The rootFolder to start with');
