@@ -3,10 +3,12 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Command\BaseCommand;
+use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -28,7 +30,7 @@ class TaskContext implements TaskContextInterface
 
     private $shell;
 
-    public function __construct(BaseCommand $command, InputInterface $input, OutputInterface $output)
+    public function __construct(BaseOptionsCommand $command, InputInterface $input, OutputInterface $output)
     {
         $this->setInput($input);
         $this->setOutput($output);
@@ -68,12 +70,12 @@ class TaskContext implements TaskContextInterface
         return $this->configurationService;
     }
 
-    public function setCommand(BaseCommand $command)
+    public function setCommand(BaseOptionsCommand $command)
     {
         $this->command = $command;
     }
 
-    public function getCommand(): BaseCommand
+    public function getCommand(): BaseOptionsCommand
     {
         return $this->command;
     }

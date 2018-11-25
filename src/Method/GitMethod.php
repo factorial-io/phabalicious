@@ -49,7 +49,7 @@ class GitMethod extends BaseMethod implements MethodInterface
 
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
-        $validation = new ValidationService($config, $errors, 'host-config');
+        $validation = new ValidationService($config, $errors, sprintf('host-config: `%s`', $config['configName']));
         $validation->hasKey('gitRootFolder', 'gitRootFolder should point to your gits root folder.');
         $validation->hasKey('branch', 'git needs a branch-name so it can run deployments.');
     }

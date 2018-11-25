@@ -137,20 +137,7 @@ abstract class BaseCommand extends BaseOptionsCommand
         }
     }
 
-    /**
-     * Get the configuration object.
-     *
-     * @return ConfigurationService
-     */
-    public function getConfiguration()
-    {
-        return $this->configuration;
-    }
 
-    protected function getMethods()
-    {
-        return $this->methods;
-    }
 
     /**
      * Get host config.

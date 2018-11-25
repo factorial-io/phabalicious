@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Command\BaseCommand;
+use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
@@ -23,9 +24,9 @@ interface TaskContextInterface
 
     public function getOutput(): OutputInterface;
 
-    public function setCommand(BaseCommand $command);
+    public function setCommand(BaseOptionsCommand $command);
 
-    public function getCommand() : BaseCommand;
+    public function getCommand() : BaseOptionsCommand;
 
     public function setConfigurationService(ConfigurationService $service);
 

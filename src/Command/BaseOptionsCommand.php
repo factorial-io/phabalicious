@@ -72,4 +72,19 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         $this->configuration->setOffline($input->getOption('offline'));
         $this->configuration->readConfiguration(getcwd(), $fabfile);
     }
+
+    /**
+     * Get the configuration object.
+     *
+     * @return ConfigurationService
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }
+
+    protected function getMethods()
+    {
+        return $this->methods;
+    }
 }

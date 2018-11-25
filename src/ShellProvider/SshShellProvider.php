@@ -48,7 +48,7 @@ class SshShellProvider extends LocalShellProvider
     {
         parent::validateConfig($config, $errors);
 
-        $validation = new ValidationService($config, $errors, 'host-config');
+        $validation = new ValidationService($config, $errors, sprintf('host-config: `%s`', $config['configName']));
         $validation->hasKeys([
             'host' => 'Hostname to connect to',
             'port' => 'The port to connect to',
@@ -56,7 +56,11 @@ class SshShellProvider extends LocalShellProvider
         ]);
 
         if (!empty($config['sshTunnel'])) {
-            $tunnel_validation = new ValidationService($config['sshTunnel'], $errors, 'sshTunnel-config');
+            $tunnel_validation = new ValidationService(
+                $config['sshTunnel'],
+                $errors,
+                sprintf('sshTunnel-config: `%s`', $config['configName'])
+            );
             $tunnel_validation->hasKeys([
                 'bridgeHost' => 'The hostname of the bridge-host',
                 'bridgeUser' => 'The username to use to connect to the bridge-host',
