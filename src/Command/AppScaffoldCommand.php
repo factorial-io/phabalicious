@@ -81,6 +81,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $url = $input->getArgument('scaffold-url');
+        $is_remote = false;
         if (substr($url, 0, 4) !== 'http') {
             $data = Yaml::parseFile($url);
             $twig_loader_base = dirname($url);
@@ -88,12 +89,26 @@ class AppScaffoldCommand extends BaseOptionsCommand
             $data = $this->configuration->readHttpResource($url);
             $data = Yaml::parse($data);
             $twig_loader_base = '/tmp';
+            $is_remote = true;
         }
         if (!$data) {
             throw new \InvalidArgumentException('Could not read yaml from ' . $url);
         }
 
         $data['base_path'] = dirname($url);
+
+        if ($is_remote && !empty($data['inheritsFrom'])) {
+            if (!is_array($data['inheritsFrom'])) {
+                $data['inheritsFrom'] = [$data['inheritsFrom']];
+            }
+
+            foreach ($data['inheritsFrom'] as $item) {
+                if (strpos($item, 0, 4) !== 'http') {
+                    $data['inheritsFrom'] =$data['base_path'] . '/' . $item;
+                }
+            }
+        }
+
         $data = $this->configuration->resolveInheritance($data, [], dirname($url));
 
         $helper = $this->getHelper('question');
@@ -125,6 +140,8 @@ class AppScaffoldCommand extends BaseOptionsCommand
         }
 
 
+
+
         $errors = new ValidationErrorBag();
         $validation = new ValidationService($data, $errors, 'scaffold');
 
@@ -134,10 +151,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
             throw new ValidationFailedException($errors);
         }
 
-
-        // @todo: Get from somewhere else,
-        $logger = new ConsoleLogger($output);
-
+        $logger = $this->configuration->getLogger();
         $shell = new LocalShellProvider($logger);
         $script = new ScriptMethod($logger);
 
