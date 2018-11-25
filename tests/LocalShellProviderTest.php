@@ -78,7 +78,7 @@ class LocalShellProviderTest extends TestCase
             'rootFolder' => dirname(__FILE__)
         ], $this->shellProvider);
 
-        $test_dir = dirname(__FILE__) . '/assets/local-shell-providerxxx';
+        $test_dir = dirname(__FILE__) . '/assets/local-shell-provider';
 
         $this->shellProvider->setHostConfig($host_config);
 
