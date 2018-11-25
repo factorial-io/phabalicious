@@ -7,6 +7,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Validation\ValidationErrorBagInterface;
+use webignition\ReadableDuration\ReadableDuration;
 
 class SshMethod extends BaseMethod implements MethodInterface
 {
@@ -112,8 +113,15 @@ class SshMethod extends BaseMethod implements MethodInterface
             $ctx = clone $context;
             $context->getConfigurationService()->getMethodFactory()->runTask('getIp', $target_config, $ctx);
             $tunnel = $target_config['sshTunnel'];
-            $tunnel['destHost'] = $ctx->getResult('ip');
-            $target_config['sshTunnel'] = $tunnel;
+            if ($ip = $ctx->getResult('ip', false)) {
+                $tunnel['destHost'] = $ctx->getResult('ip');
+                $target_config['sshTunnel'] = $tunnel;
+            } else {
+                $this->logger->warning(sprintf('Could not get ip for config `%s`!', $target_config['configName']));
+                $this->tunnels[$key]['creating'] = false;
+                $this->tunnels[$key]['created'] = null;
+                return false;
+            }
         }
 
         $prefix = [];
