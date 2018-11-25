@@ -3,7 +3,6 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
@@ -12,11 +11,9 @@ use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
@@ -177,7 +174,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
         if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
-            $question = new ConfirmationQuestion('Target-folder exists? Continue anyways? ', false);
+            $question = new ConfirmationQuestion('Target-folder exists! Continue anyways? ', false);
             if (!$helper->ask($input, $output, $question)) {
                 return 1;
             }
@@ -240,7 +237,5 @@ class AppScaffoldCommand extends BaseOptionsCommand
             bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
             bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
             bin2hex(openssl_random_pseudo_bytes(6));
-
     }
-
 }

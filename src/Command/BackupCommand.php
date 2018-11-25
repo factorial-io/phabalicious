@@ -73,5 +73,4 @@ class BackupCommand extends BaseCommand
 
         return $context->getResult('exitCode', 0);
     }
-
 }
