@@ -305,6 +305,7 @@ class ConfigurationService
                 $this->logger->info('Read remote file from ' . $resource . '`');
                 $url = parse_url($resource);
                 $url['path'] = urlencode($url['path']);
+                $url['path'] = str_replace('%2F', '/', $url['path']);
                 $resource =  http_build_url($url);
                 $contents = file_get_contents($resource);
             } catch (\Exception $e) {
@@ -394,6 +395,7 @@ class ConfigurationService
         }
         $data = $this->validateHostConfig($data['configName'], $data);
 
+        $this->cache['host:' . $data['configName']] = $data;
         $this->cache[$cid] = $data;
         return $data;
     }

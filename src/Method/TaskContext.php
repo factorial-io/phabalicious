@@ -139,4 +139,9 @@ class TaskContext implements TaskContextInterface
         $result = array_merge($result, $rows);
         $this->setResult($key, $result);
     }
+
+    public function clearResults()
+    {
+        $this->result = [];
+    }
 }

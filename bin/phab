@@ -2,6 +2,7 @@
 <?php
 
 use Phabalicious\AppKernel;
+use Phabalicious\Utilities\Logger;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
@@ -37,8 +38,9 @@ $kernel = new AppKernel($env, $debug);
 $kernel->boot();
 $container = $kernel->getContainer();
 
-/** @var \Symfony\Component\Console\Logger\ConsoleLogger $logger */
-$logger = $container->get(\Symfony\Component\Console\Logger\ConsoleLogger::class);
+/** @var Phabalicious\Utilities\Logger $logger */
+$logger = $container->get(Logger::class);
+/** @var \Symfony\Component\Console\Output\OutputInterface $output */
 $output = $container->get(ConsoleOutput::class);
 
 /** @var Application $application */

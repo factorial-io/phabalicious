@@ -55,6 +55,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 sprintf('host.docker: `%s`', $config['configName'])
             );
             $validation->hasKey('name', 'name of the docker-container to inspect');
+            $validation->hasKey(
+                'projectFolder',
+                'projectFolder where the project is stored, relative to the rootFolder'
+            );
             $validation->hasKey('configuration', 'name of the docker-configuration to use');
         }
     }
@@ -69,7 +73,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
      */
     public function getDockerConfig(HostConfig $host_config, TaskContextInterface $context)
     {
-        return $context->getConfigurationService()->getDockerConfig($host_config['docker']['configuration']);
+        $config = $context->getConfigurationService()->getDockerConfig($host_config['docker']['configuration']);
+        $config['executables'] = $host_config['executables'];
+        return $config;
     }
 
     /**
@@ -333,6 +339,76 @@ class DockerMethod extends BaseMethod implements MethodInterface
     public function getIp(HostConfig $host_config, TaskContextInterface $context)
     {
         $context->setResult('ip', $this->getIpAddress($host_config, $context));
+    }
+
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     */
+    public function appCheckExisting(HostConfig $host_config, TaskContextInterface $context)
+    {
+        // Set outer-shell to the one provided by the docker-configuration.
+        $docker_config = $this->getDockerConfig($host_config, $context);
+        $context->setResult('outerShell', $docker_config->shell());
+        $context->setResult('installDir', $docker_config['rootFolder'] .
+            '/' . $host_config['docker']['projectFolder']);
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws MethodNotFoundException
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     */
+    public function appCreate(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $this->runAppSpecificTask($host_config, $context);
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws MethodNotFoundException
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     */
+    public function appDestroy(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $this->runAppSpecificTask($host_config, $context);
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws MethodNotFoundException
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     */
+    public function runAppSpecificTask(HostConfig $host_config, TaskContextInterface $context)
+    {
+        if (!$current_stage = $context->get('currentStage', false)) {
+            throw new \InvalidArgumentException('Missing currentStage on context!');
+        }
+
+        $docker_config = $this->getDockerConfig($host_config, $context);
+        $shell = $docker_config->shell();
+
+        if (in_array($current_stage['stage'], $docker_config['tasks']) ||
+            in_array($current_stage['stage'], array('spinUp', 'spinDown', 'deleteContainer'))
+        ) {
+            $this->runTaskImpl($host_config, $context, $current_stage['stage'], false);
+        }
     }
 
 }

@@ -9,12 +9,18 @@ services:
     public: true
   Symfony\Component\Console\Output\ConsoleOutput:
     public: true
-  Symfony\Component\Console\Logger\ConsoleLogger:
+
+  Symfony\Component\Console\Input\ArgvInput:
     public: true
 
+  Phabalicious\Utilities\Logger:
+    public: true
 
   Psr\Log\LoggerInterface:
-    alias: Symfony\Component\Console\Logger\ConsoleLogger
+    alias: Phabalicious\Utilities\Logger
 
   Symfony\Component\Console\Output\OutputInterface:
     alias: Symfony\Component\Console\Output\ConsoleOutput
+
+  Symfony\Component\Console\Input\InputInterface:
+    alias: Symfony\Component\Console\Input\ArgvInput

@@ -44,6 +44,8 @@ interface TaskContextInterface
 
     public function getResults(): array;
 
+    public function clearResults();
+
     /**
      * @return ShellProviderInterface
      */

@@ -51,8 +51,10 @@ class ComposerMethod extends BaseMethod implements MethodInterface
     {
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($host_config, $context);
+        $pwd = $shell->getWorkingDir();
         $shell->cd($host_config['composerRootFolder']);
         $result = $shell->run('#!composer ' . $command);
+        $shell->cd($pwd);
         $context->setResult('exitCode', $result->getExitCode());
     }
 
@@ -79,6 +81,17 @@ class ComposerMethod extends BaseMethod implements MethodInterface
     {
         $command = $context->get('command');
         $this->runCommand($host_config, $context, $command);
+    }
+
+    public function appCreate(HostConfig $host_config, TaskContextInterface $context)
+    {
+        if (!$current_stage = $context->get('currentStage', false)) {
+            throw new \InvalidArgumentException('Missing currentStage on context!');
+        }
+
+        if ($current_stage['stage'] == 'installDependencies') {
+            $this->resetPrepare($host_config, $context);
+        }
     }
 
     public function appUpdate(HostConfig $host_config, TaskContextInterface $context)

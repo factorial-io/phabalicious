@@ -156,14 +156,23 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     public function runCommand(string $command, array $args, InputInterface $original_input, OutputInterface $output)
     {
+        $cmd = $this->getApplication()->find($command);
+
         $args['command'] = $command;
 
         foreach ($original_input->getOptions() as $key => $value) {
-            $args['--' . $key] = $value;
+            // Skip options not available for command.
+            if (!$cmd->getDefinition()->hasOption($key)) {
+                continue;
+            }
+
+            $option_key = '--' . $key;
+            if (empty($args[$option_key])) {
+                $args[$option_key] = $value;
+            }
         };
-        print_r($args);
         $input = new ArrayInput($args);
-        return $this->getApplication()->find($command)->run($input, $output);
+        return $cmd->run($input, $output);
     }
 
 }

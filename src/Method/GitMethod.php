@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\EarlyTaskExitException;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -87,7 +88,7 @@ class GitMethod extends BaseMethod implements MethodInterface
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
-        $shell = $host_config->shell();
+        $shell = $this->getShell($host_config, $context);
         $shell->cd($host_config['gitRootFolder']);
         if (!$this->isWorkingcopyClean($host_config, $context)) {
             $this->logger->error('Working copy is not clean, aborting');
@@ -105,8 +106,7 @@ class GitMethod extends BaseMethod implements MethodInterface
         $shell->run('#!git pull -q ' . $git_options . ' origin ' . $branch);
 
         if (empty($host_config['ignoreSubmodules'])) {
-            $shell->run('#!git submodule init');
-            $shell->run('#!git submodule update');
+            $shell->run('#!git submodule update --init');
             $shell->run('#!git submodule sync');
         }
     }
@@ -128,6 +128,49 @@ class GitMethod extends BaseMethod implements MethodInterface
             new MetaInformation('Version', $this->getVersion($host_config, $context), true),
             new MetaInformation('Commit', $this->getCommitHash($host_config, $context), true),
         ]);
+    }
+
+    public function appCheckExisting(HostConfig $host_config, TaskContextInterface $context)
+    {
+        if (!$context->getResult('appInstallDir', false)) {
+            $context->setResult('appInstallDir', $host_config['gitRootFolder']);
+        }
+    }
+
+    public function appCreate(HostConfig $host_config, TaskContextInterface $context)
+    {
+        if (!$current_stage = $context->get('currentStage', false)) {
+            throw new \InvalidArgumentException('Missing currentStage on context!');
+        }
+
+        if ($current_stage['stage'] !== 'installCode') {
+            return;
+        }
+        /** @var ShellProviderInterface $shell */
+        $shell = $context->get('outerShell', $host_config->shell());
+        $install_dir = $context->get('installDir', $host_config['gitRootFolder']);
+
+        $repository = $context->getConfigurationService()->getSetting('repository', false);
+        if (!$repository) {
+            throw new \InvalidArgumentException('Missing `repository` in fabfile! Cannot proceed!');
+        }
+
+        $shell->run(sprintf(
+            '#!git clone -b %s %s %s',
+            $host_config['branch'],
+            $repository,
+            $install_dir
+        ));
+
+        $cwd = $shell->getWorkingDir();
+
+        if (!$host_config['ignoreSubmodules']) {
+            $shell->cd($install_dir);
+            $shell->run('#!git submodule update --init');
+        }
+
+        $shell->run('touch .projectCreated');
+        $shell->cd($cwd);
     }
 
 }
