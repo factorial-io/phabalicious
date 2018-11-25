@@ -107,10 +107,6 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                 fwrite(STDOUT, $buffer);
             }
         });
-
-        $this->applyEnvironment([
-            'COLUMNS' => (new Terminal())->getWidth(),
-        ]);
     }
 
     /**
@@ -127,6 +123,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $scoped_capture_output = new SetAndRestoreObjProperty('captureOutput', $this, $capture_output);
 
         $this->setup();
+
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
         $this->logger->log($this->loglevel->get(), $command);
 
@@ -180,7 +177,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     public function applyEnvironment(array $environment)
     {
         foreach ($environment as $key => $value) {
-            $this->run("export \"$key\"=\"$value\"", true, false);
+            $this->run("export \"$key\"=\"$value\"");
         }
     }
 
