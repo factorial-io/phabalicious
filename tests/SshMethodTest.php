@@ -31,7 +31,8 @@ class SshMethodTest extends TestCase
             'host' => 'localhost',
             'port' => 22,
             'rootFolder' => '/',
-            'shellExecutable' => '/usr/bin/ssh'
+            'shellExecutable' => '/usr/bin/ssh',
+            'configName' => 'test'
         ], $errors);
         $this->assertEquals($errors->hasErrors(), false);
 
@@ -42,7 +43,8 @@ class SshMethodTest extends TestCase
         $errors = new ValidationErrorBag();
 
         $this->method->createShellProvider([])->validateConfig([
-            'host' => 'localhost'
+            'host' => 'localhost',
+            'configName' => 'test'
         ], $errors);
         $this->assertEquals($errors->hasErrors(), true);
         $this->assertEquals(
@@ -60,6 +62,7 @@ class SshMethodTest extends TestCase
         $errors = new ValidationErrorBag();
 
         $this->method->createShellProvider([])->validateConfig([
+            'configName' => 'test',
             'host' => 'localhost',
             'user' => 'user',
             'port' => '22',

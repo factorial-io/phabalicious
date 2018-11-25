@@ -78,13 +78,13 @@ class LocalShellProviderTest extends TestCase
             'rootFolder' => dirname(__FILE__)
         ], $this->shellProvider);
 
-        $test_dir = dirname(__FILE__) . '/assets/local-shell-provider';
+        $test_dir = dirname(__FILE__) . '/assets/local-shell-providerxxx';
 
         $this->shellProvider->setHostConfig($host_config);
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('ls -la', true);
+            ->run('ls -la', true, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->failed());

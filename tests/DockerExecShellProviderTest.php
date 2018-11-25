@@ -37,7 +37,8 @@ class DockerExecShellProviderTest extends TestCase
         $this->shellProvider = new DockerExecShellProvider($logger);
 
         $host_config = new HostConfig([
-            'shellExecutable' => 'docker',
+            'shellProviderExecutable' => 'docker',
+            'shellExecutable' => '/bin/sh',
             'rootFolder' => '/',
             'docker' => [
                 'name' => 'phabalicious_test'
@@ -55,9 +56,9 @@ class DockerExecShellProviderTest extends TestCase
             'rootFolder' => dirname(__FILE__)
         ], $runDockerShell);
 
-        $result = $runDockerShell->run('docker pull busybox');
-        $result = $runDockerShell->run('docker stop phabalicious_test | true');
-        $result = $runDockerShell->run('docker rm phabalicious_test | true');
+        $result = $runDockerShell->run('docker pull busybox', true);
+        $result = $runDockerShell->run('docker stop phabalicious_test | true', true);
+        $result = $runDockerShell->run('docker rm phabalicious_test | true', true);
 
 
         $this->backgroundProcess = new Process([

@@ -85,6 +85,7 @@ class DrushMethodTest extends TestCase
     {
         $host_config = [
             'needs' => ['drush7'],
+            'configName' => 'test'
         ];
         $errors = new ValidationErrorBag();
         $result = $this->method->validateConfig($host_config, $errors);
