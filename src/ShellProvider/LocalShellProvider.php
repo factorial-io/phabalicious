@@ -97,9 +97,10 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->process->setInput($this->input);
         $this->process->start(function ($type, $buffer) {
             if ($type == Process::ERR) {
-                $this->logger->debug(trim($buffer));
                 if (!$this->captureOutput) {
                     fwrite(STDERR, $buffer);
+                } else {
+                    $this->logger->debug(trim($buffer));
                 }
             } elseif ((!$this->captureOutput) && strpos($buffer, self::RESULT_IDENTIFIER) === false) {
                 fwrite(STDOUT, $buffer);
