@@ -116,12 +116,12 @@ class AppScaffoldCommand extends BaseOptionsCommand
         }
 
         if (!$short_name = $input->getOption('short-name')) {
-            $question = new Question('Please provide the short name of the new project (1-3 letters): ');
+            $question = new Question('Please provide the short name of the new project (1-5 letters): ');
             $short_name = $helper->ask($input, $output, $question);
         }
-        if (strlen($short_name) > 3 || !ctype_alnum($short_name)) {
+        if (strlen($short_name) > 5 || !ctype_alnum($short_name)) {
             throw new \InvalidArgumentException(
-                'Shortname contains non-alphanumeric letter or is longer than 3 letters'
+                'Shortname contains non-alphanumeric letter or is longer than 5 letters'
             );
         }
         $tokens = [
