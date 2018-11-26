@@ -59,7 +59,14 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
         mbb:
           shellProvider: docker-exec
 * You can get help for a specific task via `phab help <task>`. It will show all possible options and some help.
+* docker-compose version 23 changes the schema how names of docker-containers are constructed. To support this change we can now declare the needed service to compute the correct container-name from. 
 
+      hosts:
+        testHost:
+          docker:
+            service: web
+  
+  
 ### Changed
 
 * `docker:startRemoteAccess` is now the task `start-remote-access` as it makes more sense.
