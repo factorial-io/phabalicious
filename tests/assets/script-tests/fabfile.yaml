@@ -1,0 +1,34 @@
+name: script-tests
+
+
+common:
+  deployPrepare:
+    dev:
+      - debug(deployPrepare on dev)
+  deploy:
+    dev:
+      - debug(deploy on dev)
+  deployFinished:
+    dev:
+      - debug(deployFinished on dev)
+
+
+
+hosts:
+  base:
+    type: dev
+    needs:
+      - local
+
+  hostA:
+    inheritsFrom: base
+    testEnvironmentVar: "testEnvironmentVar from hostA"
+    test:
+      test:
+        testEnvironmentVar: "test.test.testEnvironmentVar from hostA"
+    environment:
+      ROOT_FOLDER: "%host.rootFolder%"
+    scripts:
+      test:
+        - echo "Hello"
+        - echo "World"

@@ -1,0 +1,21 @@
+name: executables-test
+
+uuid: 1-2-3-4
+
+executables:
+  drush: /usr/bin/drush
+  mysql: /usr/bin/mysql
+
+needs:
+  - drush
+
+hosts:
+  unaltered:
+    type: dev
+    backupFolder: /var/www
+
+  altered:
+    type: dev
+    backupFolder: /var/www
+    executables:
+      drush: /usr/local/bin/drush

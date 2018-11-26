@@ -3,16 +3,31 @@
     "description": "A deployment helper cli",
     "type": "project",
     "require": {
-        "symfony/console": "^4.1",
+        "php": "^7.1",
+        "symfony/console": "^2.8|^3|^4.1",
         "psr/log": "^1.0",
-        "symfony/event-dispatcher": "^4.1",
-        "symfony/http-kernel": "^4.1",
-        "symfony/dependency-injection": "^4.1",
-        "symfony/config": "^4.1",
-        "symfony/yaml": "^4.1"
+        "symfony/event-dispatcher": "^2.8|^3|^4.1",
+        "symfony/http-kernel": "^2.8|^3|^4.1",
+        "symfony/dependency-injection": "^2.8|^3|^4.1",
+        "symfony/config": "^2.8|^3|^4.1",
+        "symfony/yaml": "^2.8|^3|^4.1",
+        "wikimedia/composer-merge-plugin": "^1.4",
+        "composer/semver": "^1.4",
+        "symfony/process": "^2.8|^3|^4.1",
+        "symfony/flex": "^1.1",
+        "symfony/dotenv": "^2.8|^3|^4.1",
+        "ext-json": "*",
+        "stecman/symfony-console-completion": "^0.8.0",
+        "symfony/finder": "^4.1",
+        "thibaud-dauce/mattermost-php": "^1.2",
+        "twig/twig": "^2.5",
+      "ext-openssl": "*",
+        "jakeasmith/http_build_url": "^1.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^4.1"
+        "symfony/phpunit-bridge": "^2.8|^3|^4.1",
+        "phpunit/phpunit": "^7.3",
+        "macfja/phar-builder": "dev-sf4-compatibility"
     },
     "autoload": {
         "psr-4": {"Phabalicious\\": "src/"}
@@ -22,5 +37,30 @@
             "name": "Stephan Maximilian Huber",
             "email": "stephan@factorial.io"
         }
-    ]
+    ],
+    "scripts": {
+        "auto-scripts": {
+
+        },
+        "build-phar": "php -d phar.readonly=0 vendor/bin/phar-builder package",
+        "install-phar": "cp ./build/phabalicious.phar /usr/local/bin/phab; chmod u+x /usr/local/bin/phab"
+    },
+    "extra": {
+      "phar-builder": {
+        "compression": "GZip",
+        "name": "phabalicious.phar",
+        "output-dir": "./build",
+        "entry-point": "./bin/phab",
+        "include": ["bin","config"],
+        "include-dev": false,
+        "skip-shebang": false,
+        "events": {
+          "build.before" : "git describe --tags > bin/version.txt",
+          "build.after": [
+            "rm bin/version.txt",
+            "chmod +x ../phabalicious.phar"
+          ]
+        }
+    }
+  }
 }

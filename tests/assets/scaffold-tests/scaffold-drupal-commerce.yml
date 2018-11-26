@@ -1,0 +1,5 @@
+inheritsFrom:
+  - scaffold-drupal-8.yml
+
+variables:
+  composerProject: drupalcommerce/project-base

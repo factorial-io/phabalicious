@@ -1,0 +1,19 @@
+image: factorial/phabalicious-test-runner
+
+stages:
+  - build
+  - test
+
+before_script:
+  - php /composer.phar install
+ 
+runTests:
+  artifacts:
+    expire_in: 1 hour
+  tags:
+    - docker
+  stage: test
+  script:
+  - cd tests; ../vendor/bin/phpunit --exclude-group docker .
+
+

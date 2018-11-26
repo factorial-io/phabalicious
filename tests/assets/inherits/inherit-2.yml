@@ -1,0 +1,4 @@
+fromFile2:
+  value1: "a value"
+  value2:
+    value: "another value"

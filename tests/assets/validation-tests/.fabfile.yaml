@@ -1,0 +1,165 @@
+name: validation-tests
+
+requires: 2.0.0
+needs:
+  - git
+
+inheritsFrom:
+  - https://config.factorial.io/docker/2.0/xdebug.yaml
+
+disableScripts: true
+
+
+excludeFiles:
+  backup:
+    - "styles"
+    - "tmp"
+  copyFrom:
+    - "tmp"
+    - "styles"
+    - "php"
+    - "js"
+    - "css"
+    - "twig_cache"
+    - "xmlsitemap"
+
+scripts:
+  behatInstall:
+     - cd %host.gitRootFolder% && composer install --ignore-platform-reqs
+  behat:
+    - fail_on_error(0)
+    - cd %host.gitRootFolder%.tools/behat && %host.gitRootFolder%/vendor/bin/behat %arguments.combined%
+    - fail_on_error(1)
+  copyHtAccess:
+    - cd %host.gitRootFolder% && cp .tools/htaccess .htaccess
+  reindex-content:
+    - cd %host.siteFolder% && drush solr-delete-index; drush solr-mark-all; drush solr-index;
+  patternlab:
+    - cd %host.rootFolder%/sites/all/themes/custom/bif_frontend && php core/console --generate
+  setSolrUrlForDev:
+    - "drush vset apachesolr_default_environment solr"
+    - >
+      drush vset apachesolr_environments
+      --format=json
+      '{"solr": {"url": "http://solr:8983/solr/mycore" } }'
+  resetAdminUser:
+    - cd %host.siteFolder%; drush sql-query "update users set name='admin' where uid=1"
+
+common:
+  resetPrepare:
+    dev:
+      - execute(script, resetAdminUser)
+
+  copyDBFromFinished:
+    dev:
+      - execute(script, reindex-content)
+    stage:
+      - execute(script, reindex-content)
+    test:
+      - execute(script, reindex-content)
+    prod:
+      - execute(script, reindex-content)
+
+  reset:
+    dev:
+      - "drush vset devel_rebuild_theme_registry FALSE"
+      - "drush vdel -y googleanalytics_account"
+      - "drush vset -y --exact cache 0"
+      - "drush vset -y --exact preprocess_css 0"
+      - "drush vset -y --exact preprocess_js 0"
+      - "drush en shield -y"
+      - "drush vset -y shield_user rmh"
+      - "drush vset -y shield_pass rmh"
+      - "drush vset -y shield_print 'Enter security credentials to access'"
+      - "drush vset admin_menu_tweak_modules 1"
+      - "drush vset admin_menu_tweak_permissions 1"
+      - execute(script, patternlab)
+      - execute(script, setSolrUrlForDev)
+    test:
+      - execute(script, patternlab)
+    prod:
+      - execute(script, patternlab)
+
+dockerHosts:
+  mbb:
+    environment:
+      VHOST: "%host.docker.vhost%"
+      COMPOSE_FILE: "docker-compose.yml:docker-compose-mbb.yml"
+    inheritsFrom:
+      - https://config.factorial.io/mbb/2.0/mbb-docker.yaml
+      - https://config.factorial.io/docker/2.0/docker-compose.yaml
+
+  clients.factorial.io:
+    environment:
+      VHOST: "%host.docker.vhost%"
+    inheritsFrom:
+      - https://config.factorial.io/clients.factorial.io/2.0/d8/docker.yaml
+
+hosts:
+  mbb:
+    adminUser: admin
+    host: bi-france.test
+    user: root
+    password: root
+    port: 36997
+    type: dev
+    rootFolder: /var/www/
+    gitRootFolder: /var/www/
+    siteFolder: /sites/default
+    filesFolder: /sites/default/files
+    backupFolder: /var/www/backups
+    branch: int
+    supportsInstalls: true
+    docker:
+      name: fr012-bi-france_web_1
+      configuration: mbb
+      vhost: >-
+        bi-france.test
+        cardiocity.bi-france.test
+        oncocity.bi-france.test
+        pneumocity.bi-france.test
+        spiolto.bi-france.test
+        pradaxa.bi-france.test
+        pradaxa-praxbind.bi-france.test
+        ofev-pharmacist.bi-france.test
+        ofev-pneumolog.bi-france.test
+      projectFolder: fr012-bi-france
+    database:
+      name: bifrance
+      user: root
+      pass: admin
+      host: mysql
+    reset:
+      - "drush vset -y error_level 2"
+      - "execute(script, copyHtAccess)"
+      - "drush vset -y file_public_path 'sites/default/files'"
+      - "drush vset -y file_private_path 'sites/default/files/private'"
+      - "drush vset -y file_temporary_path 'sites/default/files/private/tmp'"
+    xdebug:
+      php_version: 5
+    blueprint:
+      database:
+        name: bifrance_%slug%
+      inheritsFrom: mbb
+      configName: "mbb-%slug%"
+      siteFolder: /sites/%slug%
+      filesFolder: /sites/%slug%/files
+      reset:
+        - drush vset -y error_level 2
+        - execute(script, copyHtAccess)
+        - drush vset -y file_public_path 'sites/%slug%/files'
+        - drush vset -y file_private_path 'sites/%slug%/files/private'
+        - drush vset -y file_temporary_path 'sites/%slug%/files/private/tmp'
+
+
+blueprints:
+  - configName: mbb
+    variants:
+      - pneumocity
+      - spiolto
+      - pradaxapraxbind
+      - cardiocity
+      - oncocity
+      - pradaxa
+      - ofevpharmacist
+      - ofevpneumolog
