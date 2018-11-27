@@ -36,6 +36,9 @@ class AppScaffoldCommandTest extends TestCase
         $this->application->add(new AppScaffoldCommand($configuration, $method_factory));
     }
 
+    /**
+     * @group docker
+     */
     public function testAppScaffolder()
     {
         $target_folder = getcwd() . '/tmp';
