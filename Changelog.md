@@ -66,6 +66,8 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
           docker:
             service: web
   
+  The `name` will be discarded, if a `service`-entry is set.
+  
   
 ### Changed
 

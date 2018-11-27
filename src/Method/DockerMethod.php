@@ -70,6 +70,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    public function alterConfig(ConfigurationService $configuration_service, array &$data)
+    {
+        if (!empty($data['docker']['service'])) {
+            unset($data['docker']['name']);
+        }
+    }
+
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
@@ -165,6 +172,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $hostconfig
      * @param TaskContextInterface $context
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      */
     public function waitForServices(HostConfig $hostconfig, TaskContextInterface $context)
     {
@@ -176,6 +186,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $docker_config = $this->getDockerConfig($hostconfig, $context);
         $container_name = $this->getDockerContainerName($hostconfig, $context);
         $shell = $docker_config->shell();
+
+        if (!$this->isContainerRunning($docker_config, $container_name)) {
+            throw new \RuntimeException(sprintf(
+                'Docker container %s not running, check your `host.docker.name` configuration!',
+                $container_name
+            ));
+        }
 
         while ($tries < $max_tries) {
             $error_log_level = new ScopedErrorLogLevel($shell, LogLevel::NOTICE);
@@ -251,7 +268,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $shell = $docker_config->shell();
             $container_name = $this->getDockerContainerName($hostconfig, $context);
             if (!$this->isContainerRunning($docker_config, $container_name)) {
-                throw new \RuntimeException(sprintf('Docker container %s not running', $container_name));
+                throw new \RuntimeException(sprintf(
+                    'Docker container %s not running, check your `host.docker.name` configuration!',
+                    $container_name
+                ));
             }
             $shell->run(sprintf('#!docker exec %s mkdir -p /root/.ssh', $container_name));
 
