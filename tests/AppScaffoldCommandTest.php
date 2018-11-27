@@ -51,24 +51,24 @@ class AppScaffoldCommandTest extends TestCase
         // the output of the command in the console
         $output = $commandTester->getDisplay();
 
-        $this->testFileContent('/tmp/test/.fabfile.yaml', 'name: Test');
-        $this->testFileContent('/tmp/test/.fabfile.yaml', 'key: tst');
-        $this->testFileContent('/tmp/test/.fabfile.yaml', 'host: test.test');
-        $this->testFileContent(
+        $this->checkFileContent('/tmp/test/.fabfile.yaml', 'name: Test');
+        $this->checkFileContent('/tmp/test/.fabfile.yaml', 'key: tst');
+        $this->checkFileContent('/tmp/test/.fabfile.yaml', 'host: test.test');
+        $this->checkFileContent(
             '/tmp/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
             'name: Test deployment module'
         );
-        $this->testFileContent(
+        $this->checkFileContent(
             '/tmp/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
             'name: Test deployment module'
         );
-        $this->testFileContent(
+        $this->checkFileContent(
             '/tmp/test/web/modules/custom/tst_deploy/tst_deploy.install',
             'function tst_deploy_install()'
         );
     }
 
-    private function testFileContent($filename, $needle)
+    private function checkFileContent($filename, $needle)
     {
 
         $haystack = file_get_contents($filename);
