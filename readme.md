@@ -11,6 +11,7 @@ Phabalicious is the successor of the python tool [fabalicious](https://github.co
 ## Build from source
 
 * Clone the repository
+* run `composer install`
 * run `composer build-phar`
 * run `composer install-phar` this will copy the app to /usr/local/bin and make it executable.
 
