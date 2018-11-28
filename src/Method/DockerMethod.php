@@ -264,6 +264,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
         if (count($files) > 0) {
             $docker_config = $this->getDockerConfig($hostconfig, $context);
+            $root_folder = $docker_config['rootFolder'] . '/' . $hostconfig['docker']['projectFolder'];
+
             /** @var ShellProviderInterface $shell */
             $shell = $docker_config->shell();
             $container_name = $this->getDockerContainerName($hostconfig, $context);
@@ -284,15 +286,17 @@ class DockerMethod extends BaseMethod implements MethodInterface
                     $data['source'] = $temp_file;
                     $temp_files[] = $temp_file;
                 } elseif ($data['source'][0] !== '/') {
-                      $data['source'] = realpath(
+                    $data['source'] =
                           $context->getConfigurationService()->getFabfilePath() .
                           '/' .
-                          $data['source']
-                      );
+                          $data['source'];
                 }
+                $temp_file = $docker_config['tmpFolder'] . '/' . basename($data['source']);
+                $shell->putFile($data['source'], $temp_file, $context);
 
-                $shell->run(sprintf('#!docker cp %s %s:%s', $data['source'], $container_name, $dest));
+                $shell->run(sprintf('#!docker cp %s %s:%s', $temp_file, $container_name, $dest));
                 $shell->run(sprintf('#!docker exec %s #!chmod %s %s', $container_name, $data['permissions'], $dest));
+                $shell->run(sprintf('rm %s', $temp_file));
             }
             $shell->run(sprintf('#!docker exec %s #!chmod 700 /root/.ssh', $container_name));
             $shell->run(sprintf('#!docker exec %s #!chown -R root /root/.ssh', $container_name));
