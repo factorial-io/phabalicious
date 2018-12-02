@@ -11,15 +11,16 @@ Phabalicious is the successor of the python tool [fabalicious](https://github.co
 ## Build from source
 
 * Clone the repository
+* run `composer install`
 * run `composer build-phar`
 * run `composer install-phar` this will copy the app to /usr/local/bin and make it executable.
 
 ## Add it via composer.json
 
-* run `composer require factorial.io/phabalicious`
+* run `composer require factorial-io/phabalicious`
 * then you can run phabalicious via `./vendor/factorial-io/fabablicious/bin/phab` (or create a symbolic link)
 
-## Running pha
+## Running phab
 
 * Run `phab list` to get a list of all available commands.
 * run `phab help <command>` to get some help for a given command.

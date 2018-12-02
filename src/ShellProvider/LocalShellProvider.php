@@ -54,7 +54,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         );
     }
 
-    public function createShellProcess(array $command = [], $options = []): Process
+    public function createShellProcess(array $command = [], array $options = []): Process
     {
         $shell_command = $this->getShellCommand($options);
         if (count($command) > 0) {
@@ -154,13 +154,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         } while (empty($exit_code));
 
         $exit_code = intval(str_replace(self::RESULT_IDENTIFIER, '', $exit_code), 10);
-        foreach ($lines as $line) {
-            if (!$capture_output && $this->output) {
-                $this->output->writeln($line);
-            } elseif ($capture_output) {
-                $this->logger->debug($line);
-            }
-        }
+
         $cr = new CommandResult($exit_code, $lines);
         if ($cr->failed() && !$capture_output && $throw_exception_on_error) {
             $cr->throwException(sprintf('`%s` failed!', $command));
@@ -235,5 +229,4 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         throw new \InvalidArgumentException('Local shells cannot handle tunnels!');
     }
-
 }

@@ -528,6 +528,9 @@ class ConfigurationService
 
         $data = $this->dockerHosts[$config_name];
         $data = $this->resolveInheritance($data, $this->dockerHosts);
+        $data = $this->applyDefaults($data, [
+            'tmpFolder' => '/tmp',
+        ]);
         if (!empty($data['inheritOnly'])) {
             return $data;
         }
@@ -597,6 +600,7 @@ class ConfigurationService
         $validation->deprecate(['runLocally']);
         $validation->hasKey('shellProvider', 'The name of the shell-provider to use');
         $validation->hasKey('rootFolder', 'The rootFolder to start with');
+        $validation->hasKey('tmpFolder', 'The rootFolder to use');
 
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
