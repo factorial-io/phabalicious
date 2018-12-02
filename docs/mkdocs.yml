@@ -19,7 +19,7 @@ pages:
   - docker-integration.md
   - local-overrides.md
   - contribute.md
-  - changelog.md
+  - Changelog.md
 extra_css:
   - css/version-select.css
 extra_javascript:

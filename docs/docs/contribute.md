@@ -1,15 +1,16 @@
-# Contributing to Fabalicious
+# Contributing to Phabalicious
 
-If you get stuck at any point you can create a [ticket on GitHub](https://github.com/factorial-io/fabalicious/issues).
+If you get stuck at any point you can create a [ticket on GitHub](https://github.com/factorial-io/phabalicious/issues).
 
 ## Contributing to development
 
-_@TODO_
+It's the usual, fork the repository, create a feature-branch, do your changes and submit a pull-request via Github. If your new feature has test-coverage the better. 
 
-## Improving Documenation
+We are happy for every contribution.
 
-_@TODO_
+## Improving documenation
 
+The procedure is the same as with contributing code.
 
 !!! tip
     To edit existing pages, use the **Edit on GitHub** link on the top right corner of the page.
@@ -20,7 +21,7 @@ _@TODO_
     This document is build using [MkDocs](http://www.mkdocs.org/) and served using [GitHub Pages](https://pages.github.com/)
 
     - [Install MkDocs](http://www.mkdocs.org/#installation).
-    - Clone [the repo](https://github.com/factorial-io/fabalicious) locally and switch to `develop` branch.
+    - Clone [the repo](https://github.com/factorial-io/phabalicious) locally and switch to `develop` branch.
     - Using Terminal, navigate to `/docs` folder.
     - Run `mike deploy <version-number>`
 
