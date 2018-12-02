@@ -54,7 +54,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         );
     }
 
-    public function createShellProcess(array $command = [], $options = []): Process
+    public function createShellProcess(array $command = [], array $options = []): Process
     {
         $shell_command = $this->getShellCommand($options);
         if (count($command) > 0) {
