@@ -45,7 +45,7 @@ $output = $container->get(ConsoleOutput::class);
 
 /** @var Application $application */
 $application = $container->get(Application::class);
-$application->setVersion('3.0.0-alpha.1');
+$application->setVersion('3.0.0-alpha.2');
 $application->setName('phabalicious');
 $application->setDefaultCommand('list');
 
