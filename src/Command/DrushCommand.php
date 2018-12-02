@@ -2,10 +2,7 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
-use Phabalicious\Method\TaskContextInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -49,14 +46,19 @@ class DrushCommand extends BaseCommand
         $context = new TaskContext($this, $input, $output);
         $context->set('command', implode(' ', $input->getArgument('drush')));
 
-        try {
-            $this->getMethods()->runTask('drush', $this->getHostConfig(), $context);
-        } catch (EarlyTaskExitException $e) {
-            return 1;
+        // Allow methods to override the used shellProvider:
+        $host_config = $this->getHostConfig();
+        $this->getMethods()->runTask('drush', $host_config, $context);
+        $shell = $context->getResult('shell', $host_config->shell());
+        $command = $context->getResult('command');
+
+        if (!$command) {
+            throw new \RuntimeException('No command-arguments returned for drush-command!');
         }
 
-        return $context->getResult('exitCode', 0);
+        $output->writeln('<info>Starting drush on `' . $host_config['configName'] . '`');
+
+        $process = $this->startInteractiveShell($shell, $command);
+        return $process->getExitCode();
     }
-
-
 }

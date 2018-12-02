@@ -11,7 +11,6 @@ use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
-use webignition\ReadableDuration\ReadableDuration;
 
 class DrushMethod extends BaseMethod implements MethodInterface
 {
@@ -234,8 +233,12 @@ class DrushMethod extends BaseMethod implements MethodInterface
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($host_config, $context);
         $shell->cd($host_config['siteFolder']);
-        $result = $shell->run('#!drush ' . $command);
-        $context->setResult('exitCode', $result->getExitCode());
+        $context->setResult('shell', $shell);
+        $command = sprintf('cd %s;  #!drush  %s', $host_config['siteFolder'], $command);
+        $command = $shell->expandCommand($command);
+        $context->setResult('command', [
+            $command
+        ]);
     }
 
     private function handleModules(
@@ -399,7 +402,6 @@ class DrushMethod extends BaseMethod implements MethodInterface
             if ($tokens) {
                 $result[] = $tokens;
             }
-
         }
 
         $existing = $context->getResult('files', []);
@@ -612,8 +614,5 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
 
         $shell->cd($cwd);
-
-
-
     }
 }
