@@ -18,12 +18,12 @@ The procedure is the same as with contributing code.
     To add a new page to documentation please follow [the guideline provided by MKdocs](http://www.mkdocs.org/user-guide/writing-your-docs/#configure-pages-and-navigation) to add new page and link them within the documentation.
 
 !!! note
-    This document is build using [MkDocs](http://www.mkdocs.org/) and served using [GitHub Pages](https://pages.github.com/)
-
+    This document is build using [MkDocs](http://www.mkdocs.org/), [Mike](https://github.com/jimporter/mike) and served using [GitHub Pages](https://pages.github.com/)
     - [Install MkDocs](http://www.mkdocs.org/#installation).
+    - [Install Mike](https://github.com/jimporter/mike)
     - Clone [the repo](https://github.com/factorial-io/phabalicious) locally and switch to `develop` branch.
     - Using Terminal, navigate to `/docs` folder.
-    - Run `mike deploy <version-number>`
+    - Run `mike deploy <version-number> --push`
 
 ### Resources
 * [Writing your docs in MKdocs](http://www.mkdocs.org/user-guide/writing-your-docs/)
