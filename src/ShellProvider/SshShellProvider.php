@@ -96,6 +96,9 @@ class SshShellProvider extends LocalShellProvider
             $this->hostConfig['port'],
             ];
         $this->addCommandOptions($command);
+        if (!empty($options['tty'])) {
+            $command[] = '-t';
+        }
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'];
 
         return $command;
