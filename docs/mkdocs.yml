@@ -18,6 +18,7 @@ pages:
   - configuration.md
   - docker-integration.md
   - local-overrides.md
+  - app-scaffold.md
   - contribute.md
   - Changelog.md
 extra_css:

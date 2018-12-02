@@ -1,3 +1,7 @@
+## -v/ -vv/ -vvv/ -vvvv
+
+Setting this option will increase the verbosity of phabalicious. Without this settings you'll get only warnings and errors and some informational stuff. If you encounter a problem try increasing the verbosity-level.
+
 ## --config
 
 ```shell
@@ -505,6 +509,17 @@ This task will run a command to forward a local port to a remote port. It starts
 
 * `phab --config=mbb start-remote-access` will forward `localhost:8888` to port `80` of the docker-container
 * `phab --config=mbb start-remote-access --port=3306 --publicPort=33060` will forward `localhost:33060`to port `3306` 
+
+## notify
+
+```shell
+phab --config=<config> notify <message> <channel>
+```
+
+This command will send the notification <message> to Mattermosts channel <channel>. For a detailed description have a look into the dedicated documentation.
+
+**Examples**
+* `phab config:mbb notify "hello world" "off-topic": sends `hello world` to `#off-topic`
 
 ## app:scaffold
 
