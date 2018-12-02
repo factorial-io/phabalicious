@@ -52,22 +52,7 @@ class ShellCommand extends BaseCommand
 
         $output->writeln('<info>Starting shell on `' . $host_config['configName'] . '`');
 
-        /** @var Process $process */
-        $process = $shell->createShellProcess([], ['tty' => true]);
-        $stdin = fopen('php://stdin', 'r');
-        $process->setInput($stdin);
-        $process->setTimeout(0);
-        $process->setTty(true);
-        $process->start();
-        $process->wait(function ($type, $buffer) {
-            if ($type == Process::ERR) {
-                fwrite(STDERR, $buffer);
-            } else {
-                fwrite(STDOUT, $buffer);
-            }
-        });
-
+        $process = $this->startInteractiveShell($shell);
         return $process->getExitCode();
     }
-
 }
