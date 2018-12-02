@@ -291,7 +291,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                           '/' .
                           $data['source'];
                 }
-                $temp_file = $docker_config['tmpFolder'] . '/' . basename($data['source']);
+                $temp_file = $docker_config['tmpFolder'] . '/' . 'phab.tmp.' . basename($data['source']);
                 $shell->putFile($data['source'], $temp_file, $context);
 
                 $shell->run(sprintf('#!docker cp %s %s:%s', $temp_file, $container_name, $dest));
