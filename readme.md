@@ -24,3 +24,7 @@ Phabalicious is the successor of the python tool [fabalicious](https://github.co
 
 * Run `phab list` to get a list of all available commands.
 * run `phab help <command>` to get some help for a given command.
+
+## Documentation
+
+You can find an extensive documentation at [https://factorial-io.github.io/phabalicious](https://factorial-io.github.io/phabalicious)
