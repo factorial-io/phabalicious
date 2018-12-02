@@ -229,5 +229,4 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         throw new \InvalidArgumentException('Local shells cannot handle tunnels!');
     }
-
 }
