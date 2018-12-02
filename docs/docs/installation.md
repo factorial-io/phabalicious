@@ -1,6 +1,6 @@
 # Installation of needed dependencies
 
-Phabalicious needs at least PHP 7.1 with the json- and openss-extensions. The best way is to install it globally.
+Phabalicious needs at least PHP 7.1 with the json- and openssl-extensions. The best way is to install it globally by downloading the phar-file:
 
 ## Download phar
 
