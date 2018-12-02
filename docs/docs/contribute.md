@@ -19,6 +19,7 @@ The procedure is the same as with contributing code.
 
 !!! note
     This document is build using [MkDocs](http://www.mkdocs.org/), [Mike](https://github.com/jimporter/mike) and served using [GitHub Pages](https://pages.github.com/)
+    
     - [Install MkDocs](http://www.mkdocs.org/#installation).
     - [Install Mike](https://github.com/jimporter/mike)
     - Clone [the repo](https://github.com/factorial-io/phabalicious) locally and switch to `develop` branch.
