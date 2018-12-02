@@ -36,12 +36,13 @@ The fabfile needs at least the `scaffold`-section. The `scaffold`-section is a l
 ## The `scaffold`-section
 Phabalicious will provide the following replacement-patterns out of the box:
 
-||Pattern||Value||
+|Pattern|Value|
+|--------|-------|
 |%rootFolder%|The folder the app will be installed into|
 |%name%|The name of the app|
 |%projectFolder%|a cleaned version of the app-name, suitable for machine-names.|
 |%shortName%|The short-name|
-|%uuid|a random-uuid|
+|%uuid%|a random-uuid|
 
 ## the `variables`-section
 You can add own variables via the `variables`-section. In the above example, the variable `composerProject` will be available in the `scaffold`-section via the pattern `%composerProject%`
@@ -157,6 +158,7 @@ scaffold:
 ```
 
 #### the fabfile-template
+
 ```yaml
 name: {{ name }}
 key: {{ shortName }}
@@ -171,53 +173,16 @@ needs:
   - git
   - files
 
-excludeFiles:
-  backup:
-    - "styles"
-    - "tmp"
-  copyFrom:
-    - "tmp"
-    - "styles"
-    - "php"
-    - "js"
-    - "css"
-
-scripts:
-
-dockerHosts:
-  mbb:
-    environment:
-      COMPOSE_FILE: 'docker-compose.yml:docker-compose-mbb.yml'
-    inheritsFrom:
-      - https://config.factorial.io/mbb/2.0/mbb-docker.yaml
-      - https://config.factorial.io/docker/2.0/docker-compose.yaml
-
-  clients.factorial.io:
-    environment:
-      COMPOSE_HTTP_TIMEOUT: "180"
-      VHOST: "%host.docker.vhost%"
-    inheritsFrom:
-      - https://config.factorial.io/clients.factorial.io/2.0/d8/docker.yaml
-
 hosts:
   mbb:
     host: {{ projectFolder }}.test
     user: root
-    password: root
     port: {{ 1024 + random(20000) }}
     type: dev
     rootFolder: /var/www/{{ webRoot }}
     gitRootFolder: /var/www
-    siteFolder: /sites/default
-    filesFolder: /sites/default/files
     backupFolder: /var/www/backups
     branch: develop
-    supportsInstalls: true
-    docker:
-      name: {{ projectFolder }}_web_1
-      service: web
-      configuration: mbb
-      projectFolder: {{ projectFolder }}
     database:
       name: {{ projectFolder|replace({'-': '_'}) }}_db
       user: root
