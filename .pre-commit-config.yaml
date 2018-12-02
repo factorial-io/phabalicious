@@ -11,3 +11,5 @@
       files: \.php$
       args:
         - --standard=PSR2 -p
+    - id: php-unit
+      files: \.php$
