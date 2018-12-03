@@ -128,7 +128,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
             'name' => trim($name),
             'shortName' => trim(strtolower($short_name)),
             'projectFolder' => Utilities::cleanupString($name),
-            'rootFolder' => $input->getOption('output') . '/' . Utilities::cleanupString($name),
+            'rootFolder' => realpath($input->getOption('output') . '/' . Utilities::cleanupString($name)),
             'uuid' => $this->fakeUUID(),
         ];
 
@@ -153,7 +153,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $script = new ScriptMethod($logger);
 
         $host_config = new HostConfig([
-            'rootFolder' => $input->getOption('output'),
+            'rootFolder' => realpath($input->getOption('output')),
             'shellExecutable' => '/bin/bash'
         ], $shell);
         $context = new TaskContext($this, $input, $output);
