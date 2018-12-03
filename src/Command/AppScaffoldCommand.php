@@ -171,7 +171,6 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $this->twig = new \Twig_Environment($loader, array(
         ));
 
-        $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
         if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
             $question = new ConfirmationQuestion('Target-folder exists! Continue anyways? ', false);
@@ -179,6 +178,8 @@ class AppScaffoldCommand extends BaseOptionsCommand
                 return 1;
             }
         }
+
+        $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
         $script->runScript($host_config, $context);
         return 0;
