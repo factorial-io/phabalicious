@@ -84,6 +84,7 @@ dockerHosts:
       - https://some.host/docker-compose.yml
 ```
 
+
 ## Built-in docker commands
 
 There are two commands builtin, because they are hard to implement in a script-only version:
@@ -122,3 +123,6 @@ Phabalicious is running some predefined docker-tasks if set in the fabfile and w
 
 If you want to support this in your configuration, add the tasks to the fabfile and its corresponding commands. 
 
+## Conclusion
+
+As you can see, there's not much docker-specific besides the naming. So in theory you can control something else like `rancher` or maybe even `kubectl`. All you have is the referencing between a host and a dockerHost and the possibility to run tasks locally or via SSH on a remote instance, and pass data from the host-config or docker-config to your scripts.
