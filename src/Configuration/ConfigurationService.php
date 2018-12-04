@@ -134,7 +134,6 @@ class ConfigurationService
                     $disallow_deep_merge_for_keys,
                     $method->getKeysForDisallowingDeepMerge()
                 );
-
             }
             foreach ($this->methods->all() as $method) {
                 $data = $this->applyDefaults(
@@ -617,5 +616,4 @@ class ConfigurationService
     {
         $this->offlineMode = $offline;
     }
-
 }

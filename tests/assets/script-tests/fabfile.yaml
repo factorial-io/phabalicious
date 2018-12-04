@@ -32,3 +32,9 @@ hosts:
       test:
         - echo "Hello"
         - echo "World"
+    deployPrepare:
+      - debug(deployPrepare on hostA)
+    deploy:
+      - debug(deploy on hostA)
+    deployFinished:
+      - debug(deployFinished on hostA)

@@ -98,7 +98,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             );
 
             $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
-
         } catch (UnknownReplacementPatternException $e) {
             $context->getOutput()
                 ->writeln('<error>Unknown replacement in line ' . $e->getOffendingLine() . '</error>');
@@ -296,7 +295,22 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
         if (!empty($common_scripts[$task][$type])) {
             $script = $common_scripts[$task][$type];
-            $this->logger->info('Running common script for task `' . $task . '` and type `' . $type . '`');
+            $this->logger->info(sprintf(
+                'Running common script for task `%s` and type `%s`',
+                $task,
+                $type
+            ));
+            $context->set('scriptData', $script);
+            $this->runScript($config, $context);
+        }
+
+        if (!empty($config[$task])) {
+            $script = $config[$task];
+            $this->logger->info(sprintf(
+                'Running host-specific script for task `%s` and host `%s`',
+                $task,
+                $config['configName']
+            ));
             $context->set('scriptData', $script);
             $this->runScript($config, $context);
         }
