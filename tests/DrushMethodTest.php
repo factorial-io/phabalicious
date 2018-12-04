@@ -27,7 +27,6 @@ class DrushMethodTest extends TestCase
         $method_factory->addMethod($this->method);
 
         $this->configurationService->readConfiguration(getcwd() . '/assets/drush-tests/fabfile.yaml');
-
     }
 
     public function testGetDefaultConfig()
