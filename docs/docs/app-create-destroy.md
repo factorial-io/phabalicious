@@ -18,12 +18,17 @@ appStages:
     - stage: spinUp
     - stage: installDependencies
     - stage: install
+  createCode:
+    - stage: installCode
+    - stage: installDependencies
   deploy:
     - stage: spinUp
   destroy:
     - stage: spinDown
     - stage: deleteContainers
 ```
+
+`createCode` is only used by the `ftp-sync`-method, to create a complete code version of an app.
 
 ## Creating a new app
 

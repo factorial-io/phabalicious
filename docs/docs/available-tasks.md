@@ -186,6 +186,7 @@ After a successfull deployment the `reset`-task will be run.
 
 * `git` will deploy to the latest commit for the given branch defined in the host-configuration. Submodules will be synced, and updated.
 * `platform` will push the current branch to the `platform` remote, which will start the deployment-process on platform.sh
+* `ftp-sync` will create a copy of the app in a temporary folder and syncs this folder with the help of `lftp` with a remote-ftp-server.
 
 **Examples:**
 

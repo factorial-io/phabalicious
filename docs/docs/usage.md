@@ -25,6 +25,7 @@ Phabalicious provides a set of so-called methods which implement all listed func
 * drupalconsole
 * mattermost
 * platform
+* ftp-sync
 
 You declare your needs in the fabfile.yaml with the key `needs`, e.g.
 
