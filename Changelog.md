@@ -67,27 +67,27 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
               service: web
    The `name` will be discarded, if a `service`-entry is set.
 
-* new method `ftp-sync`, it's a bit special. This method creates the app into a temporary folder, and syncs it via `lftp` to a remote instance. Here's a complete example:
+* new method `ftp-sync`, it's a bit special. This method creates the app into a temporary folder, and syncs it via `lftp` to a remote instance. Here's a complete example (most of them are provided via sensible defaults):
 
         excludeFiles:
           ftp-sync:
             - .git/
             - node_modules
-          hosts:
-            ftpSyncSample:
-              needs:
-                - git
-                - ftp-sync
-                - local
-              ftp:
-                user: <ftp-user>  
-                password: <ftp-password>
-                host: <ftp-host>
-                port: 21
-                lftpOptions:
-                  - --ignoreTime
-                  - --verbose=3
-                  - --no-perms
+        hosts:
+          ftpSyncSample:
+            needs:
+              - git
+              - ftp-sync
+              - local
+            ftp:
+              user: <ftp-user>  
+              password: <ftp-password>
+              host: <ftp-host>
+              port: 21
+              lftpOptions:
+                - --ignoreTime
+                - --verbose=3
+                - --no-perms
            
         
   
