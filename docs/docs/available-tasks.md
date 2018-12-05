@@ -537,12 +537,14 @@ This command will scaffold a new project from a set of scaffold-files. See the d
 ## app:create
 
 ```shell
-phab --config=<config> app:create
+phab --config=<config> app:create --config-from=<other-config>
 ```
 
 This command will create a new app instance from a given config. Most useful with the usage of blueprints. 
 
-The creation is done in several steps which can be customized. For a deeper explanation please have a look into the dedicated documentation
+The creation is done in several steps which can be customized. If you apply the `--config-from`-option an additional copyFrom is done afterwards. 
+
+For a deeper explanation please have a look into the dedicated documentation
 
 ## app:update
 

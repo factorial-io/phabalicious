@@ -55,19 +55,41 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * new shell-provider `dockerExec` which will start a shell with the help of `docker exec` instead of ssh.
 * new config-option `shellProvider`, where you can override the shell-provider to your liking.
 
-      hosts:
-        mbb:
-          shellProvider: docker-exec
+        hosts:
+          mbb:
+            shellProvider: docker-exec
 * You can get help for a specific task via `phab help <task>`. It will show all possible options and some help.
 * docker-compose version 23 changes the schema how names of docker-containers are constructed. To support this change we can now declare the needed service to compute the correct container-name from. 
 
-      hosts:
-        testHost:
-          docker:
-            service: web
-  
-  The `name` will be discarded, if a `service`-entry is set.
-  
+        hosts:
+          testHost:
+            docker:
+              service: web
+   The `name` will be discarded, if a `service`-entry is set.
+
+* new method `ftp-sync`, it's a bit special. This method creates the app into a temporary folder, and syncs it via `lftp` to a remote instance. Here's a complete example (most of them are provided via sensible defaults):
+
+        excludeFiles:
+          ftp-sync:
+            - .git/
+            - node_modules
+        hosts:
+          ftpSyncSample:
+            needs:
+              - git
+              - ftp-sync
+              - local
+            ftp:
+              user: <ftp-user>  
+              password: <ftp-password>
+              host: <ftp-host>
+              port: 21
+              lftpOptions:
+                - --ignoreTime
+                - --verbose=3
+                - --no-perms
+           
+        
   
 ### Changed
 
