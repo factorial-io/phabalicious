@@ -5,6 +5,7 @@ namespace Phabalicious\Command;
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\AppDefaultStages;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -60,14 +61,7 @@ class AppDestroyCommand extends AppBaseCommand
         if ($app_exists) {
             $stages = $this->configuration->getSetting(
                 'appStages.deploy',
-                [
-                    [
-                        'stage' => 'spinDown',
-                    ],
-                    [
-                        'stage' => 'deleteContainer',
-                    ],
-                ]
+                AppDefaultStages::DESTROY
             );
             $this->executeStages($stages, 'appDestroy', $context, 'Destroying app');
             $outer_shell->run(sprintf('sudo rm -rf %s', $install_dir));

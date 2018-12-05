@@ -45,6 +45,7 @@ class GitMethod extends BaseMethod implements MethodInterface
             'gitRootFolder' => $host_config['rootFolder'],
             'ignoreSubmodules' => false,
             'gitOptions' => $configuration_service->getSetting('gitOptions', []),
+            'deployMethod' => 'git',
         ];
     }
 
@@ -88,6 +89,9 @@ class GitMethod extends BaseMethod implements MethodInterface
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
+        if ($host_config['deployMethod'] !== 'git') {
+            return ;
+        }
         $shell = $this->getShell($host_config, $context);
         $shell->cd($host_config['gitRootFolder']);
         if (!$this->isWorkingcopyClean($host_config, $context)) {
