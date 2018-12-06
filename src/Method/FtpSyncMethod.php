@@ -124,7 +124,11 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
         // Run deploy scripts
         /** @var ScriptMethod $script_method */
         $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
-        $script_method->runTaskSpecificScripts($host_config, 'reset', $context);
+        $context->set('variables', [
+            'installFolder' => $install_dir
+        ]);
+        $context->set('rootFolder', $install_dir);
+        $script_method->runTaskSpecificScripts($host_config, 'deploy', $context);
 
         $context->setResult('skipResetStep', true);
     }
