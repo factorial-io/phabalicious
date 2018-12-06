@@ -411,6 +411,9 @@ class ConfigurationService
     {
         $data = $this->resolveInheritance($data, $this->hosts);
         $type = isset($data['type']) ? $data['type'] : false;
+        $type = HostType::convertLegacyTypes($type);
+        $data['type'] = $type;
+
         $defaults = [
             'type' => $type ? $type : 'dev',
             'config_name' => $config_name, // For backwards compatibility
