@@ -216,6 +216,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             }
         }
 
+        $context->set('rootFolder', $host_config['siteFolder']);
         $script_method->runTaskSpecificScripts($host_config, 'reset', $context);
 
         // Keep calm and clear the cache.

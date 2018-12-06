@@ -56,9 +56,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $context->setShell($host_config->shell());
         }
 
-        $root_folder = isset($host_config['siteFolder'])
-            ? $host_config['siteFolder']
-            : isset($host_config['rootFolder'])
+        $root_folder = isset($host_config['rootFolder'])
                 ? $host_config['rootFolder']
                 : '.';
         $root_folder = $context->get('rootFolder', $root_folder);
