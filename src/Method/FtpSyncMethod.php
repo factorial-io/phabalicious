@@ -9,6 +9,7 @@ use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\AppDefaultStages;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Symfony\Component\Console\Helper\QuestionHelper;
 
 class FtpSyncMethod extends BaseMethod implements MethodInterface
 {
@@ -75,7 +76,6 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
             $service = new ValidationService($config['ftp'], $errors, 'host-config.ftp '. $config['configName']);
             $service->hasKeys([
                 'user' => 'the ftp user-name',
-                'password' => 'the ftp password',
                 'host' => 'the ftp host to connect to',
                 'port' => 'the port to connect to',
                 'rootFolder' => 'the rootfolder of your app on the remote file-system',
@@ -141,6 +141,12 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
             return;
         }
 
+        if (empty($host_config['ftp']['password'])) {
+            $ftp = $host_config['ftp'];
+            $ftp['password'] = $context->getPasswordManager()->getPasswordFor($ftp['host'], $ftp['port'], $ftp['user']);
+            $host_config['ftp'] = $ftp;
+        }
+
         $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . time();
         $context->set('installDir', $install_dir);
 
@@ -178,6 +184,7 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
         $shell->run(sprintf('#!lftp -f %s', $command_file));
 
         // Cleanup.
+        $shell->run(sprintf('rm %s', $command_file));
         $shell->run(sprintf('rm -rf %s', $install_dir));
 
         // Do not run any next tasks.
