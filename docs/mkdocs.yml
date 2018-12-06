@@ -21,6 +21,7 @@ nav:
   - scripts.md
   - app-scaffold.md
   - app-create-destroy.md
+  - passwords.md
   - contribute.md
   - Changelog.md
 extra_css:

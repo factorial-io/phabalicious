@@ -81,15 +81,16 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
               - local
             ftp:
               user: <ftp-user>  
-              password: <ftp-password>
+              password: <ftp-password> #
               host: <ftp-host>
               port: 21
               lftpOptions:
                 - --ignoreTime
                 - --verbose=3
                 - --no-perms
-           
-        
+
+    You can add your password to the file `.phabalicious-credentials` (see passwords.md) so phabalicious pick it up. 
+	
   
 ### Changed
 
