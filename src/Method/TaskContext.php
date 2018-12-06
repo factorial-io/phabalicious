@@ -7,10 +7,14 @@ use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestAttributeValueResolver;
 
 class TaskContext implements TaskContextInterface
 {
@@ -29,6 +33,8 @@ class TaskContext implements TaskContextInterface
     private $commandResult;
 
     private $shell;
+
+    private $passwordManager;
 
     public function __construct(BaseOptionsCommand $command, InputInterface $input, OutputInterface $output)
     {
@@ -143,5 +149,21 @@ class TaskContext implements TaskContextInterface
     public function clearResults()
     {
         $this->result = [];
+    }
+
+    public function askQuestion(string $question)
+    {
+        $question = new Question($question);
+        $question_helper = new QuestionHelper();
+        return $question_helper->ask($this->input, $this->output, $question);
+    }
+
+    public function getPasswordManager()
+    {
+        if (!$this->passwordManager) {
+            $this->passwordManager = new PasswordManager($this);
+        }
+
+        return $this->passwordManager;
     }
 }

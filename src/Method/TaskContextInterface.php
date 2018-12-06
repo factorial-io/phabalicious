@@ -7,6 +7,7 @@ use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\PasswordManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -55,6 +56,12 @@ interface TaskContextInterface
 
     public function mergeResults(TaskContextInterface $context);
 
+    public function askQuestion(string $string);
+
+    /**
+     * @return PasswordManagerInterface
+     */
+    public function getPasswordManager();
 
 
 }
