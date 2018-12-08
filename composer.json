@@ -42,7 +42,7 @@
         "auto-scripts": {
 
         },
-        "build-phar": "box build",
+        "build-phar": "box compile",
         "install-phar": "cp ./build/phabalicious.phar /usr/local/bin/phab; chmod u+x /usr/local/bin/phab"
     },
     "extra": {
