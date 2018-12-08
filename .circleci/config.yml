@@ -22,16 +22,16 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "composer.json" }}
+          - v2-dependencies-{{ checksum "composer.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v2-dependencies-
 
       - run: php /composer.phar install
 
       - save_cache:
           paths:
             - ./vendor
-          key: v1-dependencies-{{ checksum "composer.json" }}
+          key: v2-dependencies-{{ checksum "composer.json" }}
 
       # run tests!
       - run: cd tests; ../vendor/bin/phpunit --exclude-group docker .
