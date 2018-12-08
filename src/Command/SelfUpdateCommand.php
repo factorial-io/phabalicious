@@ -30,12 +30,15 @@ class SelfUpdateCommand extends BaseOptionsCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $helper = new SymfonyStyle($input, $output);
-        $helper->text('Looking for a new version ...');
+        $helper->text(sprintf(
+            'Current version is %s, looking for a new version ...',
+            $this->getApplication()->getVersion()
+        ));
 
-        $result = $this->runSelfUpdate($input->getOption('allow-unstable'));
+        $new_version = $this->runSelfUpdate($input->getOption('allow-unstable'));
 
-        if ($result) {
-            $helper->success('Updated phabalicious sucessfuly');
+        if ($new_version) {
+            $helper->success(sprintf('Updated phabalicious successfully to %s', $new_version));
         } else {
             $helper->note('No newer version found!');
         }
@@ -53,6 +56,6 @@ class SelfUpdateCommand extends BaseOptionsCommand
         $updater->getStrategy()->setStability($allow_unstable ? 'unstable' : 'stable');
         $result = $updater->update();
 
-        return $result;
+        return $result ? $updater->getNewVersion() : false;
     }
 }
