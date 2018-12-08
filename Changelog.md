@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0-alpha.5 / 2018-12-08
+
+### fixed
+
+  * Use real version number
+  * Fix phar-build
+
 ## 3.0.0-alpha.4 / 2018-12-08
 
 ### new
