@@ -52,7 +52,6 @@ class SelfUpdateCommand extends BaseOptionsCommand
         $updater->getStrategy()->setPackageName('factorial-io/phabalicious');
         $updater->getStrategy()->setPharName('phabalicious.phar');
         $updater->getStrategy()->setCurrentLocalVersion($this->getApplication()->getVersion());
-        $updater->getStrategy()->setCurrentLocalVersion('3.0.0-alpha.1');
         $updater->getStrategy()->setStability($allow_unstable ? 'unstable' : 'stable');
         $result = $updater->update();
 
