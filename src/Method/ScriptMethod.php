@@ -150,6 +150,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         }
 
         foreach ($commands as $line) {
+            $line = trim($line);
+            if (empty($line)) {
+                continue;
+            }
             $result = Utilities::extractCallback($line);
             $callback_handled = false;
             if ($result) {
