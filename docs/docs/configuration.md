@@ -36,10 +36,12 @@ List here all needed methods for that type of project. Available methods are:
   * `ssh`
   * `drush` for support of drupal installations
   * `files`
-  * `Mattermost` for slack-notifications
+  * `mattermost` for slack-notifications
   * `docker` for docker-support
   * `composer` for composer support
   * `drupalconsole` for drupal-concole support
+  * `platform` for deploying to platform.sh
+  * `ftp-sync` to deploy to a ftp-server
 
 **Example for drupal 7**
 
@@ -159,7 +161,7 @@ This will print all host configuration for the host `staging`.
 
 * `composerRootFolder` the folder where the composer.json for the project is stored, defaults to `gitRootFolder`.
 
-#### Configuration for the crush-method
+#### Configuration for the drush-method
 
 * `siteFolder` is a drupal-specific folder, where the settings.php resides for the given installation. This allows to interact with multisites etc.
 * `filesFolder` the path to the files-folder, where user-assets get stored and which should be backed up by the `files`-method
@@ -177,16 +179,23 @@ This will print all host configuration for the host `staging`.
 * `drupalVersion` set the drupal-version to use. If not set phabalicious is trying to guess it from the `needs`-configuration.
 * `drushVersion` set the used crush-version, default is `8`. Drush is not 100% backwards-compatible, for phabalicious needs to know its version.
 * `supportsZippedBackups` default is true, set to false, when zipped backups are not supported
+
+#### Configuration of the ftp-sync-method
+
+* `ftp` keeps all configuration bundled:
+  * `user` the ftp-user  
+  * `password` the ftp password
+  * `host` the ftp host
+  * `port`, default is 21, the port to connect to 
+  * `rootFolder` the folder to copy the app into on the ftp-host.
+  * `lftpOptions`, an array of options to pass when executing `lftp`
+
 #### Configuration of the docker-method
 
 * `docker` for all docker-relevant configuration. `configuration` and `name`/`service` are the only required keys, all other are optional and used by the docker-tasks.
     * `configuration` should contain the key of the dockerHost-configuration in `dockerHosts`
     * `name` contains the name of the docker-container. This is needed to get the IP-address of the particular docker-container when using ssh-tunnels (see above).
     * for docker-compose-base setups you can provide the `service` instead the name, phabalicious will get the docker name automatically from the service.
-
-
-
-
 
 ### dockerHosts
 

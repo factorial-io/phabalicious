@@ -1,4 +1,7 @@
 {
+    "composer/ca-bundle": {
+        "version": "1.1.3"
+    },
     "composer/semver": {
         "version": "1.4.2"
     },
@@ -14,44 +17,17 @@
     "guzzlehttp/psr7": {
         "version": "1.4.2"
     },
-    "hoa/consistency": {
-        "version": "1.17.05.02"
-    },
-    "hoa/event": {
-        "version": "1.17.01.13"
-    },
-    "hoa/exception": {
-        "version": "1.17.01.16"
-    },
-    "hoa/file": {
-        "version": "1.17.07.11"
-    },
-    "hoa/iterator": {
-        "version": "2.17.01.10"
-    },
-    "hoa/protocol": {
-        "version": "1.17.01.14"
-    },
-    "hoa/stream": {
-        "version": "1.17.02.21"
-    },
     "jakeasmith/http_build_url": {
         "version": "1.0.1"
-    },
-    "league/event": {
-        "version": "2.1.2"
-    },
-    "macfja/phar-builder": {
-        "version": "dev-sf4-compatibility"
-    },
-    "macfja/symfony-console-filechooser": {
-        "version": "1.0.0"
     },
     "myclabs/deep-copy": {
         "version": "1.8.1"
     },
-    "neutron/signal-handler": {
-        "version": "1.0.1"
+    "padraic/humbug_get_contents": {
+        "version": "1.1.2"
+    },
+    "padraic/phar-updater": {
+        "version": "v1.0.6"
     },
     "phar-io/manifest": {
         "version": "1.0.3"
@@ -103,9 +79,6 @@
     },
     "psr/log": {
         "version": "1.0.2"
-    },
-    "rych/bytesize": {
-        "version": "v1.0.0"
     },
     "sebastian/code-unit-reverse-lookup": {
         "version": "1.0.1"
@@ -217,9 +190,6 @@
     },
     "twig/twig": {
         "version": "v2.5.0"
-    },
-    "webignition/readable-duration": {
-        "version": "0.2"
     },
     "webmozart/assert": {
         "version": "1.3.0"

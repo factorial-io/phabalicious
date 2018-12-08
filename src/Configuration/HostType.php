@@ -25,4 +25,13 @@ class HostType
         ];
     }
 
+    public static function convertLegacyTypes($type)
+    {
+        if ($type == 'live') {
+            return self::PROD;
+        }
+
+        return $type;
+    }
+
 }

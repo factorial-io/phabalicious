@@ -1,0 +1,6 @@
+{
+  "main": "bin/phab",
+  "git-tag": "git_tag",
+  "output": "build/phabalicious.phar",
+  "compression": "GZ"
+}

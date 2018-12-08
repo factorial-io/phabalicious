@@ -186,6 +186,7 @@ After a successfull deployment the `reset`-task will be run.
 
 * `git` will deploy to the latest commit for the given branch defined in the host-configuration. Submodules will be synced, and updated.
 * `platform` will push the current branch to the `platform` remote, which will start the deployment-process on platform.sh
+* `ftp-sync` will create a copy of the app in a temporary folder and syncs this folder with the help of `lftp` with a remote-ftp-server.
 
 **Examples:**
 
@@ -537,12 +538,14 @@ This command will scaffold a new project from a set of scaffold-files. See the d
 ## app:create
 
 ```shell
-phab --config=<config> app:create
+phab --config=<config> app:create --config-from=<other-config>
 ```
 
 This command will create a new app instance from a given config. Most useful with the usage of blueprints. 
 
-The creation is done in several steps which can be customized. For a deeper explanation please have a look into the dedicated documentation
+The creation is done in several steps which can be customized. If you apply the `--config-from`-option an additional copyFrom is done afterwards. 
+
+For a deeper explanation please have a look into the dedicated documentation
 
 ## app:update
 
@@ -564,3 +567,12 @@ phab --config=<config> app:destroy
 ```
 
 This command will destroy an app from a given configuration. The process has several steps. Caution: there will be no backup!
+
+## self-update
+
+```shell
+phab self-update
+Phan self-update --allow-unstable=1
+```
+
+This will download the latest version of phab and replace the current installed one with the downloaded version. If `allow-unstable` is set, the latest-dev-version will be downloaded.

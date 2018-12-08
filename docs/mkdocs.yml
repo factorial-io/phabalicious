@@ -10,7 +10,7 @@ site_description: Phabalicious Documentation
 site_author: Factorial GmbH, Hamburg
 copyright: © 2018 Factorial GmbH, Hamburg
 
-pages:
+nav:
   - index.md
   - installation.md
   - usage.md
@@ -20,6 +20,8 @@ pages:
   - local-overrides.md
   - scripts.md
   - app-scaffold.md
+  - app-create-destroy.md
+  - passwords.md
   - contribute.md
   - Changelog.md
 extra_css:

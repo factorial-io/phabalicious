@@ -2,8 +2,6 @@
 
 namespace Phabalicious\Utilities;
 
-use Wikimedia\Composer\Merge\NestedArray;
-
 class Utilities
 {
 
