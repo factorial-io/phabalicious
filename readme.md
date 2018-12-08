@@ -4,11 +4,13 @@ Phabalicious is the successor of the python tool [fabalicious](https://github.co
 
 ## Installation
 
-* Download the `phabalicious.phar`
+* Download the `phabalicious.phar` from https://github.com/factorial-io/phabalicious/releases
 * `cp phabalicious.phar <a-folder-of-your-liking>/phab`
 * `chmod +x <a-folder-of-your-liking>/phab`
 
 ## Build from source
+
+You'll need [box](https://github.com/humbug/box) for building the phar-file.
 
 * Clone the repository
 * run `composer install`
@@ -24,6 +26,12 @@ Phabalicious is the successor of the python tool [fabalicious](https://github.co
 
 * Run `phab list` to get a list of all available commands.
 * run `phab help <command>` to get some help for a given command.
+
+## Updating phab
+
+* Run `phab self-update`, this will download the latest release from GitHub.
+
+If you want to get the latest dev-version, add `--allow-unstable=1`
 
 ## Enhancing phab, contributing to phab
 

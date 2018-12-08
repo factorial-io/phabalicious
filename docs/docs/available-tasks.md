@@ -567,3 +567,12 @@ phab --config=<config> app:destroy
 ```
 
 This command will destroy an app from a given configuration. The process has several steps. Caution: there will be no backup!
+
+## self-update
+
+```shell
+phab self-update
+Phan self-update --allow-unstable=1
+```
+
+This will download the latest version of phab and replace the current installed one with the downloaded version. If `allow-unstable` is set, the latest-dev-version will be downloaded.
