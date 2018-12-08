@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0
+## 3.0.0-alpha.1
 
 Fabalicious is now rewritten in PHP, so we changed the name to make the separation more clear. Phabalicious is now a symfony console app and uses a more unix-style approach to arguments and options. E.g. instead of `config:<name-of-config>` use `--config=<name-of-config>`
 
