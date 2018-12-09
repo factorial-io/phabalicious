@@ -31,18 +31,19 @@ class FishShellCompletionDescriptor extends Descriptor
      */
     protected function describeInputArgument(InputArgument $argument, array $options = array())
     {
+        global $argv;
         $command = $options['command'];
         if (!$command instanceof CompletionAwareInterface) {
             return;
         }
         $this->output->write(
-            "complete -c pha -n '__fish_seen_subcommand_from " . $command->getName() .
+            "complete -c ' . $argv[0] . ' -n '__fish_seen_subcommand_from " . $command->getName() .
             "' -f"
         );
         global $argv;
 
         $this->output->write(
-            " -a '(__fish_pha_get_arguments " .
+            " -a '(__fish_phab_get_arguments " .
             $command->getName() . ' ' .
             $argument->getName() .
             ")'"
@@ -63,9 +64,10 @@ class FishShellCompletionDescriptor extends Descriptor
      */
     protected function describeInputOption(InputOption $option, array $options = array())
     {
+        global $argv;
         $command = $options['command'];
         $this->output->write(
-            "complete -c pha -n '__fish_seen_subcommand_from " . $command->getName() .
+            "complete -c ' . $argv[0] . ' -n '__fish_seen_subcommand_from " . $command->getName() .
             "' -f"
         );
 
@@ -91,7 +93,7 @@ class FishShellCompletionDescriptor extends Descriptor
         if ($command instanceof CompletionAwareInterface) {
             global $argv;
             $this->output->write(
-                "complete -c pha -n '__fish_seen_subcommand_from " .
+                "complete -c ' . $argv[0] . ' -n '__fish_seen_subcommand_from " .
                 $command->getName() .
                 " and __fish_seen_argument --" .
                 $option->getName() .
@@ -103,7 +105,7 @@ class FishShellCompletionDescriptor extends Descriptor
             }
 
             $this->output->writeln(
-                " -a '(__fish_pha_get_options " .
+                " -a '(__fish_phab_get_options " .
                 $command->getName() . ' ' .
                 $option->getName() .
                 ")'"
@@ -131,8 +133,10 @@ class FishShellCompletionDescriptor extends Descriptor
      */
     protected function describeCommand(Command $command, array $options = array())
     {
+        global $argv;
+
         $this->output->writeln(
-            "complete -c pha -n '__fish_use_subcommand' -f -a " .
+            "complete -c ' . $argv[0] . ' -n '__fish_use_subcommand' -f -a " .
             $command->getName() .
             " -d '" .
             $command->getDescription() .
@@ -156,15 +160,17 @@ class FishShellCompletionDescriptor extends Descriptor
     protected function describeApplication(Application $application, array $options = array())
     {
         global $argv;
-        $this->output->writeln('complete -c pha -e');
-        $this->output->writeln('function __fish_pha_get_options');
+        $this->output->writeln('complete -c ' . $argv[0] . ' -e');
+        $this->output->writeln('function __fish_phab_get_options');
         $this->output->writeln('  set -l CMD (commandline -ocp)');
-        $this->output->writeln(  '  ' . $argv[0] . ' _completion --complete-command $argv[1]  --complete-option $argv[2] --command-line "$CMD" ');
+        $this->output->writeln('  ' . $argv[0] .
+            ' _completion --complete-command $argv[1]  --complete-option $argv[2] --command-line "$CMD" ');
         $this->output->writeln('end');
 
-        $this->output->writeln('function __fish_pha_get_arguments');
+        $this->output->writeln('function __fish_phab_get_arguments');
         $this->output->writeln('  set -l CMD (commandline -ocp)');
-        $this->output->writeln(  '  ' . $argv[0] . ' _completion --complete-command $argv[1]  --complete-argument $argv[2] --command-line "$CMD" ');
+        $this->output->writeln('  ' . $argv[0] .
+            ' _completion --complete-command $argv[1]  --complete-argument $argv[2] --command-line "$CMD" ');
         $this->output->writeln('end');
 
 
