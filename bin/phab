@@ -45,7 +45,11 @@ $output = $container->get(ConsoleOutput::class);
 
 /** @var Application $application */
 $application = $container->get(Application::class);
-$application->setVersion('@git_tag@');
+$version = '@git_tag@';
+if ($version[0] == '@') {
+    $version = '3.0.0';
+}
+$application->setVersion($version);
 $application->setName('phabalicious');
 $application->setDefaultCommand('list');
 
