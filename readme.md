@@ -27,6 +27,18 @@ You'll need [box](https://github.com/humbug/box) for building the phar-file.
 * Run `phab list` to get a list of all available commands.
 * run `phab help <command>` to get some help for a given command.
 
+## Shell autocompletion
+
+Add this to your shell-startup script:
+
+* for fish-shells
+
+        phab _completion --generate-hook --shell-type fish | source
+
+  * for zsh/bash-shells
+
+        source <(phab _completion --generate-hook)
+
 ## Updating phab
 
 * Run `phab self-update`, this will download the latest release from GitHub.
