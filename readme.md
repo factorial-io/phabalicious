@@ -35,7 +35,7 @@ Add this to your shell-startup script:
 
         phab _completion --generate-hook --shell-type fish | source
 
-  * for zsh/bash-shells
+* for zsh/bash-shells
 
         source <(phab _completion --generate-hook)
 
