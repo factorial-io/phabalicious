@@ -37,7 +37,7 @@ class FishShellCompletionDescriptor extends Descriptor
             return;
         }
         $this->output->write(
-            "complete -c ' . $argv[0] . ' -n '__fish_seen_subcommand_from " . $command->getName() .
+            "complete -c phab -n '__fish_seen_subcommand_from " . $command->getName() .
             "' -f"
         );
         global $argv;
@@ -67,7 +67,7 @@ class FishShellCompletionDescriptor extends Descriptor
         global $argv;
         $command = $options['command'];
         $this->output->write(
-            "complete -c ' . $argv[0] . ' -n '__fish_seen_subcommand_from " . $command->getName() .
+            "complete -c phab -n '__fish_seen_subcommand_from " . $command->getName() .
             "' -f"
         );
 
@@ -93,9 +93,9 @@ class FishShellCompletionDescriptor extends Descriptor
         if ($command instanceof CompletionAwareInterface) {
             global $argv;
             $this->output->write(
-                "complete -c ' . $argv[0] . ' -n '__fish_seen_subcommand_from " .
+                "complete -c phab -n '__fish_seen_subcommand_from " .
                 $command->getName() .
-                " and __fish_seen_argument --" .
+                "; and __fish_phab_seen_argument -l " .
                 $option->getName() .
                 "' -f"
             );
@@ -136,7 +136,7 @@ class FishShellCompletionDescriptor extends Descriptor
         global $argv;
 
         $this->output->writeln(
-            "complete -c ' . $argv[0] . ' -n '__fish_use_subcommand' -f -a " .
+            "complete -c phab -n '__fish_use_subcommand' -f -a " .
             $command->getName() .
             " -d '" .
             $command->getDescription() .
@@ -160,7 +160,7 @@ class FishShellCompletionDescriptor extends Descriptor
     protected function describeApplication(Application $application, array $options = array())
     {
         global $argv;
-        $this->output->writeln('complete -c ' . $argv[0] . ' -e');
+        $this->output->writeln('complete -c phab -e');
         $this->output->writeln('function __fish_phab_get_options');
         $this->output->writeln('  set -l CMD (commandline -ocp)');
         $this->output->writeln('  ' . $argv[0] .
@@ -172,7 +172,27 @@ class FishShellCompletionDescriptor extends Descriptor
         $this->output->writeln('  ' . $argv[0] .
             ' _completion --complete-command $argv[1]  --complete-argument $argv[2] --command-line "$CMD" ');
         $this->output->writeln('end');
+        $this->output->writeln('function __fish_phab_seen_argument');
+        $this->output->writeln('	argparse \'s/short=+\' \'l/long=+\' -- $argv');
 
+        $this->output->writeln('	set cmd (commandline -co)');
+        $this->output->writeln('	set -e cmd[1]');
+        $this->output->writeln('	for t in $cmd');
+        $this->output->writeln('		for s in $_flag_s');
+        $this->output->writeln('			if string match -qr "^-[A-z0-9]*"$s"[A-z0-9]*\$" -- $t');
+        $this->output->writeln('				return 0');
+        $this->output->writeln('			end');
+        $this->output->writeln('		end');
+        $this->output->writeln('');
+        $this->output->writeln('		for l in $_flag_l');
+        $this->output->writeln('			if string match -q -- "--$l" $t');
+        $this->output->writeln('				return 0');
+        $this->output->writeln('			end');
+        $this->output->writeln('		end');
+        $this->output->writeln('	end');
+        $this->output->writeln('');
+        $this->output->writeln('	return 1');
+        $this->output->writeln('end');
 
         $describedNamespace = isset($options['namespace']) ? $options['namespace'] : null;
         $description = new ApplicationDescription($application, $describedNamespace);
