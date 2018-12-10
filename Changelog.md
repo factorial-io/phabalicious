@@ -1,6 +1,32 @@
 # Changelog
 
-## 3.0.0
+## 3.0.0-alpha.5 / 2018-12-08
+
+### fixed
+
+  * Use real version number
+  * Fix phar-build
+
+## 3.0.0-alpha.4 / 2018-12-08
+
+### new
+
+  * New command `self-update`, will download and install the latest available version
+  * New method `ftp-sync` to deploy code-bases to a remote ftp-instance
+  * Introduction of a password-manager for retrieving passwords from the user or a special file
+
+### changed
+
+  * Switch to box for building phars
+
+### fixed
+
+  * Do not run empty script lines (Fixes #8)
+  * Set folder for script-phase
+  * Set rootFolder fot task-specific scripts
+  * Support legacy host-types
+
+## 3.0.0 develop
 
 Fabalicious is now rewritten in PHP, so we changed the name to make the separation more clear. Phabalicious is now a symfony console app and uses a more unix-style approach to arguments and options. E.g. instead of `config:<name-of-config>` use `--config=<name-of-config>`
 
@@ -59,7 +85,7 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
           mbb:
             shellProvider: docker-exec
 * You can get help for a specific task via `phab help <task>`. It will show all possible options and some help.
-* docker-compose version 23 changes the schema how names of docker-containers are constructed. To support this change we can now declare the needed service to compute the correct container-name from. 
+* docker-compose version 23 changes the schema how names of docker-containers are constructed. To support this change we can now declare the needed service to compute the correct container-name from.
 
         hosts:
           testHost:
@@ -80,7 +106,7 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
               - ftp-sync
               - local
             ftp:
-              user: <ftp-user>  
+              user: <ftp-user>
               password: <ftp-password> #
               host: <ftp-host>
               port: 21
@@ -89,9 +115,9 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
                 - --verbose=3
                 - --no-perms
 
-    You can add your password to the file `.phabalicious-credentials` (see passwords.md) so phabalicious pick it up. 
-	
-  
+    You can add your password to the file `.phabalicious-credentials` (see passwords.md) so phabalicious pick it up.
+
+
 ### Changed
 
 * `docker:startRemoteAccess` is now the task `start-remote-access` as it makes more sense.
