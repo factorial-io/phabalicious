@@ -14,6 +14,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestAttributeValueResolver;
 
 class TaskContext implements TaskContextInterface
@@ -35,6 +36,8 @@ class TaskContext implements TaskContextInterface
     private $shell;
 
     private $passwordManager;
+
+    private $io;
 
     public function __construct(BaseOptionsCommand $command, InputInterface $input, OutputInterface $output)
     {
@@ -165,5 +168,16 @@ class TaskContext implements TaskContextInterface
         }
 
         return $this->passwordManager;
+    }
+
+    /**
+     * @return SymfonyStyle
+     */
+    public function getStyle()
+    {
+        if (!$this->io) {
+            $this->io = new SymfonyStyle($this->getInput(), $this->getOutput());
+        }
+        return $this->io;
     }
 }

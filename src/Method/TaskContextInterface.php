@@ -10,6 +10,7 @@ use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\PasswordManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 interface TaskContextInterface
 {
@@ -63,6 +64,8 @@ interface TaskContextInterface
      */
     public function getPasswordManager();
 
-
+    /**
+     * @return SymfonyStyle
+     */
+    public function getStyle();
 }
-

@@ -97,8 +97,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
             $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
         } catch (UnknownReplacementPatternException $e) {
-            $context->getOutput()
-                ->writeln('<error>Unknown replacement in line ' . $e->getOffendingLine() . '</error>');
+            $context->getStyle()->error('Unknown replacement in line ' . $e->getOffendingLine());
 
             $printed_replacements = array_map(function ($key) use ($replacements) {
                 $value = $replacements[$key];
@@ -107,8 +106,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 }
                 return [$key, $value];
             }, array_keys($replacements));
-            $style = new SymfonyStyle($context->getInput(), $context->getOutput());
-            $style->table(['Key', 'Replacement'], $printed_replacements);
+            $context->getStyle()->table(['Key', 'Replacement'], $printed_replacements);
         }
     }
 

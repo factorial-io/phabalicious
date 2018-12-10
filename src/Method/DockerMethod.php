@@ -108,6 +108,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $this->runTaskImpl($host_config, $context, $task . 'Prepare', true);
         $this->runTaskImpl($host_config, $context, $task, false);
         $this->runTaskImpl($host_config, $context, $task . 'Finished', true);
+
+        $context->getStyle()->success(sprintf('Task `%s` executed successfully!', $task));
     }
 
     /**
@@ -213,7 +215,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 $this->logger->notice('Error running supervisorctl, check the logs');
             }
             if ($result->getExitCode() == 0 && ($count_running == $count_services)) {
-                $this->logger->notice('Services up and running!');
+                $context->getStyle()->comment('Services up and running!');
                 return;
             }
             $tries++;
@@ -297,6 +299,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 $shell->run(sprintf('#!docker cp %s %s:%s', $temp_file, $container_name, $dest));
                 $shell->run(sprintf('#!docker exec %s #!chmod %s %s', $container_name, $data['permissions'], $dest));
                 $shell->run(sprintf('rm %s', $temp_file));
+                $context->getStyle()->comment(sprintf('Handled %s successfully!', $dest));
             }
             $shell->run(sprintf('#!docker exec %s #!chmod 700 /root/.ssh', $container_name));
             $shell->run(sprintf('#!docker exec %s #!chown -R root /root/.ssh', $container_name));
@@ -487,5 +490,4 @@ class DockerMethod extends BaseMethod implements MethodInterface
             ));
         }
     }
-
 }
