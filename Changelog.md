@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0-alpha.6 / 2018-12-11
+
+  * Some bugfixes for ftp-deployments
+  * Nicer output
+  * Add docs for shell-autcompletion
+  * Fix fish autocompletion (sort of)
+  * Set version number, when not bundling as phar
+
 ## 3.0.0-alpha.5 / 2018-12-08
 
 ### fixed
