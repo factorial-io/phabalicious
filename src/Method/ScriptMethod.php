@@ -56,9 +56,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $context->setShell($host_config->shell());
         }
 
-        $root_folder = isset($host_config['siteFolder'])
-            ? $host_config['siteFolder']
-            : isset($host_config['rootFolder'])
+        $root_folder = isset($host_config['rootFolder'])
                 ? $host_config['rootFolder']
                 : '.';
         $root_folder = $context->get('rootFolder', $root_folder);
@@ -98,10 +96,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             );
 
             $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
-
         } catch (UnknownReplacementPatternException $e) {
-            $context->getOutput()
-                ->writeln('<error>Unknown replacement in line ' . $e->getOffendingLine() . '</error>');
+            $context->getStyle()->error('Unknown replacement in line ' . $e->getOffendingLine());
 
             $printed_replacements = array_map(function ($key) use ($replacements) {
                 $value = $replacements[$key];
@@ -110,8 +106,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 }
                 return [$key, $value];
             }, array_keys($replacements));
-            $style = new SymfonyStyle($context->getInput(), $context->getOutput());
-            $style->table(['Key', 'Replacement'], $printed_replacements);
+            $context->getStyle()->table(['Key', 'Replacement'], $printed_replacements);
         }
     }
 
@@ -153,6 +148,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         }
 
         foreach ($commands as $line) {
+            $line = trim($line);
+            if (empty($line)) {
+                continue;
+            }
             $result = Utilities::extractCallback($line);
             $callback_handled = false;
             if ($result) {
@@ -296,7 +295,22 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
         if (!empty($common_scripts[$task][$type])) {
             $script = $common_scripts[$task][$type];
-            $this->logger->info('Running common script for task `' . $task . '` and type `' . $type . '`');
+            $this->logger->info(sprintf(
+                'Running common script for task `%s` and type `%s`',
+                $task,
+                $type
+            ));
+            $context->set('scriptData', $script);
+            $this->runScript($config, $context);
+        }
+
+        if (!empty($config[$task])) {
+            $script = $config[$task];
+            $this->logger->info(sprintf(
+                'Running host-specific script for task `%s` and host `%s`',
+                $task,
+                $config['configName']
+            ));
             $context->set('scriptData', $script);
             $this->runScript($config, $context);
         }

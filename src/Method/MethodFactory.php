@@ -94,9 +94,12 @@ class MethodFactory
         TaskContextInterface $context = null,
         $nextTasks = []
     ) {
+        $context->setResult('runNextTasks', $nextTasks);
         $this->preflight('preflight', $task_name, $configuration, $context);
         $this->runTaskImpl($task_name . 'Prepare', $configuration, $context, false);
         $this->runTaskImpl($task_name, $configuration, $context, true);
+
+        $nextTasks = $context->getResult('runNextTasks', []);
         if (!empty($nextTasks)) {
             foreach ($nextTasks as $next_task_name) {
                 $this->runTask($next_task_name, $configuration, $context);

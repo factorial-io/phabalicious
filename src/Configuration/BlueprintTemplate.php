@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Configuration;
 
-
 use Phabalicious\Utilities\Utilities;
 
 class BlueprintTemplate
@@ -44,5 +43,4 @@ class BlueprintTemplate
 
         return Utilities::expandStrings($this->template, $replacements);
     }
-
 }

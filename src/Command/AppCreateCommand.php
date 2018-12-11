@@ -5,6 +5,7 @@ namespace Phabalicious\Command;
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\AppDefaultStages;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -75,31 +76,14 @@ class AppCreateCommand extends AppBaseCommand
 
             $stages = $this->configuration->getSetting(
                 'appStages.deploy',
-                [
-                    [
-                        'stage' => 'spinUp',
-                    ]
-                ]
+                AppDefaultStages::DEPLOY
             );
             $this->executeStages($stages, 'appCreate', $context, 'Creating app');
             $this->runCommand('deploy', [], $input, $output);
         } else {
             $stages = $this->configuration->getSetting(
                 'appStages.create',
-                [
-                    [
-                        'stage' => 'installCode',
-                    ],
-                    [
-                        'stage' => 'spinUp',
-                    ],
-                    [
-                        'stage' => 'installDependencies',
-                    ],
-                    [
-                        'stage' => 'install',
-                    ],
-                ]
+                AppDefaultStages::CREATE
             );
 
             $this->executeStages($stages, 'appCreate', $context, 'Creating app');

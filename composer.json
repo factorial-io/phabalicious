@@ -21,13 +21,13 @@
         "symfony/finder": "^4.1",
         "thibaud-dauce/mattermost-php": "^1.2",
         "twig/twig": "^2.5",
-      "ext-openssl": "*",
-        "jakeasmith/http_build_url": "^1.0"
+        "ext-openssl": "*",
+        "jakeasmith/http_build_url": "^1.0",
+        "padraic/phar-updater": "^1.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^2.8|^3|^4.1",
-        "phpunit/phpunit": "^7.3",
-        "macfja/phar-builder": "dev-sf4-compatibility"
+        "phpunit/phpunit": "^7.3"
     },
     "autoload": {
         "psr-4": {"Phabalicious\\": "src/"}
@@ -42,7 +42,7 @@
         "auto-scripts": {
 
         },
-        "build-phar": "php -d phar.readonly=0 vendor/bin/phar-builder package",
+        "build-phar": "box compile",
         "install-phar": "cp ./build/phabalicious.phar /usr/local/bin/phab; chmod u+x /usr/local/bin/phab"
     },
     "extra": {

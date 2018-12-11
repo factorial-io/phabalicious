@@ -70,6 +70,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    public function alterConfig(ConfigurationService $configuration_service, array &$data)
+    {
+        if (!empty($data['docker']['service'])) {
+            unset($data['docker']['name']);
+        }
+    }
+
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
@@ -101,6 +108,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $this->runTaskImpl($host_config, $context, $task . 'Prepare', true);
         $this->runTaskImpl($host_config, $context, $task, false);
         $this->runTaskImpl($host_config, $context, $task . 'Finished', true);
+
+        $context->getStyle()->success(sprintf('Task `%s` executed successfully!', $task));
     }
 
     /**
@@ -165,6 +174,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $hostconfig
      * @param TaskContextInterface $context
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      */
     public function waitForServices(HostConfig $hostconfig, TaskContextInterface $context)
     {
@@ -176,6 +188,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $docker_config = $this->getDockerConfig($hostconfig, $context);
         $container_name = $this->getDockerContainerName($hostconfig, $context);
         $shell = $docker_config->shell();
+
+        if (!$this->isContainerRunning($docker_config, $container_name)) {
+            throw new \RuntimeException(sprintf(
+                'Docker container %s not running, check your `host.docker.name` configuration!',
+                $container_name
+            ));
+        }
 
         while ($tries < $max_tries) {
             $error_log_level = new ScopedErrorLogLevel($shell, LogLevel::NOTICE);
@@ -196,7 +215,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 $this->logger->notice('Error running supervisorctl, check the logs');
             }
             if ($result->getExitCode() == 0 && ($count_running == $count_services)) {
-                $this->logger->notice('Services up and running!');
+                $context->getStyle()->comment('Services up and running!');
                 return;
             }
             $tries++;
@@ -247,11 +266,16 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
         if (count($files) > 0) {
             $docker_config = $this->getDockerConfig($hostconfig, $context);
+            $root_folder = $docker_config['rootFolder'] . '/' . $hostconfig['docker']['projectFolder'];
+
             /** @var ShellProviderInterface $shell */
             $shell = $docker_config->shell();
             $container_name = $this->getDockerContainerName($hostconfig, $context);
             if (!$this->isContainerRunning($docker_config, $container_name)) {
-                throw new \RuntimeException(sprintf('Docker container %s not running', $container_name));
+                throw new \RuntimeException(sprintf(
+                    'Docker container %s not running, check your `host.docker.name` configuration!',
+                    $container_name
+                ));
             }
             $shell->run(sprintf('#!docker exec %s mkdir -p /root/.ssh', $container_name));
 
@@ -264,15 +288,18 @@ class DockerMethod extends BaseMethod implements MethodInterface
                     $data['source'] = $temp_file;
                     $temp_files[] = $temp_file;
                 } elseif ($data['source'][0] !== '/') {
-                      $data['source'] = realpath(
+                    $data['source'] =
                           $context->getConfigurationService()->getFabfilePath() .
                           '/' .
-                          $data['source']
-                      );
+                          $data['source'];
                 }
+                $temp_file = $docker_config['tmpFolder'] . '/' . 'phab.tmp.' . basename($data['source']);
+                $shell->putFile($data['source'], $temp_file, $context);
 
-                $shell->run(sprintf('#!docker cp %s %s:%s', $data['source'], $container_name, $dest));
+                $shell->run(sprintf('#!docker cp %s %s:%s', $temp_file, $container_name, $dest));
                 $shell->run(sprintf('#!docker exec %s #!chmod %s %s', $container_name, $data['permissions'], $dest));
+                $shell->run(sprintf('rm %s', $temp_file));
+                $context->getStyle()->comment(sprintf('Handled %s successfully!', $dest));
             }
             $shell->run(sprintf('#!docker exec %s #!chmod 700 /root/.ssh', $container_name));
             $shell->run(sprintf('#!docker exec %s #!chown -R root /root/.ssh', $container_name));
@@ -463,5 +490,4 @@ class DockerMethod extends BaseMethod implements MethodInterface
             ));
         }
     }
-
 }

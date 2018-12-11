@@ -64,12 +64,16 @@ class BackupCommand extends BaseCommand
 
         $files = $context->getResult('files', []);
 
-        $io = new SymfonyStyle($input, $output);
-        $io->title('Created backup files');
-        $io->table(
-            ['Type', 'File'],
-            $files
-        );
+        if (count($files)) {
+            $io = new SymfonyStyle($input, $output);
+            $io->title('Created backup files');
+            $io->table(
+                ['Type', 'File'],
+                $files
+            );
+
+            $context->getStyle()->success('Backups created successfully!');
+        }
 
         return $context->getResult('exitCode', 0);
     }

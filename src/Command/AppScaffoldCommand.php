@@ -128,7 +128,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
             'name' => trim($name),
             'shortName' => trim(strtolower($short_name)),
             'projectFolder' => Utilities::cleanupString($name),
-            'rootFolder' => $input->getOption('output') . '/' . Utilities::cleanupString($name),
+            'rootFolder' => realpath($input->getOption('output') . '/' . Utilities::cleanupString($name)),
             'uuid' => $this->fakeUUID(),
         ];
 
@@ -153,7 +153,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $script = new ScriptMethod($logger);
 
         $host_config = new HostConfig([
-            'rootFolder' => $input->getOption('output'),
+            'rootFolder' => realpath($input->getOption('output')),
             'shellExecutable' => '/bin/bash'
         ], $shell);
         $context = new TaskContext($this, $input, $output);
@@ -171,7 +171,6 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $this->twig = new \Twig_Environment($loader, array(
         ));
 
-        $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
         if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
             $question = new ConfirmationQuestion('Target-folder exists! Continue anyways? ', false);
@@ -179,6 +178,8 @@ class AppScaffoldCommand extends BaseOptionsCommand
                 return 1;
             }
         }
+
+        $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
         $script->runScript($host_config, $context);
         return 0;

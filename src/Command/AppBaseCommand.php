@@ -5,6 +5,7 @@ namespace Phabalicious\Command;
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Utilities\AppDefaultStages;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,11 +22,14 @@ abstract class AppBaseCommand extends BaseCommand
      */
     protected function executeStages(array $stages, string $command, TaskContextInterface $context, string $message)
     {
-        foreach ($stages as $stage) {
-            $context->getOutput()->writeln(sprintf('%s, stage %s', $message, $stage['stage']));
-            $context->set('currentStage', $stage);
-            $this->getMethods()->runTask($command, $this->getHostConfig(), $context);
-        }
+        AppDefaultStages::executeStages(
+            $this->getMethods(),
+            $this->getHostConfig(),
+            $stages,
+            $command,
+            $context,
+            $message
+        );
     }
 
 

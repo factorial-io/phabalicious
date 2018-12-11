@@ -56,7 +56,8 @@ class ScriptMethodTest extends TestCase
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
             $this->getMockBuilder(InputInterface::class)->getMock(),
-            $this->getMockBuilder(OutputInterface::class)->getMock());
+            $this->getMockBuilder(OutputInterface::class)->getMock()
+        );
         $this->context->setConfigurationService($this->configurationService);
     }
 
@@ -228,10 +229,12 @@ class ScriptMethodTest extends TestCase
 
         $this->assertEquals([
             'deployPrepare on dev',
+            'deployPrepare on hostA',
             'deploy on dev',
-            'deployFinished on dev'
+            'deploy on hostA',
+            'deployFinished on dev',
+            'deployFinished on hostA'
         ], $this->context->get('debug'));
-
     }
 
     public function scriptDebugCallback(TaskContextInterface $context, $message)
@@ -243,5 +246,4 @@ class ScriptMethodTest extends TestCase
         $debug[] = $message;
         $context->set('debug', $debug);
     }
-
 }

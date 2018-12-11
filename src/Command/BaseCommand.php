@@ -10,6 +10,7 @@ use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
@@ -17,6 +18,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 abstract class BaseCommand extends BaseOptionsCommand
 {
@@ -175,4 +177,28 @@ abstract class BaseCommand extends BaseOptionsCommand
         return $cmd->run($input, $output);
     }
 
+    /**
+     * @param ShellProviderInterface $shell
+     * @param array $command
+     * @return Process
+     */
+    protected function startInteractiveShell(ShellProviderInterface $shell, array $command = [])
+    {
+        /** @var Process $process */
+        $process = $shell->createShellProcess($command, ['tty' => true]);
+        $stdin = fopen('php://stdin', 'r');
+        $process->setInput($stdin);
+        $process->setTimeout(0);
+        $process->setTty(true);
+        $process->start();
+        $process->wait(function ($type, $buffer) {
+            if ($type == Process::ERR) {
+                fwrite(STDERR, $buffer);
+            } else {
+                fwrite(STDOUT, $buffer);
+            }
+        });
+
+        return $process;
+    }
 }
