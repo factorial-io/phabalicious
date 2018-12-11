@@ -128,7 +128,7 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
             'installFolder' => $install_dir
         ]);
         $context->set('rootFolder', $install_dir);
-        $script_method->runTaskSpecificScripts($host_config, 'deploy', $context);
+        $script_method->runTaskSpecificScripts($cloned_host_config, 'deploy', $context);
 
         $context->setResult('skipResetStep', true);
     }
