@@ -2,6 +2,8 @@
 
 ## 3.0.0-alpha.6 / 2018-12-11
 
+### fixed
+
   * Some bugfixes for ftp-deployments
   * Nicer output
   * Add docs for shell-autcompletion
