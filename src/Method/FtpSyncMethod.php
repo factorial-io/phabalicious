@@ -34,7 +34,8 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
         $defaults = parent::getGlobalSettings();
         $defaults['excludeFiles']['ftpSync'] = [
             '.git/',
-            'node_modules/'
+            'node_modules/',
+            'fabfile.yaml'
         ];
 
         return $defaults;
@@ -52,9 +53,9 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
         $return['ftp'] = [
             'port' => 21,
             'lftpOptions' => [
-                '--ignore-time',
                 '--verbose=2',
-                '--no-perms'
+                '--no-perms',
+                '--no-symlinks',
             ]
         ];
 
@@ -175,7 +176,7 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
             $command_file
         ));
         $shell->run(sprintf(
-            'echo "mirror %s -c -e -RL %s %s" >> %s',
+            'echo "mirror %s -c -e -R  %s %s" >> %s',
             $options,
             $install_dir,
             $host_config['ftp']['rootFolder'],
