@@ -170,6 +170,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      */
     public function applyEnvironment(array $environment)
     {
+        $this->run('. /etc/profile');
         foreach ($environment as $key => $value) {
             $this->run("export \"$key\"=\"$value\"");
         }
