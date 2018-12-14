@@ -14,6 +14,7 @@ use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Facade;
 use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -26,7 +27,7 @@ class FishShellCompletionContext extends CompletionContext
 
     protected $configName;
 
-    public function __construct(ConfigurationService $configuration, $application, $commandline)
+    public function __construct(ConfigurationService $configuration, Application $application, $commandline)
     {
         $this->configuration = $configuration;
         $this->commandLine = $commandline;
@@ -42,7 +43,17 @@ class FishShellCompletionContext extends CompletionContext
                 'c',
                 InputOption::VALUE_OPTIONAL
             ),
+            new InputOption(
+                'offline',
+                null,
+                InputOption::VALUE_OPTIONAL
+            ),
         ]);
+
+        // Copy the app-options.
+        foreach ($application->getDefinition()->getOptions() as $option) {
+            $input_definition->addOption($option);
+        }
 
         $input = new ArgvInput(explode(' ', $commandline), $input_definition);
 
@@ -82,6 +93,4 @@ class FishShellCompletionContext extends CompletionContext
             return null;
         }
     }
-
 }
-
