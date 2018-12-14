@@ -621,4 +621,9 @@ class ConfigurationService
     {
         $this->offlineMode = $offline;
     }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 }

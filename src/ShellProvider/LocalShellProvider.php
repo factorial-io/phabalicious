@@ -96,15 +96,22 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
         $this->input = new InputStream();
         $this->process->setInput($this->input);
+
         $this->process->start(function ($type, $buffer) {
-            if ($type == Process::ERR) {
-                if (!$this->captureOutput) {
-                    fwrite(STDERR, $buffer);
-                } else {
-                    $this->logger->debug(trim($buffer));
+            $lines = explode(PHP_EOL, $buffer);
+            foreach ($lines as $line) {
+                if (empty(trim($line))) {
+                    continue;
                 }
-            } elseif ((!$this->captureOutput) && strpos($buffer, self::RESULT_IDENTIFIER) === false) {
-                fwrite(STDOUT, $buffer);
+                if ($type == Process::ERR) {
+                    if (!$this->captureOutput) {
+                        fwrite(STDERR, $line . PHP_EOL);
+                    } else {
+                        $this->logger->debug(trim($line));
+                    }
+                } elseif ((!$this->captureOutput) && strpos($line, self::RESULT_IDENTIFIER) === false) {
+                    fwrite(STDOUT, $line . PHP_EOL);
+                }
             }
         });
     }
@@ -170,6 +177,15 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      */
     public function applyEnvironment(array $environment)
     {
+        $files = [
+            '/etc/profile',
+            '~/.bashrc'
+        ];
+        foreach ($files as $file) {
+            if ($this->exists($file)) {
+                $this->run(sprintf('. %s', $file));
+            }
+        }
         foreach ($environment as $key => $value) {
             $this->run("export \"$key\"=\"$value\"");
         }

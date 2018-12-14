@@ -1,6 +1,20 @@
 # Changelog
 
+## 3.0.0-alpha.7 / 2018-12-14
+
+### fixed
+
+  * Handle app-options correctly when doing shell-autocompletion (Fixes #12)
+  * Silent warnings when doing autocompletion (fixes #11)
+  * Better command output for start-remote-access (fixes #10)
+  * Throw exception if docker task fails
+  * Fix command output parsing
+  * Source /etc/profile and .bashrc
+  * Better defaults for lftp
+
 ## 3.0.0-alpha.6 / 2018-12-11
+
+### fixed
 
   * Some bugfixes for ftp-deployments
   * Nicer output

@@ -5,6 +5,7 @@ namespace Phabalicious\Command;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
 use Phabalicious\ShellCompletion\FishShellCompletionDescriptor;
+use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
@@ -68,6 +69,7 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->configuration->setLogger(new NullLogger());
         $this->handler = new CompletionHandler($this->getApplication());
         $shell_type = $input->getOption('shell-type') ?: $this->getShellType();
 
@@ -109,6 +111,4 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
         $helper = new FishShellCompletionDescriptor();
         $helper->describe($output, $this->getApplication());
     }
-
-
 }

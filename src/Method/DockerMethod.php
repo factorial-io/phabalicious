@@ -9,6 +9,7 @@ use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ScopedLogLevel\ScopedErrorLogLevel;
 use Phabalicious\ScopedLogLevel\ScopedLogLevel;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -160,6 +161,12 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $docker_config->shell()->setOutput($context->getOutput());
 
         $method->runScript($host_config, $context);
+
+        /** @var CommandResult $cr */
+        $cr = $context->getResult('commandResult', false);
+        if ($cr && $cr->failed()) {
+            $cr->throwException(sprintf('Docker task `%s` failed!', $task));
+        }
     }
 
     public function getInternalTasks()

@@ -96,6 +96,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             );
 
             $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
+            $context->setResult('commandResult', $result);
         } catch (UnknownReplacementPatternException $e) {
             $context->getStyle()->error('Unknown replacement in line ' . $e->getOffendingLine());
 
