@@ -161,6 +161,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $docker_config->shell()->setOutput($context->getOutput());
 
         $method->runScript($host_config, $context);
+
         /** @var CommandResult $cr */
         $cr = $context->getResult('commandResult', false);
         if ($cr && $cr->failed()) {

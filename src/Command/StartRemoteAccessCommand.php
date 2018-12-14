@@ -15,6 +15,12 @@ class StartRemoteAccessCommand extends BaseCommand
 
     protected function configure()
     {
+        $host= gethostname();
+        $ip = false;
+
+        if ($host) {
+            $ip = gethostbyname($host);
+        }
         parent::configure();
         $this->setAliases(['startRemoteAccess']);
         $this
@@ -34,7 +40,7 @@ class StartRemoteAccessCommand extends BaseCommand
             'pi',
             InputOption::VALUE_OPTIONAL,
             'public ip on this computer to listen for',
-            '0.0.0.0'
+            $ip ? $ip : '0.0.0.0'
         )
         ->addOption(
             'public-port',
@@ -43,7 +49,6 @@ class StartRemoteAccessCommand extends BaseCommand
             'public port on this computer to listen for',
             8080
         );
-
     }
 
     /**
@@ -73,7 +78,16 @@ class StartRemoteAccessCommand extends BaseCommand
         $port = $input->getOption('port');
         $config = $context->getResult('config', $host_config);
 
-        $output->writeln('<info>Starting remote access to ' . $ip . ':' . $port .'</info>');
+        $context->getStyle()->comment(sprintf('Starting remote access to %s:%s', $ip, $port));
+        $context->getStyle()->success(sprintf(
+            'You should be able to access the remote via %s%s:%s',
+            $this->getSchemeFromPort($port),
+            $input->getOption('public-ip'),
+            $input->getOption('public-port')
+        ));
+
+        $context->getStyle()->comment('Usually this will open a new remote shell, type `exit` when you are finished.');
+
 
         $host_config->shell()->startRemoteAccess(
             $ip,
@@ -85,4 +99,15 @@ class StartRemoteAccessCommand extends BaseCommand
         );
     }
 
+    private function getSchemeFromPort($port)
+    {
+        $mapping = [
+            '80' => 'http',
+            '443' => 'https',
+            '22' => 'ssh',
+            '3306' => 'mysql'
+        ];
+
+        return isset($mapping[$port]) ? $mapping[$port] . '://' : '';
+    }
 }
