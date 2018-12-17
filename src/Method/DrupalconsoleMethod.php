@@ -32,14 +32,46 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
         ];
     }
 
+    private function getDrupalExec(string $root_folder, ShellProviderInterface $shell)
+    {
+        if ($shell->exists($root_folder . '/vendor/bin/drupal')) {
+            return sprintf('%s/vendor/bin/drupal', $root_folder);
+        } else {
+            return '#!drupal';
+        }
+    }
+
+    private function getRootFolder(HostConfig $host_config)
+    {
+        $root_folder = !empty($host_config['composerRootFolder'])
+            ? $host_config['composerRootFolder']
+            : !empty($host_config['gitRootFolder'])
+                ? $host_config['gitRootFolder']
+                : $host_config['rootFolder'];
+
+        return $root_folder;
+    }
+
     public function drupalConsole(HostConfig $host_config, TaskCOntextInterface $context)
     {
         $shell = $this->getShell($host_config, $context);
+        $shell->cd($host_config['siteFolder']);
         $command = $context->get('command', false);
         if (!$command) {
             throw new \InvalidArgumentException('Missing command to run');
         }
-        $this->runDrupalConsole($host_config, $shell, $command);
+        $context->setResult('shell', $shell);
+        $root_folder = $this->getRootFolder($host_config);
+        $command = sprintf(
+            'cd %s;  %s %s',
+            $host_config['siteFolder'],
+            $this->getDrupalExec($root_folder, $shell),
+            $command
+        );
+        $command = $shell->expandCommand($command);
+        $context->setResult('command', [
+            $command
+        ]);
     }
 
     private function runDrupalConsole(HostConfig $host_config, ShellProviderInterface $shell, string $command)
@@ -47,20 +79,10 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
         $current = $shell->getWorkingDir();
         $shell->cd($host_config['siteFolder']);
 
-        $root_folder = !empty($host_config['composerRootFolder'])
-            ? $host_config['composerRootFolder']
-            : !empty($host_config['gitRootFolder'])
-                ? $host_config['gitRootFolder']
-                : $host_config['rootFolder'];
-
-        if ($shell->exists($root_folder . '/vendor/bin/drupal')) {
-            $result = $shell->run(sprintf('%s/vendor/bin/drupal %s', $root_folder, $command));
-        } else {
-            $result = $shell->run('#!drupal ' . $command);
-        }
-
+        $root_folder = $this->getRootFolder($host_config);
+        $exec = $this->getDrupalExec($root_folder, $shell);
+        $result = $shell->run(sprintf('%s %s', $exec, $command));
         $shell->cd($current);
-
         return $result;
     }
 }

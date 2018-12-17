@@ -48,15 +48,19 @@ class DrupalConsoleCommand extends BaseCommand
 
         $context = new TaskContext($this, $input, $output);
         $context->set('command', $input->getArgument('drupal-command'));
+        $host_config = $this->getHostConfig();
 
-        try {
-            $this->getMethods()->runTask('drupalConsole', $this->getHostConfig(), $context);
-        } catch (EarlyTaskExitException $e) {
-            return 1;
+        $this->getMethods()->runTask('drupalconsole', $host_config, $context);
+        $shell = $context->getResult('shell', $host_config->shell());
+        $command = $context->getResult('command');
+
+        if (!$command) {
+            throw new \RuntimeException('No command-arguments returned for drupal-command!');
         }
 
-        return $context->getResult('exitCode', 0);
+        $output->writeln('<info>Starting drupal-console on `' . $host_config['configName'] . '`');
+
+        $process = $this->startInteractiveShell($shell, $command);
+        return $process->getExitCode();
     }
-
-
 }
