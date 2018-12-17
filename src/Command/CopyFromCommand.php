@@ -4,6 +4,7 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,6 +31,19 @@ class CopyFromCommand extends BaseCommand
             ['files', 'db']
         );
         $this->setAliases(['copyFrom']);
+    }
+
+    public function completeArgumentValues($argumentName, CompletionContext $context)
+    {
+        if ($argumentName == 'from') {
+            $data = $this->configuration->getAllHostConfigs();
+            return array_keys($data);
+        } elseif ($argumentName == 'what') {
+            return [
+                'db',
+                'files'
+            ];
+        }
     }
 
     /**
@@ -73,5 +87,4 @@ class CopyFromCommand extends BaseCommand
 
         return $context->getResult('exitCode', 0);
     }
-
 }
