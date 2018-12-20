@@ -75,6 +75,23 @@ class PlatformMethod extends BaseMethod
         $this->drushMethod->drush($host_config, $context);
     }
 
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     */
+    public function reset(HostConfig $host_config, TaskContextInterface $context)
+    {
+        // As we are overriding the drush-method, this reset gets called twice.
+        // Make sure to run it only one time.
+        if ($context->get('currentMethod', false) != 'platform') {
+            return;
+        }
+
+        $this->drushMethod->reset($host_config, $context);
+    }
+
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
         /** @var ShellProviderInterface $shell */
@@ -95,8 +112,7 @@ class PlatformMethod extends BaseMethod
             throw new \RuntimeException('Could not push code to platforms git-repository');
         }
 
-        $context->getOutput()->writeln('Wait 10 seconds for remote instance...');
-        sleep(10);
+        $context->getOutput()->writeln('Wait 20 seconds for remote instance...');
+        sleep(20);
     }
-
 }
