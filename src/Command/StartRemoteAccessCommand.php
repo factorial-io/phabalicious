@@ -37,14 +37,14 @@ class StartRemoteAccessCommand extends BaseCommand
         )
         ->addOption(
             'public-ip',
-            'pi',
+            null,
             InputOption::VALUE_OPTIONAL,
             'public ip on this computer to listen for',
             $ip ? $ip : '0.0.0.0'
         )
         ->addOption(
             'public-port',
-            'pp',
+            null,
             InputOption::VALUE_OPTIONAL,
             'public port on this computer to listen for',
             8080
