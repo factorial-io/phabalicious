@@ -358,12 +358,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
 
         $result = $shell->run(sprintf(
-            '#!docker inspect --format "{{range .NetworkSettings.Networks}}{{.IPAddress}}\n{{end}}" %s',
+            '#!docker inspect --format "{{range .NetworkSettings.Networks}}{{.IPAddress}}|{{end}}" %s',
             $container_name
         ), true);
 
         if ($result->getExitCode() === 0) {
-            $ip = str_replace(array("\\r", "\\n"), '', $result->getOutput()[0]);
+            $ips = explode('|', $result->getOutput()[0]);
+            $ips = array_filter($ips);
+            $ip = reset($ips);
             $this->cache[$host_config['configName']] = $ip;
             return $ip;
         }

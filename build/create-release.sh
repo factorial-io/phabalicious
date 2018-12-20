@@ -6,6 +6,7 @@ ASSETS_PATH=./
 VERSION=`git describe --tags | sed 's/-[0-9]-g[a-z0-9]\{7\}//'`
 echo "Releasing ${VERSION} ..."
 cd ..
+composer install
 composer build-phar
 cd build
 

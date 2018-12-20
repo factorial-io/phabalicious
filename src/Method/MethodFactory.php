@@ -175,11 +175,13 @@ class MethodFactory
             }
         }
         $method_name = $method->getName();
+        $context->set('currentMethod', $method_name);
+
         if (isset($overrides[$method_name])) {
             $this->logger->info('Use override ' . $overrides[$method_name] . ' for ' . $method_name);
             $method = $this->getMethod($overrides[$method_name]);
         }
-        $this->logger->debug('Call task ' . $task_name . ' on method' . $method_name);
+        $this->logger->debug('Call task ' . $task_name . ' on method ' . $method_name);
 
         if (method_exists($method, $task_name)) {
             $method->{$task_name}($configuration, $context);
