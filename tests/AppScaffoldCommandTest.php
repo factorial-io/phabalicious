@@ -77,7 +77,9 @@ class AppScaffoldCommandTest extends TestCase
         shell_exec(sprintf('rm -rf %s', $target_folder));
     }
 
-
+    /**
+     * @group docker
+     */
     public function testScaffoldWithRelativeFolder()
     {
         $root = getcwd();
