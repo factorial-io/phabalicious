@@ -77,9 +77,51 @@ class AppScaffoldCommandTest extends TestCase
         shell_exec(sprintf('rm -rf %s', $target_folder));
     }
 
+
+    public function testScaffoldWithRelativeFolder()
+    {
+        $root = getcwd();
+        $target_folder = $root . '/tmp';
+        if (!is_dir($target_folder)) {
+            mkdir($target_folder);
+            mkdir($target_folder . '/here');
+        }
+
+        chdir($target_folder . '/here');
+
+        $command = $this->application->find('app:scaffold');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            '--short-name'  => 'TST',
+            '--name' => 'Test',
+            '--output' => '..',
+            '--override' => true,
+            'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-drupal-commerce.yml'
+        ));
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+
+        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'name: Test');
+        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'key: tst');
+        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'host: test.test');
+        $this->checkFileContent(
+            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
+            'name: Test deployment module'
+        );
+        $this->checkFileContent(
+            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
+            'name: Test deployment module'
+        );
+        $this->checkFileContent(
+            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.install',
+            'function tst_deploy_install()'
+        );
+        shell_exec(sprintf('rm -rf %s', $target_folder));
+    }
+
     private function checkFileContent($filename, $needle)
     {
-
         $haystack = file_get_contents($filename);
         $this->assertContains($needle, $haystack);
     }

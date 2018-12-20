@@ -55,7 +55,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
             null,
             InputOption::VALUE_OPTIONAL,
             'the folder where to create the new project',
-            getcwd()
+            false
         );
         $this->addOption(
             'override',
@@ -124,11 +124,12 @@ class AppScaffoldCommand extends BaseOptionsCommand
                 'Shortname contains non-alphanumeric letter or is longer than 5 letters'
             );
         }
+        $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
         $tokens = [
             'name' => trim($name),
             'shortName' => trim(strtolower($short_name)),
             'projectFolder' => Utilities::cleanupString($name),
-            'rootFolder' => realpath($input->getOption('output') . '/' . Utilities::cleanupString($name)),
+            'rootFolder' => realpath($root_folder) . '/' . Utilities::cleanupString($name),
             'uuid' => $this->fakeUUID(),
         ];
 
