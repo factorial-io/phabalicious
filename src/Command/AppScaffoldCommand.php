@@ -174,15 +174,19 @@ class AppScaffoldCommand extends BaseOptionsCommand
 
 
         if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
-            $question = new ConfirmationQuestion('Target-folder exists! Continue anyways? ', false);
+            $question = new ConfirmationQuestion('Destination folder exists! Continue anyways? ', false);
             if (!$helper->ask($input, $output, $question)) {
                 return 1;
             }
         }
 
+        $context->getStyle()->comment('Create destination folder ...');
         $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
+        $context->getStyle()->comment('Start scaffolding script ...');
         $script->runScript($host_config, $context);
+
+        $context->getStyle()->success('Scaffolding finished successfully!');
         return 0;
     }
 
@@ -227,7 +231,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
             }
 
             $target_file_name = $target_folder. '/' . strtr(basename($file_name), $replacements);
-            $context->getOutput()->writeln(sprintf('Creating %s ...', $target_file_name));
+            $context->getStyle()->comment(sprintf('Creating %s ...', $target_file_name));
             file_put_contents($target_file_name, $converted);
         }
     }
