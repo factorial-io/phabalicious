@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.0.0-alpha.8 / 2018-12-20
+
+### fixed
+
+  * Call overridden methods only one time, add missin reset-implementation to platform-method (fixes #14)
+  * Increase verbosity of app:scaffold
+  * Add missing twig-dependency to phar-creation (fixes #17)
+  * Fix handling of relative paths in app:scaffold (Fixes #16)
+  * Fix parsing of multiple IPs from a docker-container (Fixes #15)
+  * Pass available arguments to autocompletion for command copy-from (Fixes #13)
+  * Run drupalconsole in an interactive shell
+
 ## 3.0.0-alpha.7 / 2018-12-14
 
 ### fixed
