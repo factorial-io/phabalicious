@@ -2,7 +2,8 @@
   "main": "bin/phab",
   "files": [
     ".env",
-    "config/services.yml"
+    "config/services.yml",
+    "vendor/twig/twig/lib/Twig/Test.php"
   ],
   "git-tag": "git_tag",
   "output": "build/phabalicious.phar",
