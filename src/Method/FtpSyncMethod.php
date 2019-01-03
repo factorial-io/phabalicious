@@ -53,9 +53,10 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
         $return['ftp'] = [
             'port' => 21,
             'lftpOptions' => [
-                '--verbose=2',
+                '--verbose=1',
                 '--no-perms',
                 '--no-symlinks',
+                '-P 20',
             ]
         ];
 
@@ -152,7 +153,12 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
             $host_config['ftp'] = $ftp;
         }
 
-        $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . time();
+        if (empty($host_config['ftp']['installFolder'])) {
+            $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . time();
+        } else {
+            $install_dir = $host_config['ftp']['installFolder'];
+        }
+
         $context->set('installDir', $install_dir);
 
         $shell = $this->getShell($host_config, $context);
