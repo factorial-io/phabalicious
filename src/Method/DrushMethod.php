@@ -235,7 +235,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShell($host_config, $context);
         $shell->cd($host_config['siteFolder']);
         $context->setResult('shell', $shell);
-        $command = sprintf('cd %s;  #!drush  %s', $host_config['siteFolder'], $command);
+        $command = sprintf(
+            'cd %s;  #!drush  %s',
+            $host_config['siteFolder'],
+            $command
+        );
         $command = $shell->expandCommand($command);
         $context->setResult('command', [
             $command

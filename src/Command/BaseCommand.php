@@ -185,6 +185,12 @@ abstract class BaseCommand extends BaseOptionsCommand
     protected function startInteractiveShell(ShellProviderInterface $shell, array $command = [])
     {
         /** @var Process $process */
+        $command = [
+            'bash',
+            '--login',
+            '-c',
+            '\'' . implode(' ', $command) .'\'',
+        ];
         $process = $shell->createShellProcess($command, ['tty' => true]);
         $stdin = fopen('php://stdin', 'r');
         $process->setInput($stdin);
