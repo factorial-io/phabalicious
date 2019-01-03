@@ -153,12 +153,7 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
             $host_config['ftp'] = $ftp;
         }
 
-        if (empty($host_config['ftp']['installFolder'])) {
-            $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . time();
-        } else {
-            $install_dir = $host_config['ftp']['installFolder'];
-        }
-
+        $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . time();
         $context->set('installDir', $install_dir);
 
         $shell = $this->getShell($host_config, $context);
