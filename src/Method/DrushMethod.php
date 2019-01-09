@@ -264,7 +264,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         $to_ignore = $context->getConfigurationService()->getSetting($key, []);
         if (count($to_ignore) > 0) {
-            $this->logger->warning(sprintf(
+            $this->logger->notice(sprintf(
                 'Ignoring %s while %s modules from %s',
                 implode(' ', $to_ignore),
                 $should_enable ? 'enabling' : 'disabling',
