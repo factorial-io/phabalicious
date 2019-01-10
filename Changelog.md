@@ -1,5 +1,14 @@
 # Changelog
 
+### fixed
+
+  * Fix logic error in InstallCommand, add testcases (Fixes #21)
+  * Wrap interactive shell with bash only if we have a command to execute
+  * Try up to 5 parent folders to find suitable fabfiles (Fixes #18)
+  * Use paralell uploads for ftp-deployments
+  * Use a login-shell when running drush or drupalconsole interactively. (Fixes #20)
+  * Add autocompletion for `install-from`
+
 ## 3.0.0-alpha.8 / 2018-12-20
 
 ### fixed
