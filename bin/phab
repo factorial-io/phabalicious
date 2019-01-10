@@ -8,6 +8,7 @@ use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 set_time_limit(0);
 
@@ -45,12 +46,18 @@ $output = $container->get(ConsoleOutput::class);
 
 /** @var Application $application */
 $application = $container->get(Application::class);
+
+/** @var EventDispatcher $dispatcher */
+$dispatcher = $container->get(EventDispatcher::class);
+$application->setDispatcher($dispatcher);
+\Phabalicious\Command\SelfUpdateCommand::registerListener($dispatcher);
+
 $version = '@git_tag@';
 if ($version[0] == '@') {
     $version = '3.0.0';
 }
+
 $application->setVersion($version);
 $application->setName('phabalicious');
 $application->setDefaultCommand('list');
-
 $application->run($input, $output);

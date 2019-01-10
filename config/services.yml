@@ -7,6 +7,10 @@ services:
 
   Symfony\Component\Console\Application:
     public: true
+
+  Symfony\Component\EventDispatcher\EventDispatcher:
+    public: true
+
   Symfony\Component\Console\Output\ConsoleOutput:
     public: true
 
