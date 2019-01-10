@@ -1,0 +1,14 @@
+name: getproperty-tests
+
+needs:
+  - files
+
+
+hosts:
+  testProd:
+    type: prod
+    supportsInstalls: true
+
+  testStage:
+    type: stage
+    supportsInstalls: true

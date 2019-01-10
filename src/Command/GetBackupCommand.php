@@ -92,7 +92,7 @@ class GetBackupCommand extends BaseCommand
 
 
         if (count($files) > 0) {
-            $io = new SymfonyStyle($input, $output);
+            $io = $context->getStyle();
             $io->title('Copied backup-set:');
             $io->table(
                 ['Type', 'File'],
@@ -102,5 +102,4 @@ class GetBackupCommand extends BaseCommand
 
         return 0;
     }
-
 }

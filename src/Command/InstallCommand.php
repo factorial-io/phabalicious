@@ -57,7 +57,7 @@ class InstallCommand extends BaseCommand
         }
 
         $host_config = $this->getHostConfig();
-        if ($host_config->isType(HostType::PROD) || !$host_config['supportsInstalls']) {
+        if ($host_config['supportsInstalls'] == false) {
             throw new \InvalidArgumentException('This configuration disallows installs!');
         }
 
@@ -76,6 +76,9 @@ class InstallCommand extends BaseCommand
         $context = new TaskContext($this, $input, $output);
 
         $next_tasks = $input->getOption('skip-reset') ? [] : ['reset'];
+
+        $context->getStyle()->comment('Installing new app for `' . $this->getHostConfig()['configName']. '`');
+
         try {
             $this->getMethods()->runTask('install', $this->getHostConfig(), $context, $next_tasks);
         } catch (EarlyTaskExitException $e) {
@@ -84,5 +87,4 @@ class InstallCommand extends BaseCommand
 
         return $context->getResult('exitCode', 0);
     }
-
 }
