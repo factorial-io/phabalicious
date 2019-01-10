@@ -53,9 +53,10 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
         $return['ftp'] = [
             'port' => 21,
             'lftpOptions' => [
-                '--verbose=2',
+                '--verbose=1',
                 '--no-perms',
                 '--no-symlinks',
+                '-P 20',
             ]
         ];
 

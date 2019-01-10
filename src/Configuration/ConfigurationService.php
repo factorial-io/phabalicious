@@ -164,7 +164,7 @@ class ConfigurationService
             $path = $this->getFabfilePath();
         }
         $depth = 0;
-        while ($depth <= 3) {
+        while ($depth <= 5) {
             foreach ($candidates as $candidate) {
                 $p = $path . '/' . $candidate;
                 $this->logger->debug('trying ' . $p);
