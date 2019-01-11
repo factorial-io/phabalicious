@@ -96,7 +96,11 @@ class SelfUpdateCommand extends BaseOptionsCommand
             /** @var SelfUpdateCommand command */
             $command = $event->getCommand()->getApplication()->find('self-update');
 
-            if ($command && !$output->isQuiet() && !$input->hasParameterOption(['--offline'])) {
+            if ($command
+                && !$event->getCommand()->isHidden()
+                && !$output->isQuiet() && !$command->getConfiguration()->isOffline()
+                && !$input->hasParameterOption(['--offline'])
+            ) {
                 if ($version = $command->hasUpdate()) {
                     $style = new SymfonyStyle($input, $output);
                     $style->block([
