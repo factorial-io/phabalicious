@@ -87,4 +87,32 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
     {
         return $this->methods;
     }
+
+    /**
+     * Check if all required params are available.
+     *
+     * @param InputInterface $input
+     */
+    protected function checkAllRequiredOptionsAreNotEmpty(InputInterface $input)
+    {
+        $errors = [];
+        $options = $this->getDefinition()->getOptions();
+
+        /** @var InputOption $option */
+        foreach ($options as $option) {
+            $name = $option->getName();
+            /** @var InputOption $value */
+            $value = $input->getOption($name);
+
+            if ($option->isValueRequired() &&
+                ($value === null || $value === '' || ($option->isArray() && empty($value)))
+            ) {
+                $errors[] = sprintf('The required option --%s is not set or is empty', $name);
+            }
+        }
+
+        if (count($errors)) {
+            throw new \InvalidArgumentException(implode("\n\n", $errors));
+        }
+    }
 }
