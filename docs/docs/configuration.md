@@ -303,6 +303,24 @@ Running the script via `phab config:mbb script:defaultArgumentTest,name="Julia"`
 
 For more information see the main scripts section below.
 
+### jira
+
+The jira-command needs some configuration. It is advised to store this configuration in your user folder (`~/.fabfile.local.yaml`) or somewhere upstream of your project folder, as it might contain sensitive information.
+
+```
+jira:
+  host: <jira-host>
+  user: <jira-user>
+  pass: <jira-password>
+```
+
+The command will use the global `key` as project-key, you can override that via the following configuration:
+
+```
+jira:
+  projectKey: <jira project-key>
+```
+
 ### other
 
 * `deploymentModule` name of the deployment-module the drush-method enables when doing a deploy
