@@ -110,7 +110,14 @@ class ConfigurationService
             throw new FabfileNotReadableException("Could not read from '" . $fabfile . "'");
         }
 
-        if ($local_override_file = $this->findFabfilePath(['fabfile.local.yaml', 'fabfile.local.yml'])) {
+        $local_override_file = $this->findFabfilePath(['fabfile.local.yaml', 'fabfile.local.yml']);
+        if (!$local_override_file) {
+            $local_override_file = $this->findFabfilePath(
+                ['.fabfile.local.yaml', '.fabfile.local.yml'],
+                $_SERVER['HOME']
+            );
+        }
+        if ($local_override_file) {
             $override_data = $this->readFile($local_override_file);
             $data = $this->mergeData($data, $override_data);
         }
@@ -193,6 +200,8 @@ class ConfigurationService
         }
 
         $data = Yaml::parseFile($file);
+        $this->logger->info(sprintf('Read data from `%s`', $file));
+
         if ($data && isset($data['requires'])) {
             $required_version = $data['requires'];
             $app_version = $this->application->getVersion();
@@ -301,7 +310,7 @@ class ConfigurationService
 
         if (!$this->offlineMode) {
             try {
-                $this->logger->info('Read remote file from ' . $resource . '`');
+                $this->logger->info(sprintf('Read remote file from `%s`', $resource));
                 $url = parse_url($resource);
                 $url['path'] = urlencode($url['path']);
                 $url['path'] = str_replace('%2F', '/', $url['path']);
