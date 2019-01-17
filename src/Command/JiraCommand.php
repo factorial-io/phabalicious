@@ -68,17 +68,19 @@ class JiraCommand extends BaseOptionsCommand
         );
 
         $issues = $client->search($jql);
+        $context->getStyle()->title('My open tickets on ' . $this->configuration->getSetting('name'));
         $context->getStyle()->table(
-            ['Key', 'Summary'],
-            array_map(function ($issue) {
+            ['Key', 'Summary', 'Url'],
+            array_map(function ($issue) use ($jira_config) {
                 return [
                     $issue->key,
                     $issue->fields->summary,
+                    sprintf('%s/browse/%s', $jira_config['host'], $issue->key)
                 ];
             }, $issues->issues)
         );
 
 
-        return $context->getResult('exitCode', 0);
+        return 0;
     }
 }
