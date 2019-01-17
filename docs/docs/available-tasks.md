@@ -143,7 +143,7 @@ will display the configuration of host `<your-config>`.
 Phab config=<your-config> --blueprint=<your-blueprint-config> output
 ```
 
-This command will print the computed configuration from a blueprint as yams. You can copy it and paste it back to the fabfile to make it permanent. 
+This command will print the computed configuration from a blueprint as yams. You can copy it and paste it back to the fabfile to make it permanent.
 
 ## get:property
 
@@ -356,7 +356,7 @@ You can limit what to copy by adding `db` or `files`  as arguments.
 phab --config=<config> drush "<drush-command>"
 ```
 
-This task will execute the `drush-command` on the remote host specified in <config>. Please note, that you'll have to quote the drush-command when it contains spaces. 
+This task will execute the `drush-command` on the remote host specified in <config>. Please note, that you'll have to quote the drush-command when it contains spaces.
 
 **Available methods**
 
@@ -509,7 +509,7 @@ This task will run a command to forward a local port to a remote port. It starts
 **Examples**
 
 * `phab --config=mbb start-remote-access` will forward `localhost:8888` to port `80` of the docker-container
-* `phab --config=mbb start-remote-access --port=3306 --publicPort=33060` will forward `localhost:33060`to port `3306` 
+* `phab --config=mbb start-remote-access --port=3306 --publicPort=33060` will forward `localhost:33060`to port `3306`
 
 ## notify
 
@@ -541,9 +541,9 @@ This command will scaffold a new project from a set of scaffold-files. See the d
 phab --config=<config> app:create --config-from=<other-config>
 ```
 
-This command will create a new app instance from a given config. Most useful with the usage of blueprints. 
+This command will create a new app instance from a given config. Most useful with the usage of blueprints.
 
-The creation is done in several steps which can be customized. If you apply the `--config-from`-option an additional copyFrom is done afterwards. 
+The creation is done in several steps which can be customized. If you apply the `--config-from`-option an additional copyFrom is done afterwards.
 
 For a deeper explanation please have a look into the dedicated documentation
 
@@ -576,3 +576,13 @@ Phan self-update --allow-unstable=1
 ```
 
 This will download the latest version of phab and replace the current installed one with the downloaded version. If `allow-unstable` is set, the latest-dev-version will be downloaded.
+
+## jira
+
+```shell
+phab jira
+```
+
+This command will display your open tasks for that given project. For this to work, the command needs some configuration-options.
+
+

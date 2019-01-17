@@ -1,6 +1,6 @@
 # Local overrides
 
-`fabfile.local.yaml` is used to override parts of your fabfile-configuration. If you run a fab-command the code will try to find the `fabfile.local.yaml` up to three folder levels up and merge the data with your fabfile.yaml.
+`fabfile.local.yaml` is used to override parts of your fabfile-configuration. If you run a fab-command the code will try to find a `fabfile.local.yaml` up to five folder levels up, or in your user-folder (`~/.fabfile.local.yaml`) and merge the data with your fabfile.yaml.
 
 A small example:
 
