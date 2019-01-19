@@ -1,5 +1,25 @@
 # Changelog
 
+## 3.0.0-beta.2 / 2019-01-19
+
+  * Add support for .fabfile.local.yaml in user-folder
+  * Documentation for the new jira-command (#22)
+  * Remove trailing semicolon (Fixes #23)
+  * Report a proper error message when handling modules_enabled.txt or modules_disabled.txt is failing
+  * Fix shell-completion
+  * Show a message when a new version of phabalicious is available.
+
+## 3.0.0-beta.1 / 2019-01-10
+
+### fixed
+
+  * Fix logic error in InstallCommand, add testcases (Fixes #21)
+  * Wrap interactive shell with bash only if we have a command to execute
+  * Try up to 5 parent folders to find suitable fabfiles (Fixes #18)
+  * Use paralell uploads for ftp-deployments
+  * Use a login-shell when running drush or drupalconsole interactively. (Fixes #20)
+  * Add autocompletion for `install-from`
+
 ## 3.0.0-alpha.8 / 2018-12-20
 
 ### fixed
@@ -195,3 +215,4 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * `sshCommand` is deprecated and got renamed to `shell:command` and will return the command to run a shell with the given configuration
 * the needs `drush7`, `drush8` and `drush9` are deprecated, use the need `drush` and the newly introduced options `drupalVersion` and `drushVersion` instead,
 * the `slack`-configuration got removed and got replaced by a general notification solution, currently only with a mattermost implementation.
+

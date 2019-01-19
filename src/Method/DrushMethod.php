@@ -274,9 +274,16 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $modules = array_diff($modules, $to_ignore);
         }
         if ($should_enable) {
-            $this->runDrush($shell, 'en -y %s', implode(' ', $modules));
+            $result = $this->runDrush($shell, 'en -y %s', implode(' ', $modules));
         } else {
-            $this->runDrush($shell, 'dis -y %s', implode(' ', $modules));
+            $result = $this->runDrush($shell, 'dis -y %s', implode(' ', $modules));
+        }
+        if ($result->failed()) {
+            $result->throwException(
+                'Drush reported an error while handling `'
+                . $file_name
+                . '`. Please check the output, there might be an error in the file!'
+            );
         }
     }
 
