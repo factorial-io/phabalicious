@@ -110,6 +110,8 @@ class ConfigurationService
             throw new FabfileNotReadableException("Could not read from '" . $fabfile . "'");
         }
 
+        $data = $this->resolveInheritance($data, $data);
+
         $local_override_file = $this->findFabfilePath(['fabfile.local.yaml', 'fabfile.local.yml']);
         if (!$local_override_file) {
             $local_override_file = $this->findFabfilePath(
