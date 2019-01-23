@@ -108,7 +108,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                         $this->logger->debug(trim($line));
                     }
                 } elseif ((!$this->captureOutput) && strpos($line, self::RESULT_IDENTIFIER) === false) {
-                    $this->output->writeln($line);
+                    if ($this->output) {
+                        $this->output->writeln($line);
+                    } else {
+                        fwrite(STDOUT, $line . PHP_EOL);
+                    }
                 }
             }
         });

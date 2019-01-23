@@ -170,6 +170,16 @@ class AppScaffoldCommand extends BaseOptionsCommand
                     throw new \InvalidArgumentException($question_data['error'] . ': ' . $value);
                 }
             }
+            if (!empty($question_data['transform'])) {
+                $transform = strtolower($question_data['transform']);
+                $mapping = [
+                    'lowercase' => 'strtolower',
+                    'uppercase' => 'strtoupper',
+                ];
+                if (isset($mapping[$transform])) {
+                    $value = call_user_func($mapping[$transform], $value);
+                }
+            }
             $tokens[$key] = trim($value);
         }
         if (empty($tokens['name'])) {

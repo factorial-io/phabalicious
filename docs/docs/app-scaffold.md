@@ -12,6 +12,7 @@ questions:
     question: "The short-name of this project"
     validation: "/^[A-Za-z0-9]{3,5}$/"
     error: "The shortname may consist of 3 to 5 letters (A-Z) or digits (0-9)"
+    transform: lowercase
     
 variables:
   composerProject: drupal-composer/drupal-project:8.x-dev
@@ -43,7 +44,7 @@ The fabfile needs at least the `questions`and the `scaffold`-section. The `scaff
 
 ## The `questions`-section
 
-This section contains a list of questions to be asked when running the scaffold-command. The yaml-key will get the value inputted by the user and can be used as a replacement pattern or in twig-templates. Questions can be validated with a regex.
+This section contains a list of questions to be asked when running the scaffold-command. The yaml-key will get the value inputted by the user and can be used as a replacement pattern or in twig-templates. Answers can be validated against a regex and/or transformed to lower- or uppercase.
 
 An example:
 
@@ -53,6 +54,7 @@ questions:
     question: <the text to display>
     validation: <the regex to check the input against to>
     error: <the error message to display, when validation fails>
+    transform: <lowercase|uppercase>
 ```
 
 For non-interactive usage you can pass the values via commandline-options, where the option-name is the same as the key, for the above example: 

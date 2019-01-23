@@ -146,7 +146,7 @@ class AppScaffoldCommandTest extends TestCase
         // the output of the command in the console
         $output = $commandTester->getDisplay();
         $this->assertContains('Project: Test', $output);
-        $this->assertContains('Shortname: TST', $output);
+        $this->assertContains('Shortname: tst', $output);
     }
 
     private function checkFileContent($filename, $needle)
