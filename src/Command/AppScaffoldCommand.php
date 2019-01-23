@@ -12,6 +12,7 @@ use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,6 +24,8 @@ class AppScaffoldCommand extends BaseOptionsCommand
 {
 
     protected $twig;
+
+    private $dynamicOptions = [];
 
     protected function configure()
     {
@@ -37,18 +40,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
             InputArgument::REQUIRED,
             'the url/path to load the scaffold-yaml from'
         );
-        $this->addOption(
-            'name',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'the name of the app to create'
-        );
-        $this->addOption(
-            'short-name',
-            's',
-            InputOption::VALUE_OPTIONAL,
-            'the short name of the app to create'
-        );
+
 
         $this->addOption(
             'output',
@@ -64,6 +56,33 @@ class AppScaffoldCommand extends BaseOptionsCommand
             'Set to true if you want to override existing folders',
             false
         );
+
+        $this->setDefinition(new class($this->getDefinition(), $this->dynamicOptions) extends InputDefinition {
+            protected $dynamicOptions = [];
+
+            public function __construct(InputDefinition $definition, array &$dynamicOptions)
+            {
+                parent::__construct();
+                $this->setArguments($definition->getArguments());
+                $this->setOptions($definition->getOptions());
+                $this->dynamicOptions =& $dynamicOptions;
+            }
+
+            public function getOption($name)
+            {
+                if (!parent::hasOption($name)) {
+                    $this->addOption(new InputOption($name, null, InputOption::VALUE_OPTIONAL));
+                    $this->dynamicOptions[] = $name;
+                }
+                return parent::getOption($name);
+            }
+
+            public function hasOption($name)
+            {
+                return true;
+            }
+
+        });
     }
 
     /**
@@ -108,45 +127,61 @@ class AppScaffoldCommand extends BaseOptionsCommand
 
         $data = $this->configuration->resolveInheritance($data, [], dirname($url));
 
-        $helper = $this->getHelper('question');
-
-        if (!$name = $input->getOption('name')) {
-            $question = new Question('Please provide the name of the new project: ');
-            $name = $helper->ask($input, $output, $question);
-        }
-
-        if (!$short_name = $input->getOption('short-name')) {
-            $question = new Question('Please provide the short name of the new project (1-5 letters): ');
-            $short_name = $helper->ask($input, $output, $question);
-        }
-        if (strlen($short_name) > 5 || !ctype_alnum($short_name)) {
-            throw new \InvalidArgumentException(
-                'Shortname contains non-alphanumeric letter or is longer than 5 letters'
-            );
-        }
-        $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
-        $tokens = [
-            'name' => trim($name),
-            'shortName' => trim(strtolower($short_name)),
-            'projectFolder' => Utilities::cleanupString($name),
-            'rootFolder' => realpath($root_folder) . '/' . Utilities::cleanupString($name),
-            'uuid' => $this->fakeUUID(),
-        ];
-
-        if (!empty($data['variables'])) {
-            $tokens = Utilities::mergeData($data['variables'], $tokens);
-        }
-
-
-
-
         $errors = new ValidationErrorBag();
         $validation = new ValidationService($data, $errors, 'scaffold');
 
         $validation->hasKey('scaffold', 'The file needs a scaffold-section.');
         $validation->hasKey('assets', 'The file needs a scaffold-section.');
+        $validation->hasKey('questions', 'The file needs a questions-section.');
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
+        }
+
+        $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
+        $tokens = [
+            'uuid' => $this->fakeUUID(),
+        ];
+
+        $questions = !empty($data['questions']) ? $data['questions'] : [];
+        $helper = $this->getHelper('question');
+
+        foreach ($questions as $key => $question_data) {
+            $errors = new ValidationErrorBag();
+            $validation = new ValidationService($question_data, $errors, 'questions');
+            $validation->hasKey('question', 'Please provide a question');
+            if (!empty($question_data['validation'])) {
+                $validation->hasKey('validation', 'Please provide a regex for validation');
+                $validation->hasKey('error', 'Please provide an error message when a validation fails');
+            }
+            if ($errors->hasErrors()) {
+                throw new ValidationFailedException($errors);
+            }
+
+            $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
+            if (in_array($option_name, $this->dynamicOptions)) {
+                $value = $input->getOption($option_name);
+            } else {
+                $question = new Question($question_data['question']. ': ');
+                $value = $helper->ask($input, $output, $question);
+            }
+
+            if (!empty($question_data['validation'])) {
+                if (!preg_match($question_data['validation'], $value)) {
+                    throw new \InvalidArgumentException($question_data['error'] . ': ' . $value);
+                }
+            }
+            $tokens[$key] = trim($value);
+        }
+        if (empty($tokens['name'])) {
+            throw new \InvalidArgumentException('Missing `name` in questions, aborting!');
+        }
+
+        $tokens['projectFolder'] = Utilities::cleanupString($tokens['name']);
+        $tokens['rootFolder'] = realpath($root_folder) . '/' . Utilities::cleanupString($tokens['name']);
+
+
+        if (!empty($data['variables'])) {
+            $tokens = Utilities::mergeData($data['variables'], $tokens);
         }
 
         $logger = $this->configuration->getLogger();

@@ -1,0 +1,9 @@
+questions:
+  name:
+    question: "Please provide the name of the new project"
+  shortName:
+    question: "Please provide the short name of the new project (3-5 letters)"
+    validation: "/^[A-Za-z0-9]{3,5}$/"
+    error: "The shortname may consist of 3 to 5 letters (A-Z) or digits (0-9)"
+
+

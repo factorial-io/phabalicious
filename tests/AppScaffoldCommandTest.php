@@ -122,6 +122,33 @@ class AppScaffoldCommandTest extends TestCase
         shell_exec(sprintf('rm -rf %s', $target_folder));
     }
 
+    public function testScaffoldQuestions()
+    {
+        $root = getcwd();
+        $target_folder = $root . '/tmp';
+        if (!is_dir($target_folder)) {
+            mkdir($target_folder);
+            mkdir($target_folder . '/here');
+        }
+
+        chdir($target_folder . '/here');
+
+        $command = $this->application->find('app:scaffold');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            '--short-name'  => 'TST',
+            '--name' => 'Test',
+            '--output' => '..',
+            '--override' => true,
+            'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-simple.yml'
+        ));
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertContains('Project: Test', $output);
+        $this->assertContains('Shortname: TST', $output);
+    }
+
     private function checkFileContent($filename, $needle)
     {
         $haystack = file_get_contents($filename);

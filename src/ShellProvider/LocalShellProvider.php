@@ -8,8 +8,6 @@ use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\SetAndRestoreObjProperty;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Terminal;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
 
@@ -110,7 +108,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                         $this->logger->debug(trim($line));
                     }
                 } elseif ((!$this->captureOutput) && strpos($line, self::RESULT_IDENTIFIER) === false) {
-                    fwrite(STDOUT, $line . PHP_EOL);
+                    $this->output->writeln($line);
                 }
             }
         });

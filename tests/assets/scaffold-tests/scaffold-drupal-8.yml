@@ -1,3 +1,6 @@
+inheritsFrom:
+  - ./questions.yml
+
 variables:
   composerProject: drupal-composer/drupal-project:8.x-dev
 assets:
