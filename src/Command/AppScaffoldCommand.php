@@ -113,14 +113,15 @@ class AppScaffoldCommand extends BaseOptionsCommand
 
         $data['base_path'] = dirname($url);
 
-        if ($is_remote && !empty($data['inheritsFrom'])) {
+        if (!empty($data['inheritsFrom'])) {
             if (!is_array($data['inheritsFrom'])) {
                 $data['inheritsFrom'] = [$data['inheritsFrom']];
             }
-
-            foreach ($data['inheritsFrom'] as $item) {
-                if (strpos($item, 0, 4) !== 'http') {
-                    $data['inheritsFrom'] =$data['base_path'] . '/' . $item;
+            if ($is_remote) {
+                foreach ($data['inheritsFrom'] as $item) {
+                    if (substr($item, 0, 4) !== 'http') {
+                        $data['inheritsFrom'] = $data['base_path'] . '/' . $item;
+                    }
                 }
             }
         }
