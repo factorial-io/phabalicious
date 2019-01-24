@@ -1,0 +1,9 @@
+inheritsFrom:
+  - ./questions.yml
+
+assets:
+  - ./scaffold-simple.yml
+
+scaffold:
+  - "echo 'Project: %name%'"
+  - "echo 'Shortname: %shortName%'"

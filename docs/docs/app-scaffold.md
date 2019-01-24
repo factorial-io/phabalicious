@@ -5,6 +5,15 @@ Phabalicious has a simple but powerful scaffold-command. It will read a yml-file
 Here's an example of a scaffold-file:
 
 ```yaml
+questions:
+  name:
+    question: "The Name of this project"
+  shortName:
+    question: "The short-name of this project"
+    validation: "/^[A-Za-z0-9]{3,5}$/"
+    error: "The shortname may consist of 3 to 5 letters (A-Z) or digits (0-9)"
+    transform: lowercase
+    
 variables:
   composerProject: drupal-composer/drupal-project:8.x-dev
   webRoot: web
@@ -31,7 +40,30 @@ scaffold:
   - cd %rootFolder%; git commit -m "Initial commit by phabalicious"
 ```
 
-The fabfile needs at least the `scaffold`-section. The `scaffold`-section is a list of commands, executed by phabalicious one by one. It will use the pattern-replacement known for scripts.
+The fabfile needs at least the `questions`and the `scaffold`-section. The `scaffold`-section is a list of commands, executed by phabalicious one by one. It will use the pattern-replacement known for scripts.
+
+## The `questions`-section
+
+This section contains a list of questions to be asked when running the scaffold-command. The yaml-key will get the value inputted by the user and can be used as a replacement pattern or in twig-templates. Answers can be validated against a regex and/or transformed to lower- or uppercase.
+
+An example:
+
+```
+questions:
+  <key>: 
+    question: <the text to display>
+    validation: <the regex to check the input against to>
+    error: <the error message to display, when validation fails>
+    transform: <lowercase|uppercase>
+```
+
+For non-interactive usage you can pass the values via commandline-options, where the option-name is the same as the key, for the above example: 
+
+|command-line option|Question key|
+|------|------|
+| --\<key\> | \<key\> |
+| --name | name |
+| --short-name | shortName |
 
 ## The `scaffold`-section
 Phabalicious will provide the following replacement-patterns out of the box:
