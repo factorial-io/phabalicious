@@ -271,6 +271,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 'permissions' => '600',
             ];
         }
+
+        if ($file = $context->getConfigurationService()->getSetting('dockerNetRcFile')) {
+            $files['/root/.netrc'] = [
+                'source' => $file,
+                'permissions' => '600',
+            ];
+        }
         if (count($files) > 0) {
             $docker_config = $this->getDockerConfig($hostconfig, $context);
             $root_folder = $docker_config['rootFolder'] . '/' . $hostconfig['docker']['projectFolder'];
