@@ -489,6 +489,7 @@ This will copy the ssh-keys into the docker-instance. You'll need to provide the
 * `dockerKeyFile`, the path to the private ssh-key to use.
 * `dockerAuthorizedKeyFile`, the path to the file for `authoried_keys` or a url.
 * `dockerKnownHostsFile`, the path to the file for `known_hosts`
+* `dockerNetRcFile`, the path to a `.netrc`-file to copy into the container. This is helpful if you are using https-repositories and want to authenticate against them.
 
 As docker-container do not have any state, this task is used to copy any necessary ssh-configuration into the docker-container, so communication per ssh does not need any passwords.
 
