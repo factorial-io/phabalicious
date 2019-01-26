@@ -1,13 +1,27 @@
 # Changelog
 
+## 3.0.0-beta.3 / 2019-01-26
+
+### New
+
+  * Add transform to questions, update documentation, fix tests
+  * Refactor questions in `app:scaffold` questions are now part of the scaffold.yml
+  * Add support for copying a .netrc file to the docker container
+  * New command `jira`which will show all open tickets for the given project and user. (#22)
+
 ## 3.0.0-beta.2 / 2019-01-19
 
+### New
+
   * Add support for .fabfile.local.yaml in user-folder
+  * Show a message when a new version of phabalicious is available.
+
+### Fixed
+
   * Documentation for the new jira-command (#22)
   * Remove trailing semicolon (Fixes #23)
   * Report a proper error message when handling modules_enabled.txt or modules_disabled.txt is failing
   * Fix shell-completion
-  * Show a message when a new version of phabalicious is available.
 
 ## 3.0.0-beta.1 / 2019-01-10
 
