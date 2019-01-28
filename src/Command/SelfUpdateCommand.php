@@ -44,6 +44,9 @@ class SelfUpdateCommand extends BaseOptionsCommand
 
         if ($new_version) {
             $helper->success(sprintf('Updated phabalicious successfully to %s', $new_version));
+
+            // Exit early to prevent errors afterwards because of missing files in the phar.
+            exit(0);
         } else {
             $helper->note('No newer version found!');
         }
