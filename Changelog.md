@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0-beta.4 / 2019-01-28
+
+### Fixed
+
+  * Exit early after app-update to prevent php exception because of missing files. (Fixes #24)
+  * Make update-check more robust
+
 ## 3.0.0-beta.3 / 2019-01-26
 
 ### New
