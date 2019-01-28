@@ -71,19 +71,25 @@ class SelfUpdateCommand extends BaseOptionsCommand
 
     public function hasUpdate()
     {
-        $version = $this->getApplication()->getVersion();
-        $allow_unstable = (stripos($version, 'alpha') !== false) || (stripos($version, 'beta') !== false);
+        try {
+            $version = $this->getApplication()->getVersion();
+            $allow_unstable = (stripos($version, 'alpha') !== false) || (stripos($version, 'beta') !== false);
 
-        $updater = self::getUpdater($this->getApplication(), $allow_unstable);
+            $updater = self::getUpdater($this->getApplication(), $allow_unstable);
 
-        if (!$updater->hasUpdate()) {
-            return false;
+            if (!$updater->hasUpdate()) {
+                return false;
+            }
+
+            return [
+                'new_version' => $updater->getNewVersion(),
+                'unstable' => $allow_unstable,
+            ];
+        } catch (\Exception $e) {
+            // Do nothing
         }
 
-        return [
-            'new_version' => $updater->getNewVersion(),
-            'unstable' => $allow_unstable,
-        ];
+        return false;
     }
 
     public static function registerListener(EventDispatcher $dispatcher)
