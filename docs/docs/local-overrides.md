@@ -28,3 +28,11 @@ hosts:
 ```
 
 This will override the `host` and `port` settings of the `local`-configuration. With this technique you can alter an existing fabfile.yaml with local overrides. (In this example,  `host=localhost` and `port=2222`
+
+Another example:
+
+Using a local `.netrc`-file in the docker-container
+
+```
+dockerNetRcFile: /home/user/.netrc
+```
