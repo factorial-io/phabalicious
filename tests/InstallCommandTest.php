@@ -41,7 +41,7 @@ class InstallCommandTest extends TestCase
         $commandTester->execute(array(
             'command'  => $command->getName(),
             '--config' => 'testProd',
-            '--yes' => true,
+            '--force' => true,
         ));
 
         // the output of the command in the console
@@ -56,7 +56,7 @@ class InstallCommandTest extends TestCase
         $commandTester->execute(array(
             'command'  => $command->getName(),
             '--config' => 'testStage',
-            '--yes' => true,
+            '--force' => true,
         ));
 
         // the output of the command in the console
