@@ -119,7 +119,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
             }
 
             foreach ($data['inheritsFrom'] as $item) {
-                if (strpos($item, 0, 4) !== 'http') {
+                if (substr($item, 0, 4) !== 'http') {
                     $data['inheritsFrom'] =$data['base_path'] . '/' . $item;
                 }
             }
