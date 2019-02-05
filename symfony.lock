@@ -8,6 +8,15 @@
     "doctrine/instantiator": {
         "version": "1.1.0"
     },
+    "graze/data-structure": {
+        "version": "2.1.0"
+    },
+    "graze/parallel-process": {
+        "version": "0.8.1"
+    },
+    "graze/sort": {
+        "version": "2.0.1"
+    },
     "guzzlehttp/guzzle": {
         "version": "6.3.3"
     },

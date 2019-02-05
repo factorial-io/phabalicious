@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Command;
 
+use Graze\ParallelProcess\Pool;
 use http\Exception\InvalidArgumentException;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
@@ -12,15 +13,19 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\ParallelExecutor;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 
 abstract class BaseCommand extends BaseOptionsCommand
@@ -55,8 +60,15 @@ abstract class BaseCommand extends BaseOptionsCommand
                 'variants',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'Runt the command on a given set of variants simultanously',
+                'Run the command on a given set of blueprints simultanously',
                 null
+            )
+            ->addOption(
+                'force',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Don\'t ask for confirmation',
+                false
             );
 
         parent::configure();
@@ -113,7 +125,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $this->hostConfig->shell()->setOutput($output);
             }
 
-            if ($input->hasOption('variants')) {
+            if ($input->getOption('variants')) {
                 return $this->handleVariants($input->getOption('variants'), $input, $output);
             }
         } catch (MissingHostConfigException $e) {
@@ -205,10 +217,11 @@ abstract class BaseCommand extends BaseOptionsCommand
      * @param $variants
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @throws ValidationFailedException
      */
     private function handleVariants($variants, InputInterface $input, OutputInterface $output)
     {
+        global $argv;
+
         $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig['configName']);
         if (!$available_variants) {
             throw new \InvalidArgumentException(sprintf(
@@ -231,6 +244,41 @@ abstract class BaseCommand extends BaseOptionsCommand
                     implode('`, `', $not_found)
                 ));
             }
+        }
+        if (!empty($variants)) {
+            $cmd_lines = [];
+            $rows = [];
+            foreach ($variants as $v) {
+                $cmd = [];
+                $cmd[] = 'phab';
+
+                foreach ($input->getArguments() as $a) {
+                    $cmd[] = $a;
+                }
+                foreach ($input->getOptions() as $name => $value) {
+                    if ($value && !in_array($name, ['variants', 'blueprint', 'fabfile'])) {
+                        $cmd[] = '--' . $name;
+                        $cmd[]= $value;
+                    }
+                }
+                $cmd[] = '--fabfile';
+                $cmd[] = $this->configuration->getFabfileLocation();
+                $cmd[] = '--blueprint';
+                $cmd[] = $v;
+
+                $cmd_lines[] = $cmd;
+                $rows[] = [$v, implode(' ', $cmd)];
+            }
+
+            $style = new SymfonyStyle($input, $output);
+            $style->table(['variant', 'command'], $rows);
+
+            if ($input->getOption('force') || $style->confirm('Do you want to run these commands? ', false)) {
+                $executor = new ParallelExecutor($cmd_lines, $output);
+                return $executor->execute($input, $output);
+            }
+
+            return 1;
         }
     }
 }

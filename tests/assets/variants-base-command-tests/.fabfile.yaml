@@ -1,6 +1,6 @@
 name: variants-tests
 
-requires: 3.0.0
+requires: 2.0.0
 
 needs:
   - script
@@ -12,10 +12,14 @@ hosts:
     rootFolder: "%fabfile.path%"
 
   test:
+    scripts:
+      test:
+        - echo "%host.configName%"
+        - sleep 4
     blueprint:
+      inheritsFrom: test
       configName: test-%slug%
-      script:
-        - echo "%host.configName"
+
 
 
 

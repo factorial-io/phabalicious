@@ -35,6 +35,7 @@ class ConfigurationService
     private $methods;
 
     private $fabfilePath;
+    private $fabfileLocation;
 
     private $dockerHosts;
     private $hosts;
@@ -104,6 +105,7 @@ class ConfigurationService
         }
 
         $this->setFabfilePath(dirname($fabfile));
+        $this->fabfileLocation = $fabfile;
 
         $data = $this->readFile($fabfile);
         if (!$data) {
@@ -230,6 +232,11 @@ class ConfigurationService
     public function getFabfilePath()
     {
         return $this->fabfilePath;
+    }
+
+    public function getFabfileLocation()
+    {
+        return $this->fabfileLocation;
     }
 
     public function mergeData(array $data, array $override_data): array
