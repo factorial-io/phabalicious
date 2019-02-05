@@ -17,13 +17,15 @@ class ParallelExecutorRun extends ProcessRun
     private $output;
     private $commandLine;
 
-    public function __construct($command_line, ConsoleSectionOutput $output)
+    public function __construct($command_line, ConsoleSectionOutput $output = null)
     {
         $this->output = $output;
         $this->commandLine = implode(' ', $command_line);
 
         parent::__construct(new Process($command_line));
-        $this->addListeners();
+        if ($output) {
+            $this->addListeners();
+        }
     }
 
     public function addListeners()

@@ -71,7 +71,9 @@ class VariantBaseCommandTest extends TestCase
         ));
     }
 
-
+    /**
+     * @group docker
+     */
     public function testAllVariants()
     {
         $command = $this->application->find('script');
@@ -79,10 +81,14 @@ class VariantBaseCommandTest extends TestCase
         $commandTester->execute(array(
             'command'  => $command->getName(),
             '--config' => 'test',
-            '--variants' => 'a,b,c',
+            '--variants' => 'all',
+            '--force' => 1,
             'script' => 'test'
         ));
 
         $output = $commandTester->getDisplay();
+        $this->assertContains('--blueprint a', $output);
+        $this->assertContains('--blueprint b', $output);
+        $this->assertContains('--blueprint c', $output);
     }
 }

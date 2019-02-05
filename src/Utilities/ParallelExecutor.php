@@ -9,6 +9,8 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
+use Symfony\Component\Console\Output\ConsoleSectionOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ParallelExecutor
@@ -17,7 +19,7 @@ class ParallelExecutor
 
     private $pool;
 
-    public function __construct($command_lines, ConsoleOutputInterface $output, $max_simultaneous_processes = 4)
+    public function __construct($command_lines, OutputInterface $output, $max_simultaneous_processes = 4)
     {
         $this->pool = new PriorityPool();
         $this->pool->setMaxSimultaneous($max_simultaneous_processes);
@@ -25,20 +27,24 @@ class ParallelExecutor
         foreach ($command_lines as $cmd) {
             $this->add(new ParallelExecutorRun(
                 $cmd,
-                $output->section()
+                $output instanceof ConsoleSectionOutput
+                    ? $output->section()
+                    : null
             ));
         }
     }
 
-    public function execute(InputInterface $input, ConsoleOutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $progress_section = $output->section();
+        $progress_section = $output instanceof ConsoleSectionOutput
+            ? $output->section()
+            : $output;
         $progress = new ProgressBar($progress_section, $this->pool->count());
 
         $this->pool->start();
 
-        $interval = (1000000);
+        $interval = (200000);
         $current = 0;
         $previous = 0;
         while ($this->pool->poll()) {
