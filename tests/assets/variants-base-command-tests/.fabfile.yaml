@@ -1,0 +1,33 @@
+name: variants-tests
+
+requires: 3.0.0
+
+needs:
+  - script
+
+
+
+hosts:
+  testMissingVariants:
+    rootFolder: "%fabfile.path%"
+
+  test:
+    blueprint:
+      configName: test-%slug%
+      script:
+        - echo "%host.configName"
+
+
+
+blueprints:
+  - configName: test
+    variants:
+      - a
+      - b
+      - c
+      - d
+      - e
+      - f
+      - g
+      - h
+

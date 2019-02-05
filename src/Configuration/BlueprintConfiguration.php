@@ -30,7 +30,6 @@ class BlueprintConfiguration
             }
         }
         foreach ($this->configuration->getAllHostConfigs() as $key => $data) {
-
             if (!empty($data['blueprint'])) {
                 $this->templates['host:'  . $key] = new BlueprintTemplate($this->configuration, $data['blueprint']);
             }
@@ -90,5 +89,24 @@ class BlueprintConfiguration
                 $this->configuration->addHost($template->expand($variant));
             }
         }
+    }
+
+
+    /**
+     * Get all variants for a given config.
+     *
+     * @param $config_name
+     * @return bool|array
+     */
+    public function getVariants($config_name)
+    {
+        $data = $this->configuration->getSetting('blueprints', []);
+        foreach ($data as $b) {
+            if ($b['configName'] == $config_name) {
+                return $b['variants'];
+            }
+        }
+
+        return false;
     }
 }

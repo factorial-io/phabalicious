@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Command;
 
+use http\Exception\InvalidArgumentException;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
@@ -11,6 +12,8 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Validation\ValidationErrorBag;
+use Phabalicious\Validation\ValidationService;
 use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
@@ -46,6 +49,13 @@ abstract class BaseCommand extends BaseOptionsCommand
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Which blueprint to use',
+                null
+            )
+            ->addOption(
+                'variants',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Runt the command on a given set of variants simultanously',
                 null
             );
 
@@ -102,6 +112,10 @@ abstract class BaseCommand extends BaseOptionsCommand
             if ($this->hostConfig->shell()) {
                 $this->hostConfig->shell()->setOutput($output);
             }
+
+            if ($input->hasOption('variants')) {
+                return $this->handleVariants($input->getOption('variants'), $input, $output);
+            }
         } catch (MissingHostConfigException $e) {
             $output->writeln('<error>Could not find host-config named `' . $config_name . '`</error>');
             return 1;
@@ -115,10 +129,6 @@ abstract class BaseCommand extends BaseOptionsCommand
 
         return 0;
     }
-
-
-
-
 
     /**
      * Get host config.
@@ -187,5 +197,40 @@ abstract class BaseCommand extends BaseOptionsCommand
         });
 
         return $process;
+    }
+
+    /**
+     * Handle variants.
+     *
+     * @param $variants
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws ValidationFailedException
+     */
+    private function handleVariants($variants, InputInterface $input, OutputInterface $output)
+    {
+        $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig['configName']);
+        if (!$available_variants) {
+            throw new \InvalidArgumentException(sprintf(
+                'Could not find variants for `%s` in `blueprints`',
+                $this->hostConfig['configName']
+            ));
+        }
+
+        if ($variants == 'all') {
+            $variants = $available_variants;
+        } else {
+            $variants = explode(',', $variants);
+            $not_found = array_filter($variants, function ($v) use ($available_variants) {
+                return !in_array($v, $available_variants);
+            });
+
+            if (!empty($not_found)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Could not find variants `%s` in `blueprints`',
+                    implode('`, `', $not_found)
+                ));
+            }
+        }
     }
 }
