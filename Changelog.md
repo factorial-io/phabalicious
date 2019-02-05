@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-beta.5 / 2019-02-05
+
+### Fixed
+
+  * fixes a bug resolving remote assets for app:scaffold
+
 ## 3.0.0-beta.4 / 2019-01-28
 
 ### Fixed
