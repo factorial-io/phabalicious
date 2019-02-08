@@ -2,6 +2,8 @@
 
 ## 3.0.0-beta.6 / 2019-02-08
 
+### Fixed
+
   * .netrc is optional, show a warning if not found, instead of breaking the flow (Fixes #27)
 
 ## 3.0.0-beta.5 / 2019-02-05
