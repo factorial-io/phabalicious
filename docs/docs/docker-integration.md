@@ -15,7 +15,7 @@ The tasks can use the pattern-replacement used in other parts of phabalicious to
 
 ```yaml
 tasks:
-  run: 
+  run:
     - echo "running container %host.docker.name% for config %host.configName% in %dockerHost.rootFolder%
 ```
 
@@ -79,7 +79,7 @@ The inheritance mechanism allows you to store the docker-config in a central loc
 dockerHosts:
   testB:
     rootFolder: /some/other/folder
-    inheritsFrom: 
+    inheritsFrom:
       - https://some.host/docker.yml
       - https://some.host/docker-compose.yml
 ```
@@ -88,7 +88,7 @@ dockerHosts:
 ## Built-in docker commands
 
 There are two commands builtin, because they are hard to implement in a script-only version:
-  
+
   * waitForServices
   * copySSHKeysToDocker
 
@@ -103,13 +103,14 @@ executables:
 
 ### copySSHKeysToDocker
 
-This command will copy the referenced files from your local computer into the docker container and set the permissions so ssh can use the copied data. 
+This command will copy the referenced files from your local computer into the docker container and set the permissions so ssh can use the copied data.
 
 These are the needed global settings in the fabfile:
 
 * `dockerKeyFile` will copy the referenced private key and its public key into the container
 * `dockerAuthorizedKeyFile`, the `authorized_keys`-file, can be a path to a file or an url
 * `dockerKnownHostsFile`, the `known_hosts`-file
+* `dockerNetRcFile`, will copy a `.netrc`-file into the container (suitable for authenticating against https repositories)
 
 Obviously a ssh-demon should be running inside your docker-container.
 
@@ -121,7 +122,7 @@ Phabalicious is running some predefined docker-tasks if set in the fabfile and w
 * `spinDown`: stop all app-containers
 * `deleteContainer`: remove and delete all app container
 
-If you want to support this in your configuration, add the tasks to the fabfile and its corresponding commands. 
+If you want to support this in your configuration, add the tasks to the fabfile and its corresponding commands.
 
 ## Conclusion
 
