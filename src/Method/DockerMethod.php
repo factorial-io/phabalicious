@@ -276,6 +276,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $files['/root/.netrc'] = [
                 'source' => $file,
                 'permissions' => '600',
+                'optional' => true,
             ];
         }
         if (count($files) > 0) {
@@ -307,6 +308,20 @@ class DockerMethod extends BaseMethod implements MethodInterface
                           '/' .
                           $data['source'];
                 }
+
+                // Check if file exists
+                if (!file_exists($data['source'])) {
+                    if (empty($data['optional'])) {
+                        throw new \RuntimeException(sprintf(
+                            'File `%s does not exist, could not copy into container!',
+                            $data['source']
+                        ));
+                    } else {
+                        $context->getStyle()->comment(sprintf('File `%s does not exist, skipping!', $data['source']));
+                        continue;
+                    }
+                }
+
                 $temp_file = $docker_config['tmpFolder'] . '/' . 'phab.tmp.' . basename($data['source']);
                 $shell->putFile($data['source'], $temp_file, $context);
 
