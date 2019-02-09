@@ -20,6 +20,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Yaml\Yaml;
 
+
 class AppScaffoldCommand extends BaseOptionsCommand
 {
 
@@ -209,6 +210,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $context->set('variables', $tokens);
         $context->set('callbacks', [
             'copy_assets' => [$this, 'copyAssets'],
+            'copy_dir' => [$this, 'copyDir'],
         ]);
         $context->set('scaffoldData', $data);
         $context->set('tokens', $tokens);
@@ -280,6 +282,59 @@ class AppScaffoldCommand extends BaseOptionsCommand
             $context->getStyle()->comment(sprintf('Creating %s ...', $target_file_name));
             file_put_contents($target_file_name, $converted);
         }
+    }
+
+    /**
+     * Copy assets preserving the directory structure.
+     *
+     * Doesn't support fancy replacements of destination path.
+     *
+     * @param TaskContextInterface $context
+     * @param $target_folder
+     * @param string $data_key
+     */
+    public function copyDir(TaskContextInterface $context, $target_folder, $data_key = 'assets')
+    {
+      if (!is_dir($target_folder)) {
+        mkdir($target_folder, 0777, true);
+      }
+      $data = $context->get('scaffoldData');
+      $tokens = $context->get('tokens');
+      $is_remote = substr($data['base_path'], 0, 4) == 'http';
+      $replacements = [];
+      foreach ($tokens as $key => $value) {
+        $replacements['%' . $key . '%'] = $value;
+      }
+
+      if (empty($data[$data_key])) {
+        throw new \InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
+      }
+      foreach ($data[$data_key] as $file_name) {
+        $tmp_target_file = false;
+        if ($is_remote) {
+          $tmpl = $this->configuration->readHttpResource($data['base_path'] . '/' . $file_name);
+          if (empty($tmpl)) {
+            throw new \RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
+          }
+          $tmp_target_file = '/tmp/' . $file_name;
+          if (!is_dir(dirname($tmp_target_file))) {
+            mkdir(dirname($tmp_target_file), 0777, true);
+          }
+          file_put_contents('/tmp/' . $file_name, $tmpl);
+        }
+        $converted = $this->twig->render($file_name, $tokens);
+        if ($tmp_target_file) {
+          unlink($tmp_target_file);
+        }
+        $target_file_name = $target_folder . '/' . $file_name;
+        $target_dir = dirname($target_file_name);
+        $context->getStyle()->comment($target_dir);
+        if (!is_dir($target_dir)) {
+          mkdir($target_dir, 0777, TRUE);
+        }
+        $context->getStyle()->comment(sprintf('Creating %s ...', $target_file_name));
+        file_put_contents($target_file_name, $converted);
+      }
     }
 
     private function fakeUUID()
