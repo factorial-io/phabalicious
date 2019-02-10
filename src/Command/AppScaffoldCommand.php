@@ -24,6 +24,9 @@ use Symfony\Component\Yaml\Yaml;
 class AppScaffoldCommand extends BaseOptionsCommand
 {
 
+    CONST FILES_COPY_STRATEGY_FLAT = 'flat';
+    CONST FILES_COPY_STRATEGY_RECURSIVE = 'recursive';
+
     protected $twig;
 
     private $dynamicOptions = [];
@@ -245,43 +248,8 @@ class AppScaffoldCommand extends BaseOptionsCommand
      */
     public function copyAssets(TaskContextInterface $context, $target_folder, $data_key = 'assets')
     {
-        if (!is_dir($target_folder)) {
-            mkdir($target_folder, 0777, true);
-        }
-        $data = $context->get('scaffoldData');
-        $tokens = $context->get('tokens');
-        $is_remote = substr($data['base_path'], 0, 4) == 'http';
-        $replacements = [];
-        foreach ($tokens as $key => $value) {
-            $replacements['%' . $key . '%'] = $value;
-        }
-
-        if (empty($data[$data_key])) {
-            throw new \InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
-        }
-
-        foreach ($data[$data_key] as $file_name) {
-            $tmp_target_file = false;
-            if ($is_remote) {
-                $tmpl = $this->configuration->readHttpResource($data['base_path'] . '/' . $file_name);
-                if (empty($tmpl)) {
-                    throw new \RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
-                }
-                $tmp_target_file = '/tmp/' . $file_name;
-                if (!is_dir(dirname($tmp_target_file))) {
-                    mkdir(dirname($tmp_target_file), 0777, true);
-                }
-                file_put_contents('/tmp/' . $file_name, $tmpl);
-            }
-            $converted = $this->twig->render($file_name, $tokens);
-            if ($tmp_target_file) {
-                unlink($tmp_target_file);
-            }
-
-            $target_file_name = $target_folder. '/' . strtr(basename($file_name), $replacements);
-            $context->getStyle()->comment(sprintf('Creating %s ...', $target_file_name));
-            file_put_contents($target_file_name, $converted);
-        }
+      $context->set('copyFilesStrategy', self::FILES_COPY_STRATEGY_FLAT);
+      $this->copyFiles($context, $target_folder, $data_key);
     }
 
     /**
@@ -295,9 +263,22 @@ class AppScaffoldCommand extends BaseOptionsCommand
      */
     public function copyDir(TaskContextInterface $context, $target_folder, $data_key = 'assets')
     {
-      if (!is_dir($target_folder)) {
-        mkdir($target_folder, 0777, true);
-      }
+      $context->set('copyFilesStrategy', self::FILES_COPY_STRATEGY_RECURSIVE);
+      $this->copyFiles($context, $target_folder, $data_key);
+    }
+
+
+    /**
+     * Copy assets preserving the directory structure.
+     *
+     * Doesn't support fancy replacements of destination path.
+     *
+     * @param TaskContextInterface $context
+     * @param $target_folder
+     * @param string $data_key
+     */
+    public function copyFiles(TaskContextInterface $context, $target_folder, $data_key = 'assets')
+    {
       $data = $context->get('scaffoldData');
       $tokens = $context->get('tokens');
       $is_remote = substr($data['base_path'], 0, 4) == 'http';
@@ -317,24 +298,55 @@ class AppScaffoldCommand extends BaseOptionsCommand
             throw new \RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
           }
           $tmp_target_file = '/tmp/' . $file_name;
-          if (!is_dir(dirname($tmp_target_file))) {
-            mkdir(dirname($tmp_target_file), 0777, true);
-          }
+          $this->preapreDirForFile($tmp_target_file);
           file_put_contents('/tmp/' . $file_name, $tmpl);
         }
         $converted = $this->twig->render($file_name, $tokens);
         if ($tmp_target_file) {
           unlink($tmp_target_file);
         }
-        $target_file_name = $target_folder . '/' . $file_name;
-        $target_dir = dirname($target_file_name);
-        $context->getStyle()->comment($target_dir);
-        if (!is_dir($target_dir)) {
-          mkdir($target_dir, 0777, TRUE);
+
+        $target_file_name = NULL;
+        switch ($context->get('copyFilesStrategy')) {
+          case self::FILES_COPY_STRATEGY_RECURSIVE:
+            $target_file_name = $target_folder . '/' . $file_name;
+            break;
+
+          case self::FILES_COPY_STRATEGY_FLAT:
+          default:
+            $target_file_name = $target_folder. '/' . strtr(basename($file_name), $replacements);
         }
-        $context->getStyle()->comment(sprintf('Creating %s ...', $target_file_name));
-        file_put_contents($target_file_name, $converted);
+
+        if ($target_file_name) {
+          $context->getStyle()->comment(sprintf('Creating %s ...', $target_file_name));
+          $this->preapreDirForFile($target_file_name);
+          file_put_contents($target_file_name, $converted);
+        }
+        else {
+          $context->getStyle()->comment(sprintf('Empty target, skipping %s ...', $target_file_name));
+        }
       }
+    }
+
+    /**
+     * Helper function to prepare directory for writing files.
+     *
+     * @param $dir
+     */
+    private function prepareDir($dir) {
+      if (!is_dir($dir)) {
+        mkdir($dir, 0777, true);
+      }
+    }
+
+    /**
+     * Helper function prepare directory for a file.
+     *
+     * @param $filename
+     */
+    private function preapreDirForFile($filename) {
+      $dir = dirname($filename);
+      $this->prepareDir($dir);
     }
 
     private function fakeUUID()
