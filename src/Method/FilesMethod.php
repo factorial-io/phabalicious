@@ -137,7 +137,6 @@ class FilesMethod extends BaseMethod implements MethodInterface
             if ($tokens) {
                 $result[] = $tokens;
             }
-
         }
 
         $context->addResult('files', $result);
@@ -230,7 +229,6 @@ class FilesMethod extends BaseMethod implements MethodInterface
                 if ($filename) {
                     $context->addResult('files', [$filename]);
                 }
-
             }
         }
     }
@@ -281,7 +279,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
             $from_config['port']
         ) . '"';
         $rsync_args .= sprintf(
-            ' %s@%s:%s/* %s',
+            ' %s@%s:%s/. %s',
             $from_config['user'],
             $from_config['host'],
             $from_path,
@@ -292,5 +290,4 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShell($to_config, $context);
         return $shell->run('#!rsync ' . $rsync_args);
     }
-
 }
