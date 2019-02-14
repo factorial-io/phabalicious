@@ -51,6 +51,8 @@ class RestoreSqlFromFileCommand extends BaseCommand
         }
 
         $host_config = $this->getHostConfig();
+        $this->getMethods()->runTask('restoreSqlFromFilePreparation', $host_config, $context);
+
         $shell = $host_config->shell();
         $dest = $host_config['tmpFolder'] . '/' .
             $host_config['configName'] . '.' .

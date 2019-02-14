@@ -1,6 +1,16 @@
 # Changelog
 
+## 3.0.0 / 2019-02-14
+
+### Fixed
+
+  * Increase timeout for non-interactive processes.
+  * `restore:sql-from-file`: Run a preparation method so tunnels are in place before running the actual scp
+  * `copy-from files`: Fix for "too many arguments" error message of rsync
+
 ## 3.0.0-beta.6 / 2019-02-08
+
+### Fixed
 
   * .netrc is optional, show a warning if not found, instead of breaking the flow (Fixes #27)
 
