@@ -123,7 +123,6 @@ abstract class BaseShellProvider implements ShellProviderInterface
             fwrite(STDERR, $buffer);
         } else {
             fwrite(STDOUT, $buffer);
-
         }
     }
 
@@ -141,7 +140,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
             $process->start();
             $process->wait($cb);
         } else {
-            $process->setTimeout(10*60);
+            $process->setTimeout(60*60);
             //$process->setTty($verbose);
             $process->run($cb);
         }
@@ -180,5 +179,4 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
         return $this->putFile($immediate_file_name, $target_file_name, $context, $verbose);
     }
-
 }
