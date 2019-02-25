@@ -373,7 +373,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $docker_config = $this->getDockerConfig($host_config, $context);
         $shell = $docker_config->shell();
         $scoped_loglevel = new ScopedLogLevel($shell, LogLevel::DEBUG);
-        $container_name = $this->getDockerContainerName($host_config, $context);
+        try {
+            $container_name = $this->getDockerContainerName($host_config, $context);
+        } catch (\RuntimeException $e) {
+            return false;
+        }
 
         if (!$this->isContainerRunning($docker_config, $container_name)) {
             return false;
@@ -486,7 +490,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $shell = $docker_config->shell();
 
         if (in_array($current_stage['stage'], $docker_config['tasks']) ||
-            in_array($current_stage['stage'], array('spinUp', 'spinDown', 'deleteContainer'))
+            in_array($current_stage['stage'], array('spinUp', 'spinDown', 'deleteContainer', 'prepareDestination'))
         ) {
             $this->runTaskImpl($host_config, $context, $current_stage['stage'], false);
         }
@@ -517,7 +521,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 }
             }
             throw new \RuntimeException(sprintf(
-                'Could not get the name of the docker container running the service `s`'
+                'Could not get the name of the docker container running the service `%s`',
+                $composer_service
             ));
         }
     }
