@@ -11,9 +11,10 @@ Both commands executes a list of stages, which can be influenced via configurati
 
 These are the standard stages. You can override them by adding them to the global section of your fabfile:
 
-```yaml  
+```yaml
 appStages:
   create:
+    - stage: prepareDestination
     - stage: installCode
     - stage: spinUp
     - stage: installDependencies
