@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.1 / 2019-02-25
+
+### Fixed
+
+  * Fix a bug in docker:getIpAddress when using the service keyword and the container is not running.
+
+### New
+
+  * Add a new stage `prepareDestination` for `app:create`
+
 ## 3.0.0 / 2019-02-14
 
 ### Fixed
