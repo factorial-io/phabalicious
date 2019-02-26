@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: stephan
- * Date: 05.10.18
- * Time: 12:27
- */
 
 namespace Phabalicious\Tests;
 

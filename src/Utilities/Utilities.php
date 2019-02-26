@@ -5,6 +5,8 @@ namespace Phabalicious\Utilities;
 class Utilities
 {
 
+    const FALLBACK_VERSION = '3.0.0';
+
     public static function mergeData(array $data, array $override_data): array
     {
         $result = $data;
@@ -134,7 +136,11 @@ class Utilities
         ];
         $identifier = strtr($identifier, $filter);
 
-        $identifier = preg_replace('/[^\\x{002D}\\x{0030}-\\x{0039}\\x{0041}-\\x{005A}\\x{005F}\\x{0061}-\\x{007A}\\x{00A1}-\\x{FFFF}]/u', '', $identifier);
+        $identifier = preg_replace(
+            '/[^\\x{002D}\\x{0030}-\\x{0039}\\x{0041}-\\x{005A}\\x{005F}\\x{0061}-\\x{007A}\\x{00A1}-\\x{FFFF}]/u',
+            '',
+            $identifier
+        );
 
         // Convert everything to lower case.
         return strtolower($identifier);

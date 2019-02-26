@@ -54,7 +54,7 @@ $application->setDispatcher($dispatcher);
 
 $version = '@git_tag@';
 if ($version[0] == '@') {
-    $version = '3.0.0';
+    $version = \Phabalicious\Utilities\Utilities::FALLBACK_VERSION;
 }
 
 $application->setVersion($version);

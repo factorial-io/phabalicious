@@ -144,7 +144,8 @@ class AppScaffoldCommand extends BaseOptionsCommand
         ];
 
         $questions = !empty($data['questions']) ? $data['questions'] : [];
-        $helper = $this->getHelper('question');
+        $context = new TaskContext($this, $input, $output);
+
 
         foreach ($questions as $key => $question_data) {
             $errors = new ValidationErrorBag();
@@ -162,8 +163,10 @@ class AppScaffoldCommand extends BaseOptionsCommand
             if (in_array($option_name, $this->dynamicOptions)) {
                 $value = $input->getOption($option_name);
             } else {
-                $question = new Question($question_data['question']. ': ');
-                $value = $helper->ask($input, $output, $question);
+                $value = $context->getStyle()->ask(
+                    $question_data['question'],
+                    isset($question_data['default']) ? $question_data['default'] : null
+                );
             }
 
             if (!empty($question_data['validation'])) {
@@ -203,7 +206,6 @@ class AppScaffoldCommand extends BaseOptionsCommand
             'rootFolder' => realpath($input->getOption('output')),
             'shellExecutable' => '/bin/bash'
         ], $shell);
-        $context = new TaskContext($this, $input, $output);
 
         $context->set('scriptData', $data['scaffold']);
         $context->set('variables', $tokens);
@@ -220,8 +222,10 @@ class AppScaffoldCommand extends BaseOptionsCommand
 
 
         if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
-            $question = new ConfirmationQuestion('Destination folder exists! Continue anyways? ', false);
-            if (!$helper->ask($input, $output, $question)) {
+            if (!$context->getStyle()->confirm(
+                'Destination folder exists! Continue anyways?',
+                false
+            )) {
                 return 1;
             }
         }

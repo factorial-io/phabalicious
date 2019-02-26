@@ -2,10 +2,8 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\HostType;
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -56,24 +54,22 @@ class InstallCommand extends BaseCommand
             return $result;
         }
 
+        $context = new TaskContext($this, $input, $output);
+
         $host_config = $this->getHostConfig();
         if ($host_config['supportsInstalls'] == false) {
             throw new \InvalidArgumentException('This configuration disallows installs!');
         }
 
         if (!$input->getOption('yes')) {
-            $helper = $this->getHelper('question');
-            $question = new ConfirmationQuestion(
-                'Install new database for configuration `' . $this->getHostConfig()['configName'] . '`? ',
-                false
-            );
-
-            if (!$helper->ask($input, $output, $question)) {
+            if (!$context->getStyle()->confirm(sprintf(
+                'Install new database for configuration `%s`?',
+                $this->getHostConfig()['configName']
+            ), false)) {
                 return 1;
             }
         }
 
-        $context = new TaskContext($this, $input, $output);
 
         $next_tasks = $input->getOption('skip-reset') ? [] : ['reset'];
 
