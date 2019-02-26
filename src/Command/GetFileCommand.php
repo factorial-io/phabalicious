@@ -53,7 +53,7 @@ class GetFileCommand extends BaseCommand
         $context->set('sourceFile', $file);
         $context->set('destFile', getcwd());
 
-        $context->getStyle()->comment('Get file `' . $file . '` from `' . $this->getHostConfig()['configName']. '`');
+        $context->io()->comment('Get file `' . $file . '` from `' . $this->getHostConfig()['configName']. '`');
 
         $this->getMethods()->runTask('getFile', $this->getHostConfig(), $context);
 

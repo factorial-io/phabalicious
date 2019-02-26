@@ -67,5 +67,5 @@ interface TaskContextInterface
     /**
      * @return SymfonyStyle
      */
-    public function getStyle();
+    public function io();
 }

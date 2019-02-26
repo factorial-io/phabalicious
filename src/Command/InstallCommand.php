@@ -62,7 +62,7 @@ class InstallCommand extends BaseCommand
         }
 
         if (!$input->getOption('yes')) {
-            if (!$context->getStyle()->confirm(sprintf(
+            if (!$context->io()->confirm(sprintf(
                 'Install new database for configuration `%s`?',
                 $this->getHostConfig()['configName']
             ), false)) {
@@ -73,7 +73,7 @@ class InstallCommand extends BaseCommand
 
         $next_tasks = $input->getOption('skip-reset') ? [] : ['reset'];
 
-        $context->getStyle()->comment('Installing new app for `' . $this->getHostConfig()['configName']. '`');
+        $context->io()->comment('Installing new app for `' . $this->getHostConfig()['configName']. '`');
 
         try {
             $this->getMethods()->runTask('install', $this->getHostConfig(), $context, $next_tasks);
