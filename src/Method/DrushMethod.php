@@ -524,6 +524,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $host_config['configName']
         ));
 
+        $shell->cd($host_config['siteFolder']);
         $result = $this->importSqlFromFile($shell, $to_filename, true);
         if (!$result->succeeded()) {
             $result->throwException('Could not import DB from file `' . $to_filename . '`');
