@@ -1,0 +1,35 @@
+name: app-create-tests
+
+needs:
+  - script
+  - docker
+
+dockerHosts:
+  test:
+    runLocally: true
+    rootFolder: .
+    tasks:
+      spinUp:
+        - echo "XX Spin up XX"
+      spinDown:
+        - echo "XX Spin down XX"
+      install:
+        - echo "XX Install XX"
+  testWithPrepare:
+    inheritsFrom: test
+    tasks:
+      prepareDestination:
+        - echo "XX prepareDestination XX"
+
+hosts:
+  test:
+    type: dev
+    docker:
+      configuration: test
+      name: test
+      projectFolder: ""
+  testWithPrepare:
+    inheritsFrom: test
+    docker:
+      configuration: testWithPrepare
+
