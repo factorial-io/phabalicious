@@ -147,56 +147,25 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $context = new TaskContext($this, $input, $output);
 
 
-        foreach ($questions as $key => $question_data) {
-            $errors = new ValidationErrorBag();
-            $validation = new ValidationService($question_data, $errors, 'questions');
-            $validation->hasKey('question', 'Please provide a question');
-            if (!empty($question_data['validation'])) {
-                $validation->hasKey('validation', 'Please provide a regex for validation');
-                $validation->hasKey('error', 'Please provide an error message when a validation fails');
-            }
-            if ($errors->hasErrors()) {
-                throw new ValidationFailedException($errors);
-            }
-
-            $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
-            if (in_array($option_name, $this->dynamicOptions)) {
-                $value = $input->getOption($option_name);
-            } else {
-                $value = $context->io()->ask(
-                    $question_data['question'],
-                    isset($question_data['default']) ? $question_data['default'] : null
-                );
-            }
-
-            if (!empty($question_data['validation'])) {
-                if (!preg_match($question_data['validation'], $value)) {
-                    throw new \InvalidArgumentException($question_data['error'] . ': ' . $value);
-                }
-            }
-            if (!empty($question_data['transform'])) {
-                $transform = strtolower($question_data['transform']);
-                $mapping = [
-                    'lowercase' => 'strtolower',
-                    'uppercase' => 'strtoupper',
-                ];
-                if (isset($mapping[$transform])) {
-                    $value = call_user_func($mapping[$transform], $value);
-                }
-            }
-            $tokens[$key] = trim($value);
-        }
+        $tokens = $this->askQuestions($input, $questions, $context, $tokens);
         if (empty($tokens['name'])) {
             throw new \InvalidArgumentException('Missing `name` in questions, aborting!');
         }
-
-        $tokens['projectFolder'] = Utilities::cleanupString($tokens['name']);
-        $tokens['rootFolder'] = realpath($root_folder) . '/' . Utilities::cleanupString($tokens['name']);
-
-
         if (!empty($data['variables'])) {
             $tokens = Utilities::mergeData($data['variables'], $tokens);
         }
+        if (empty($tokens['projectFolder'])) {
+            $tokens['projectFolder'] = $tokens['name'];
+        }
+
+        // Do a first round of replacements.
+        $replacements = $this->getReplacements($tokens);
+        foreach ($tokens as $ndx => $token) {
+            $tokens[$ndx] = strtr($token, $replacements);
+        }
+
+        $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
+        $tokens['rootFolder'] = realpath($root_folder) . '/' . $tokens['projectFolder'];
 
         $logger = $this->configuration->getLogger();
         $shell = new LocalShellProvider($logger);
@@ -253,10 +222,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $data = $context->get('scaffoldData');
         $tokens = $context->get('tokens');
         $is_remote = substr($data['base_path'], 0, 4) == 'http';
-        $replacements = [];
-        foreach ($tokens as $key => $value) {
-            $replacements['%' . $key . '%'] = $value;
-        }
+        $replacements = $this->getReplacements($tokens);
 
         if (empty($data[$data_key])) {
             throw new \InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
@@ -302,5 +268,70 @@ class AppScaffoldCommand extends BaseOptionsCommand
             bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
             bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
             bin2hex(openssl_random_pseudo_bytes(6));
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param array $questions
+     * @param TaskContext $context
+     * @param array $tokens
+     * @return array
+     * @throws ValidationFailedException
+     */
+    protected function askQuestions(InputInterface $input, array $questions, TaskContext $context, array $tokens): array
+    {
+        foreach ($questions as $key => $question_data) {
+            $errors = new ValidationErrorBag();
+            $validation = new ValidationService($question_data, $errors, 'questions');
+            $validation->hasKey('question', 'Please provide a question');
+            if (!empty($question_data['validation'])) {
+                $validation->hasKey('validation', 'Please provide a regex for validation');
+                $validation->hasKey('error', 'Please provide an error message when a validation fails');
+            }
+            if ($errors->hasErrors()) {
+                throw new ValidationFailedException($errors);
+            }
+
+            $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
+            if (in_array($option_name, $this->dynamicOptions)) {
+                $value = $input->getOption($option_name);
+            } else {
+                $value = $context->io()->ask(
+                    $question_data['question'],
+                    isset($question_data['default']) ? $question_data['default'] : null
+                );
+            }
+
+            if (!empty($question_data['validation'])) {
+                if (!preg_match($question_data['validation'], $value)) {
+                    throw new \InvalidArgumentException($question_data['error'] . ': ' . $value);
+                }
+            }
+            if (!empty($question_data['transform'])) {
+                $transform = strtolower($question_data['transform']);
+                $mapping = [
+                    'lowercase' => 'strtolower',
+                    'uppercase' => 'strtoupper',
+                ];
+                if (isset($mapping[$transform])) {
+                    $value = call_user_func($mapping[$transform], $value);
+                }
+            }
+            $tokens[$key] = trim($value);
+        }
+        return $tokens;
+    }
+
+    /**
+     * @param $tokens
+     * @return array
+     */
+    protected function getReplacements($tokens): array
+    {
+        $replacements = [];
+        foreach ($tokens as $key => $value) {
+            $replacements['%' . $key . '%'] = $value;
+        }
+        return $replacements;
     }
 }
