@@ -496,7 +496,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShell($host_config, $context);
         $from_shell = $context->get('fromShell', $from_config->shell());
 
-        $context->getStyle()->comment(sprintf('Dumping database of `%s` ...', $from_config['configName']));
+        $context->io()->comment(sprintf('Dumping database of `%s` ...', $from_config['configName']));
 
         $from_filename = $from_config['tmpFolder'] . '/' . $from_config['configName'] . '.' . date('YmdHms') . '.sql';
         $from_filename = $this->backupSQL($from_config, $context, $from_shell, $from_filename);
@@ -504,7 +504,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $to_filename = $host_config['tmpFolder'] . '/' . basename($from_filename);
 
         // Copy filename to host
-        $context->getStyle()->comment(sprintf(
+        $context->io()->comment(sprintf(
             'Copying dump from `%s` to `%s` ...',
             $from_config['configName'],
             $host_config['configName']
@@ -519,11 +519,12 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $from_shell->run(sprintf(' rm %s', $from_filename));
 
         // Import db.
-        $context->getStyle()->comment(sprintf(
+        $context->io()->comment(sprintf(
             'Importing dump into `%s` ...',
             $host_config['configName']
         ));
 
+        $shell->cd($host_config['siteFolder']);
         $result = $this->importSqlFromFile($shell, $to_filename, true);
         if (!$result->succeeded()) {
             $result->throwException('Could not import DB from file `' . $to_filename . '`');
@@ -531,7 +532,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         $shell->run(sprintf('rm %s', $to_filename));
 
-        $context->getStyle()->success('Copied the database successfully!');
+        $context->io()->success('Copied the database successfully!');
     }
 
     public function appUpdate(HostConfig $host_config, TaskContextInterface $context)

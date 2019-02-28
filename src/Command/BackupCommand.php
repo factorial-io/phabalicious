@@ -72,7 +72,7 @@ class BackupCommand extends BaseCommand
                 $files
             );
 
-            $context->getStyle()->success('Backups created successfully!');
+            $context->io()->success('Backups created successfully!');
         }
 
         return $context->getResult('exitCode', 0);

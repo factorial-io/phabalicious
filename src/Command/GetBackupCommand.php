@@ -92,7 +92,7 @@ class GetBackupCommand extends BaseCommand
 
 
         if (count($files) > 0) {
-            $io = $context->getStyle();
+            $io = $context->io();
             $io->title('Copied backup-set:');
             $io->table(
                 ['Type', 'File'],

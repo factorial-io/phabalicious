@@ -1,5 +1,23 @@
 # Changelog
 
+## 3.0.1 / 2019-02-25
+
+### Fixed
+
+  * Fix a bug in docker:getIpAddress when using the service keyword and the container is not running.
+
+### New
+
+  * Add a new stage `prepareDestination` for `app:create`
+
+## 3.0.0 / 2019-02-14
+
+### Fixed
+
+  * Increase timeout for non-interactive processes.
+  * `restore:sql-from-file`: Run a preparation method so tunnels are in place before running the actual scp
+  * `copy-from files`: Fix for "too many arguments" error message of rsync
+
 ## 3.0.0-beta.6 / 2019-02-08
 
 ### Fixed

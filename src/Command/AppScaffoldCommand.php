@@ -20,12 +20,11 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Yaml\Yaml;
 
-
 class AppScaffoldCommand extends BaseOptionsCommand
 {
 
-    CONST FILES_COPY_STRATEGY_FLAT = 'flat';
-    CONST FILES_COPY_STRATEGY_RECURSIVE = 'recursive';
+    const FILES_COPY_STRATEGY_FLAT = 'flat';
+    const FILES_COPY_STRATEGY_RECURSIVE = 'recursive';
 
     protected $twig;
 
@@ -148,7 +147,8 @@ class AppScaffoldCommand extends BaseOptionsCommand
         ];
 
         $questions = !empty($data['questions']) ? $data['questions'] : [];
-        $helper = $this->getHelper('question');
+        $context = new TaskContext($this, $input, $output);
+
 
         foreach ($questions as $key => $question_data) {
             $errors = new ValidationErrorBag();
@@ -166,8 +166,10 @@ class AppScaffoldCommand extends BaseOptionsCommand
             if (in_array($option_name, $this->dynamicOptions)) {
                 $value = $input->getOption($option_name);
             } else {
-                $question = new Question($question_data['question']. ': ');
-                $value = $helper->ask($input, $output, $question);
+                $value = $context->io()->ask(
+                    $question_data['question'],
+                    isset($question_data['default']) ? $question_data['default'] : null
+                );
             }
 
             if (!empty($question_data['validation'])) {
@@ -207,7 +209,6 @@ class AppScaffoldCommand extends BaseOptionsCommand
             'rootFolder' => realpath($input->getOption('output')),
             'shellExecutable' => '/bin/bash'
         ], $shell);
-        $context = new TaskContext($this, $input, $output);
 
         $context->set('scriptData', $data['scaffold']);
         $context->set('variables', $tokens);
@@ -225,19 +226,21 @@ class AppScaffoldCommand extends BaseOptionsCommand
 
 
         if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
-            $question = new ConfirmationQuestion('Destination folder exists! Continue anyways? ', false);
-            if (!$helper->ask($input, $output, $question)) {
+            if (!$context->io()->confirm(
+                'Destination folder exists! Continue anyways?',
+                false
+            )) {
                 return 1;
             }
         }
 
-        $context->getStyle()->comment('Create destination folder ...');
+        $context->io()->comment('Create destination folder ...');
         $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
-        $context->getStyle()->comment('Start scaffolding script ...');
+        $context->io()->comment('Start scaffolding script ...');
         $script->runScript($host_config, $context);
 
-        $context->getStyle()->success('Scaffolding finished successfully!');
+        $context->io()->success('Scaffolding finished successfully!');
         return 0;
     }
 
@@ -248,8 +251,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
      */
     public function copyAssets(TaskContextInterface $context, $target_folder, $data_key = 'assets')
     {
-      $context->set('copyFilesStrategy', self::FILES_COPY_STRATEGY_FLAT);
-      $this->copyFiles($context, $target_folder, $data_key);
+        $this->copyFiles($context, $target_folder, $data_key, self::FILES_COPY_STRATEGY_FLAT);
     }
 
     /**
@@ -263,8 +265,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
      */
     public function copyDir(TaskContextInterface $context, $target_folder, $data_key = 'assets')
     {
-      $context->set('copyFilesStrategy', self::FILES_COPY_STRATEGY_RECURSIVE);
-      $this->copyFiles($context, $target_folder, $data_key);
+        $this->copyFiles($context, $target_folder, $data_key, self::FILES_COPY_STRATEGY_RECURSIVE);
     }
 
 
@@ -276,56 +277,62 @@ class AppScaffoldCommand extends BaseOptionsCommand
      * @param TaskContextInterface $context
      * @param $target_folder
      * @param string $data_key
+     * @param string $copy_files_strategy
      */
-    public function copyFiles(TaskContextInterface $context, $target_folder, $data_key = 'assets')
-    {
-      $data = $context->get('scaffoldData');
-      $tokens = $context->get('tokens');
-      $is_remote = substr($data['base_path'], 0, 4) == 'http';
-      $replacements = [];
-      foreach ($tokens as $key => $value) {
-        $replacements['%' . $key . '%'] = $value;
-      }
-
-      if (empty($data[$data_key])) {
-        throw new \InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
-      }
-      foreach ($data[$data_key] as $file_name) {
-        $tmp_target_file = false;
-        if ($is_remote) {
-          $tmpl = $this->configuration->readHttpResource($data['base_path'] . '/' . $file_name);
-          if (empty($tmpl)) {
-            throw new \RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
-          }
-          $tmp_target_file = '/tmp/' . $file_name;
-          $this->preapreDirForFile($tmp_target_file);
-          file_put_contents('/tmp/' . $file_name, $tmpl);
-        }
-        $converted = $this->twig->render($file_name, $tokens);
-        if ($tmp_target_file) {
-          unlink($tmp_target_file);
+    public function copyFiles(
+        TaskContextInterface $context,
+        $target_folder,
+        $data_key = 'assets',
+        $copy_files_strategy = self::FILES_COPY_STRATEGY_FLAT
+    ) {
+        $data = $context->get('scaffoldData');
+        $tokens = $context->get('tokens');
+        $is_remote = substr($data['base_path'], 0, 4) == 'http';
+        $replacements = [];
+        foreach ($tokens as $key => $value) {
+            $replacements['%' . $key . '%'] = $value;
         }
 
-        $target_file_name = NULL;
-        switch ($context->get('copyFilesStrategy')) {
-          case self::FILES_COPY_STRATEGY_RECURSIVE:
-            $target_file_name = $target_folder . '/' . $file_name;
-            break;
+        if (empty($data[$data_key])) {
+            throw new \InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
+        }
+        foreach ($data[$data_key] as $file_name) {
+            $tmp_target_file = false;
+            if ($is_remote) {
+                $tmpl = $this->configuration->readHttpResource($data['base_path'] . '/' . $file_name);
+                if (empty($tmpl)) {
+                    throw new \RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
+                }
+                $tmp_target_file = '/tmp/' . $file_name;
+                $this->prepareDirForFile($tmp_target_file);
+                file_put_contents('/tmp/' . $file_name, $tmpl);
+            }
+            $converted = $this->twig->render($file_name, $tokens);
+            if ($tmp_target_file) {
+                unlink($tmp_target_file);
+            }
 
-          case self::FILES_COPY_STRATEGY_FLAT:
-          default:
-            $target_file_name = $target_folder. '/' . strtr(basename($file_name), $replacements);
-        }
+            $target_file_name = null;
+            switch ($copy_files_strategy) {
+                case self::FILES_COPY_STRATEGY_RECURSIVE:
+                    $target_file_name = $target_folder . '/' . strtr(basename($file_name), $replacements);
+                    break;
 
-        if ($target_file_name) {
-          $context->getStyle()->comment(sprintf('Creating %s ...', $target_file_name));
-          $this->preapreDirForFile($target_file_name);
-          file_put_contents($target_file_name, $converted);
+                case self::FILES_COPY_STRATEGY_FLAT:
+                default:
+                    $target_file_name = $target_folder. '/' . strtr(basename($file_name), $replacements);
+                    $context->io()->comment(sprintf('Creating %s ...', $target_file_name));
+                    file_put_contents($target_file_name, $converted);
+            }
+
+            if ($target_file_name) {
+                $context->io()->comment(sprintf('Creating %s ...', $target_file_name));
+                $this->prepareDirForFile($target_file_name);
+                file_put_contents($target_file_name, $converted);
+            } else {
+                $context->io()->comment(sprintf('Empty target, skipping %s ...', $target_file_name));
+            }
         }
-        else {
-          $context->getStyle()->comment(sprintf('Empty target, skipping %s ...', $target_file_name));
-        }
-      }
     }
 
     /**
@@ -333,10 +340,11 @@ class AppScaffoldCommand extends BaseOptionsCommand
      *
      * @param $dir
      */
-    private function prepareDir($dir) {
-      if (!is_dir($dir)) {
-        mkdir($dir, 0777, true);
-      }
+    private function prepareDir($dir)
+    {
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
     }
 
     /**
@@ -344,9 +352,10 @@ class AppScaffoldCommand extends BaseOptionsCommand
      *
      * @param $filename
      */
-    private function preapreDirForFile($filename) {
-      $dir = dirname($filename);
-      $this->prepareDir($dir);
+    private function prepareDirForFile($filename)
+    {
+        $dir = dirname($filename);
+        $this->prepareDir($dir);
     }
 
     private function fakeUUID()

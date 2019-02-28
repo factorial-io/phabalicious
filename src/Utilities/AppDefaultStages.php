@@ -9,6 +9,9 @@ class AppDefaultStages
 {
     const CREATE = [
         [
+            'stage' => 'prepareDestination',
+        ],
+        [
             'stage' => 'installCode',
         ],
         [

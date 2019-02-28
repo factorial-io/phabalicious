@@ -173,7 +173,7 @@ class TaskContext implements TaskContextInterface
     /**
      * @return SymfonyStyle
      */
-    public function getStyle()
+    public function io()
     {
         if (!$this->io) {
             $this->io = new SymfonyStyle($this->getInput(), $this->getOutput());

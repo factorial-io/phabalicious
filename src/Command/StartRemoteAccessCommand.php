@@ -78,15 +78,15 @@ class StartRemoteAccessCommand extends BaseCommand
         $port = $input->getOption('port');
         $config = $context->getResult('config', $host_config);
 
-        $context->getStyle()->comment(sprintf('Starting remote access to %s:%s', $ip, $port));
-        $context->getStyle()->success(sprintf(
+        $context->io()->comment(sprintf('Starting remote access to %s:%s', $ip, $port));
+        $context->io()->success(sprintf(
             'You should be able to access the remote via %s%s:%s',
             $this->getSchemeFromPort($port),
             $input->getOption('public-ip'),
             $input->getOption('public-port')
         ));
 
-        $context->getStyle()->comment('Usually this will open a new remote shell, type `exit` when you are finished.');
+        $context->io()->comment('Usually this will open a new remote shell, type `exit` when you are finished.');
 
 
         $host_config->shell()->startRemoteAccess(
