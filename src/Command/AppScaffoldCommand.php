@@ -183,6 +183,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         ]);
         $context->set('scaffoldData', $data);
         $context->set('tokens', $tokens);
+        $context->set('loaderBase', $twig_loader_base);
 
         // Setup twig
         $loader = new \Twig_Loader_Filesystem($twig_loader_base);
@@ -213,9 +214,14 @@ class AppScaffoldCommand extends BaseOptionsCommand
      * @param TaskContextInterface $context
      * @param $target_folder
      * @param string $data_key
+     * @param bool $limitedForTwigExtension
      */
-    public function copyAssets(TaskContextInterface $context, $target_folder, $data_key = 'assets')
-    {
+    public function copyAssets(
+        TaskContextInterface $context,
+        $target_folder,
+        $data_key = 'assets',
+        $limitedForTwigExtension = false
+    ) {
         if (!is_dir($target_folder)) {
             mkdir($target_folder, 0777, true);
         }
@@ -241,7 +247,19 @@ class AppScaffoldCommand extends BaseOptionsCommand
                 }
                 file_put_contents('/tmp/' . $file_name, $tmpl);
             }
-            $converted = $this->twig->render($file_name, $tokens);
+
+            if ($limitedForTwigExtension &&
+                ('.' . pathinfo($file_name, PATHINFO_EXTENSION) !== $limitedForTwigExtension)
+            ) {
+                $converted = file_get_contents($context->get('loaderBase') . '/' . $file_name);
+            } else {
+                $converted = $this->twig->render($file_name, $tokens);
+            }
+
+            if ($limitedForTwigExtension) {
+                $file_name = str_replace($limitedForTwigExtension, '', $file_name);
+            }
+
             if ($tmp_target_file) {
                 unlink($tmp_target_file);
             }

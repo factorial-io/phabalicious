@@ -9,7 +9,6 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Command\AppScaffoldCommand;
-use Phabalicious\Command\GetPropertyCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
