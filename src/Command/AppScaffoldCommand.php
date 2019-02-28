@@ -280,9 +280,18 @@ class AppScaffoldCommand extends BaseOptionsCommand
                 unlink($tmp_target_file);
             }
 
-            $target_file_name = $target_folder. '/' . strtr(basename($file_name), $replacements);
-            $context->io()->comment(sprintf('Creating %s ...', $target_file_name));
-            file_put_contents($target_file_name, $converted);
+            $file_name = strtr($file_name, $replacements);
+            if (strpos($file_name, '/') !== false) {
+                $file_name = substr($file_name, strpos($file_name, '/', 1) + 1);
+            }
+
+            $target_file_path = $target_folder . '/' . $file_name;
+            if (!is_dir(dirname($target_file_path))) {
+                mkdir(dirname($target_file_path), 0777, true);
+            }
+
+            $context->io()->comment(sprintf('Creating %s ...', $target_file_path));
+            file_put_contents($target_file_path, $converted);
         }
     }
 

@@ -1,0 +1,5 @@
+name: {{ name }} utils module
+description: "Utilities module"
+package: {{ name }}
+type: module
+core: 8.x
