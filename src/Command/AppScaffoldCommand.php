@@ -238,7 +238,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
             $tmp_target_file = false;
             if ($is_remote) {
                 $tmpl = $this->configuration->readHttpResource($data['base_path'] . '/' . $file_name);
-                if (empty($tmpl)) {
+                if ($tmpl === false) {
                     throw new \RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
                 }
                 $tmp_target_file = '/tmp/' . $file_name;
