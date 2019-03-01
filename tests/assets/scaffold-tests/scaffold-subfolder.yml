@@ -1,0 +1,15 @@
+inheritsFrom:
+  - ./questions.yml
+
+assets:
+  - ./scaffold-utils.yml
+
+utilsModule:
+  - utilsModule/%shortName%_utils/%shortName%_utils.info.yml.scaffold
+  - utilsModule/%shortName%_utils/%shortName%_utils.install.scaffold
+  - utilsModule/%shortName%_utils/%shortName%_utils.module.scaffold
+
+scaffold:
+  - "echo 'Project: %name%'"
+  - "echo 'Shortname: %shortName%'"
+  - copy_assets(%rootFolder%/web/modules/custom, utilsModule, .scaffold)

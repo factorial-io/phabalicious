@@ -1,0 +1,6 @@
+inheritsFrom:
+  - ./scaffold-subfolder.yml
+
+variables:
+  projectFolder: "%shortName%-%name%"
+

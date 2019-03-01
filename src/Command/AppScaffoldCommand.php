@@ -147,6 +147,157 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $context = new TaskContext($this, $input, $output);
 
 
+        $tokens = $this->askQuestions($input, $questions, $context, $tokens);
+        if (empty($tokens['name'])) {
+            throw new \InvalidArgumentException('Missing `name` in questions, aborting!');
+        }
+        if (!empty($data['variables'])) {
+            $tokens = Utilities::mergeData($data['variables'], $tokens);
+        }
+        if (empty($tokens['projectFolder'])) {
+            $tokens['projectFolder'] = $tokens['name'];
+        }
+
+        // Do a first round of replacements.
+        $replacements = $this->getReplacements($tokens);
+        foreach ($tokens as $ndx => $token) {
+            $tokens[$ndx] = strtr($token, $replacements);
+        }
+
+        $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
+        $tokens['rootFolder'] = realpath($root_folder) . '/' . $tokens['projectFolder'];
+
+        $logger = $this->configuration->getLogger();
+        $shell = new LocalShellProvider($logger);
+        $script = new ScriptMethod($logger);
+
+        $host_config = new HostConfig([
+            'rootFolder' => realpath($input->getOption('output')),
+            'shellExecutable' => '/bin/bash'
+        ], $shell);
+
+        $context->set('scriptData', $data['scaffold']);
+        $context->set('variables', $tokens);
+        $context->set('callbacks', [
+            'copy_assets' => [$this, 'copyAssets'],
+        ]);
+        $context->set('scaffoldData', $data);
+        $context->set('tokens', $tokens);
+        $context->set('loaderBase', $twig_loader_base);
+
+        // Setup twig
+        $loader = new \Twig_Loader_Filesystem($twig_loader_base);
+        $this->twig = new \Twig_Environment($loader, array(
+        ));
+
+
+        if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
+            if (!$context->io()->confirm(
+                'Destination folder exists! Continue anyways?',
+                false
+            )) {
+                return 1;
+            }
+        }
+
+        $context->io()->comment('Create destination folder ...');
+        $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
+
+        $context->io()->comment('Start scaffolding script ...');
+        $script->runScript($host_config, $context);
+
+        $context->io()->success('Scaffolding finished successfully!');
+        return 0;
+    }
+
+    /**
+     * @param TaskContextInterface $context
+     * @param $target_folder
+     * @param string $data_key
+     * @param bool $limitedForTwigExtension
+     */
+    public function copyAssets(
+        TaskContextInterface $context,
+        $target_folder,
+        $data_key = 'assets',
+        $limitedForTwigExtension = false
+    ) {
+        if (!is_dir($target_folder)) {
+            mkdir($target_folder, 0777, true);
+        }
+        $data = $context->get('scaffoldData');
+        $tokens = $context->get('tokens');
+        $is_remote = substr($data['base_path'], 0, 4) == 'http';
+        $replacements = $this->getReplacements($tokens);
+
+        if (empty($data[$data_key])) {
+            throw new \InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
+        }
+
+        foreach ($data[$data_key] as $file_name) {
+            $tmp_target_file = false;
+            if ($is_remote) {
+                $tmpl = $this->configuration->readHttpResource($data['base_path'] . '/' . $file_name);
+                if ($tmpl === false) {
+                    throw new \RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
+                }
+                $tmp_target_file = '/tmp/' . $file_name;
+                if (!is_dir(dirname($tmp_target_file))) {
+                    mkdir(dirname($tmp_target_file), 0777, true);
+                }
+                file_put_contents('/tmp/' . $file_name, $tmpl);
+            }
+
+            if ($limitedForTwigExtension &&
+                ('.' . pathinfo($file_name, PATHINFO_EXTENSION) !== $limitedForTwigExtension)
+            ) {
+                $converted = file_get_contents($context->get('loaderBase') . '/' . $file_name);
+            } else {
+                $converted = $this->twig->render($file_name, $tokens);
+            }
+
+            if ($limitedForTwigExtension) {
+                $file_name = str_replace($limitedForTwigExtension, '', $file_name);
+            }
+
+            if ($tmp_target_file) {
+                unlink($tmp_target_file);
+            }
+
+            $file_name = strtr($file_name, $replacements);
+            if (strpos($file_name, '/') !== false) {
+                $file_name = substr($file_name, strpos($file_name, '/', 1) + 1);
+            }
+
+            $target_file_path = $target_folder . '/' . $file_name;
+            if (!is_dir(dirname($target_file_path))) {
+                mkdir(dirname($target_file_path), 0777, true);
+            }
+
+            $context->io()->comment(sprintf('Creating %s ...', $target_file_path));
+            file_put_contents($target_file_path, $converted);
+        }
+    }
+
+    private function fakeUUID()
+    {
+        return bin2hex(openssl_random_pseudo_bytes(4)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(6));
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param array $questions
+     * @param TaskContext $context
+     * @param array $tokens
+     * @return array
+     * @throws ValidationFailedException
+     */
+    protected function askQuestions(InputInterface $input, array $questions, TaskContext $context, array $tokens): array
+    {
         foreach ($questions as $key => $question_data) {
             $errors = new ValidationErrorBag();
             $validation = new ValidationService($question_data, $errors, 'questions');
@@ -186,112 +337,19 @@ class AppScaffoldCommand extends BaseOptionsCommand
             }
             $tokens[$key] = trim($value);
         }
-        if (empty($tokens['name'])) {
-            throw new \InvalidArgumentException('Missing `name` in questions, aborting!');
-        }
-
-        $tokens['projectFolder'] = Utilities::cleanupString($tokens['name']);
-        $tokens['rootFolder'] = realpath($root_folder) . '/' . Utilities::cleanupString($tokens['name']);
-
-
-        if (!empty($data['variables'])) {
-            $tokens = Utilities::mergeData($data['variables'], $tokens);
-        }
-
-        $logger = $this->configuration->getLogger();
-        $shell = new LocalShellProvider($logger);
-        $script = new ScriptMethod($logger);
-
-        $host_config = new HostConfig([
-            'rootFolder' => realpath($input->getOption('output')),
-            'shellExecutable' => '/bin/bash'
-        ], $shell);
-
-        $context->set('scriptData', $data['scaffold']);
-        $context->set('variables', $tokens);
-        $context->set('callbacks', [
-            'copy_assets' => [$this, 'copyAssets'],
-        ]);
-        $context->set('scaffoldData', $data);
-        $context->set('tokens', $tokens);
-
-        // Setup twig
-        $loader = new \Twig_Loader_Filesystem($twig_loader_base);
-        $this->twig = new \Twig_Environment($loader, array(
-        ));
-
-
-        if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
-            if (!$context->io()->confirm(
-                'Destination folder exists! Continue anyways?',
-                false
-            )) {
-                return 1;
-            }
-        }
-
-        $context->io()->comment('Create destination folder ...');
-        $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
-
-        $context->io()->comment('Start scaffolding script ...');
-        $script->runScript($host_config, $context);
-
-        $context->io()->success('Scaffolding finished successfully!');
-        return 0;
+        return $tokens;
     }
 
     /**
-     * @param TaskContextInterface $context
-     * @param $target_folder
-     * @param string $data_key
+     * @param $tokens
+     * @return array
      */
-    public function copyAssets(TaskContextInterface $context, $target_folder, $data_key = 'assets')
+    protected function getReplacements($tokens): array
     {
-        if (!is_dir($target_folder)) {
-            mkdir($target_folder, 0777, true);
-        }
-        $data = $context->get('scaffoldData');
-        $tokens = $context->get('tokens');
-        $is_remote = substr($data['base_path'], 0, 4) == 'http';
         $replacements = [];
         foreach ($tokens as $key => $value) {
             $replacements['%' . $key . '%'] = $value;
         }
-
-        if (empty($data[$data_key])) {
-            throw new \InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
-        }
-
-        foreach ($data[$data_key] as $file_name) {
-            $tmp_target_file = false;
-            if ($is_remote) {
-                $tmpl = $this->configuration->readHttpResource($data['base_path'] . '/' . $file_name);
-                if (empty($tmpl)) {
-                    throw new \RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
-                }
-                $tmp_target_file = '/tmp/' . $file_name;
-                if (!is_dir(dirname($tmp_target_file))) {
-                    mkdir(dirname($tmp_target_file), 0777, true);
-                }
-                file_put_contents('/tmp/' . $file_name, $tmpl);
-            }
-            $converted = $this->twig->render($file_name, $tokens);
-            if ($tmp_target_file) {
-                unlink($tmp_target_file);
-            }
-
-            $target_file_name = $target_folder. '/' . strtr(basename($file_name), $replacements);
-            $context->io()->comment(sprintf('Creating %s ...', $target_file_name));
-            file_put_contents($target_file_name, $converted);
-        }
-    }
-
-    private function fakeUUID()
-    {
-        return bin2hex(openssl_random_pseudo_bytes(4)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(6));
+        return $replacements;
     }
 }
