@@ -2,14 +2,10 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\HostType;
-use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class InstallFromCommand extends BaseCommand
 {

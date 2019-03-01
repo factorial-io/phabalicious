@@ -9,7 +9,6 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Command\AppScaffoldCommand;
-use Phabalicious\Command\GetPropertyCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
@@ -147,6 +146,64 @@ class AppScaffoldCommandTest extends TestCase
         $output = $commandTester->getDisplay();
         $this->assertContains('Project: Test', $output);
         $this->assertContains('Shortname: tst', $output);
+    }
+
+    public function testScaffoldSubfolder()
+    {
+        $root = getcwd();
+        $target_folder = $root . '/tmp/here';
+        if (!is_dir($target_folder)) {
+            mkdir($target_folder, 0777, true);
+        }
+
+        chdir($target_folder);
+
+        $command = $this->application->find('app:scaffold');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            '--short-name'  => 'TST',
+            '--name' => 'Test',
+            '--output' => '.',
+            '--override' => true,
+            'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-subfolder.yml'
+        ));
+
+        $this->checkFileContent(
+            $target_folder . '/test/web/modules/custom/tst_utils/tst_utils.info.yml',
+            'name: Test utils module'
+        );
+        $this->checkFileContent(
+            $target_folder . '/test/web/modules/custom/tst_utils/tst_utils.install',
+            'function tst_utils_install()'
+        );
+    }
+    public function testScaffoldExistingProjectFolder()
+    {
+        $root = getcwd();
+        $target_folder = $root . '/tmp/tst-test';
+        if (!is_dir($target_folder)) {
+            mkdir($target_folder, 0777, true);
+        }
+
+        chdir($root . '/tmp');
+
+        $command = $this->application->find('app:scaffold');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            '--short-name'  => 'TST',
+            '--name' => 'Test',
+            '--override' => true,
+            'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-projectfolder.yml'
+        ));
+
+        $this->checkFileContent(
+            $target_folder . '/web/modules/custom/tst_utils/tst_utils.info.yml',
+            'name: Test utils module'
+        );
+        $this->checkFileContent(
+            $target_folder . '/web/modules/custom/tst_utils/tst_utils.install',
+            'function tst_utils_install()'
+        );
     }
 
     private function checkFileContent($filename, $needle)

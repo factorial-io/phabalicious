@@ -1,0 +1,11 @@
+<?php
+/**
+    * @file
+    * Custom install hooks.
+    */
+
+/**
+ * Implements hook_install().
+ */
+function {{shortName}}_utils_install() {
+}

@@ -110,7 +110,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $this->runTaskImpl($host_config, $context, $task, false);
         $this->runTaskImpl($host_config, $context, $task . 'Finished', true);
 
-        $context->getStyle()->success(sprintf('Task `%s` executed successfully!', $task));
+        $context->io()->success(sprintf('Task `%s` executed successfully!', $task));
     }
 
     /**
@@ -222,7 +222,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 $this->logger->notice('Error running supervisorctl, check the logs');
             }
             if ($result->getExitCode() == 0 && ($count_running == $count_services)) {
-                $context->getStyle()->comment('Services up and running!');
+                $context->io()->comment('Services up and running!');
                 return;
             }
             $tries++;
@@ -317,7 +317,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                             $data['source']
                         ));
                     } else {
-                        $context->getStyle()->comment(sprintf('File `%s does not exist, skipping!', $data['source']));
+                        $context->io()->comment(sprintf('File `%s does not exist, skipping!', $data['source']));
                         continue;
                     }
                 }
@@ -328,7 +328,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 $shell->run(sprintf('#!docker cp %s %s:%s', $temp_file, $container_name, $dest));
                 $shell->run(sprintf('#!docker exec %s #!chmod %s %s', $container_name, $data['permissions'], $dest));
                 $shell->run(sprintf('rm %s', $temp_file));
-                $context->getStyle()->comment(sprintf('Handled %s successfully!', $dest));
+                $context->io()->comment(sprintf('Handled %s successfully!', $dest));
             }
             $shell->run(sprintf('#!docker exec %s #!chmod 700 /root/.ssh', $container_name));
             $shell->run(sprintf('#!docker exec %s #!chown -R root /root/.ssh', $container_name));
@@ -489,8 +489,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $docker_config = $this->getDockerConfig($host_config, $context);
         $shell = $docker_config->shell();
 
-        if (in_array($current_stage['stage'], $docker_config['tasks']) ||
-            in_array($current_stage['stage'], array('spinUp', 'spinDown', 'deleteContainer', 'prepareDestination'))
+        if (isset($docker_config['tasks'][$current_stage['stage']]) ||
+            in_array($current_stage['stage'], array('spinUp', 'spinDown', 'deleteContainer'))
         ) {
             $this->runTaskImpl($host_config, $context, $current_stage['stage'], false);
         }
