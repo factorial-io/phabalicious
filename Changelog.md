@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.2 / 2019-03-01
+
+  * Fix scaffolding of empty files via http
+  * Add support to limit files handled by twig by an extension as third parameter to copy_assets
+  * Add support for a dedicated projectFolder, add support for dependent variables, so you can compose variables from other variables
+  * strip first subfolder from filenames to copy when running app:scaffold, keep folder hierarchy for subsequents folders
+  * Refactor TaskContext::getStyle to TaskContext::io for clearer code
+  * Fix a bug on copyFrom for specific multi.site setups
+  * Fix bug when running app:scaffold where stages do not fire existing docker-tasks
+
 ## 3.0.1 / 2019-02-25
 
 ### Fixed
