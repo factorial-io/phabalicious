@@ -322,7 +322,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $this->runScript($config, $context);
         }
 
-        if (!empty($config[$task])) {
+        if (!empty($config[$task]) && !Utilities::isAssocArray($config[$task])) {
             $script = $config[$task];
             $this->logger->info(sprintf(
                 'Running host-specific script for task `%s` and host `%s`',
