@@ -4,9 +4,9 @@ Phabalicious is the successor of the python tool [fabalicious](https://github.co
 
 ## Installation
 
-* Download the `phabalicious.phar` from https://github.com/factorial-io/phabalicious/releases
-* `cp phabalicious.phar <a-folder-of-your-liking>/phab`
-* `chmod +x <a-folder-of-your-liking>/phab`
+* Download the latest version from [Github](https://github.com/factorial-io/phabalicious/releases)
+* copy the phar to a suitable folder, e.g. `/usr/local/bin` and rename it to `phab`: `cp phabalalicious.phar /usr/local/bin/phab`
+* Make it executable, e.g. `chmod +x /usr/local/bin/phab`
 
 ## Build from source
 
