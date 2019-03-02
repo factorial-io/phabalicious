@@ -352,7 +352,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
         ShellProviderInterface $shell,
         string $backup_file_name
     ) {
+        $context->io()->comment(sprintf('Dumping database of `%s` ...', $host_config['configName']));
         $shell->cd($host_config['siteFolder']);
+
         $dump_options = '';
         if ($skip_tables = $context->getConfigurationService()->getSetting('sqlSkipTables')) {
             $dump_options .= ' --structure-tables-list=' . implode(',', $skip_tables);
@@ -495,8 +497,6 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $from_config = $context->get('from', false);
         $shell = $this->getShell($host_config, $context);
         $from_shell = $context->get('fromShell', $from_config->shell());
-
-        $context->io()->comment(sprintf('Dumping database of `%s` ...', $from_config['configName']));
 
         $from_filename = $from_config['tmpFolder'] . '/' . $from_config['configName'] . '.' . date('YmdHms') . '.sql';
         $from_filename = $this->backupSQL($from_config, $context, $from_shell, $from_filename);
