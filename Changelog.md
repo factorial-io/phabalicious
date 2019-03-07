@@ -1,6 +1,18 @@
 # Changelog
 
+## 3.0.3 / 2019-03-07
+
+### Fixed
+
+  * Use progressbar when scaffolding more then 3 asset-files
+  * FIx a regression for task-specific scripts. (Fixes #31)
+  * Make sure, that task-specific scripts are run. (Fixes #31)
+  * Add a notification before starting a db dump (Fixes #30 and #33)
+  * If no unstable update is available, try the stable branch (Fixes #34)
+
 ## 3.0.2 / 2019-03-01
+
+### Fixed
 
   * Fix scaffolding of empty files via http
   * Add support to limit files handled by twig by an extension as third parameter to copy_assets

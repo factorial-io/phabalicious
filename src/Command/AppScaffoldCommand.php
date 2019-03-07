@@ -234,6 +234,13 @@ class AppScaffoldCommand extends BaseOptionsCommand
             throw new \InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
         }
 
+        $context->io()->comment(sprintf('Copying assets `%s`', $data_key));
+        $use_progress = count($data[$data_key]) > 3;
+
+        if ($use_progress) {
+            $context->io()->progressStart(count($data[$data_key]));
+        }
+
         foreach ($data[$data_key] as $file_name) {
             $tmp_target_file = false;
             if ($is_remote) {
@@ -274,8 +281,13 @@ class AppScaffoldCommand extends BaseOptionsCommand
                 mkdir(dirname($target_file_path), 0777, true);
             }
 
-            $context->io()->comment(sprintf('Creating %s ...', $target_file_path));
+            if ($use_progress) {
+                $context->io()->progressAdvance();
+            }
             file_put_contents($target_file_path, $converted);
+        }
+        if ($use_progress) {
+            $context->io()->progressFinish();
         }
     }
 

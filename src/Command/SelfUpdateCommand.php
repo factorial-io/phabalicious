@@ -67,6 +67,11 @@ class SelfUpdateCommand extends BaseOptionsCommand
 
     private function runSelfUpdate($allow_unstable)
     {
+        $update_data = $this->hasUpdate();
+        if (!$update_data) {
+            return false;
+        }
+        $allow_unstable = $update_data['unstable'];
         $updater = self::getUpdater($this->getApplication(), $allow_unstable);
         $result = $updater->update();
         return $result ? $updater->getNewVersion() : false;
@@ -79,6 +84,12 @@ class SelfUpdateCommand extends BaseOptionsCommand
             $allow_unstable = (stripos($version, 'alpha') !== false) || (stripos($version, 'beta') !== false);
 
             $updater = self::getUpdater($this->getApplication(), $allow_unstable);
+
+            if ($allow_unstable && !$updater->hasUpdate()) {
+                // No new unstable version available, try again on the stable branch.
+                $allow_unstable = false;
+                $updater = self::getUpdater($this->getApplication(), $allow_unstable);
+            }
 
             if (!$updater->hasUpdate()) {
                 return false;
@@ -113,8 +124,8 @@ class SelfUpdateCommand extends BaseOptionsCommand
                 if ($version = $command->hasUpdate()) {
                     $style = new SymfonyStyle($input, $output);
                     $style->block([
-                        'Version ' . $version['new_version'] . ' of phabalicious is available. Run `phab self-update '
-                        . ($version['unstable'] ? '--allow-unstable=1' : '')
+                        'Version ' . $version['new_version'] . ' of phabalicious is available. Run `phab self-update'
+                        . ($version['unstable'] ? ' --allow-unstable=1' : '')
                         . '` to update your local installation.',
                         'Visit https://github.com/factorial-io/phabalicious/releases for more info.',
                     ], null, 'fg=white;bg=blue', ' ', true);

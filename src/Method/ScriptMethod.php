@@ -16,6 +16,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 {
 
     private $breakOnFirstError = true;
+    private $callbacks = [];
+    private $handledTaskSpecificScripts = [];
 
     public function getName(): string
     {
@@ -42,6 +44,17 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
 
     /**
+     * Set default callbacks, these are globally available.
+     *
+     * @param array $callbacks
+     */
+    public function setDefaultCallbacks(array $callbacks)
+    {
+        $this->callbacks = $callbacks;
+    }
+
+
+    /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @throws MissingScriptCallbackImplementation
@@ -51,6 +64,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $commands = $context->get('scriptData', []);
         $variables = $context->get('variables', []);
         $callbacks = $context->get('callbacks', []);
+        $callbacks = Utilities::mergeData($this->callbacks, $callbacks);
+
         $environment = $context->get('environment', []);
         if (!$context->getShell()) {
             $context->setShell($host_config->shell());
@@ -285,6 +300,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      */
     public function runTaskSpecificScripts(HostConfig $config, string $task, TaskContextInterface $context)
     {
+        $this->handledTaskSpecificScripts[$task] = true;
+
         $common_scripts = $context->getConfigurationService()->getSetting('common', []);
         $type = $config['type'];
         if (!empty($common_scripts[$type]) && is_array($common_scripts[$type])) {
@@ -305,7 +322,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $this->runScript($config, $context);
         }
 
-        if (!empty($config[$task])) {
+        if (!empty($config[$task]) && !Utilities::isAssocArray($config[$task])) {
             $script = $config[$task];
             $this->logger->info(sprintf(
                 'Running host-specific script for task `%s` and host `%s`',
@@ -356,6 +373,17 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
         parent::postflightTask($task, $config, $context);
+
+        // Make sure, that task-specific scripts get called.
+        // Other methods may have called them already, so
+        // handledTaskSpecificScripts keep track of them.
+        if (empty($this->handledTaskSpecificScripts[$task])) {
+            $this->runTaskSpecificScripts($config, $task, $context);
+        }
         $this->runTaskSpecificScripts($config, $task . 'Finished', $context);
+
+        foreach ([$task . 'Prepare', $task, $task . 'Finished'] as $t) {
+            unset($this->handledTaskSpecificScripts[$t]);
+        }
     }
 }
