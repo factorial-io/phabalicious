@@ -7,7 +7,6 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Validation\ValidationErrorBagInterface;
-use webignition\ReadableDuration\ReadableDuration;
 
 class SshMethod extends BaseMethod implements MethodInterface
 {
@@ -172,4 +171,30 @@ class SshMethod extends BaseMethod implements MethodInterface
         $this->creatingTunnel = false;
     }
 
+    public function shell(HostConfig $config, TaskContextInterface $context)
+    {
+        if (!empty($config['sshTunnel'])) {
+            $tunnel = $config['sshTunnel'];
+            $ssh_command = [
+                'ssh',
+                '-A',
+                '-J',
+                sprintf(
+                    '%s@%s:%s',
+                    $tunnel['bridgeUser'],
+                    $tunnel['bridgeHost'],
+                    $tunnel['bridgePort']
+                ),
+                '-p',
+                $tunnel['destPort'],
+                sprintf(
+                    '%s@%s',
+                    $config['user'],
+                    $tunnel['destHost']
+                )
+            ];
+
+            $context->setResult('ssh_command', $ssh_command);
+        }
+    }
 }
