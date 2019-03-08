@@ -128,6 +128,8 @@ class SshShellProvider extends LocalShellProvider
         $command[] = $source;
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'] . ':' . $dest;
 
+        $context->setResult('targetFile', $dest);
+
         return $this->runProcess($command, $context, false, true);
     }
 
@@ -263,9 +265,7 @@ class SshShellProvider extends LocalShellProvider
             } else {
                 $this->logger->warning('Could not copy file via SSH, try fallback');
             }
-
         }
         return parent::copyFileFrom($from_shell, $source_file_name, $target_file_name, $context, $verbose);
     }
-
 }

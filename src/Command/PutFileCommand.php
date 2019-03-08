@@ -55,10 +55,17 @@ class PutFileCommand extends BaseCommand
         $context = new TaskContext($this, $input, $output);
         $context->set('sourceFile', $file);
 
-        $output->writeln('<info>Put file `' . $file . '` into `' . $this->getHostConfig()['configName']. '`');
+        $context->io()->comment('Putting file `' . $file . '` to `' . $this->getHostConfig()['configName']. '`');
 
         $this->getMethods()->runTask('putFile', $this->getHostConfig(), $context);
 
-        return $context->getResult('exitCode', 0);
+        $return_code = $context->getResult('exitCode', 0);
+        if (!$return_code) {
+            $context->io()->success(sprintf(
+                '`%s` copied to `%s`',
+                $file,
+                $context->getResult('targetFile', 'unknown')
+            ));
+        }
     }
 }

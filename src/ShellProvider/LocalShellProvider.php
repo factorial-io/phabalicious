@@ -218,6 +218,8 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         $this->cd($context->getConfigurationService()->getFabfilePath());
         $result = $this->run(sprintf('cp -r "%s" "%s"', $source, $dest));
+        $context->setResult('targetFile', $dest);
+
         return $result->succeeded();
     }
 
