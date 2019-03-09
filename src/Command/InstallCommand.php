@@ -25,13 +25,6 @@ class InstallCommand extends BaseCommand
             'Skip the reset-task if set to true',
             false
         );
-        $this->addOption(
-            'yes',
-            'y',
-            InputOption::VALUE_OPTIONAL,
-            'Skip confirmation step, install without question',
-            false
-        );
     }
 
     /**
@@ -61,7 +54,9 @@ class InstallCommand extends BaseCommand
             throw new \InvalidArgumentException('This configuration disallows installs!');
         }
 
-        if (!$input->getOption('yes')) {
+        $context = new TaskContext($this, $input, $output);
+
+        if (!$input->getOption('force')) {
             if (!$context->io()->confirm(sprintf(
                 'Install new database for configuration `%s`?',
                 $this->getHostConfig()['configName']

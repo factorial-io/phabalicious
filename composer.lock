@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f7bccafd33b2508f929c7c85efb734c2",
+    "content-hash": "11989c13bcb0588ac113f3373ef4ba47",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -123,6 +123,179 @@
                 "versioning"
             ],
             "time": "2016-08-30T16:08:34+00:00"
+        },
+        {
+            "name": "graze/data-structure",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/graze/data-structure.git",
+                "reference": "24e0544b7828f65b1b93ce69ad702c9efb4a64d0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/graze/data-structure/zipball/24e0544b7828f65b1b93ce69ad702c9efb4a64d0",
+                "reference": "24e0544b7828f65b1b93ce69ad702c9efb4a64d0",
+                "shasum": ""
+            },
+            "require": {
+                "graze/sort": "~2.0",
+                "php": ">=5.5|^7.0"
+            },
+            "require-dev": {
+                "graze/standards": "^2.0",
+                "phpunit/phpunit": "^4.2 | ^5.2",
+                "squizlabs/php_codesniffer": "^3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Graze\\DataStructure\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Graze tech team",
+                    "homepage": "https://github.com/graze/data-structure/graphs/contributors"
+                }
+            ],
+            "description": "Data collections and containers",
+            "homepage": "https://github.com/graze/data-structure",
+            "keywords": [
+                "array",
+                "collection",
+                "container",
+                "data",
+                "filter",
+                "map",
+                "parameters",
+                "reduce",
+                "structure"
+            ],
+            "time": "2017-11-29T09:06:31+00:00"
+        },
+        {
+            "name": "graze/parallel-process",
+            "version": "0.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/graze/parallel-process.git",
+                "reference": "84ccec5d8a62a8ed928dc5e1c0da8f646bcef7cc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/graze/parallel-process/zipball/84ccec5d8a62a8ed928dc5e1c0da8f646bcef7cc",
+                "reference": "84ccec5d8a62a8ed928dc5e1c0da8f646bcef7cc",
+                "shasum": ""
+            },
+            "require": {
+                "graze/data-structure": "^2.0",
+                "php": "^5.5 | ^7.0",
+                "psr/log": "^1.0",
+                "symfony/event-dispatcher": "^2.8 | ^3.2 | ^4.0",
+                "symfony/process": "^2.8 | ^3.2 | ^4.0"
+            },
+            "require-dev": {
+                "graze/console-diff-renderer": "^0.6.1",
+                "graze/standards": "^2",
+                "mockery/mockery": "^1.0",
+                "phpunit/phpunit": "^5.7.21|^6|^7",
+                "squizlabs/php_codesniffer": "^3",
+                "symfony/console": "^3.1 | ^4"
+            },
+            "suggest": {
+                "graze/console-diff-renderer": "required to use Table and Lines",
+                "symfony/console": "To use the Table to print current runs"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Graze\\ParallelProcess\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Harry Bragg",
+                    "email": "harry.bragg@graze.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Graze Developers",
+                    "email": "developers@graze.com",
+                    "homepage": "http://www.graze.com",
+                    "role": "Development Team"
+                }
+            ],
+            "description": "run a pool of processes simultaneously",
+            "homepage": "https://github.com/graze/parallel-process",
+            "keywords": [
+                "graze",
+                "parallel-process"
+            ],
+            "time": "2018-09-25T09:06:26+00:00"
+        },
+        {
+            "name": "graze/sort",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/graze/sort.git",
+                "reference": "50f0896363f177f68be248d7bad9eb0c2f7f666c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/graze/sort/zipball/50f0896363f177f68be248d7bad9eb0c2f7f666c",
+                "reference": "50f0896363f177f68be248d7bad9eb0c2f7f666c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "adlawson/timezone": "~1.0",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/fn.php"
+                ],
+                "psr-4": {
+                    "Graze\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Graze tech team",
+                    "homepage": "https://github.com/graze/sort/graphs/contributors"
+                }
+            ],
+            "description": "A collection of array sorting transforms and functions",
+            "homepage": "https://github.com/graze/sort",
+            "keywords": [
+                "array",
+                "collection",
+                "list",
+                "order",
+                "ordered",
+                "schwartzian",
+                "sort",
+                "sorting",
+                "transform"
+            ],
+            "time": "2014-09-23T17:01:23+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",

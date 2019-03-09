@@ -4,20 +4,17 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Exception\BlueprintTemplateNotFoundException;
-use Phabalicious\Exception\FabfileNotFoundException;
-use Phabalicious\Exception\FabfileNotReadableException;
-use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\ParallelExecutor;
 use Psr\Log\NullLogger;
-use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 
 abstract class BaseCommand extends BaseOptionsCommand
@@ -47,6 +44,20 @@ abstract class BaseCommand extends BaseOptionsCommand
                 InputOption::VALUE_OPTIONAL,
                 'Which blueprint to use',
                 null
+            )
+            ->addOption(
+                'variants',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Run the command on a given set of blueprints simultanously',
+                null
+            )
+            ->addOption(
+                'force',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Don\'t ask for confirmation',
+                false
             );
 
         parent::configure();
@@ -78,6 +89,8 @@ abstract class BaseCommand extends BaseOptionsCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
+
         $this->checkAllRequiredOptionsAreNotEmpty($input);
 
         $config_name = '' . $input->getOption('config');
@@ -102,23 +115,24 @@ abstract class BaseCommand extends BaseOptionsCommand
             if ($this->hostConfig->shell()) {
                 $this->hostConfig->shell()->setOutput($output);
             }
+
+            if ($input->getOption('variants')) {
+                return $this->handleVariants($input->getOption('variants'), $input, $output);
+            }
         } catch (MissingHostConfigException $e) {
-            $output->writeln('<error>Could not find host-config named `' . $config_name . '`</error>');
+            $io->error(sprintf('Could not find host-config named `%s`', $config_name));
             return 1;
         } catch (ValidationFailedException $e) {
-            $output->writeln('<error>Could not validate config `' . $config_name . '`</error>');
-            foreach ($e->getValidationErrors() as $error_msg) {
-                $output->writeln('<error>' . $error_msg . '</error>');
-            }
+            $io->error(sprintf(
+                "Could not validate config `%s`\n\n%s",
+                $config_name,
+                implode("\n", $e->getValidationErrors())
+            ));
             return 1;
         }
 
         return 0;
     }
-
-
-
-
 
     /**
      * Get host config.
@@ -187,5 +201,86 @@ abstract class BaseCommand extends BaseOptionsCommand
         });
 
         return $process;
+    }
+
+    /**
+     * Handle variants.
+     *
+     * @param $variants
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return bool|int
+     */
+    private function handleVariants($variants, InputInterface $input, OutputInterface $output)
+    {
+        global $argv;
+        $executable = $argv[0];
+        if (basename($executable) !== 'phab') {
+            $executable = 'bin/phab';
+        }
+        if (getenv('PHABALICIOUS_EXECUTABLE')) {
+            $executable = getenv('PHABALICIOUS_EXECUTABLE');
+        }
+
+        $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig['configName']);
+        if (!$available_variants) {
+            throw new \InvalidArgumentException(sprintf(
+                'Could not find variants for `%s` in `blueprints`',
+                $this->hostConfig['configName']
+            ));
+        }
+
+        if ($variants == 'all') {
+            $variants = $available_variants;
+        } else {
+            $variants = explode(',', $variants);
+            $not_found = array_filter($variants, function ($v) use ($available_variants) {
+                return !in_array($v, $available_variants);
+            });
+
+            if (!empty($not_found)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Could not find variants `%s` in `blueprints`',
+                    implode('`, `', $not_found)
+                ));
+            }
+        }
+        if (!empty($variants)) {
+            $cmd_lines = [];
+            $rows = [];
+            foreach ($variants as $v) {
+                $cmd = [];
+                $cmd[] = $executable;
+
+                foreach ($input->getArguments() as $a) {
+                    $cmd[] = $a;
+                }
+                foreach ($input->getOptions() as $name => $value) {
+                    if ($value && !in_array($name, ['verbose', 'variants', 'blueprint', 'fabfile'])) {
+                        $cmd[] = '--' . $name;
+                        $cmd[]= $value;
+                    }
+                }
+                $cmd[] = '--no-interaction';
+                $cmd[] = '--fabfile';
+                $cmd[] = $this->configuration->getFabfileLocation();
+                $cmd[] = '--blueprint';
+                $cmd[] = $v;
+
+                $cmd_lines[] = $cmd;
+                $rows[] = [$v, implode(' ', $cmd)];
+            }
+
+            $io = new SymfonyStyle($input, $output);
+            $io->table(['variant', 'command'], $rows);
+
+            if ($input->getOption('force') || $io->confirm('Do you want to run these commands? ', false)) {
+                $io->comment('Running ...');
+                $executor = new ParallelExecutor($cmd_lines, $output);
+                return $executor->execute($input, $output);
+            }
+
+            return 1;
+        }
     }
 }
