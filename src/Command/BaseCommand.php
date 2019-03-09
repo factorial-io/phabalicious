@@ -89,6 +89,8 @@ abstract class BaseCommand extends BaseOptionsCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
+
         $this->checkAllRequiredOptionsAreNotEmpty($input);
 
         $config_name = '' . $input->getOption('config');
@@ -118,13 +120,14 @@ abstract class BaseCommand extends BaseOptionsCommand
                 return $this->handleVariants($input->getOption('variants'), $input, $output);
             }
         } catch (MissingHostConfigException $e) {
-            $output->writeln('<error>Could not find host-config named `' . $config_name . '`</error>');
+            $io->error(sprintf('Could not find host-config named `%s`', $config_name));
             return 1;
         } catch (ValidationFailedException $e) {
-            $output->writeln('<error>Could not validate config `' . $config_name . '`</error>');
-            foreach ($e->getValidationErrors() as $error_msg) {
-                $output->writeln('<error>' . $error_msg . '</error>');
-            }
+            $io->error(sprintf(
+                "Could not validate config `%s`\n\n%s",
+                $config_name,
+                implode("\n", $e->getValidationErrors())
+            ));
             return 1;
         }
 
@@ -206,10 +209,18 @@ abstract class BaseCommand extends BaseOptionsCommand
      * @param $variants
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return bool|int
      */
     private function handleVariants($variants, InputInterface $input, OutputInterface $output)
     {
         global $argv;
+        $executable = $argv[0];
+        if (basename($executable) !== 'phab') {
+            $executable = 'bin/phab';
+        }
+        if (getenv('PHABALICIOUS_EXECUTABLE')) {
+            $executable = getenv('PHABALICIOUS_EXECUTABLE');
+        }
 
         $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig['configName']);
         if (!$available_variants) {
@@ -239,17 +250,18 @@ abstract class BaseCommand extends BaseOptionsCommand
             $rows = [];
             foreach ($variants as $v) {
                 $cmd = [];
-                $cmd[] = 'phab';
+                $cmd[] = $executable;
 
                 foreach ($input->getArguments() as $a) {
                     $cmd[] = $a;
                 }
                 foreach ($input->getOptions() as $name => $value) {
-                    if ($value && !in_array($name, ['variants', 'blueprint', 'fabfile'])) {
+                    if ($value && !in_array($name, ['verbose', 'variants', 'blueprint', 'fabfile'])) {
                         $cmd[] = '--' . $name;
                         $cmd[]= $value;
                     }
                 }
+                $cmd[] = '--no-interaction';
                 $cmd[] = '--fabfile';
                 $cmd[] = $this->configuration->getFabfileLocation();
                 $cmd[] = '--blueprint';
@@ -259,10 +271,11 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $rows[] = [$v, implode(' ', $cmd)];
             }
 
-            $style = new SymfonyStyle($input, $output);
-            $style->table(['variant', 'command'], $rows);
+            $io = new SymfonyStyle($input, $output);
+            $io->table(['variant', 'command'], $rows);
 
-            if ($input->getOption('force') || $style->confirm('Do you want to run these commands? ', false)) {
+            if ($input->getOption('force') || $io->confirm('Do you want to run these commands? ', false)) {
+                $io->comment('Running ...');
                 $executor = new ParallelExecutor($cmd_lines, $output);
                 return $executor->execute($input, $output);
             }
