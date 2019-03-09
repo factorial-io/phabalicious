@@ -47,23 +47,8 @@ class ParallelExecutorRun extends ProcessRun
         $this->addListener(
             RunEvent::FAILED,
             function (RunEvent $event) {
-                $run = $event->getRun();
-                $exceptions = $run->getExceptions();
-                $exception = null;
-                if (count($exceptions) > 0) {
-                    $exception = reset($exceptions);
-                    $error = sprintf(
-                        "<error>x Failed</error> (%d) %s",
-                        $exception->getCode(),
-                        $exception->getMessage()
-                    );
-                } else {
-                    $error = "<error>x Failed</error>";
-                }
+                $error = "<error>x Failed</error>";
                 $this->writeln($error);
-                if ($exception) {
-                    $this->writeln($exception->getMessage());
-                }
             }
         );
     }

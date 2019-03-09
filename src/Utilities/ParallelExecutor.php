@@ -7,6 +7,7 @@ use Graze\ParallelProcess\ProcessRun;
 use Graze\ParallelProcess\RunInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 use Symfony\Component\Console\Output\ConsoleSectionOutput;
@@ -27,7 +28,7 @@ class ParallelExecutor
         foreach ($command_lines as $cmd) {
             $this->add(new ParallelExecutorRun(
                 $cmd,
-                $output instanceof ConsoleSectionOutput
+                $output instanceof ConsoleOutput
                     ? $output->section()
                     : null
             ));
@@ -37,12 +38,14 @@ class ParallelExecutor
     public function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $progress_section = $output instanceof ConsoleSectionOutput
+        $progress_section = $output instanceof ConsoleOutput
             ? $output->section()
             : $output;
         $progress = new ProgressBar($progress_section, $this->pool->count());
 
         $this->pool->start();
+        $output->writeln('');
+        $progress->display();
 
         $interval = (200000);
         $current = 0;
@@ -60,7 +63,18 @@ class ParallelExecutor
         foreach ($this->pool->getAll() as $run) {
             if ($run instanceof ParallelExecutorRun) {
                 $style->section(sprintf('Results of `%s`', $run->getCommandLine()));
-                $style->writeln($run->getProcess()->getOutput());
+                $exceptions = $run->getExceptions();
+
+                if (count($exceptions) > 0) {
+                    $exception = reset($exceptions);
+                    $style->error(sprintf(
+                        "Execution failed with error %d:\n%s",
+                        $exception->getCode(),
+                        $exception->getMessage()
+                    ));
+                } else {
+                    $style->writeln($run->getProcess()->getOutput());
+                }
             }
         }
 
