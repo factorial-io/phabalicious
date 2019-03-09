@@ -76,6 +76,9 @@ class VariantBaseCommandTest extends TestCase
      */
     public function testAllVariants()
     {
+        $executable = realpath(getcwd() . '/../bin/phab');
+        putenv('PHABALICIOUS_EXECUTABLE=' . $executable);
+
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
@@ -90,5 +93,9 @@ class VariantBaseCommandTest extends TestCase
         $this->assertContains('--blueprint a', $output);
         $this->assertContains('--blueprint b', $output);
         $this->assertContains('--blueprint c', $output);
+
+        $this->assertContains('XX-test-a-XX', $output);
+        $this->assertContains('XX-test-b-XX', $output);
+        $this->assertContains('XX-test-c-XX', $output);
     }
 }

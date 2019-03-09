@@ -14,8 +14,8 @@ hosts:
   test:
     scripts:
       test:
-        - echo "%host.configName%"
-        - sleep 4
+        - echo "XX-%host.configName%-XX"
+        - sleep $[ ( $RANDOM % 10 )  + 1 ]s
     blueprint:
       inheritsFrom: test
       configName: test-%slug%
