@@ -6,6 +6,7 @@ use Psr\Log\LogLevel;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
+use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -24,7 +25,7 @@ class Logger extends ConsoleLogger
         LogLevel::ALERT => OutputInterface::VERBOSITY_NORMAL,
         LogLevel::CRITICAL => OutputInterface::VERBOSITY_NORMAL,
         LogLevel::ERROR => OutputInterface::VERBOSITY_NORMAL,
-        LogLevel::WARNING => OutputInterface::VERBOSITY_NORMAL,
+        LogLevel::WARNING => OutputInterface::VERBOSITY_VERBOSE,
         LogLevel::NOTICE => OutputInterface::VERBOSITY_VERBOSE,
         LogLevel::INFO => OutputInterface::VERBOSITY_VERY_VERBOSE,
         LogLevel::DEBUG => OutputInterface::VERBOSITY_DEBUG,
@@ -59,6 +60,10 @@ class Logger extends ConsoleLogger
                 LogLevel::INFO => self::INFO,
                 LogLevel::DEBUG => self::DEBUG,
         ];
+        if (!$output->isDecorated()) {
+            // For undecorated output warnings will be shown only when using verbose mode.
+            $this->verbosityLevelMap[LogLevel::WARNING] = OutputInterface::VERBOSITY_VERBOSE;
+        }
         parent::__construct(
             $output,
             $this->verbosityLevelMap,

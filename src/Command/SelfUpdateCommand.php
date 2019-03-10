@@ -120,8 +120,10 @@ class SelfUpdateCommand extends BaseOptionsCommand
             $command = $event->getCommand()->getApplication()->find('self-update');
 
             if ($command
+                && $output->isDecorated()
+                && !$output->isQuiet()
                 && !$event->getCommand()->isHidden()
-                && !$output->isQuiet() && !$command->getConfiguration()->isOffline()
+                && !$command->getConfiguration()->isOffline()
                 && !$input->hasParameterOption(['--offline'])
                 && !$input->hasParameterOption(['--no-interaction'])
             ) {
