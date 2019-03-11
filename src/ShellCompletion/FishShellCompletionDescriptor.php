@@ -86,9 +86,8 @@ class FishShellCompletionDescriptor extends Descriptor
         );
 
         $this->output->writeln(
-            " -d '" .
-            $option->getDescription() .
-            "'"
+            " -d " .
+            escapeshellarg($option->getDescription())
         );
         if ($command instanceof CompletionAwareInterface) {
             global $argv;
