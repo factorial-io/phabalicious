@@ -66,10 +66,9 @@ blueprint:
     name: '%project-slug%%slug.without-feature%_web_1'
 ```
 
-And the output of `phab blueprint:feature/XY-123-my_Branch-name,configNamy=<config-name>,output=true` is
+And the output of `phab --blueprint=feature/XY-123-my_Branch-name --config=<config-name> output` is
 
 ```yaml
-hosts:
   phbackend-xy-123-my-branch-name.some.host.tld:
     branch: feature/XY-123-my_Branch-name
     configName: phbackend-xy-123-my-branch-name.some.host.tld
