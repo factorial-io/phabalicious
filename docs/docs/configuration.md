@@ -197,6 +197,10 @@ This will print all host configuration for the host `staging`.
     * `name` contains the name of the docker-container. This is needed to get the IP-address of the particular docker-container when using ssh-tunnels (see above).
     * for docker-compose-base setups you can provide the `service` instead the name, phabalicious will get the docker name automatically from the service.
 
+### Configuration of the mattermost-method
+
+* `notifyOn`: a list of all tasks where to send a message to a Mattermost channel. Have a look at the global Mattermost-configuration-example below.
+
 ### dockerHosts
 
 `dockerHosts` is similar structured as the `hosts`-entry. It's a keyed lists of hosts containing all necessary information to create a ssh-connection to the host, controlling the docker-instances, and a list of tasks, the user might call via the `docker`-command. See the `docker`-entry for a more birds-eye-view of the concepts.
@@ -319,6 +323,37 @@ The command will use the global `key` as project-key, you can override that via 
 ```
 jira:
   projectKey: <jira project-key>
+```
+
+### mattermost
+
+Phabalicious can send notifications to a running Mattermost instance. You need to create an incoming web hook in your instance and pass this to your configuration. Here's an example
+
+```
+mattermost:
+  username: phabalicious
+  webhook: https://chat.your.server.tld/hooks/... 
+  Channel: "my-channel"
+  
+hosts:
+  test:
+    needs:
+      - mattermost
+    notifyOn:
+      - deploy
+      - reset
+```
+
+* `mattermost` contains all global mattermost config.
+    * `username` the username to post messages as
+    * `webhook` the address of the web-hook
+    * `channel` the channel to post the message to
+* `notifyOn` is a list of tasks which should send a notification
+
+You can test the Mattermost config via
+
+```
+phab notify "hello world" --config <your-config>
 ```
 
 ### other
