@@ -1,0 +1,37 @@
+name: variants-tests
+
+requires: 2.0.0
+
+needs:
+  - script
+
+
+
+hosts:
+  testMissingVariants:
+    rootFolder: "%fabfile.path%"
+
+  test:
+    scripts:
+      test:
+        - echo "XX-%host.configName%-XX"
+        - sleep $[ ( $RANDOM % 10 )  + 1 ]s
+    blueprint:
+      inheritsFrom: test
+      configName: test-%slug%
+
+
+
+
+blueprints:
+  - configName: test
+    variants:
+      - a
+      - b
+      - c
+      - d
+      - e
+      - f
+      - g
+      - h
+

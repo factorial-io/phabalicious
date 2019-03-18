@@ -45,19 +45,24 @@ class OutputCommand extends BaseCommand
 
         $template = $this->getConfiguration()->getBlueprints()->getTemplate($config);
         $data = $template->expand($blueprint);
-        $data = ['hosts' => [
+        $data = [
             $data['configName'] => $data
-        ]];
+        ];
 
         $dumper = new Dumper(2);
 
         $io = new SymfonyStyle($input, $output);
-        $io->title('Output of applied blueprint `' . $config . '`');
-        $io->block($dumper->dump($data, 10, 2));
+        if ($output->isDecorated()) {
+            $io->title('Output of applied blueprint `' . $config . '`');
+        }
 
+        $io->block(
+            $dumper->dump($data, 10, 2),
+            null,
+            null,
+            ''
+        );
 
         return 0;
     }
-
-
 }

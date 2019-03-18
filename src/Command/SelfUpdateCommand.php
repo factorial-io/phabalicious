@@ -67,7 +67,7 @@ class SelfUpdateCommand extends BaseOptionsCommand
 
     private function runSelfUpdate($allow_unstable)
     {
-        $update_data = $this->hasUpdate();
+        $update_data = $this->hasUpdate($allow_unstable);
         if (!$update_data) {
             return false;
         }
@@ -77,11 +77,14 @@ class SelfUpdateCommand extends BaseOptionsCommand
         return $result ? $updater->getNewVersion() : false;
     }
 
-    public function hasUpdate()
+    public function hasUpdate($allow_unstable = false)
     {
         try {
             $version = $this->getApplication()->getVersion();
-            $allow_unstable = (stripos($version, 'alpha') !== false) || (stripos($version, 'beta') !== false);
+            $allow_unstable =
+                $allow_unstable ||
+                (stripos($version, 'alpha') !== false) ||
+                (stripos($version, 'beta') !== false);
 
             $updater = self::getUpdater($this->getApplication(), $allow_unstable);
 
@@ -117,9 +120,12 @@ class SelfUpdateCommand extends BaseOptionsCommand
             $command = $event->getCommand()->getApplication()->find('self-update');
 
             if ($command
+                && $output->isDecorated()
+                && !$output->isQuiet()
                 && !$event->getCommand()->isHidden()
-                && !$output->isQuiet() && !$command->getConfiguration()->isOffline()
+                && !$command->getConfiguration()->isOffline()
                 && !$input->hasParameterOption(['--offline'])
+                && !$input->hasParameterOption(['--no-interaction'])
             ) {
                 if ($version = $command->hasUpdate()) {
                     $style = new SymfonyStyle($input, $output);

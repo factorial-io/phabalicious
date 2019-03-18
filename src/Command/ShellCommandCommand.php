@@ -5,6 +5,8 @@ namespace Phabalicious\Command;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -48,9 +50,13 @@ class ShellCommandCommand extends BaseCommand
 
         // Allow methods to override the used shellProvider:
         $this->getMethods()->runTask('shell', $host_config, $context);
+
+        /** @var ShellProviderInterface $shell */
         $shell = $context->getResult('shell', $host_config->shell());
+        $ssh_command = $context->getResult('ssh_command', $shell->getShellCommand());
 
-        $output->writeln(implode(' ', $shell->getShellCommand()));
+        $context->io()->text('$ ' . implode(' ', $ssh_command));
+
+        return 0;
     }
-
 }

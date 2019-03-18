@@ -42,7 +42,7 @@ class GitMethod extends BaseMethod implements MethodInterface
     {
         return [
             'branch' => 'develop',
-            'gitRootFolder' => $host_config['rootFolder'],
+            'gitRootFolder' => $host_config['rootFolder'] ?? null,
             'ignoreSubmodules' => false,
             'gitOptions' => $configuration_service->getSetting('gitOptions', []),
         ];

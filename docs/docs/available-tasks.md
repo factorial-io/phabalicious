@@ -521,7 +521,8 @@ phab --config=<config> notify <message> <channel>
 This command will send the notification <message> to Mattermosts channel <channel>. For a detailed description have a look into the dedicated documentation.
 
 **Examples**
-* `phab config:mbb notify "hello world" "off-topic": sends `hello world` to `#off-topic`
+
+* `phab config:mbb notify "hello world" "off-topic"`: sends `hello world` to `#off-topic`
 
 ## app:scaffold
 
