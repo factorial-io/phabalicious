@@ -5,9 +5,14 @@ Phabalicious is the successor of the python tool [fabalicious](https://github.co
 ## Installation
 
 * Download the latest version from [Github](https://github.com/factorial-io/phabalicious/releases)
-* copy the phar to a suitable folder, e.g. `/usr/local/bin` and rename it to `phab`: `cp phabalalicious.phar /usr/local/bin/phab`
-* Make it executable, e.g. `chmod +x /usr/local/bin/phab`
+* copy the phar to a suitable folder, e.g. `/usr/local/bin` and rename it to `phab`:
 
+      cp phabalicious.phar /usr/local/bin/phab
+
+* Make it executable, e.g.  
+
+      chmod +x /usr/local/bin/phab
+    
 ## Build from source
 
 You'll need [box](https://github.com/humbug/box) for building the phar-file.
@@ -25,7 +30,7 @@ You'll need [box](https://github.com/humbug/box) for building the phar-file.
 ## Running phab
 
 * Run `phab list` to get a list of all available commands.
-* run `phab help <command>` to get some help for a given command.
+* Run `phab help <command>` to get some help for a given command.
 
 ## Shell autocompletion
 
@@ -33,11 +38,11 @@ Add this to your shell-startup script:
 
 * for fish-shells
 
-        phab _completion --generate-hook --shell-type fish | source
+      phab _completion --generate-hook --shell-type fish | source
 
 * for zsh/bash-shells
 
-        source <(phab _completion --generate-hook)
+      source <(phab _completion --generate-hook)
 
 ## Updating phab
 
