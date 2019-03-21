@@ -58,7 +58,7 @@ class DrushCommand extends BaseCommand
 
         $output->writeln('<info>Starting drush on `' . $host_config['configName'] . '`');
 
-        $process = $this->startInteractiveShell($shell, $command);
+        $process = $this->startInteractiveShell($shell, $command, $output->isDecorated());
         return $process->getExitCode();
     }
 }

@@ -30,7 +30,7 @@ class ParallelExecutorRun extends ProcessRun
 
     public function addListeners()
     {
-        $this->writeln("<fg=blue>Waiting</>");
+        $this->writeln("<fg=blue>~ waiting</>");
 
         $this->addListener(
             RunEvent::STARTED,
@@ -47,8 +47,7 @@ class ParallelExecutorRun extends ProcessRun
         $this->addListener(
             RunEvent::FAILED,
             function (RunEvent $event) {
-                $error = "<error>x Failed</error>";
-                $this->writeln($error);
+                $this->writeln("<error>x Failed</error>");
             }
         );
     }

@@ -16,6 +16,9 @@ hosts:
       test:
         - echo "XX-%host.configName%-XX"
         - sleep $[ ( $RANDOM % 10 )  + 1 ]s
+      testErr:
+        - "(>&2 echo \"XX-%host.configName%-XX\")"
+        - sleep $[ ( $RANDOM % 10 )  + 1 ]s
     blueprint:
       inheritsFrom: test
       configName: test-%slug%
