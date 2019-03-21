@@ -105,12 +105,12 @@ class ConfigurationService
         }
 
         $this->setFabfilePath(dirname($fabfile));
-        $this->fabfileLocation = $fabfile;
 
         $data = $this->readFile($fabfile);
         if (!$data) {
             throw new FabfileNotReadableException("Could not read from '" . $fabfile . "'");
         }
+        $this->fabfileLocation = realpath($fabfile);
 
         $data = $this->resolveInheritance($data, $data);
 
