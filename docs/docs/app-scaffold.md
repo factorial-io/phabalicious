@@ -185,7 +185,6 @@ assets:
 scaffold:
   - rm -rf %rootFolder%
   - composer create-project %composerProject% %rootFolder% --stability dev --no-interaction
-  - cd %rootFolder%; composer require factorial-io/fabalicious:dev-develop
   - copy_assets(%rootFolder%)
   - cd %rootFolder%; git init .
   - cd %rootFolder%; git add .
