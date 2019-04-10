@@ -40,6 +40,9 @@
             "email": "stephan@factorial.io"
         }
     ],
+    "bin": [
+        "bin/phab"
+    ],
     "scripts": {
         "auto-scripts": {
 

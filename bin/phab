@@ -12,7 +12,16 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 set_time_limit(0);
 
-require __DIR__.'/../vendor/autoload.php';
+$autoloaders = [
+  __DIR__ . '/../../../autoload.php',
+  __DIR__ . '/../vendor/autoload.php'
+];
+
+foreach ($autoloaders as $autoloader) {
+  if (file_exists($autoloader)) {
+    require_once $autoloader;
+  }
+}
 
 if (!isset($_SERVER['APP_ENV'])) {
     if (!class_exists(Dotenv::class)) {
