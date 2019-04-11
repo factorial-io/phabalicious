@@ -5,7 +5,11 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\DockerConfig;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ScopedLogLevel\ScopedErrorLogLevel;
 use Phabalicious\ScopedLogLevel\ScopedLogLevel;
@@ -83,8 +87,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @return DockerConfig
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      */
     public function getDockerConfig(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -96,11 +100,12 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
+     * @throws FailedShellCommandException
      * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws MissingScriptCallbackImplementation
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
     public function docker(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -119,10 +124,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param $task
      * @param $silent
      * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws MissingScriptCallbackImplementation
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws FailedShellCommandException
      */
     private function runTaskImpl(HostConfig $host_config, TaskContextInterface $context, $task, $silent)
     {
@@ -182,8 +188,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $hostconfig
      * @param TaskContextInterface $context
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      */
     public function waitForServices(HostConfig $hostconfig, TaskContextInterface $context)
     {
@@ -240,8 +246,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $hostconfig
      * @param TaskContextInterface $context
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      */
     private function copySSHKeys(HostConfig $hostconfig, TaskContextInterface $context)
     {
@@ -362,8 +368,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @return bool|string
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      */
     public function getIpAddress(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -402,8 +408,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      */
     public function startRemoteAccess(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -418,8 +424,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      */
     public function getIp(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -431,8 +437,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      */
     public function appCheckExisting(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -448,9 +454,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @throws MethodNotFoundException
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws MissingScriptCallbackImplementation
      */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -462,9 +468,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @throws MethodNotFoundException
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws MissingScriptCallbackImplementation
      */
     public function appDestroy(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -476,9 +482,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @throws MethodNotFoundException
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws MissingScriptCallbackImplementation
      */
     public function runAppSpecificTask(HostConfig $host_config, TaskContextInterface $context)
     {
