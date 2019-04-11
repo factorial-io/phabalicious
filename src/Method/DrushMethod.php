@@ -282,8 +282,6 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
         $drush_command = ($should_enable) ? 'en -y %s' : 'dis -y %s';
 
-        $context->io()->writeln(sprintf('verbosity %s', $context->getOutput()->getVerbosity()));
-
         if (!$context->getOutput() || $context->getOutput()->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
             $modules = [
                 implode(' ', $modules),
