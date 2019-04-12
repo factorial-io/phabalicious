@@ -289,7 +289,7 @@ abstract class BaseCommand extends BaseOptionsCommand
             $io = new SymfonyStyle($input, $output);
             $io->table(['variant', 'command'], $rows);
 
-            if ($input->getOption('force') || $io->confirm('Do you want to run these commands? ', false)) {
+            if ($input->getOption('force') !== false || $io->confirm('Do you want to run these commands? ', false)) {
                 $io->comment('Running ...');
                 $executor = new ParallelExecutor($cmd_lines, $output);
                 return $executor->execute($input, $output);

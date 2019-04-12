@@ -56,7 +56,7 @@ class InstallCommand extends BaseCommand
 
         $context = new TaskContext($this, $input, $output);
 
-        if (!$input->getOption('force')) {
+        if (!$input->getOption('force') !== false) {
             if (!$context->io()->confirm(sprintf(
                 'Install new database for configuration `%s`?',
                 $this->getHostConfig()['configName']
