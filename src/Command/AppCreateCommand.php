@@ -2,7 +2,17 @@
 
 namespace Phabalicious\Command;
 
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\EarlyTaskExitException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\Exception\ShellProviderNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
+use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\AppDefaultStages;
@@ -35,16 +45,16 @@ class AppCreateCommand extends AppBaseCommand
      * @param OutputInterface $output
      *
      * @return int|null
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws MissingHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws TaskNotFoundInMethodException
+     * @throws ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -64,7 +74,20 @@ class AppCreateCommand extends AppBaseCommand
 
         /** @var ShellProviderInterface $outer_shell */
         $outer_shell = $context->getResult('outerShell', $host_config->shell());
-        $lock_file = $context->getResult('installDir', $host_config['rootFolder']) . '/.projectCreated';
+
+        $install_dir = $context->getResult('installDir', $host_config['rootFolder']);
+        if ($outer_shell->exists($install_dir) && $input->getOption('force') === false) {
+            $continue = $context->io()->confirm('Target directory exists', false);
+            if (!$continue) {
+                $context->io()->warning(sprintf(
+                    'Stopping, as target-folder `%s` already exists on `%s`.',
+                    $install_dir,
+                    $host_config['configName']
+                ));
+                return 1;
+            }
+        }
+        $lock_file =  $install_dir . '/.projectCreated';
         $app_exists = $outer_shell->exists($lock_file);
 
         $context->set('outerShell', $outer_shell);
@@ -97,5 +120,4 @@ class AppCreateCommand extends AppBaseCommand
 
         return $context->getResult('exitCode', 0);
     }
-
 }
