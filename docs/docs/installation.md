@@ -24,7 +24,7 @@ Note, phabalicious is using Symfony 4 so you might get some unresolvable conflic
 
 ## and then ...
 
-1. Run `fab list`, this should give you a list of all available commands.
+1. Run `phab list`, this should give you a list of all available commands.
 2. Create a configuration file called `fabfile.yaml`
 
 # A simple configuration-example
