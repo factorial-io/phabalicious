@@ -2,11 +2,13 @@
 
 namespace Phabalicious\Command;
 
+use http\Exception\RuntimeException;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -205,6 +207,16 @@ class AppScaffoldCommand extends BaseOptionsCommand
 
         $context->io()->comment('Start scaffolding script ...');
         $script->runScript($host_config, $context);
+
+        /** @var CommandResult $result */
+        $result = $context->getResult('commandResult');
+        if ($result->failed()) {
+            throw new \RuntimeException(sprintf(
+                "Scaffolding failed with exit-code %d\n%s",
+                $result->getExitCode(),
+                implode("\n", $result->getOutput())
+            ));
+        }
 
         $context->io()->success('Scaffolding finished successfully!');
         return 0;
