@@ -34,6 +34,10 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     /** @var LogLevelStack */
     protected $errorLogLevel;
+    /**
+     * @var array
+     */
+    private $workingDirStack = [];
 
     public function __construct(LoggerInterface $logger)
     {
@@ -81,6 +85,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $this->workingDir;
     }
 
+
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
@@ -92,6 +97,21 @@ abstract class BaseShellProvider implements ShellProviderInterface
         $this->logger->debug('New working dir: ' . $dir);
 
         return $this;
+    }
+
+    public function pushWorkingDir(string $new_working_dir)
+    {
+        $this->workingDirStack[] = $this->getWorkingDir();
+        $this->cd($new_working_dir);
+    }
+
+    public function popWorkingDir()
+    {
+        if (count($this->workingDirStack) == 0) {
+            throw new \RuntimeException('Can\'t pop working dir, stack is empty');
+        }
+        $working_dir = array_pop($this->workingDirStack);
+        $this->cd($working_dir);
     }
 
     /**

@@ -428,6 +428,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $context->setResult('files', array_merge($existing, $result));
     }
 
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     */
     public function restore(HostConfig $host_config, TaskContextInterface $context)
     {
         $shell = $this->getShell($host_config, $context);
@@ -442,7 +447,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 continue;
             }
 
+            $shell->pushWorkingDir($host_config['siteFolder']);
             $result = $this->importSqlFromFile($shell, $host_config['backupFolder'] . '/' . $elem['file']);
+            $shell->popWorkingDir();
+
             if (!$result->succeeded()) {
                 $result->throwException('Could not restore backup from ' . $elem['file']);
             }
@@ -480,7 +488,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing file parameter');
         }
         $shell = $this->getShell($host_config, $context);
+
+        $shell->pushWorkingDir($host_config['siteFolder']);
         $result = $this->importSqlFromFile($shell, $file);
+        $shell->popWorkingDir();
 
         $context->setResult('exitCode', $result->getExitCode());
     }
