@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.5 / 2019-04-17
+
+### Fixed
+
+  * Cd into siteFolder before restoring a db-dump. (Fixes #48)
+
 ## 3.0.4 / 2019-03-18
 
 ### New
@@ -9,10 +15,12 @@
 ### Fixed
 
   * Document mattermost integration, fixes #29
-  * Fix broken shell autocomplete
+  * Fix broken shell autocompletion
   * Limit output when using phab with pipes
   * Include jump-host when running ssh:command if needed (fixes #36)
   * Display destination for put:file (Fixes #37)
+
+
 
 ## 3.0.3 / 2019-03-07
 

@@ -24,6 +24,10 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function getWorkingDir(): string;
 
+    public function pushWorkingDir(string $new_working_dir);
+
+    public function popWorkingDir();
+
     public function exists($file): bool;
 
     public function cd(string $dir): ShellProviderInterface;
@@ -64,5 +68,4 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
     public function createShellProcess(array $command = [], array $options = []): Process;
 
     public function createTunnelProcess(HostConfig $target_config, array $prefix = []);
-
 }
