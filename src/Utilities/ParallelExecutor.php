@@ -63,17 +63,11 @@ class ParallelExecutor
         foreach ($this->pool->getAll() as $run) {
             if ($run instanceof ParallelExecutorRun) {
                 $style->section(sprintf('Results of `%s`', $run->getCommandLine()));
-                $exceptions = $run->getExceptions();
-
-                if (count($exceptions) > 0) {
-                    $exception = reset($exceptions);
-                    $style->error(sprintf(
-                        "Execution failed with error %d:\n%s",
-                        $exception->getCode(),
-                        $exception->getMessage()
-                    ));
-                } else {
-                    $style->writeln($run->getProcess()->getOutput());
+                $style->writeln($run->getProcess()->getOutput());
+                $error = $run->getProcess()->getErrorOutput();
+                if (!empty($error)) {
+                    $style->comment('Error output:');
+                    $style->writeln($run->getProcess()->getErrorOutput());
                 }
             }
         }

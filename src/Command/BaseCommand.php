@@ -8,6 +8,7 @@ use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\ParallelExecutor;
+use Phabalicious\Utilities\Utilities;
 use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -117,7 +118,8 @@ abstract class BaseCommand extends BaseOptionsCommand
             }
 
             if ($input->getOption('variants')) {
-                return $this->handleVariants($input->getOption('variants'), $input, $output);
+                $this->handleVariants($input->getOption('variants'), $input, $output);
+                return 2;
             }
         } catch (MissingHostConfigException $e) {
             $io->error(sprintf('Could not find host-config named `%s`', $config_name));
@@ -175,7 +177,7 @@ abstract class BaseCommand extends BaseOptionsCommand
      * @param array $command
      * @return Process
      */
-    protected function startInteractiveShell(ShellProviderInterface $shell, array $command = [])
+    protected function startInteractiveShell(ShellProviderInterface $shell, array $command = [], $use_tty = true)
     {
         /** @var Process $process */
         if (!empty($command)) {
@@ -186,11 +188,11 @@ abstract class BaseCommand extends BaseOptionsCommand
                 '\'' . implode(' ', $command) .'\'',
             ];
         }
-        $process = $shell->createShellProcess($command, ['tty' => true]);
+        $process = $shell->createShellProcess($command, ['tty' => $use_tty]);
         $stdin = fopen('php://stdin', 'r');
         $process->setInput($stdin);
         $process->setTimeout(0);
-        $process->setTty(true);
+        $process->setTty($use_tty);
         $process->start();
         $process->wait(function ($type, $buffer) {
             if ($type == Process::ERR) {
@@ -221,6 +223,8 @@ abstract class BaseCommand extends BaseOptionsCommand
         if (getenv('PHABALICIOUS_EXECUTABLE')) {
             $executable = getenv('PHABALICIOUS_EXECUTABLE');
         }
+
+        $base_path = getcwd();
 
         $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig['configName']);
         if (!$available_variants) {
@@ -253,7 +257,11 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $cmd[] = $executable;
 
                 foreach ($input->getArguments() as $a) {
-                    $cmd[] = $a;
+                    if (is_array($a)) {
+                        $cmd[] = implode(' ', $a);
+                    } else {
+                        $cmd[] = $a;
+                    }
                 }
                 foreach ($input->getOptions() as $name => $value) {
                     if ($value && !in_array($name, ['verbose', 'variants', 'blueprint', 'fabfile'])) {
@@ -263,18 +271,25 @@ abstract class BaseCommand extends BaseOptionsCommand
                 }
                 $cmd[] = '--no-interaction';
                 $cmd[] = '--fabfile';
-                $cmd[] = $this->configuration->getFabfileLocation();
+                $cmd[] = Utilities::getRelativePath($base_path, $this->configuration->getFabfileLocation());
                 $cmd[] = '--blueprint';
                 $cmd[] = $v;
 
+                if ($output->isVeryVerbose()) {
+                    $cmd[] = '-vv';
+                } elseif ($output->isVerbose()) {
+                    $cmd[]= '-v';
+                }
+
                 $cmd_lines[] = $cmd;
+
                 $rows[] = [$v, implode(' ', $cmd)];
             }
 
             $io = new SymfonyStyle($input, $output);
             $io->table(['variant', 'command'], $rows);
 
-            if ($input->getOption('force') || $io->confirm('Do you want to run these commands? ', false)) {
+            if ($input->getOption('force') !== false || $io->confirm('Do you want to run these commands? ', false)) {
                 $io->comment('Running ...');
                 $executor = new ParallelExecutor($cmd_lines, $output);
                 return $executor->execute($input, $output);

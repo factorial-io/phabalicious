@@ -47,6 +47,7 @@ class AppCreateCommandTest extends TestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
             '--config'  => 'test',
+            '--force' => 1,
         ));
 
         // the output of the command in the console
@@ -69,6 +70,7 @@ class AppCreateCommandTest extends TestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
             '--config'  => 'testWithPrepare',
+            '--force' => 1,
         ));
 
         // the output of the command in the console

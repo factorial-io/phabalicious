@@ -74,7 +74,7 @@ class VariantBaseCommandTest extends TestCase
     /**
      * @group docker
      */
-    public function testAllVariants()
+    private function runScript($script_name)
     {
         $executable = realpath(getcwd() . '/../bin/phab');
         putenv('PHABALICIOUS_EXECUTABLE=' . $executable);
@@ -86,7 +86,7 @@ class VariantBaseCommandTest extends TestCase
             '--config' => 'test',
             '--variants' => 'all',
             '--force' => 1,
-            'script' => 'test'
+            'script' => $script_name
         ));
 
         $output = $commandTester->getDisplay();
@@ -97,5 +97,15 @@ class VariantBaseCommandTest extends TestCase
         $this->assertContains('XX-test-a-XX', $output);
         $this->assertContains('XX-test-b-XX', $output);
         $this->assertContains('XX-test-c-XX', $output);
+    }
+
+    public function testAllVariants()
+    {
+        $this->runScript('test');
+    }
+
+    public function testAllVariantsWithStdErr()
+    {
+        $this->runScript('testErr');
     }
 }

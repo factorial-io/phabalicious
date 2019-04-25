@@ -1,0 +1,10 @@
+inheritsFrom:
+  - ./questions.yml
+
+assets:
+  - ./scaffold-utils.yml
+
+scaffold:
+  - "echo 'Project: %name%'"
+  - "(exit 42)"
+  - "echo 'Shortname: %shortName%'"

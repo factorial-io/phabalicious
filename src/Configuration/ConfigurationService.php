@@ -105,12 +105,12 @@ class ConfigurationService
         }
 
         $this->setFabfilePath(dirname($fabfile));
-        $this->fabfileLocation = $fabfile;
 
         $data = $this->readFile($fabfile);
         if (!$data) {
             throw new FabfileNotReadableException("Could not read from '" . $fabfile . "'");
         }
+        $this->fabfileLocation = realpath($fabfile);
 
         $data = $this->resolveInheritance($data, $data);
 
@@ -194,7 +194,7 @@ class ConfigurationService
      * @param string $file
      *
      * @return mixed
-     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws MismatchedVersionException
      */
     protected function readFile(string $file)
     {
@@ -263,7 +263,8 @@ class ConfigurationService
      * @param $lookup
      *
      * @return array
-     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws MismatchedVersionException
+     * @throws FabfileNotReadableException
      */
     public function resolveInheritance(array $data, $lookup, $root_folder = false): array
     {
@@ -288,6 +289,11 @@ class ConfigurationService
                 $add_data = Yaml::parse($this->readHttpResource($resource));
             } elseif (file_exists($root_folder . '/' . $resource)) {
                 $add_data = $this->readFile($root_folder . '/' . $resource);
+            } else {
+                throw new FabfileNotReadableException(sprintf(
+                    'Could not resolve inheritance from `inheritsFrom: %s`',
+                    $resource
+                ));
             }
             if ($add_data) {
                 if (isset($add_data['inheritsFrom'])) {
@@ -324,7 +330,13 @@ class ConfigurationService
                 $url['path'] = urlencode($url['path']);
                 $url['path'] = str_replace('%2F', '/', $url['path']);
                 $resource =  http_build_url($url);
+                set_error_handler(
+                    function ($severity, $message) {
+                        throw new FabfileNotReadableException($message);
+                    }
+                );
                 $contents = file_get_contents($resource);
+                restore_error_handler();
             } catch (\Exception $e) {
                 $this->logger->warning('Could not load resource from `' . $resource . '`: ' . $e->getMessage());
                 $contents = false;
@@ -360,7 +372,7 @@ class ConfigurationService
      * @param string $config_name
      *
      * @return \Phabalicious\Configuration\HostConfig
-     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\ValidationFailedException
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException

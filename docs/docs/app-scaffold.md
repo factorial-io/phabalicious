@@ -12,6 +12,8 @@ questions:
     question: "The short-name of this project"
     validation: "/^[A-Za-z0-9]{3,5}$/"
     error: "The shortname may consist of 3 to 5 letters (A-Z) or digits (0-9)"
+    # Questions can have a default:
+    default: "SP"
     transform: lowercase
     
 variables:
@@ -54,6 +56,7 @@ questions:
     question: <the text to display>
     validation: <the regex to check the input against to>
     error: <the error message to display, when validation fails>
+    default: <optional default-value>
     transform: <lowercase|uppercase>
 ```
 
@@ -182,7 +185,6 @@ assets:
 scaffold:
   - rm -rf %rootFolder%
   - composer create-project %composerProject% %rootFolder% --stability dev --no-interaction
-  - cd %rootFolder%; composer require factorial-io/fabalicious:dev-develop
   - copy_assets(%rootFolder%)
   - cd %rootFolder%; git init .
   - cd %rootFolder%; git add .

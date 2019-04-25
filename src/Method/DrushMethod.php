@@ -11,6 +11,7 @@ use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class DrushMethod extends BaseMethod implements MethodInterface
 {
@@ -279,17 +280,24 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
             $modules = array_diff($modules, $to_ignore);
         }
-        if ($should_enable) {
-            $result = $this->runDrush($shell, 'en -y %s', implode(' ', $modules));
-        } else {
-            $result = $this->runDrush($shell, 'dis -y %s', implode(' ', $modules));
+        $drush_command = ($should_enable) ? 'en -y %s' : 'dis -y %s';
+
+        if (!$context->getOutput() || $context->getOutput()->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
+            $modules = [
+                implode(' ', $modules),
+            ];
         }
-        if ($result->failed()) {
-            $result->throwException(
-                'Drush reported an error while handling `'
-                . $file_name
-                . '`. Please check the output, there might be an error in the file!'
-            );
+
+        foreach ($modules as $module) {
+            $result = $this->runDrush($shell, $drush_command, $module);
+            if ($result->failed()) {
+                $result->throwException(sprintf(
+                    'Drush reported an error while handling %s and module %s. ' .
+                    'Please check the output, there might be an error in the file.',
+                    $file_name,
+                    $module
+                ));
+            }
         }
     }
 

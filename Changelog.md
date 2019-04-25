@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.0.6 / 2019-04-25
+
+  * rename setting `dockerAuthorizedKeyFile` to `dockerAuthorizedKeysFile`, keep the old one for backwards compatibility
+  * if no dockerAuthorizedKeysFile is set, use the public-keys of the ssh-agent instead
+  * Cd into siteFolder before restoring a db-dump. (Fixes #48)
+  * Ask before scaffolding into an existing directory, can be overridden by `--force`. Fixes #43
+  * Allow --force and --force 1
+  * Report errors and stop the execution when errors happen while scaffolding
+  * Use latest version of stecman/symfony-console-completion
+  * Enable/ disable modules one by one, fixes #39
+  * Better error-reporting for inherited files from local and remote
+  * Handle variants and error output better
+  * Allow the phab binary to called from a regular Composer installation
+  * Add the "phab" binary to composer.json explicitly
+  * Update passwords documentation
+
 ## 3.0.5 / 2019-04-17
 
 ### Fixed

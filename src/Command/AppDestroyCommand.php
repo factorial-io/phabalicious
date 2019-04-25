@@ -60,7 +60,7 @@ class AppDestroyCommand extends AppBaseCommand
 
         if ($app_exists) {
             $stages = $this->configuration->getSetting(
-                'appStages.deploy',
+                'appStages.destroy',
                 AppDefaultStages::DESTROY
             );
             $this->executeStages($stages, 'appDestroy', $context, 'Destroying app');

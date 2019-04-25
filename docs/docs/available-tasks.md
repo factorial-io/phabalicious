@@ -66,10 +66,9 @@ blueprint:
     name: '%project-slug%%slug.without-feature%_web_1'
 ```
 
-And the output of `phab blueprint:feature/XY-123-my_Branch-name,configNamy=<config-name>,output=true` is
+And the output of `phab --blueprint=feature/XY-123-my_Branch-name --config=<config-name> output` is
 
 ```yaml
-hosts:
   phbackend-xy-123-my-branch-name.some.host.tld:
     branch: feature/XY-123-my_Branch-name
     configName: phbackend-xy-123-my-branch-name.some.host.tld
@@ -487,7 +486,7 @@ phab --config=mbb docker copySSHKeys
 
 This will copy the ssh-keys into the docker-instance. You'll need to provide the paths to the files via the three configurations:
 * `dockerKeyFile`, the path to the private ssh-key to use.
-* `dockerAuthorizedKeyFile`, the path to the file for `authoried_keys` or a url.
+* `dockerAuthorizedKeysFile`, the path to the file for `authoried_keys` or a url.
 * `dockerKnownHostsFile`, the path to the file for `known_hosts`
 * `dockerNetRcFile`, the path to a `.netrc`-file to copy into the container. This is helpful if you are using https-repositories and want to authenticate against them.
 
