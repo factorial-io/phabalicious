@@ -108,7 +108,7 @@ This command will copy the referenced files from your local computer into the do
 These are the needed global settings in the fabfile:
 
 * `dockerKeyFile` will copy the referenced private key and its public key into the container
-* `dockerAuthorizedKeyFile`, the `authorized_keys`-file, can be a path to a file or an url
+* `dockerAuthorizedKeysFile`, the `authorized_keys`-file, can be a path to a file or an url
 * `dockerKnownHostsFile`, the `known_hosts`-file
 * `dockerNetRcFile`, will copy a `.netrc`-file into the container (suitable for authenticating against https repositories)
 

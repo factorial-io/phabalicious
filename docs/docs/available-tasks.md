@@ -486,7 +486,7 @@ phab --config=mbb docker copySSHKeys
 
 This will copy the ssh-keys into the docker-instance. You'll need to provide the paths to the files via the three configurations:
 * `dockerKeyFile`, the path to the private ssh-key to use.
-* `dockerAuthorizedKeyFile`, the path to the file for `authoried_keys` or a url.
+* `dockerAuthorizedKeysFile`, the path to the file for `authoried_keys` or a url.
 * `dockerKnownHostsFile`, the path to the file for `known_hosts`
 * `dockerNetRcFile`, the path to a `.netrc`-file to copy into the container. This is helpful if you are using https-repositories and want to authenticate against them.
 
