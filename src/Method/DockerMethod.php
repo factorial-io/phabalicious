@@ -42,6 +42,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $config['executables']['docker'] = 'docker';
         $config['executables']['chmod'] = 'chmod';
         $config['executables']['chown'] = 'chown';
+        $config['executables']['ssh-add'] = 'ssh-add';
+
         if (!empty($host_config['sshTunnel']) &&
             !empty($host_config['docker']['name']) &&
             empty($host_config['sshTunnel']['destHostFromDockerContainer']) &&
@@ -254,7 +256,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $files = [];
         $temp_files = [];
 
+        // Backwards-compatibility:
         if ($file = $context->getConfigurationService()->getSetting('dockerAuthorizedKeyFile')) {
+            $files['/root/.ssh/authorized_keys'] = [
+                'source' => $file,
+                'permissions' => '600',
+            ];
+        }
+        if ($file = $context->getConfigurationService()->getSetting('dockerAuthorizedKeysFile')) {
             $files['/root/.ssh/authorized_keys'] = [
                 'source' => $file,
                 'permissions' => '600',
@@ -285,12 +294,27 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 'optional' => true,
             ];
         }
-        if (count($files) > 0) {
-            $docker_config = $this->getDockerConfig($hostconfig, $context);
-            $root_folder = $docker_config['rootFolder'] . '/' . $hostconfig['docker']['projectFolder'];
 
-            /** @var ShellProviderInterface $shell */
-            $shell = $docker_config->shell();
+        $docker_config = $this->getDockerConfig($hostconfig, $context);
+        $root_folder = $docker_config['rootFolder'] . '/' . $hostconfig['docker']['projectFolder'];
+
+        /** @var ShellProviderInterface $shell */
+        $shell = $docker_config->shell();
+
+        // If no authorized_keys file is set, then add all public keys from the agent into the container.
+        if (empty($files['/root/.ssh/authorized_keys'])) {
+            $file = tempnam("/tmp", "phabalicious");
+
+            $result = $shell->run(sprintf('#!ssh-add -L > %s', $file));
+
+            $files['/root/.ssh/authorized_keys'] = [
+                'source' => $file,
+                'permissions' => '600',
+            ];
+            $temp_files[] = $file;
+        }
+
+        if (count($files) > 0) {
             $container_name = $this->getDockerContainerName($hostconfig, $context);
             if (!$this->isContainerRunning($docker_config, $container_name)) {
                 throw new \RuntimeException(sprintf(
@@ -452,11 +476,12 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
+     * @throws FailedShellCommandException
      * @throws MethodNotFoundException
-     * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
      * @throws MissingScriptCallbackImplementation
+     * @throws ValidationFailedException
      */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -466,11 +491,12 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
+     * @throws FailedShellCommandException
      * @throws MethodNotFoundException
-     * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
      * @throws MissingScriptCallbackImplementation
+     * @throws ValidationFailedException
      */
     public function appDestroy(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -480,11 +506,12 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
+     * @throws FailedShellCommandException
      * @throws MethodNotFoundException
-     * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
      * @throws MissingScriptCallbackImplementation
+     * @throws ValidationFailedException
      */
     public function runAppSpecificTask(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -502,6 +529,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @return bool
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ValidationFailedException
+     */
     private function getDockerContainerName(HostConfig $host_config, TaskContextInterface $context)
     {
         if (!empty($host_config['docker']['name'])) {

@@ -4,6 +4,8 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -46,8 +48,8 @@ class SshMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $config
      * @param TaskContextInterface $context
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     private function createLocalToHostTunnel(HostConfig $config, TaskContextInterface $context)
     {
@@ -59,8 +61,8 @@ class SshMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $config
      * @param HostConfig $source_config
      * @param TaskContextInterface $context
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     private function createRemoteToHostTunnel(
         HostConfig $config,
@@ -82,8 +84,8 @@ class SshMethod extends BaseMethod implements MethodInterface
      * @param bool $remote
      * @param TaskContextInterface $context
      * @return mixed
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     private function createTunnel(
         HostConfig $source_config,
@@ -147,8 +149,8 @@ class SshMethod extends BaseMethod implements MethodInterface
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
