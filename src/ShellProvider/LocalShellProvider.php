@@ -4,6 +4,7 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\SetAndRestoreObjProperty;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -77,7 +78,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     /**
      * Setup local shell.
      *
-     * @throws \Exception
+     * @throws \RuntimeException
      */
     public function setup()
     {
@@ -86,7 +87,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
 
         if (empty($this->hostConfig)) {
-            throw new \Exception('No host-config set for local shell provider');
+            throw new \RuntimeException('No host-config set for local shell provider');
         }
 
         $shell_executable = $this->hostConfig['shellExecutable'];
@@ -125,7 +126,8 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      * @param bool $capture_output
      * @param bool $throw_exception_on_error
      * @return CommandResult
-     * @throws \Exception
+     * @throws FailedShellCommandException
+     * @throws \RuntimeException
      */
     public function run(string $command, $capture_output = false, $throw_exception_on_error = true): CommandResult
     {

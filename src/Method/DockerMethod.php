@@ -305,13 +305,20 @@ class DockerMethod extends BaseMethod implements MethodInterface
         if (empty($files['/root/.ssh/authorized_keys'])) {
             $file = tempnam("/tmp", "phabalicious");
 
-            $result = $shell->run(sprintf('#!ssh-add -L > %s', $file));
+            try {
+                $result = $shell->run(sprintf('#!ssh-add -L > %s', $file));
 
-            $files['/root/.ssh/authorized_keys'] = [
-                'source' => $file,
-                'permissions' => '600',
-            ];
-            $temp_files[] = $file;
+                $files['/root/.ssh/authorized_keys'] = [
+                    'source' => $file,
+                    'permissions' => '600',
+                ];
+                $temp_files[] = $file;
+            } catch (FailedShellCommandException $e) {
+                $context->io()->warning(sprintf(
+                    'Could not add public key to authorized_keys-file: %s',
+                    $e->getMessage()
+                ));
+            }
         }
 
         if (count($files) > 0) {
