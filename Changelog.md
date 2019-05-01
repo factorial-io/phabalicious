@@ -1,6 +1,14 @@
 # Changelog
 
+## 3.0.7 / 2019-05-01
+
+### Fixed
+
+  * Show a warning if local users' keyagent does not have a key when running `docker copySSHKeys`
+
 ## 3.0.6 / 2019-04-25
+
+### Fixed
 
   * rename setting `dockerAuthorizedKeyFile` to `dockerAuthorizedKeysFile`, keep the old one for backwards compatibility
   * if no dockerAuthorizedKeysFile is set, use the public-keys of the ssh-agent instead
