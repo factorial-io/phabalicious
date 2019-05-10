@@ -29,7 +29,7 @@ class SshShellProvider extends LocalShellProvider
                 if (!empty(self::$cachedSshPorts[$host_config['configName']])) {
                     $port = self::$cachedSshPorts[$host_config['configName']];
                 } else {
-                    $port = rand(1025, 65535);
+                    $port = rand(1024, 49151);
                 }
                 self::$cachedSshPorts[$host_config['configName']] = $port;
                 $result['port'] = $port;
