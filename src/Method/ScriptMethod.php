@@ -40,6 +40,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     {
         $service = new ValidationService($config, $errors, 'host-config');
         $service->hasKey('rootFolder', 'The root-folder of your configuration.');
+        $service->checkForValidFolderName('rootFolder');
     }
 
 

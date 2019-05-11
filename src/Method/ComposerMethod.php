@@ -45,6 +45,7 @@ class ComposerMethod extends BaseMethod implements MethodInterface
     {
         $validation = new ValidationService($config, $errors, 'host-config');
         $validation->hasKey('composerRootFolder', 'composerRootFolder should point to your composer root folder.');
+        $validation->checkForValidFolderName('composerRootFolder');
     }
 
     private function runCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
@@ -102,6 +103,4 @@ class ComposerMethod extends BaseMethod implements MethodInterface
             $this->prepareCommand($host_config, 'update')
         );
     }
-
-
 }

@@ -82,6 +82,7 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
                 'port' => 'the port to connect to',
                 'rootFolder' => 'the rootfolder of your app on the remote file-system',
             ]);
+            $service->checkForValidFolderName('rootFolder');
         }
     }
 

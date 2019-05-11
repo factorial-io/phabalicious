@@ -73,6 +73,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 'projectFolder',
                 'projectFolder where the project is stored, relative to the rootFolder'
             );
+            $validation->checkForValidFolderName('projectFolder');
             $validation->hasKey('configuration', 'name of the docker-configuration to use');
         }
     }
