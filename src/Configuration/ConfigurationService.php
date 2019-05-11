@@ -644,6 +644,9 @@ class ConfigurationService
             $this->logger->warning($warning);
         }
 
+        // Remove trailing slashes.
+        $data['rootFolder'] = rtrim($data['rootFolder'], '/');
+
         return $data;
     }
 
