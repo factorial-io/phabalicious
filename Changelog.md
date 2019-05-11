@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.9 / 2019-05-11
+
+### Fixed
+
+  * Add validation for foldernames
+  * Harmonize option copy-from
+
 ## 3.0.8 / 2019-05-10
 
 ### Fixed
