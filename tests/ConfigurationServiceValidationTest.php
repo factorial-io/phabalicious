@@ -47,8 +47,7 @@ class ConfigurationServiceValidationTest extends TestCase
 
     public function testMethodDefaultSettings()
     {
-       $host = $this->config->getHostConfig('mbb');
-       $this->assertEquals($host['gitRootFolder'], $host['rootFolder']);
-
+        $host = $this->config->getHostConfig('mbb');
+        $this->assertEquals($host['gitRootFolder'], $host['rootFolder']);
     }
 }
