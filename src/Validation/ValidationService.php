@@ -70,4 +70,17 @@ class ValidationService
         }
     }
 
+    public function checkForValidFolderName(string $key)
+    {
+        if (!$this->hasKey($key, 'Missing key')) {
+            return false;
+        }
+        if ($this->config[$key] !== '/' && substr($this->config[$key], -1) === DIRECTORY_SEPARATOR) {
+            $this->errors->addError(
+                $key,
+                sprintf('key %s is ending with a directory separator, please change!', $key)
+            );
+            return false;
+        }
+    }
 }

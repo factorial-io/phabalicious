@@ -103,8 +103,8 @@ hosts:
     password: root
     port: 36997
     type: dev
-    rootFolder: /var/www/
-    gitRootFolder: /var/www/
+    rootFolder: /var/www
+    gitRootFolder: /var/www
     siteFolder: /sites/default
     filesFolder: /sites/default/files
     backupFolder: /var/www/backups

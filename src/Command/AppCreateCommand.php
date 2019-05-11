@@ -33,7 +33,7 @@ class AppCreateCommand extends AppBaseCommand
             ->setHelp('Creates a new app from the code-base of a project');
 
         $this->addOption(
-            'copyFrom',
+            'copy-from',
             null,
             InputOption::VALUE_OPTIONAL,
             false
@@ -62,7 +62,7 @@ class AppCreateCommand extends AppBaseCommand
             return $result;
         }
 
-        if ($copy_from = $input->getOption('copyFrom')) {
+        if ($copy_from = $input->getOption('copy-from')) {
             // Make sure config exists.
             $copy_from = $this->getConfiguration()->getHostConfig($copy_from);
         }

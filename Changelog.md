@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.0.9 / 2019-05-11
+
+### Fixed
+
+  * Add validation for foldernames
+  * Harmonize option copy-from
+
+## 3.0.8 / 2019-05-10
+
+### Fixed
+
+  * Use correct port range, previous code might have used ephemeral ports, which are reserved -- should fix sporadically failing ssh-connections, fixes #49
+
+
 ## 3.0.7 / 2019-05-01
 
 ### Fixed

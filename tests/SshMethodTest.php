@@ -35,7 +35,6 @@ class SshMethodTest extends TestCase
             'configName' => 'test'
         ], $errors);
         $this->assertEquals($errors->hasErrors(), false);
-
     }
 
     public function testInvalidConfig()
@@ -45,6 +44,26 @@ class SshMethodTest extends TestCase
         $this->method->createShellProvider([])->validateConfig([
             'host' => 'localhost',
             'configName' => 'test'
+        ], $errors);
+        $this->assertEquals($errors->hasErrors(), true);
+        $this->assertEquals(
+            ['user', 'port', 'rootFolder', 'rootFolder', 'shellExecutable'],
+            $errors->getKeysWithErrors(),
+            '',
+            0.0,
+            10,
+            true
+        );
+    }
+
+    public function testInvalidRootFolderName()
+    {
+        $errors = new ValidationErrorBag();
+
+        $this->method->createShellProvider([])->validateConfig([
+            'host' => 'localhost',
+            'configName' => 'test',
+            'rootFolder' => '/some/rootFolder/'
         ], $errors);
         $this->assertEquals($errors->hasErrors(), true);
         $this->assertEquals(
@@ -110,7 +129,6 @@ class SshMethodTest extends TestCase
         // Running it again should give the same SSH-Port
         $result2 = $shell_provider->getDefaultConfig($configuration_service, $config);
         $this->assertEquals($result['port'], $result2['port']);
-
     }
 
     public function testGetDefaultConfigWithDocker()

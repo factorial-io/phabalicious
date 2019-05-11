@@ -36,7 +36,28 @@ class LocalShellProviderTest extends TestCase
     {
         $errors = new ValidationErrorBag();
         $this->shellProvider->validateConfig([], $errors);
-        $this->assertEquals(['rootFolder', 'shellExecutable'], $errors->getKeysWithErrors(), '', 0.0, 10, true);
+        $this->assertEquals(
+            ['rootFolder', 'rootFolder', 'shellExecutable'],
+            $errors->getKeysWithErrors(),
+            '',
+            0.0,
+            10,
+            true
+        );
+    }
+
+    public function testValidateConfigRootFolder()
+    {
+        $errors = new ValidationErrorBag();
+        $this->shellProvider->validateConfig(['rootFolder' => '/var/www/', 'shellExecutable' => '/bin/bash'], $errors);
+        $this->assertEquals(
+            ['rootFolder'],
+            $errors->getKeysWithErrors(),
+            '',
+            0.0,
+            10,
+            true
+        );
     }
 
     public function testGetName()

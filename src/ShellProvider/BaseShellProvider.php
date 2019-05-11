@@ -67,6 +67,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     {
         $validator = new ValidationService($config, $errors, 'host-config');
         $validator->hasKey('rootFolder', 'Missing rootFolder, should point to the root of your application');
+        $validator->checkForValidFolderName('rootFolder');
     }
 
     public function setHostConfig(HostConfig $config)

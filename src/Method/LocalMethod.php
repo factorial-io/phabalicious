@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Method;
 
-
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -38,14 +37,15 @@ class LocalMethod extends BaseMethod implements MethodInterface
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
         $validation = new ValidationService($config, $errors, 'host-config');
+        $validation->checkForValidFolderName('rootFolder');
         $validation->deprecate([
             'runLocally' => 'Please add `local` to your `needs`!'
         ]);
     }
 
+
     public function createShellProvider(array $host_config)
     {
         return ShellProviderFactory::create(LocalShellProvider::PROVIDER_NAME, $this->logger);
     }
-
 }
