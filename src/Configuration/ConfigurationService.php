@@ -3,6 +3,7 @@
 namespace Phabalicious\Configuration;
 
 use Composer\Semver\Comparator;
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MismatchedVersionException;
@@ -81,7 +82,7 @@ class ConfigurationService
      * @throws FabfileNotReadableException
      * @throws MismatchedVersionException
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws BlueprintTemplateNotFoundException
      */
     public function readConfiguration(string $path, string $override = ''): bool
     {
@@ -379,11 +380,12 @@ class ConfigurationService
     /**
      * @param string $config_name
      *
-     * @return \Phabalicious\Configuration\HostConfig
+     * @return HostConfig
      * @throws MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\ValidationFailedException
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws BlueprintTemplateNotFoundException
      */
     public function getHostConfig(string $config_name)
     {
@@ -398,6 +400,10 @@ class ConfigurationService
         }
 
         $data = $this->hosts[$config_name];
+
+        if (isset($data['applyBlueprint'])) {
+            $data = $this->handleApplyBlueprint($config_name, $data);
+        }
         $data = $this->validateHostConfig($config_name, $data);
 
         $this->cache[$cid] = $data;
@@ -407,11 +413,11 @@ class ConfigurationService
     /**
      * @param string $blueprint
      * @param string $identifier
-     * @return \Phabalicious\Configuration\HostConfig
+     * @return HostConfig
      * @throws MismatchedVersionException
      * @throws ShellProviderNotFoundException
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws BlueprintTemplateNotFoundException
      */
     public function getHostConfigFromBlueprint(string $blueprint, string $identifier)
     {
@@ -671,5 +677,37 @@ class ConfigurationService
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * @param string $config_name
+     * @param $data
+     * @return array
+     * @throws MismatchedVersionException
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     */
+    protected function handleApplyBlueprint(string $config_name, $data): array
+    {
+        $errors = new ValidationErrorBag();
+        $validation = new ValidationService($data['applyBlueprint'], $errors, 'applyBlueprint');
+        $validation->hasKeys([
+            'config' => 'The applyBlueprint needs a config',
+            'variant' => 'The applyBlueprint needs a variant',
+        ]);
+        if ($errors->hasErrors()) {
+            throw new ValidationFailedException($errors);
+        }
+        $add_data = $this->getHostConfigFromBlueprint(
+            $data['applyBlueprint']['config'],
+            $data['applyBlueprint']['variant']
+        );
+        unset($data['applyBlueprint']);
+
+        $data = $this->mergeData($add_data->raw(), $data);
+        $data['configName'] = $config_name;
+
+        return $data;
     }
 }

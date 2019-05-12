@@ -97,6 +97,19 @@ blueprints:
 
 will create 4 new configurations using the blueprint-config `mbb`.
 
+**Note**
+
+You can even create a new host-config from a blueprint and override some of its setting:
+
+```
+hosts:
+  myHost:
+    applyBlueprint:
+      config: my-blueprint-config
+      variant: my-variable
+    otherSettings...
+```
+
 ## list
 
 ```shell
