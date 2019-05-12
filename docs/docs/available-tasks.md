@@ -104,7 +104,7 @@ You can even create a new host-config from a blueprint and override some of its 
 ```
 hosts:
   myHost:
-    applyBlueprint:
+    inheritFromBluePrint:
       config: my-blueprint-config
       variant: my-variable
     otherSettings...

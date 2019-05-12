@@ -401,8 +401,8 @@ class ConfigurationService
 
         $data = $this->hosts[$config_name];
 
-        if (isset($data['applyBlueprint'])) {
-            $data = $this->handleApplyBlueprint($config_name, $data);
+        if (isset($data['inheritFromBlueprint'])) {
+            $data = $this->inheritFromBlueprint($config_name, $data);
         }
         $data = $this->validateHostConfig($config_name, $data);
 
@@ -688,22 +688,22 @@ class ConfigurationService
      * @throws ValidationFailedException
      * @throws BlueprintTemplateNotFoundException
      */
-    protected function handleApplyBlueprint(string $config_name, $data): array
+    protected function inheritFromBlueprint(string $config_name, $data): array
     {
         $errors = new ValidationErrorBag();
-        $validation = new ValidationService($data['applyBlueprint'], $errors, 'applyBlueprint');
+        $validation = new ValidationService($data['inheritFromBlueprint'], $errors, 'inheritFromBlueprint');
         $validation->hasKeys([
-            'config' => 'The applyBlueprint needs a config',
-            'variant' => 'The applyBlueprint needs a variant',
+            'config' => 'The inheritFromBlueprint needs to know which blueprint config to use.',
+            'variant' => 'The inheritFromBlueprint needs a variant',
         ]);
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
         }
         $add_data = $this->getHostConfigFromBlueprint(
-            $data['applyBlueprint']['config'],
-            $data['applyBlueprint']['variant']
+            $data['inheritFromBlueprint']['config'],
+            $data['inheritFromBlueprint']['variant']
         );
-        unset($data['applyBlueprint']);
+        unset($data['inheritFromBlueprint']);
 
         $data = $this->mergeData($add_data->raw(), $data);
         $data['configName'] = $config_name;

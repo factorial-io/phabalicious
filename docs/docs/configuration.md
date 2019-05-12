@@ -128,7 +128,7 @@ This will print all host configuration for the host `staging`.
     * `local`: all commands are run locally
     * `ssh`: all commands are run via a ssh-shell
     * `docker-exec` all commands are run via docker-exec.
-* `applyBlueprint` this will apply the blueprint to the current configuration. This makes it easy to base the common configuration on a blueprint and just override some parts of it.
+* `inheritFromBlueprint` this will apply the blueprint to the current configuration. This makes it easy to base the common configuration on a blueprint and just override some parts of it.
     * `config` this is the blueprint-configuration used as a base.
     * `variant` this is the variant to pass to the blueprint
 
@@ -426,7 +426,7 @@ You can even reference external files to inherit from:
 hosts:
   fileExample:
     inheritsFrom: ./path/to/config/file.yaml
-  httpExapme:
+  httpExample:
     inheritsFrom: http://my.tld/path/to/config_file.yaml
 ```
 
@@ -440,5 +440,15 @@ inheritsFrom:
   - ./drupal.yaml
 ```
 
+### Inherit from a blueprint
 
+You can even inherit from a blueprint configuration for a host-config. This host-config can then override specific parts.
+
+```
+host:
+  demo:
+    inheritsFromBlueprint:
+      config: my-blueprint-config
+      varian: the-variant
+```
 
