@@ -27,3 +27,9 @@ hosts:
     inheritsFrom:
       - hostA
       - ./hosts/host-b.yml
+
+  hostDeprecated:
+    type: dev
+    inheritsFrom:
+      - hostA
+      - ./hosts/host-deprecated.yml

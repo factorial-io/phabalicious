@@ -295,6 +295,14 @@ class ConfigurationService
                     $resource
                 ));
             }
+            if (!empty($add_data['deprecated'])) {
+                $this->logger->warning(sprintf(
+                    'Inherited data from `%s` is deprecated: %s',
+                    $resource,
+                    $add_data['deprecated']
+                ));
+                unset($add_data['deprecated']);
+            }
             if ($add_data) {
                 if (isset($add_data['inheritsFrom'])) {
                     $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder);

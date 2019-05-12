@@ -1,0 +1,5 @@
+deprecated: "Please use a newer version of this file!"
+fromFile3:
+  value1: 123
+  value2:
+    value: 456
