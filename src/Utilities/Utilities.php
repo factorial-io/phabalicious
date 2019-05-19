@@ -5,7 +5,7 @@ namespace Phabalicious\Utilities;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.0.10';
+    const FALLBACK_VERSION = '3.0.11';
 
     public static function mergeData(array $data, array $override_data): array
     {
@@ -116,7 +116,7 @@ class Utilities
 
     public static function prependRootFolder($rootFolder, $subfolder)
     {
-        if (strpos($rootFolder, $subfolder) === false) {
+        if (strpos($subfolder, $rootFolder) === false) {
             return $rootFolder . $subfolder;
         }
 
