@@ -1,11 +1,17 @@
 # Changelog
 
+## 3.0.11 / 2019-05-19
+
+### Fixed
+
+  * Fix bug when using inheritsFromBlueprint
+
 ## 3.0.10 / 2019-05-19
 
 ### Added
 
   * Add new inheritFromBlueprint config, so a host-config can inherit from a blueprinted config
-				
+
 				hosts:
 				  local:
 				    inheritFromBlueprint:
