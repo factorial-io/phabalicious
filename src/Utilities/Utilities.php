@@ -116,7 +116,7 @@ class Utilities
 
     public static function prependRootFolder($rootFolder, $subfolder)
     {
-        if (strpos($rootFolder, $subfolder) === false) {
+        if (strpos($subfolder, $rootFolder) === false) {
             return $rootFolder . $subfolder;
         }
 
