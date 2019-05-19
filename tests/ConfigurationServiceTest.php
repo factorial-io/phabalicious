@@ -4,13 +4,13 @@ namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\DrushMethod;
-use Phabalicious\Method\GitMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\SshMethod;
+use Phabalicious\Utilities\TestableLogger;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Psr\Log\Test\LoggerInterfaceTest;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Application;
 
 class ConfigurationServiceTest extends TestCase
@@ -20,6 +20,7 @@ class ConfigurationServiceTest extends TestCase
      * @var ConfigurationService
      */
     private $config;
+    /** @var TestableLogger */
     private $logger;
 
     public function setUp()
@@ -30,7 +31,8 @@ class ConfigurationServiceTest extends TestCase
         $application->expects($this->any())
             ->method('getVersion')
             ->will($this->returnValue('3.0.0'));
-        $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+
+        $logger = new TestableLogger();
         $this->logger = $logger;
         $this->config = new ConfigurationService($application, $logger);
 
@@ -47,7 +49,10 @@ class ConfigurationServiceTest extends TestCase
 
     public function testCustomFabfile()
     {
-        $result = $this->config->readConfiguration(getcwd(), getcwd() . '/assets/custom-fabfile-tests/custom_fabfile.yaml');
+        $result = $this->config->readConfiguration(
+            getcwd(),
+            getcwd() . '/assets/custom-fabfile-tests/custom_fabfile.yaml'
+        );
         $this->assertTrue($result);
         $this->assertEquals($this->config->getFabfilePath(), getCwd() . '/assets/custom-fabfile-tests');
     }
@@ -85,7 +90,9 @@ class ConfigurationServiceTest extends TestCase
 
     public function testRegularFabfileInSubSubSubFolder()
     {
-        $result = $this->config->readConfiguration(getcwd() . '/assets/fabfile-hierarchy-tests/folder1/folder2/folder3');
+        $result = $this->config->readConfiguration(
+            getcwd() . '/assets/fabfile-hierarchy-tests/folder1/folder2/folder3'
+        );
         $this->assertTrue($result);
         $this->assertEquals($this->config->getFabfilePath(), getCwd() . '/assets/fabfile-hierarchy-tests');
     }
@@ -129,6 +136,13 @@ class ConfigurationServiceTest extends TestCase
         $this->assertEquals('another value', $this->config->getSetting('fromFile2.value2.value'));
     }
 
+    public function testDeprecatedInheritance()
+    {
+        $this->config->readConfiguration(getcwd() . '/assets/inherits');
+        $host_config = $this->config->getHostConfig('hostDeprecated');
+        $this->assertTrue($this->logger->containsMessage(LogLevel::WARNING, 'Please use a newer version of this file'));
+    }
+
     public function testHostInheritance()
     {
         $this->config->readConfiguration(getcwd() . '/assets/inherits');
@@ -154,7 +168,10 @@ class ConfigurationServiceTest extends TestCase
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
         $this->config->readConfiguration(getcwd() . '/assets/executables-tests');
         $this->assertEquals('/usr/bin/drush', $this->config->getHostConfig('unaltered')['executables']['drush']);
-      $this->assertEquals('/usr/local/bin/drush', $this->config->getHostConfig('altered')['executables']['drush']);
+        $this->assertEquals(
+            '/usr/local/bin/drush',
+            $this->config->getHostConfig('altered')['executables']['drush']
+        );
         $this->assertEquals('/usr/bin/mysql', $this->config->getHostConfig('altered')['executables']['mysql']);
     }
 
@@ -169,6 +186,4 @@ class ConfigurationServiceTest extends TestCase
         $this->assertEquals('2.3.4.5', $ssh_tunnel['bridgeHost']);
         $this->assertEquals('5432', $ssh_tunnel['bridgePort']);
     }
-
-
 }

@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.0.10 / 2019-05-19
+
+### Added
+
+  * Add new inheritFromBlueprint config, so a host-config can inherit from a blueprinted config
+				
+				hosts:
+				  local:
+				    inheritFromBlueprint:
+				      config: <config-which-contains-blueprint>
+				      variant: <the-variant>
+	  Thats roughly the same as calling `phab --config=<config-which-contains-blueprint> --blueprint=<the-variant>` but using it in the fabfile allows you to override the config if needed.
+  * Introduce deprecated-flag for inherited data. Will display a warning, when found inside data
+  * Enhance output-command to support output of docker-, host- and applied blueprint config, and also of all global data.
+
+        phab -clocal output --what host # will output the complete host-config
+        phab -cremote output --what docker # will output the complete docker-host config
+        phab output --what global # will output all global settings
+
 ## 3.0.9 / 2019-05-11
 
 ### Fixed

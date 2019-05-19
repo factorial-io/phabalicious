@@ -3,7 +3,15 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\Exception\ShellProviderNotFoundException;
+use Phabalicious\Exception\ValidationFailedException;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Dumper;
@@ -18,6 +26,22 @@ class OutputCommand extends BaseCommand
             ->setName('output')
             ->setDescription('Outputs the configurarion as yaml')
             ->setHelp('Outputs the configuration as yaml');
+
+        $this->addOption(
+            'what',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'What to output: (blueprint|host|docker|global)',
+            'blueprint'
+        );
+
+        $this->addOption(
+            'format',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Format to use for output: (yaml|json)',
+            'yaml'
+        );
     }
 
     /**
@@ -25,39 +49,67 @@ class OutputCommand extends BaseCommand
      * @param OutputInterface $output
      * @return int|null
      * @throws BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws MissingHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $config = $input->getOption('config');
         $blueprint = $input->getOption('blueprint');
-        if (empty($blueprint)) {
-            throw new \InvalidArgumentException('The required option --blueprint is not set or is empty');
+        $what = strtolower($input->getOption('what'));
+
+        if (!in_array($what, ['blueprint', 'host', 'docker', 'global'])) {
+            throw new \InvalidArgumentException('Unknown option for `what`');
         }
 
-        if ($result = parent::execute($input, $output)) {
-            return $result;
+        $this->readConfiguration($input);
+        $data = [];
+        $title = '';
+
+        if ($what == 'blueprint') {
+            if (empty($blueprint)) {
+                throw new \InvalidArgumentException('The required option --blueprint is not set or is empty');
+            }
+            $template = $this->getConfiguration()->getBlueprints()->getTemplate($config);
+            $data = $template->expand($blueprint);
+            $data = [
+                $data['configName'] => $data
+            ];
+            $title = 'Output of applied blueprint `' . $config . '`';
+        } elseif ($what == 'host') {
+            $data = $this->getConfiguration()->getHostConfig($config)->raw();
+            $data = [
+                $data['configName'] => $data
+            ];
+            $title = 'Output of host-configuration `' . $config . '`';
+        } elseif ($what == 'docker') {
+            $data = $this->getConfiguration()->getDockerConfig($config)->raw();
+            $data = [ $config => $data];
+            $title = 'Output of docker-configuration `' . $config . '`';
+        } elseif ($what == 'global') {
+            $title = 'Output of global configuration `' . $config . '`';
+            $data = $this->getConfiguration()->getAllSettings();
         }
 
-        $template = $this->getConfiguration()->getBlueprints()->getTemplate($config);
-        $data = $template->expand($blueprint);
-        $data = [
-            $data['configName'] => $data
-        ];
-
-        $dumper = new Dumper(2);
+        if ($input->getOption('format') == 'json') {
+            $content = json_encode($data, JSON_PRETTY_PRINT);
+        } else {
+            $dumper = new Dumper(2);
+            $content = $dumper->dump($data, 10, 2);
+        }
 
         $io = new SymfonyStyle($input, $output);
         if ($output->isDecorated()) {
-            $io->title('Output of applied blueprint `' . $config . '`');
+            $io->title($title);
         }
 
         $io->block(
-            $dumper->dump($data, 10, 2),
+            $content,
             null,
             null,
             ''
