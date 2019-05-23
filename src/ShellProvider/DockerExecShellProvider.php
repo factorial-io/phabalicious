@@ -43,7 +43,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
             (empty($options['tty']) ? '-i' : '-it'),
             $this->hostConfig['docker']['name'],
         ];
-        if (!empty($options['tty'])) {
+        if (!empty($options['tty']) && empty($options['shell_provided'])) {
             $command[] = $this->hostConfig['shellExecutable'];
         }
 
@@ -85,5 +85,4 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
 
         return $this->runProcess($command, $context, false, true);
     }
-
 }
