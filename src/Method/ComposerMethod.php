@@ -78,6 +78,11 @@ class ComposerMethod extends BaseMethod implements MethodInterface
         $this->runCommand($host_config, $context, $command);
     }
 
+    public function installPrepare(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $this->resetPrepare($host_config, $context);
+    }
+
     public function composer(HostConfig $host_config, TaskContextInterface $context)
     {
         $command = $context->get('command');
