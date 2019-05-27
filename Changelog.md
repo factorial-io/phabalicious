@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.12 / 2019-05-27
+
+### Fixed
+
+  * Run composer install on `installPrepare`
+
 ## 3.0.11 / 2019-05-19
 
 ### Fixed
