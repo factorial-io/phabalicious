@@ -86,7 +86,13 @@ class BlueprintConfiguration
         foreach ($blueprints as $data) {
             $template = $this->getTemplate($data['configName']);
             foreach ($data['variants'] as $variant) {
-                $this->configuration->addHost($template->expand($variant));
+                $host = $template->expand($variant);
+                if (!$this->configuration->hasHostConfig($host['configName'])) {
+                    $this->configuration->addHost($template->expand($variant));
+                }
+                else {
+                  $this->configuration->getLogger()->notice('There\'s an existing config with that name, skipping creating one from blueprint');
+                }
             }
         }
     }
