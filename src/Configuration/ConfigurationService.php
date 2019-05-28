@@ -710,4 +710,8 @@ class ConfigurationService
 
         return $data;
     }
+
+  public function hasHostConfig($configName) {
+      return !empty($this->hosts[$configName]);
+  }
 }

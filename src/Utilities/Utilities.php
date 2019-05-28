@@ -5,7 +5,7 @@ namespace Phabalicious\Utilities;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.0.11';
+    const FALLBACK_VERSION = '3.0.14';
 
     public static function mergeData(array $data, array $override_data): array
     {
