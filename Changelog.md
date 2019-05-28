@@ -1,10 +1,10 @@
 # Changelog
 
-### 3.0.14 / 2019-05-28
+## 3.0.14 / 2019-05-28
 
 ### Fixed
 
-  * Merge tag '3.0.14' into develop
+ * Fix bug with variants overriding existing configuration
 
 ## 3.0.12 / 2019-05-27
 
