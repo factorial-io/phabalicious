@@ -655,7 +655,7 @@ class ConfigurationService
         $validation->hasKey('rootFolder', 'The rootFolder to start with');
         $validation->hasKey('tmpFolder', 'The rootFolder to use');
         if ($data['rootFolder'][0] === '.') {
-          $data['rootFolder'] = realpath($this->getFabfilePath() . '/' . $data['rootFolder']);
+            $data['rootFolder'] = realpath($this->getFabfilePath() . '/' . $data['rootFolder']);
         }
 
         if ($errors->hasErrors()) {
@@ -719,7 +719,8 @@ class ConfigurationService
         return $data;
     }
 
-  public function hasHostConfig($configName) {
-      return !empty($this->hosts[$configName]);
-  }
+    public function hasHostConfig($configName)
+    {
+        return !empty($this->hosts[$configName]);
+    }
 }

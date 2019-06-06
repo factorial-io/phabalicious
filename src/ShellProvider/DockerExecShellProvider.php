@@ -3,6 +3,7 @@
 namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -30,7 +31,11 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
         ]);
         if (!$errors->hasErrors()) {
             $validation = new ValidationService($config['docker'], $errors, 'host:docker');
-            $validation->hasKey('name', 'The name of the docker-container to use');
+            if (empty($config['docker']['service'])) {
+                $validation->hasKey('name', 'The name of the docker-container to use');
+            } else {
+                $validation->hasKey('service', 'The service of the docker-compose to use');
+            }
         }
     }
 

@@ -93,9 +93,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
      */
-    public function getDockerConfig(HostConfig $host_config, TaskContextInterface $context)
+    public static function getDockerConfig(HostConfig $host_config, ConfigurationService $config)
     {
-        $config = $context->getConfigurationService()->getDockerConfig($host_config['docker']['configuration']);
+        $config = $config->getDockerConfig($host_config['docker']['configuration']);
         $config['executables'] = $host_config['executables'];
         return $config;
     }
@@ -143,7 +143,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
 
         /** @var DockerConfig $docker_config */
-        $docker_config = $this->getDockerConfig($host_config, $context);
+        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
         $tasks = $docker_config['tasks'];
 
         if ($silent && empty($tasks[$task])) {
@@ -201,8 +201,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
         $max_tries = 10;
         $tries = 0;
-        $docker_config = $this->getDockerConfig($hostconfig, $context);
-        $container_name = $this->getDockerContainerName($hostconfig, $context);
+        $docker_config = $this->getDockerConfig($hostconfig, $context->getConfigurationService());
+        $container_name = $this->getDockerContainerName($hostconfig, $context->getConfigurationService());
         $shell = $docker_config->shell();
 
         if (!$this->isContainerRunning($docker_config, $container_name)) {
@@ -296,7 +296,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             ];
         }
 
-        $docker_config = $this->getDockerConfig($hostconfig, $context);
+        $docker_config = $this->getDockerConfig($hostconfig, $context->getConfigurationService());
         $root_folder = $docker_config['rootFolder'] . '/' . $hostconfig['docker']['projectFolder'];
 
         /** @var ShellProviderInterface $shell */
@@ -323,7 +323,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
 
         if (count($files) > 0) {
-            $container_name = $this->getDockerContainerName($hostconfig, $context);
+            $container_name = $this->getDockerContainerName($hostconfig, $context->getConfigurationService());
             if (!$this->isContainerRunning($docker_config, $container_name)) {
                 throw new \RuntimeException(sprintf(
                     'Docker container %s not running, check your `host.docker.name` configuration!',
@@ -408,11 +408,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
         if (!empty($this->cache[$host_config['configName']])) {
             return $this->cache[$host_config['configName']];
         }
-        $docker_config = $this->getDockerConfig($host_config, $context);
+        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
         $shell = $docker_config->shell();
         $scoped_loglevel = new ScopedLogLevel($shell, LogLevel::DEBUG);
         try {
-            $container_name = $this->getDockerContainerName($host_config, $context);
+            $container_name = $this->getDockerContainerName($host_config, $context->getConfigurationService());
         } catch (\RuntimeException $e) {
             return false;
         }
@@ -445,10 +445,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
      */
     public function startRemoteAccess(HostConfig $host_config, TaskContextInterface $context)
     {
-        $docker_config = $this->getDockerConfig($host_config, $context);
+        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
         $this->getIp($host_config, $context);
         if (is_a($docker_config->shell(), 'SshShellProvider')) {
-            $context->setResult('config', $this->getDockerConfig($host_config, $context));
+            $context->setResult('config', $docker_config);
         }
     }
 
@@ -475,7 +475,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
     public function appCheckExisting(HostConfig $host_config, TaskContextInterface $context)
     {
         // Set outer-shell to the one provided by the docker-configuration.
-        $docker_config = $this->getDockerConfig($host_config, $context);
+        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
         $context->setResult('outerShell', $docker_config->shell());
         $context->setResult('installDir', $docker_config['rootFolder'] .
             '/' . $host_config['docker']['projectFolder']);
@@ -527,7 +527,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        $docker_config = $this->getDockerConfig($host_config, $context);
+        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
         $shell = $docker_config->shell();
 
         if (isset($docker_config['tasks'][$current_stage['stage']]) ||
@@ -545,13 +545,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @throws MissingDockerHostConfigException
      * @throws ValidationFailedException
      */
-    private function getDockerContainerName(HostConfig $host_config, TaskContextInterface $context)
+    public static function getDockerContainerName(HostConfig $host_config, ConfigurationService $config)
     {
         if (!empty($host_config['docker']['name'])) {
             return $host_config['docker']['name'];
         }
         if ($composer_service = $host_config['docker']['service']) {
-            $docker_config = $this->getDockerConfig($host_config, $context);
+            $docker_config = self::getDockerConfig($host_config, $config);
             $shell = $docker_config->shell();
             $cwd = $shell->getWorkingDir();
             $shell->cd($docker_config['rootFolder'] . '/' . $host_config['docker']['projectFolder']);
@@ -573,6 +573,23 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 'Could not get the name of the docker container running the service `%s`',
                 $composer_service
             ));
+        }
+    }
+
+    public function shell(HostConfig $host_config, TaskContextInterface $context)
+    {
+        if (empty($host_config['docker']['name'])) {
+            try {
+                $config = $host_config['docker'];
+                $config['name'] = self::getDockerContainerName(
+                    $host_config,
+                    $context->getConfigurationService()
+                );
+                $host_config['docker'] = $config;
+            } catch (MismatchedVersionException $e) {
+            } catch (MissingDockerHostConfigException $e) {
+            } catch (ValidationFailedException $e) {
+            }
         }
     }
 }

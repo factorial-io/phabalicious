@@ -26,7 +26,6 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
     protected $captureOutput = false;
 
-
     public function getName(): string
     {
         return 'local';
