@@ -90,4 +90,19 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
 
         return $this->runProcess($command, $context, false, true);
     }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function wrapCommandInLoginShell(array $command)
+    {
+        array_unshift(
+            $command,
+            '/bin/bash',
+            '--login',
+            '-c'
+        );
+        return $command;
+    }
 }
