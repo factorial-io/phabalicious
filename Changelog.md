@@ -1,10 +1,21 @@
 # Changelog
 
+## 3.0.15 / 2019-06-07
+
+### Changed
+
+  * Enhance support for docker shells
+  * Rework shell execution for docker-exec
+  * Allow relative paths for docker rootFolder. Add sleep to reduce processor drain
+
+### Fixed:
+  * Fix default values
+
 ## 3.0.14 / 2019-05-28
 
 ### Fixed
 
- * Fix bug with variants overriding existing configuration
+  * Fix bug with variants overriding existing configuration
 
 ## 3.0.12 / 2019-05-27
 
