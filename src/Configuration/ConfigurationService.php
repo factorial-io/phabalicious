@@ -377,16 +377,17 @@ class ConfigurationService
         return $contents;
     }
 
-    /**
-     * @param string $config_name
-     *
-     * @return HostConfig
-     * @throws MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\ValidationFailedException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws BlueprintTemplateNotFoundException
-     */
+  /**
+   * @param string $config_name
+   *
+   * @return HostConfig
+   * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+   * @throws \Phabalicious\Exception\FabfileNotReadableException
+   * @throws \Phabalicious\Exception\MismatchedVersionException
+   * @throws \Phabalicious\Exception\MissingHostConfigException
+   * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+   * @throws \Phabalicious\Exception\ValidationFailedException
+   */
     public function getHostConfig(string $config_name)
     {
         $cid = 'host:' . $config_name;
@@ -410,15 +411,17 @@ class ConfigurationService
         return $data;
     }
 
-    /**
-     * @param string $blueprint
-     * @param string $identifier
-     * @return HostConfig
-     * @throws MismatchedVersionException
-     * @throws ShellProviderNotFoundException
-     * @throws ValidationFailedException
-     * @throws BlueprintTemplateNotFoundException
-     */
+  /**
+   * @param string $blueprint
+   * @param string $identifier
+   *
+   * @return HostConfig
+   * @throws MismatchedVersionException
+   * @throws ShellProviderNotFoundException
+   * @throws ValidationFailedException
+   * @throws BlueprintTemplateNotFoundException
+   * @throws \Phabalicious\Exception\FabfileNotReadableException
+   */
     public function getHostConfigFromBlueprint(string $blueprint, string $identifier)
     {
         $cid = 'blueprint:' . $blueprint . ':' . $identifier;
@@ -443,14 +446,16 @@ class ConfigurationService
         return $data;
     }
 
-    /**
-     * @param $config_name
-     * @param $data
-     * @return HostConfig
-     * @throws MismatchedVersionException
-     * @throws ShellProviderNotFoundException
-     * @throws ValidationFailedException
-     */
+  /**
+   * @param $config_name
+   * @param $data
+   *
+   * @return HostConfig
+   * @throws MismatchedVersionException
+   * @throws ShellProviderNotFoundException
+   * @throws ValidationFailedException
+   * @throws \Phabalicious\Exception\FabfileNotReadableException
+   */
     private function validateHostConfig($config_name, $data)
     {
         $data = $this->resolveInheritance($data, $this->hosts);
@@ -649,6 +654,9 @@ class ConfigurationService
         $validation->hasKey('shellProvider', 'The name of the shell-provider to use');
         $validation->hasKey('rootFolder', 'The rootFolder to start with');
         $validation->hasKey('tmpFolder', 'The rootFolder to use');
+        if ($data['rootFolder'][0] === '.') {
+            $data['rootFolder'] = realpath($this->getFabfilePath() . '/' . $data['rootFolder']);
+        }
 
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
@@ -711,7 +719,8 @@ class ConfigurationService
         return $data;
     }
 
-  public function hasHostConfig($configName) {
-      return !empty($this->hosts[$configName]);
-  }
+    public function hasHostConfig($configName)
+    {
+        return !empty($this->hosts[$configName]);
+    }
 }

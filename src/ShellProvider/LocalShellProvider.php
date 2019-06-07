@@ -26,7 +26,6 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
     protected $captureOutput = false;
 
-
     public function getName(): string
     {
         return 'local';
@@ -148,6 +147,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $result = '';
         while ((strpos($result, self::RESULT_IDENTIFIER) === false) && !$this->process->isTerminated()) {
             $result .= $this->process->getIncrementalOutput();
+            if (!$this->process->isTerminated()) {
+                usleep(1000 * 100);
+            }
         }
         if ($this->process->isTerminated()) {
             $this->logger->log($this->errorLogLevel->get(), 'Local shell terminated unexpected!');

@@ -94,8 +94,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
             : $configuration_service->getSetting('drushVersion', 8);
 
         $config['supportsZippedBackups'] = true;
-        $config['siteFolder'] = 'sites/default';
-        $config['filesFolder'] = 'sites/default/files';
+        $config['siteFolder'] = '/sites/default';
+        $config['filesFolder'] = '/sites/default/files';
 
         return $config;
     }
