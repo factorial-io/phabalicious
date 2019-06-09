@@ -68,4 +68,12 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
     public function createShellProcess(array $command = [], array $options = []): Process;
 
     public function createTunnelProcess(HostConfig $target_config, array $prefix = []);
+
+    /**
+     * Wrap a command to execute into a login shell.
+     *
+     * @param array $command
+     * @return array
+     */
+    public function wrapCommandInLoginShell(array $command);
 }
