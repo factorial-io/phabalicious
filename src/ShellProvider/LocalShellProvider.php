@@ -256,4 +256,17 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         throw new \InvalidArgumentException('Local shells cannot handle tunnels!');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function wrapCommandInLoginShell(array $command)
+    {
+        return [
+            '/bin/bash',
+            '--login',
+            '-c',
+            '\'' . implode(' ', $command). '\'',
+        ];
+    }
 }

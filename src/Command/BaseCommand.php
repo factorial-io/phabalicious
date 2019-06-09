@@ -183,12 +183,7 @@ abstract class BaseCommand extends BaseOptionsCommand
         /** @var Process $process */
         if (!empty($command)) {
             $options['shell_provided'] = true;
-            array_unshift(
-                $command,
-                '/bin/bash',
-                '--login',
-                '-c'
-            );
+            $command = $shell->wrapCommandInLoginShell($command);
         }
         $process = $shell->createShellProcess($command, $options);
         $stdin = fopen('php://stdin', 'r');
