@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.16 / 2019-06-09
+
+### Fixed
+
+  * Fix introduced regression when running a drush command
+
 ## 3.0.15 / 2019-06-07
 
 ### Changed
@@ -9,6 +15,7 @@
   * Allow relative paths for docker rootFolder. Add sleep to reduce processor drain
 
 ### Fixed:
+
   * Fix default values
 
 ## 3.0.14 / 2019-05-28
