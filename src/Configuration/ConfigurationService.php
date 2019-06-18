@@ -212,11 +212,12 @@ class ConfigurationService
             $app_version = $this->application->getVersion();
             if (Comparator::greaterThan($required_version, $app_version)) {
                 throw new MismatchedVersionException(
-                    'Could not read file ' .
-                    $file .
-                    ' because of version mismatch: ' .
-                    $app_version . '<' .
-                    $required_version
+                    sprintf(
+                        'Could not read from %s because of version mismatch. %s is required, current app is %s',
+                        $file,
+                        $required_version,
+                        $app_version
+                    )
                 );
             }
         }

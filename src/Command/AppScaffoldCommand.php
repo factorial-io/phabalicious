@@ -2,8 +2,10 @@
 
 namespace Phabalicious\Command;
 
+use Composer\Semver\Comparator;
 use http\Exception\RuntimeException;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
@@ -93,6 +95,8 @@ class AppScaffoldCommand extends BaseOptionsCommand
      *
      * @return int
      * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\FailedShellCommandException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
@@ -111,6 +115,21 @@ class AppScaffoldCommand extends BaseOptionsCommand
         }
         if (!$data) {
             throw new \InvalidArgumentException('Could not read yaml from ' . $url);
+        }
+
+        if ($data && isset($data['requires'])) {
+            $required_version = $data['requires'];
+            $app_version = $this->getApplication()->getVersion();
+            if (Comparator::greaterThan($required_version, $app_version)) {
+                throw new MismatchedVersionException(
+                    sprintf(
+                        'Could not read from %s because of version mismatch. %s is required, current app is %s',
+                        $url,
+                        $required_version,
+                        $app_version
+                    )
+                );
+            }
         }
 
         $data['base_path'] = dirname($url);
@@ -182,6 +201,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $context->set('variables', $tokens);
         $context->set('callbacks', [
             'copy_assets' => [$this, 'copyAssets'],
+            'log_message' => [$this, 'logMessage']
         ]);
         $context->set('scaffoldData', $data);
         $context->set('tokens', $tokens);
@@ -219,7 +239,24 @@ class AppScaffoldCommand extends BaseOptionsCommand
         }
 
         $context->io()->success('Scaffolding finished successfully!');
+        if ($data['successMessage']) {
+            $context->io()->block($data['successMessage'], 'Notes', 'fg=white;bg=blue', ' ', true);
+        }
         return 0;
+    }
+
+    public function logMessage(TaskContextInterface $context, $log_level, $log_message)
+    {
+        $log_level = strtolower($log_level);
+        if ($log_level == 'success') {
+            $context->io()->success($log_message);
+        } elseif ($log_level == 'warning') {
+            $context->io()->warning($log_message);
+        } elseif ($log_level == 'error') {
+            $context->io()->warning($log_message);
+        } else {
+            $context->io()->note($log_message);
+        }
     }
 
     /**
