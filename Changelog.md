@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.18 / 2019-06-18
+
+### Fixed
+
+  * Smaller enhancements regarding scaffolding
+  * Sleep only when shell did not produce any output
+
 ## 3.0.16 / 2019-06-09
 
 ### Fixed
