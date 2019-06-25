@@ -589,9 +589,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                     $context->getConfigurationService()
                 );
                 $host_config['docker'] = $config;
-            } catch (MismatchedVersionException $e) {
-            } catch (MissingDockerHostConfigException $e) {
-            } catch (ValidationFailedException $e) {
+            } catch (\Exception $e) {
             }
         }
     }

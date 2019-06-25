@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.19 / 2019-06-25
+
+### Fixed
+
+  * Fix warning
+  * Better errorhandling
+
 ## 3.0.18 / 2019-06-18
 
 ### Fixed

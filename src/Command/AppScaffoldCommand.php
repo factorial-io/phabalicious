@@ -239,7 +239,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         }
 
         $context->io()->success('Scaffolding finished successfully!');
-        if ($data['successMessage']) {
+        if (!empty($data['successMessage'])) {
             $context->io()->block($data['successMessage'], 'Notes', 'fg=white;bg=blue', ' ', true);
         }
         return 0;
