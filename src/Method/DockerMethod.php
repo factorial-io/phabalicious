@@ -256,6 +256,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
     {
         $files = [];
         $temp_files = [];
+        $temp_nam_prefix = 'phab-' . md5($hostconfig['configName'] . mt_rand());
+
 
         // Backwards-compatibility:
         if ($file = $context->getConfigurationService()->getSetting('dockerAuthorizedKeyFile')) {
@@ -304,7 +306,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         // If no authorized_keys file is set, then add all public keys from the agent into the container.
         if (empty($files['/root/.ssh/authorized_keys'])) {
-            $file = tempnam("/tmp", "phabalicious");
+            $file = tempnam("/tmp", $temp_nam_prefix);
 
             try {
                 $result = $shell->run(sprintf('#!ssh-add -L > %s', $file));
@@ -336,7 +338,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 if ((substr($data['source'], 0, 7) == 'http://') ||
                     (substr($data['source'], 0, 8) == 'https://')) {
                     $content = $context->getConfigurationService()->readHttpResource($data['source']);
-                    $temp_file = tempnam("/tmp", "phabalicious");
+                    $temp_file = tempnam("/tmp", $temp_nam_prefix);
                     file_put_contents($temp_file, $content);
                     $data['source'] = $temp_file;
                     $temp_files[] = $temp_file;
@@ -360,7 +362,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                     }
                 }
 
-                $temp_file = $docker_config['tmpFolder'] . '/' . 'phab.tmp.' . basename($data['source']);
+                $temp_file = $docker_config['tmpFolder'] . '/' . $temp_nam_prefix . '-' . basename($data['source']);
                 $shell->putFile($data['source'], $temp_file, $context);
 
                 $shell->run(sprintf('#!docker cp %s %s:%s', $temp_file, $container_name, $dest));
