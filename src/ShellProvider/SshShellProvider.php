@@ -268,4 +268,17 @@ class SshShellProvider extends LocalShellProvider
         }
         return parent::copyFileFrom($from_shell, $source_file_name, $target_file_name, $context, $verbose);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function wrapCommandInLoginShell(array $command)
+    {
+        return [
+            '/bin/bash',
+            '--login',
+            '-c',
+            '\'' . implode(' ', $command). '\'',
+        ];
+    }
 }

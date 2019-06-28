@@ -263,11 +263,12 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      */
     public function wrapCommandInLoginShell(array $command)
     {
-        return [
+        array_unshift(
+            $command,
             '/bin/bash',
             '--login',
-            '-c',
-            '\'' . implode(' ', $command). '\'',
-        ];
+            '-c'
+        );
+        return $command;
     }
 }
