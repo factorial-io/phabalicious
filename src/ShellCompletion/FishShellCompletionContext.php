@@ -22,7 +22,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 class FishShellCompletionContext extends CompletionContext
 {
-    /** @var ConfigurationService */
+    /** @var ConfigurationService|null */
     protected $configuration;
 
     protected $configName;

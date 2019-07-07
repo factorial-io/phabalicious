@@ -32,6 +32,7 @@ class FishShellCompletionDescriptor extends Descriptor
     protected function describeInputArgument(InputArgument $argument, array $options = array())
     {
         global $argv;
+        /** @var Command $command */
         $command = $options['command'];
         if (!$command instanceof CompletionAwareInterface) {
             return;
@@ -40,7 +41,6 @@ class FishShellCompletionDescriptor extends Descriptor
             "complete -c phab -n '__fish_seen_subcommand_from " . $command->getName() .
             "' -f"
         );
-        global $argv;
 
         $this->output->write(
             " -a '(__fish_phab_get_arguments " .
@@ -64,7 +64,7 @@ class FishShellCompletionDescriptor extends Descriptor
      */
     protected function describeInputOption(InputOption $option, array $options = array())
     {
-        global $argv;
+        /** @var Command $command */
         $command = $options['command'];
         $this->output->write(
             "complete -c phab -n '__fish_seen_subcommand_from " . $command->getName() .

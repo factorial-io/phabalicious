@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.0.20 / 2019-07-07
+
+### Fixed
+
+  * Show error-message if shell could not be initialized. Fixes #54
+  * Satisfy phpstan and add it as a new precommit-hook
+  * Fix drush and other commands when using local shell provider
+  * Prevent filename collision when running docker copySSHKeys, fixes #52
+  * Fix issue with special characters in the pw
+  * Use latest version of stecman/symfony-console-completion
+
 ## 3.0.19 / 2019-06-25
 
 ### Fixed

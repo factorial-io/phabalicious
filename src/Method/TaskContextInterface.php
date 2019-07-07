@@ -24,7 +24,7 @@ interface TaskContextInterface
 
     public function setOutput(OutputInterface $output);
 
-    public function getOutput(): OutputInterface;
+    public function getOutput(): ?OutputInterface;
 
     public function setCommand(BaseOptionsCommand $command);
 
@@ -42,6 +42,11 @@ interface TaskContextInterface
 
     public function addResult(string $key, array $rows);
 
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
     public function getResult($key, $default = null);
 
     public function getResults(): array;
@@ -49,9 +54,9 @@ interface TaskContextInterface
     public function clearResults();
 
     /**
-     * @return ShellProviderInterface
+     * @return ShellProviderInterface|null
      */
-    public function getShell();
+    public function getShell() : ?ShellProviderInterface;
 
     public function setShell(ShellProviderInterface $shell);
 

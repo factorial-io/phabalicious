@@ -17,7 +17,7 @@ class MethodFactory
     protected $methods = [];
 
     /**
-     * @var \Phabalicious\Configuration\ConfigurationService
+     * @var ConfigurationService
      */
     protected $configuration;
 
@@ -31,7 +31,7 @@ class MethodFactory
     /**
      * MethodFactory constructor.
      *
-     * @param \Phabalicious\Configuration\ConfigurationService $configuration
+     * @param ConfigurationService $configuration
      * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(ConfigurationService $configuration, LoggerInterface $logger)
@@ -58,7 +58,7 @@ class MethodFactory
      * @param string $name
      *
      * @return \Phabalicious\Method\MethodInterface
-     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws MethodNotFoundException
      */
     public function getMethod(string $name): MethodInterface
     {
@@ -81,11 +81,11 @@ class MethodFactory
      *
      * @param string $task_name
      * @param \Phabalicious\Configuration\HostConfig $configuration
-     * @param \Phabalicious\Method\TaskContextInterface|NULL $context
+     * @param TaskContextInterface|NULL $context
      * @param array $nextTasks
      *
-     * @return \Phabalicious\Method\TaskContext|\Phabalicious\Method\TaskContextInterface
-     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @return \Phabalicious\Method\TaskContext|TaskContextInterface
+     * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
      */
     public function runTask(
@@ -114,12 +114,12 @@ class MethodFactory
     /**
      * Run a task (implementation).
      *
-     * @param $task_name
+     * @param string $task_name
      * @param HostConfig $configuration
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param $fallback_allowed
+     * @param TaskContextInterface $context
+     * @param bool $fallback_allowed
      *
-     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
      */
     protected function runTaskImpl(
@@ -155,7 +155,7 @@ class MethodFactory
      * @param \Phabalicious\Method\MethodInterface $method
      * @param string $task_name
      * @param \Phabalicious\Configuration\HostConfig $configuration
-     * @param \Phabalicious\Method\TaskContextInterface $in_context
+     * @param TaskContextInterface $in_context
      * @param bool $optional
      * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
@@ -199,10 +199,10 @@ class MethodFactory
      * @param string $method_name
      * @param string $task_name
      * @param \Phabalicious\Configuration\HostConfig $configuration
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param TaskContextInterface $context
      *
-     * @return \Phabalicious\Method\TaskContextInterface
-     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @return TaskContextInterface
+     * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
      */
     public function call(
@@ -225,9 +225,9 @@ class MethodFactory
      * @param string $step_name
      * @param string $task_name
      * @param HostConfig $configuration
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param TaskContextInterface $context
      *
-     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws MethodNotFoundException
      */
     private function preflight(
         string $step_name,

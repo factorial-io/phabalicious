@@ -18,7 +18,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     const RESULT_IDENTIFIER = '##RESULT:';
     const PROVIDER_NAME = 'local';
 
-    /** @var Process */
+    /** @var Process|null */
     private $process;
 
     /** @var InputStream */
@@ -263,11 +263,12 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      */
     public function wrapCommandInLoginShell(array $command)
     {
-        return [
+        array_unshift(
+            $command,
             '/bin/bash',
             '--login',
-            '-c',
-            '\'' . implode(' ', $command). '\'',
-        ];
+            '-c'
+        );
+        return $command;
     }
 }

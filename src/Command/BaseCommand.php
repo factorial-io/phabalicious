@@ -4,6 +4,12 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
@@ -81,12 +87,12 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     /**
      * {@inheritdoc}
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws MismatchedVersionException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MissingDockerHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws BlueprintTemplateNotFoundException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -113,9 +119,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $this->dockerConfig = $this->getConfiguration()->getDockerConfig($docker_config_name);
             }
 
-            if ($this->hostConfig->shell()) {
-                $this->hostConfig->shell()->setOutput($output);
-            }
+            $this->hostConfig->shell()->setOutput($output);
 
             if ($input->getOption('variants')) {
                 $this->handleVariants($input->getOption('variants'), $input, $output);
@@ -173,12 +177,26 @@ abstract class BaseCommand extends BaseOptionsCommand
     }
 
     /**
+     * @param SymfonyStyle $io
      * @param ShellProviderInterface $shell
      * @param array $command
+     * @param bool $use_tty
      * @return Process
      */
-    protected function startInteractiveShell(ShellProviderInterface $shell, array $command = [], $use_tty = true)
-    {
+    protected function startInteractiveShell(
+        SymfonyStyle $io,
+        ShellProviderInterface $shell,
+        array $command = [],
+        $use_tty = true
+    ) {
+        $fn = function ($type, $buffer) use ($io) {
+            if ($type == Process::ERR) {
+                $io->error($buffer);
+            } else {
+                $io->write($buffer);
+            }
+        };
+
         $options = ['tty' => true];
         /** @var Process $process */
         if (!empty($command)) {
@@ -190,14 +208,15 @@ abstract class BaseCommand extends BaseOptionsCommand
         $process->setInput($stdin);
         $process->setTimeout(0);
         $process->setTty($use_tty);
-        $process->start();
-        $process->wait(function ($type, $buffer) {
-            if ($type == Process::ERR) {
-                fwrite(STDERR, $buffer);
-            } else {
-                fwrite(STDOUT, $buffer);
-            }
-        });
+        $process->start($fn);
+        $process->wait($fn);
+        if ($process->isTerminated() && !$process->isSuccessful()) {
+            $io->error(sprintf(
+                'Command %s failed with error %s',
+                $process->getCommandLine(),
+                $process->getExitCode()
+            ));
+        }
 
         return $process;
     }
@@ -205,7 +224,7 @@ abstract class BaseCommand extends BaseOptionsCommand
     /**
      * Handle variants.
      *
-     * @param $variants
+     * @param string $variants
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return bool|int

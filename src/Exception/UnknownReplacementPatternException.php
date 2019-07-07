@@ -6,15 +6,18 @@ class UnknownReplacementPatternException extends \Exception
 {
     private $patterns;
     private $offendingLine;
+
     /**
      * ValidationFailedException constructor.
      *
-     * @param \Phabalicious\Validation\ValidationErrorBagInterface $validation_errors
+     * @param string $offending_line
+     * @param array $patterns
      */
     public function __construct(string $offending_line, array $patterns)
     {
         $this->offendingLine = $offending_line;
         $this->patterns = $patterns;
+        parent::__construct();
     }
 
     public function getPatterns()
@@ -34,7 +37,8 @@ class UnknownReplacementPatternException extends \Exception
     /**
      * @return string
      */
-    public function getOffendingLine(): string {
+    public function getOffendingLine(): string
+    {
         return $this->offendingLine;
     }
 }

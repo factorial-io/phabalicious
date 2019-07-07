@@ -4,6 +4,11 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\Utilities;
@@ -30,12 +35,12 @@ class ListCommand extends BaseOptionsCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @return int
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -46,7 +51,7 @@ class ListCommand extends BaseOptionsCommand
         $io = new SymfonyStyle($input, $output);
         $io->title('List of found host-configurations:');
         $io->listing($hosts);
+
+        return 0;
     }
-
-
 }

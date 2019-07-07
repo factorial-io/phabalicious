@@ -52,7 +52,7 @@ class ShellCommand extends BaseCommand
 
         $output->writeln('<info>Starting shell on `' . $host_config['configName'] . '`');
 
-        $process = $this->startInteractiveShell($shell);
+        $process = $this->startInteractiveShell($context->io(), $shell);
         return $process->getExitCode();
     }
 }

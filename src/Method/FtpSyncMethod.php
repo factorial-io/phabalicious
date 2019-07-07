@@ -170,7 +170,7 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
         $command_file = $host_config['tmpFolder'] . '/lftp_commands_' . time() . '.x';
         $shell->run(sprintf('touch %s', $command_file));
         $shell->run(sprintf(
-            'echo "open -u %s,%s -p%s %s" >> %s',
+            "echo 'open -u %s,%s -p%s %s' >> %s",
             $host_config['ftp']['user'],
             $host_config['ftp']['password'],
             $host_config['ftp']['port'],

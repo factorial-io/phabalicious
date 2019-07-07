@@ -1,16 +1,17 @@
 <?php /** @noinspection PhpParamsInspection */
 
-/**
- * Created by PhpStorm.
- * User: stephan
- * Date: 16.09.18
- * Time: 14:36
- */
-
 namespace Phabalicious\Tests;
 
 use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\Exception\MissingScriptCallbackImplementation;
+use Phabalicious\Exception\ShellProviderNotFoundException;
+use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
@@ -34,11 +35,11 @@ class ScriptMethodTest extends TestCase
     private $context;
 
     /**
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws ValidationFailedException
      */
     public function setUp()
     {
@@ -62,11 +63,13 @@ class ScriptMethodTest extends TestCase
     }
 
     /**
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws MismatchedVersionException
+     * @throws MissingHostConfigException
+     * @throws MissingScriptCallbackImplementation
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
      */
     public function testRunScript()
     {
@@ -84,11 +87,13 @@ class ScriptMethodTest extends TestCase
     }
 
     /**
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws MissingHostConfigException
+     * @throws MissingScriptCallbackImplementation
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
      */
     public function testExitOnExitCode()
     {
@@ -104,11 +109,13 @@ class ScriptMethodTest extends TestCase
     }
 
     /**
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws MissingHostConfigException
+     * @throws MissingScriptCallbackImplementation
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
      */
     public function testIgnoreExitCode()
     {
@@ -128,11 +135,13 @@ class ScriptMethodTest extends TestCase
     }
 
     /**
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws MissingHostConfigException
+     * @throws MissingScriptCallbackImplementation
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
      */
     public function testEnvironmentVariables()
     {
@@ -152,11 +161,13 @@ class ScriptMethodTest extends TestCase
     }
 
     /**
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws MissingHostConfigException
+     * @throws MissingScriptCallbackImplementation
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
      */
     public function testExpandedEnvironmentVariables()
     {
@@ -176,11 +187,13 @@ class ScriptMethodTest extends TestCase
     }
 
     /**
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws MissingHostConfigException
+     * @throws MissingScriptCallbackImplementation
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
      */
     public function testExpandedEnvironmentVariablesFromHostConfig()
     {
@@ -197,11 +210,10 @@ class ScriptMethodTest extends TestCase
     }
 
 
-    /**
-     * @expectedException \Phabalicious\Exception\MissingScriptCallbackImplementation
-     */
     public function testMissingCallbackImplementation()
     {
+        $this->expectException(MissingScriptCallbackImplementation::class);
+
         $this->context->set('callbacks', [
             'debug' => [$this, 'missingScriptDebugCallback'],
         ]);

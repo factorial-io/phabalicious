@@ -13,7 +13,7 @@ class SshShellProvider extends LocalShellProvider
 {
     const PROVIDER_NAME = 'ssh';
 
-    static protected $cachedSshPorts = [];
+    protected static $cachedSshPorts = [];
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
@@ -105,7 +105,7 @@ class SshShellProvider extends LocalShellProvider
     }
 
     /**
-     * @param $dir
+     * @param string $dir
      * @return bool
      * @throws \Exception
      */
@@ -267,5 +267,18 @@ class SshShellProvider extends LocalShellProvider
             }
         }
         return parent::copyFileFrom($from_shell, $source_file_name, $target_file_name, $context, $verbose);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function wrapCommandInLoginShell(array $command)
+    {
+        return [
+            '/bin/bash',
+            '--login',
+            '-c',
+            '\'' . implode(' ', $command). '\'',
+        ];
     }
 }

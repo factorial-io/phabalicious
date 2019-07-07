@@ -52,7 +52,7 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
         return $root_folder;
     }
 
-    public function drupalConsole(HostConfig $host_config, TaskCOntextInterface $context)
+    public function drupalConsole(HostConfig $host_config, TaskContextInterface $context)
     {
         $shell = $this->getShell($host_config, $context);
         $shell->cd($host_config['siteFolder']);

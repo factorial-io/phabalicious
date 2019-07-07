@@ -26,7 +26,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
 
-    /** @var OutputInterface */
+    /** @var OutputInterface|null */
     protected $output;
 
     /** @var LogLevelStack */
@@ -118,7 +118,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     /**
      * Expand a command.
      *
-     * @param $line
+     * @param string $line
      * @return null|string|string[]
      */
     public function expandCommand($line)
