@@ -39,7 +39,7 @@ class BlueprintConfiguration
 
     /**
      * Get a template by key.
-     * @param $key
+     * @param string $key
      * @return BlueprintTemplate
      * @throws BlueprintTemplateNotFoundException
      */
@@ -66,7 +66,7 @@ class BlueprintConfiguration
     /**
      * Expand variants.
      *
-     * @param $blueprints
+     * @param array $blueprints
      * @throws BlueprintTemplateNotFoundException
      * @throws ValidationFailedException
      */
@@ -89,9 +89,10 @@ class BlueprintConfiguration
                 $host = $template->expand($variant);
                 if (!$this->configuration->hasHostConfig($host['configName'])) {
                     $this->configuration->addHost($template->expand($variant));
-                }
-                else {
-                  $this->configuration->getLogger()->notice('There\'s an existing config with that name, skipping creating one from blueprint');
+                } else {
+                    $this->configuration->getLogger()->notice(
+                        'There\'s an existing config with that name, skipping creating one from blueprint'
+                    );
                 }
             }
         }
@@ -101,7 +102,7 @@ class BlueprintConfiguration
     /**
      * Get all variants for a given config.
      *
-     * @param $config_name
+     * @param string $config_name
      * @return bool|array
      */
     public function getVariants($config_name)

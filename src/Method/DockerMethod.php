@@ -87,11 +87,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     /**
      * @param HostConfig $host_config
-     * @param TaskContextInterface $context
+     * @param ConfigurationService $config
      * @return DockerConfig
-     * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
+     * @throws ValidationFailedException
      */
     public static function getDockerConfig(HostConfig $host_config, ConfigurationService $config)
     {
@@ -124,8 +124,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @param $task
-     * @param $silent
+     * @param string $task
+     * @param bool $silent
      * @throws MethodNotFoundException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
@@ -173,7 +173,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         /** @var CommandResult $cr */
         $cr = $context->getResult('commandResult', false);
-        if ($cr && $cr->failed()) {
+        if ($cr->failed()) {
             $cr->throwException(sprintf('Docker task `%s` failed!', $task));
         }
     }
@@ -541,8 +541,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     /**
      * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     * @return bool
+     * @param ConfigurationService $config
+     * @return string
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
      * @throws ValidationFailedException

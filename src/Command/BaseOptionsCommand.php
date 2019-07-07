@@ -101,7 +101,7 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         /** @var InputOption $option */
         foreach ($options as $option) {
             $name = $option->getName();
-            /** @var InputOption $value */
+            /** @var mixed $value */
             $value = $input->getOption($name);
 
             if ($option->isValueRequired() &&

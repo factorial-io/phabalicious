@@ -85,7 +85,7 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
             $command_name =$input->getOption('complete-command');
             $argument = $input->getOption('complete-argument');
             $command = $this->getApplication()->find($command_name);
-            if (!$command || !($command instanceof CompletionAwareInterface)) {
+            if (!($command instanceof CompletionAwareInterface)) {
                 throw new \InvalidArgumentException('Could not find command '. $command_name);
             }
 

@@ -31,7 +31,7 @@ class ConfigurationService
     private $application;
 
     /**
-     * @var MethodFactory
+     * @var MethodFactory|null
      */
     private $methods;
 
@@ -262,7 +262,7 @@ class ConfigurationService
      * Resolve inheritance for given data.
      *
      * @param array $data
-     * @param $lookup
+     * @param array $lookup
      *
      * @return array
      * @throws MismatchedVersionException
@@ -383,7 +383,7 @@ class ConfigurationService
    *
    * @return HostConfig
    * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-   * @throws \Phabalicious\Exception\FabfileNotReadableException
+   * @throws FabfileNotReadableException
    * @throws \Phabalicious\Exception\MismatchedVersionException
    * @throws \Phabalicious\Exception\MissingHostConfigException
    * @throws \Phabalicious\Exception\ShellProviderNotFoundException
@@ -421,7 +421,7 @@ class ConfigurationService
    * @throws ShellProviderNotFoundException
    * @throws ValidationFailedException
    * @throws BlueprintTemplateNotFoundException
-   * @throws \Phabalicious\Exception\FabfileNotReadableException
+   * @throws FabfileNotReadableException
    */
     public function getHostConfigFromBlueprint(string $blueprint, string $identifier)
     {
@@ -448,14 +448,14 @@ class ConfigurationService
     }
 
   /**
-   * @param $config_name
-   * @param $data
+   * @param string $config_name
+   * @param array $data
    *
    * @return HostConfig
    * @throws MismatchedVersionException
    * @throws ShellProviderNotFoundException
    * @throws ValidationFailedException
-   * @throws \Phabalicious\Exception\FabfileNotReadableException
+   * @throws FabfileNotReadableException
    */
     private function validateHostConfig($config_name, $data)
     {
@@ -690,12 +690,13 @@ class ConfigurationService
 
     /**
      * @param string $config_name
-     * @param $data
+     * @param array $data
      * @return array
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
      * @throws MismatchedVersionException
      * @throws ShellProviderNotFoundException
      * @throws ValidationFailedException
-     * @throws BlueprintTemplateNotFoundException
      */
     protected function inheritFromBlueprint(string $config_name, $data): array
     {

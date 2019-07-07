@@ -261,7 +261,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
 
     /**
      * @param TaskContextInterface $context
-     * @param $target_folder
+     * @param string $target_folder
      * @param string $data_key
      * @param bool $limitedForTwigExtension
      */
@@ -402,7 +402,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
     }
 
     /**
-     * @param $tokens
+     * @param array $tokens
      * @return array
      */
     protected function getReplacements($tokens): array

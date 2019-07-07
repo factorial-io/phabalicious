@@ -4,6 +4,12 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
@@ -81,12 +87,12 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     /**
      * {@inheritdoc}
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws MismatchedVersionException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MissingDockerHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws BlueprintTemplateNotFoundException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -113,9 +119,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $this->dockerConfig = $this->getConfiguration()->getDockerConfig($docker_config_name);
             }
 
-            if ($this->hostConfig->shell()) {
-                $this->hostConfig->shell()->setOutput($output);
-            }
+            $this->hostConfig->shell()->setOutput($output);
 
             if ($input->getOption('variants')) {
                 $this->handleVariants($input->getOption('variants'), $input, $output);
@@ -205,7 +209,7 @@ abstract class BaseCommand extends BaseOptionsCommand
     /**
      * Handle variants.
      *
-     * @param $variants
+     * @param string $variants
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return bool|int

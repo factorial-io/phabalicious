@@ -8,13 +8,14 @@ use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 
 abstract class BaseMethod implements MethodInterface
 {
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -73,13 +74,13 @@ abstract class BaseMethod implements MethodInterface
 
     /**
      * @param TaskContext $context
-     * @param $command_name
-     * @param $args
+     * @param string $command_name
+     * @param array $args
      * @throws \Exception
      */
     public function executeCommand(TaskContext $context, $command_name, $args)
     {
-        /** @var \Symfony\Component\Console\Command\Command $command */
+        /** @var Command $command */
         $command = $context->getCommand()->getApplication()->find($command_name);
         if (isset($args[0])) {
             $args[$command_name] = $args[0];
@@ -148,5 +149,4 @@ abstract class BaseMethod implements MethodInterface
             'file' => $file
         ];
     }
-
 }

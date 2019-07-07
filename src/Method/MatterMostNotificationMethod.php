@@ -91,7 +91,7 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
             }
         }
 
-        $mmm->attachment(function (Attachment $attachment) use ($message, $type, $host_config, $config, $meta) {
+        $mmm->attachment(function (Attachment $attachment) use ($message, $type, $host_config, $meta) {
             $attachment->fallback($message);
             if ($type == BaseNotifyMethod::SUCCESS) {
                 $attachment->success();

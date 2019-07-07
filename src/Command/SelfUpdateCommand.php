@@ -119,8 +119,7 @@ class SelfUpdateCommand extends BaseOptionsCommand
             /** @var SelfUpdateCommand command */
             $command = $event->getCommand()->getApplication()->find('self-update');
 
-            if ($command
-                && $output->isDecorated()
+            if ($output->isDecorated()
                 && !$output->isQuiet()
                 && !$event->getCommand()->isHidden()
                 && !$command->getConfiguration()->isOffline()

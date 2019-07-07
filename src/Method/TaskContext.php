@@ -44,9 +44,7 @@ class TaskContext implements TaskContextInterface
         $this->setInput($input);
         $this->setOutput($output);
         $this->setCommand($command);
-        if ($command->getConfiguration()) {
-            $this->setConfigurationService($command->getConfiguration());
-        }
+        $this->setConfigurationService($command->getConfiguration());
     }
 
     public function set(string $key, $value)
@@ -64,12 +62,12 @@ class TaskContext implements TaskContextInterface
         $this->output = $output;
     }
 
-    public function getOutput(): OutputInterface
+    public function getOutput(): ?OutputInterface
     {
         return $this->output;
     }
 
-    public function setConfigurationService(ConfigurationService $service)
+    public function setConfigurationService(?ConfigurationService $service)
     {
         $this->configurationService = $service;
     }
@@ -112,7 +110,7 @@ class TaskContext implements TaskContextInterface
         return $this->commandResult;
     }
 
-    public function getShell()
+    public function getShell() : ?ShellProviderInterface
     {
         return $this->shell;
     }

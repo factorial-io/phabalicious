@@ -57,7 +57,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     }
 
     /**
-     * @param $dir
+     * @param string $dir
      * @return bool
      * @throws \Exception
      */

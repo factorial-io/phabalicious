@@ -43,7 +43,7 @@ class CommandResult
     }
 
     /**
-     * @param $message
+     * @param string $message
      * @throws FailedShellCommandException
      */
     public function throwException($message)

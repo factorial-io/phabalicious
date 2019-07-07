@@ -5,6 +5,8 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\HostType;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 
 abstract class BaseNotifyMethod extends BaseMethod implements MethodInterface, NotifyMethodInterface
@@ -65,11 +67,11 @@ abstract class BaseNotifyMethod extends BaseMethod implements MethodInterface, N
 
     /**
      * @param HostConfig $host_config
-     * @param $message
+     * @param string $message
      * @param TaskContextInterface $context
      * @param string $type
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     private function sendNotificationImpl(
         HostConfig $host_config,
@@ -88,5 +90,4 @@ abstract class BaseNotifyMethod extends BaseMethod implements MethodInterface, N
 
         $this->sendNotification($host_config, $message, $context, $type, $meta);
     }
-
 }

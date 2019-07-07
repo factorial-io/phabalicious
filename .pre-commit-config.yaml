@@ -11,5 +11,17 @@
       files: \.php$
       args:
         - --standard=PSR2 -p
+
+- repo: local
+  hooks:
+    - id: phpstan
+      name: "PHPStan"
+      language: script
+      files: ^src/(.*)\.php$
+      entry: ./vendor/bin/phpstan analyze --no-progress --error-format raw --level 4
+
+- repo: https://github.com/digitalpulp/pre-commit-php.git
+  sha: 1.3.0
+  hooks:
     - id: php-unit
       files: \.php$

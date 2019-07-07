@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -135,7 +136,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param array $environment
      * @param array $replacements
      *
-     * @return \Phabalicious\ShellProvider\CommandResult
+     * @return CommandResult|null
      * @throws MissingScriptCallbackImplementation
      * @throws UnknownReplacementPatternException
      */
@@ -146,7 +147,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         array $callbacks = [],
         array $environment = [],
         array $replacements = []
-    ) {
+    ) : ?CommandResult {
         $command_result = null;
         $context->set('break_on_first_error', $this->getBreakOnFirstError());
 
@@ -189,8 +190,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param $strings
-     * @return bool
+     * @param string[] $strings
+     * @return true|string
      */
     private function validateReplacements($strings)
     {
@@ -207,9 +208,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * Execute callback.
      *
      * @param TaskContextInterface $context
-     * @param $callbacks
-     * @param $callback
-     * @param $args
+     * @param array $callbacks
+     * @param string $callback
+     * @param array $args
      *
      * @return bool
      * @throws MissingScriptCallbackImplementation
@@ -247,7 +248,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
     /**
      * @param TaskContextInterface $context
-     * @param $flag
+     * @param bool $flag
      */
     public function handleFailOnErrorDeprecatedCallback(TaskContextInterface $context, $flag)
     {
@@ -257,7 +258,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
     /**
      * @param TaskContextInterface $context
-     * @param $flag
+     * @param bool $flag
      */
     public function handleFailOnErrorCallback(TaskContextInterface $context, $flag)
     {
@@ -267,7 +268,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
     /**
      * @param TaskContextInterface $context
-     * @param $dir
+     * @param string $dir
      * @throws \Exception
      */
     public function handleFailOnMissingDirectoryCallback(TaskContextInterface $context, $dir)
