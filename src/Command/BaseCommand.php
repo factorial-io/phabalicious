@@ -177,12 +177,26 @@ abstract class BaseCommand extends BaseOptionsCommand
     }
 
     /**
+     * @param SymfonyStyle $io
      * @param ShellProviderInterface $shell
      * @param array $command
+     * @param bool $use_tty
      * @return Process
      */
-    protected function startInteractiveShell(ShellProviderInterface $shell, array $command = [], $use_tty = true)
-    {
+    protected function startInteractiveShell(
+        SymfonyStyle $io,
+        ShellProviderInterface $shell,
+        array $command = [],
+        $use_tty = true
+    ) {
+        $fn = function ($type, $buffer) use ($io) {
+            if ($type == Process::ERR) {
+                $io->error($buffer);
+            } else {
+                $io->write($buffer);
+            }
+        };
+
         $options = ['tty' => true];
         /** @var Process $process */
         if (!empty($command)) {
@@ -194,14 +208,15 @@ abstract class BaseCommand extends BaseOptionsCommand
         $process->setInput($stdin);
         $process->setTimeout(0);
         $process->setTty($use_tty);
-        $process->start();
-        $process->wait(function ($type, $buffer) {
-            if ($type == Process::ERR) {
-                fwrite(STDERR, $buffer);
-            } else {
-                fwrite(STDOUT, $buffer);
-            }
-        });
+        $process->start($fn);
+        $process->wait($fn);
+        if ($process->isTerminated() && !$process->isSuccessful()) {
+            $io->error(sprintf(
+                'Command %s failed with error %s',
+                $process->getCommandLine(),
+                $process->getExitCode()
+            ));
+        }
 
         return $process;
     }
