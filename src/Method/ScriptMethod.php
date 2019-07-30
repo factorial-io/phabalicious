@@ -153,7 +153,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
         $shell = $context->getShell();
         $shell->setOutput($context->getOutput());
-        $shell->cd($root_folder);
         $shell->applyEnvironment($environment);
 
         $result = $this->validateReplacements($commands);
@@ -164,6 +163,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         if ($result !== true) {
             throw new UnknownReplacementPatternException($result, $replacements);
         }
+
+        $shell->pushWorkingDir($root_folder);
 
         foreach ($commands as $line) {
             $line = trim($line);
@@ -181,11 +182,13 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $context->setCommandResult($command_result);
 
                 if ($command_result->failed() && $this->getBreakOnFirstError()) {
+                    $shell->popWorkingDir();
                     return $command_result;
                 }
             }
         }
 
+        $shell->popWorkingDir();
         return $command_result;
     }
 
