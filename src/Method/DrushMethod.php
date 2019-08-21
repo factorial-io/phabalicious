@@ -35,7 +35,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 'mysql' => 'mysql',
                 'grep' => 'grep',
                 'mysqladmin' => 'mysqladmin',
-                'gunzip' => 'gunzip'
+                'gunzip' => 'gunzip',
+                'chmod' => 'chmod',
             ],
             'sqlSkipTables' => [
                 'cache',
