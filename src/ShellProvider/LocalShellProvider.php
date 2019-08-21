@@ -7,6 +7,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\SetAndRestoreObjProperty;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Process\InputStream;
@@ -117,7 +118,16 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             }
         });
         if (!empty($this->hostConfig['environment'])) {
-            $this->applyEnvironment($this->hostConfig['environment']);
+            $environment = $this->hostConfig['environment'];
+
+            $variables = [
+                'settings' => $this->hostConfig->getConfigurationService()->getAllSettings(),
+                'host' => $this->hostConfig->raw(),
+            ];
+            $replacements = Utilities::expandVariables($variables);
+            $environment = Utilities::expandStrings($environment, $replacements);
+
+            $this->applyEnvironment($environment);
         }
     }
 

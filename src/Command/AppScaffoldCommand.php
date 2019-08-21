@@ -195,7 +195,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
         $host_config = new HostConfig([
             'rootFolder' => realpath($input->getOption('output')),
             'shellExecutable' => '/bin/bash'
-        ], $shell);
+        ], $shell, $this->configuration);
 
         $context->set('scriptData', $data['scaffold']);
         $context->set('variables', $tokens);

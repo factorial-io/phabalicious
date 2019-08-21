@@ -21,6 +21,7 @@ use Symfony\Component\Process\Process;
 class DockerExecShellProviderTest extends TestCase
 {
 
+    /** @var ConfigurationService */
     private $config;
     private $shellProvider;
     private $runDockerShell;
@@ -43,7 +44,7 @@ class DockerExecShellProviderTest extends TestCase
             'docker' => [
                 'name' => 'phabalicious_test'
             ]
-        ], $this->shellProvider);
+        ], $this->shellProvider, $this->config);
 
         $this->runDockerContainer($logger);
     }
@@ -54,7 +55,7 @@ class DockerExecShellProviderTest extends TestCase
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/sh',
             'rootFolder' => dirname(__FILE__)
-        ], $runDockerShell);
+        ], $runDockerShell, $this->config);
 
         $result = $runDockerShell->run('docker pull busybox', true);
         $result = $runDockerShell->run('docker stop phabalicious_test | true', true);
@@ -90,6 +91,4 @@ class DockerExecShellProviderTest extends TestCase
         $this->assertEquals(0, $result->getExitCode());
         $this->assertEquals('root', $result->getOutput()[0]);
     }
-
-
 }
