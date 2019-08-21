@@ -140,7 +140,7 @@ This will print all host configuration for the host `staging`.
 
 #### Configuration for the ssh-method
 
-* `host`, `user`, `port` are used to connect via SSH to the remote machine. Please make sure SSH key forwarding is enabled on your installation. 
+* `host`, `user`, `port` are used to connect via SSH to the remote machine. Please make sure SSH key forwarding is enabled on your installation.
 * `disableKnownHosts`, default is false, set to true to ignore the known_hosts-file.
 * `sshTunnel` phabalicious supports SSH-Tunnels, that means it can log in into another machine and forward the access to the real host. This is handy for dockerized installations, where the ssh-port of the docker-instance is not public. `sshTunnel` needs the following informations
     * `bridgeHost`: the host acting as a bridge.
@@ -156,7 +156,7 @@ This will print all host configuration for the host `staging`.
 #### Configuration for the git-method
 
 * `gitRootFolder`  the folder, where the git-repository lies. Defaults to `rootFolder`
-* `branch` the name of the branch to use for deployments, they get usually checked out and pulled from origin. 
+* `branch` the name of the branch to use for deployments, they get usually checked out and pulled from origin.
 * `ignoreSubmodules` default is false, set to false, if you don't want to update a projects' submodule on deploy.
 * `gitOptions` a keyed list of options to apply to a git command. Currently only pull is supported. If your git-version does not support `--rebase` you can disable it via an empty array: `pull: []`
 
@@ -176,9 +176,10 @@ This will print all host configuration for the host `staging`.
     * `user` the database user
     * `pass` the password for the database user
     * `prefix` the optional table-prefix to use
+    * `skipCreateDatabase` do not create a database when running the install task.
 * `adminUser`, default is `admin`, the name of the admin-user to set when running the reset-task on `dev`-instances
 * `replaceSettingsFile`, default is true. If set to false, the settings.php file will not be replaced when running an install.
-* `installOptions` default is `distribution: minimal, locale: en, options: ''`. You can change the distribution to install and/ or the locale.  
+* `installOptions` default is `distribution: minimal, locale: en, options: ''`. You can change the distribution to install and/ or the locale.
 * `drupalVersion` set the drupal-version to use. If not set phabalicious is trying to guess it from the `needs`-configuration.
 * `drushVersion` set the used crush-version, default is `8`. Drush is not 100% backwards-compatible, for phabalicious needs to know its version.
 * `supportsZippedBackups` default is true, set to false, when zipped backups are not supported
@@ -186,10 +187,10 @@ This will print all host configuration for the host `staging`.
 #### Configuration of the ftp-sync-method
 
 * `ftp` keeps all configuration bundled:
-  * `user` the ftp-user  
+  * `user` the ftp-user
   * `password` the ftp password
   * `host` the ftp host
-  * `port`, default is 21, the port to connect to 
+  * `port`, default is 21, the port to connect to
   * `rootFolder` the folder to copy the app into on the ftp-host.
   * `lftpOptions`, an array of options to pass when executing `lftp`
 
@@ -230,7 +231,7 @@ dockerHosts:
 Here's a list of all possible entries of a dockerHosts-entry:
 * `shellProvider`, the shell-provider to use, currently `local` or `ssh`.
 * `runLocally`: if set to true, the `local`-shell-provider will be used.
-* `host`, `user` and `port`: when using the `ssh`-shell-provicer. 
+* `host`, `user` and `port`: when using the `ssh`-shell-provicer.
 * `environment` a keyed list of environment-variables to set, when running one of the tasks. The replacement-patterns of `scripts` are supported, see there for more information.
 * `tasks` a keyed list of commands to run for a given docker-subtask (similar to `scripts`). Note: these commands are running on the docker-host, not on the host. All replacement-patterns do work, and you can call even other tasks via `execute(<task>, <subtask>)` e.g. `execute(docker, stop)` See the `scripts`-section for more info.
 
@@ -335,9 +336,9 @@ Phabalicious can send notifications to a running Mattermost instance. You need t
 ```
 mattermost:
   username: phabalicious
-  webhook: https://chat.your.server.tld/hooks/... 
+  webhook: https://chat.your.server.tld/hooks/...
   Channel: "my-channel"
-  
+
 hosts:
   test:
     needs:
