@@ -116,6 +116,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                 }
             }
         });
+        if (!empty($this->hostConfig['environment'])) {
+            $this->applyEnvironment($this->hostConfig['environment']);
+        }
     }
 
     /**

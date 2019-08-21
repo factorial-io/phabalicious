@@ -111,4 +111,36 @@ class LocalShellProviderTest extends TestCase
         $this->assertTrue($result->failed());
         $this->assertNotContains(LocalShellProvider::RESULT_IDENTIFIER, $output);
     }
+
+    public function testHostEnvironment()
+    {
+        $host_config = new HostConfig([
+            'shellExecutable' => '/bin/bash',
+            'rootFolder' => dirname(__FILE__),
+            'environment' => [
+                'VAR_A' => 'variable_a',
+                'VAR_B' => 'variable_b',
+            ],
+        ], $this->shellProvider);
+
+        $test_dir = dirname(__FILE__) . '/assets/local-shell-provider';
+
+        $this->shellProvider->setHostConfig($host_config);
+
+        $result = $this->shellProvider
+            ->cd($test_dir)
+            ->run('echo $VAR_A', true, false);
+
+        $output = implode(PHP_EOL, $result->getOutput());
+        $this->assertTrue($result->succeeded());
+        $this->assertNotContains(LocalShellProvider::RESULT_IDENTIFIER, $output);
+        $this->assertContains('variable_a', $output);
+
+        $result = $this->shellProvider
+            ->cd($test_dir)
+            ->run('echo "XX${VAR_B}XX"', true, false);
+
+        $output = implode(PHP_EOL, $result->getOutput());
+        $this->assertContains('XXvariable_bXX', $output);
+    }
 }
