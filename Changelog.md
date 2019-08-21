@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.21 / 2019-08-21
+
+### Fixed
+
+  * Document `skipCreateDatabase`
+  * Add chmod to the list of executables, fixes #57
+
 ## 3.0.20 / 2019-07-07
 
 ### Fixed

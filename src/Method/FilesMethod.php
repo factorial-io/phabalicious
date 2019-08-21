@@ -31,7 +31,8 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $return['tmpFolder'] = '/tmp';
         $return['executables'] = [
             'tar' => 'tar',
-            'rsync' => 'rsync'
+            'rsync' => 'rsync',
+            'chmod' => 'chmod',
         ];
 
         return $return;
