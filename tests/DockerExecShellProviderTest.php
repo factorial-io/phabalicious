@@ -18,7 +18,7 @@ use Psr\Log\AbstractLogger;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
 
-class DockerExecShellProviderTest extends TestCase
+class DockerExecShellProviderTest extends PhabTestCase
 {
 
     /** @var ConfigurationService */

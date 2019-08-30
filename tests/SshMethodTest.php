@@ -8,7 +8,7 @@ use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
-class SshMethodTest extends TestCase
+class SshMethodTest extends PhabTestCase
 {
 
     /**

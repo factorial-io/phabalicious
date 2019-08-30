@@ -14,7 +14,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class DeployCommandTest extends TestCase
+class DeployCommandTest extends PhabTestCase
 {
     /** @var Application */
     protected $application;
@@ -37,7 +37,7 @@ class DeployCommandTest extends TestCase
         $method_factory->addMethod($method);
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $configuration->readConfiguration(getcwd() . '/assets/script-tests/fabfile.yaml');
+        $configuration->readConfiguration($this->getcwd() . '/assets/script-tests/fabfile.yaml');
 
         $this->application->add(new DeployCommand($configuration, $method_factory));
     }

@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Application;
 
-class ConfigurationServiceTest extends TestCase
+class ConfigurationServiceTest extends PhabTestCase
 {
 
     /**
@@ -50,11 +50,11 @@ class ConfigurationServiceTest extends TestCase
     public function testCustomFabfile()
     {
         $result = $this->config->readConfiguration(
-            getcwd(),
-            getcwd() . '/assets/custom-fabfile-tests/custom_fabfile.yaml'
+            $this->getcwd(),
+            $this->getcwd() . '/assets/custom-fabfile-tests/custom_fabfile.yaml'
         );
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), getCwd() . '/assets/custom-fabfile-tests');
+        $this->assertEquals($this->config->getFabfilePath(), $this->getcwd() . '/assets/custom-fabfile-tests');
     }
 
     /**
@@ -62,39 +62,42 @@ class ConfigurationServiceTest extends TestCase
      */
     public function testNonExistingCustomFabfile()
     {
-        $result = $this->config->readConfiguration(getcwd(), getcwd() . '/assets/custom__not_existing.yaml');
+        $result = $this->config->readConfiguration(
+            $this->getcwd(),
+            $this->getcwd() . '/assets/custom__not_existing.yaml'
+        );
     }
 
     public function testRegularFabfile()
     {
 
-        $result = $this->config->readConfiguration(getcwd() . '/assets/fabfile-hierarchy-tests');
+        $result = $this->config->readConfiguration($this->getcwd() . '/assets/fabfile-hierarchy-tests');
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), getCwd() . '/assets/fabfile-hierarchy-tests');
+        $this->assertEquals($this->config->getFabfilePath(), $this->getcwd() . '/assets/fabfile-hierarchy-tests');
     }
 
     public function testRegularFabfileInSubfolder()
     {
-        $result = $this->config->readConfiguration(getcwd() . '/assets/fabfile-hierarchy-tests/folder1');
+        $result = $this->config->readConfiguration($this->getcwd() . '/assets/fabfile-hierarchy-tests/folder1');
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), getCwd() . '/assets/fabfile-hierarchy-tests');
+        $this->assertEquals($this->config->getFabfilePath(), $this->getcwd() . '/assets/fabfile-hierarchy-tests');
     }
 
     public function testRegularFabfileInSubSubFolder()
     {
 
-        $result = $this->config->readConfiguration(getcwd() . '/assets/fabfile-hierarchy-tests/folder1/folder2');
+        $result = $this->config->readConfiguration($this->getcwd() . '/assets/fabfile-hierarchy-tests/folder1/folder2');
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), getCwd() . '/assets/fabfile-hierarchy-tests');
+        $this->assertEquals($this->config->getFabfilePath(), $this->getcwd() . '/assets/fabfile-hierarchy-tests');
     }
 
     public function testRegularFabfileInSubSubSubFolder()
     {
         $result = $this->config->readConfiguration(
-            getcwd() . '/assets/fabfile-hierarchy-tests/folder1/folder2/folder3'
+            $this->getcwd() . '/assets/fabfile-hierarchy-tests/folder1/folder2/folder3'
         );
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), getCwd() . '/assets/fabfile-hierarchy-tests');
+        $this->assertEquals($this->config->getFabfilePath(), $this->getcwd() . '/assets/fabfile-hierarchy-tests');
     }
 
     /**
@@ -102,7 +105,9 @@ class ConfigurationServiceTest extends TestCase
      */
     public function testNonExistingFabfile()
     {
-        $result = $this->config->readConfiguration(getcwd() . '/assets/non-existing-fabfile-tests/one/two/three');
+        $result = $this->config->readConfiguration(
+            $this->getcwd() . '/assets/non-existing-fabfile-tests/one/two/three'
+        );
     }
 
     /**
@@ -120,12 +125,12 @@ class ConfigurationServiceTest extends TestCase
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         $config = new ConfigurationService($application, $logger);
-        $result = $config->readConfiguration(getcwd() . '/assets/fabfile-hierarchy-tests');
+        $result = $config->readConfiguration($this->getcwd() . '/assets/fabfile-hierarchy-tests');
     }
 
     public function testGlobalInheritance()
     {
-        $this->config->readConfiguration(getcwd() . '/assets/inherits');
+        $this->config->readConfiguration($this->getcwd() . '/assets/inherits');
         $this->assertEquals(123, $this->config->getSetting('fromFile1.value1'));
         $this->assertEquals(456, $this->config->getSetting('fromFile1.value2.value'));
 
@@ -138,14 +143,14 @@ class ConfigurationServiceTest extends TestCase
 
     public function testDeprecatedInheritance()
     {
-        $this->config->readConfiguration(getcwd() . '/assets/inherits');
+        $this->config->readConfiguration($this->getcwd() . '/assets/inherits');
         $host_config = $this->config->getHostConfig('hostDeprecated');
         $this->assertTrue($this->logger->containsMessage(LogLevel::WARNING, 'Please use a newer version of this file'));
     }
 
     public function testHostInheritance()
     {
-        $this->config->readConfiguration(getcwd() . '/assets/inherits');
+        $this->config->readConfiguration($this->getcwd() . '/assets/inherits');
         $this->assertEquals('host-a', $this->config->getHostConfig('hostA')['host']);
         $this->assertEquals('user-a', $this->config->getHostConfig('hostA')['user']);
         $this->assertEquals('host-b', $this->config->getHostConfig('hostB')['host']);
@@ -155,7 +160,7 @@ class ConfigurationServiceTest extends TestCase
 
     public function testDockerHostInheritance()
     {
-        $this->config->readConfiguration(getcwd() . '/assets/inherits');
+        $this->config->readConfiguration($this->getcwd() . '/assets/inherits');
         $this->assertEquals('dockerhost-a', $this->config->getDockerConfig('hostA')['host']);
         $this->assertEquals('user-a', $this->config->getDockerConfig('hostA')['user']);
         $this->assertEquals('dockerhost-b', $this->config->getDockerConfig('hostB')['host']);
@@ -166,7 +171,7 @@ class ConfigurationServiceTest extends TestCase
     {
         $this->config->getMethodFactory()->addMethod(new DrushMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
-        $this->config->readConfiguration(getcwd() . '/assets/executables-tests');
+        $this->config->readConfiguration($this->getcwd() . '/assets/executables-tests');
         $this->assertEquals('/usr/bin/drush', $this->config->getHostConfig('unaltered')['executables']['drush']);
         $this->assertEquals(
             '/usr/local/bin/drush',
@@ -179,7 +184,7 @@ class ConfigurationServiceTest extends TestCase
     {
         $this->config->getMethodFactory()->addMethod(new SshMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
-        $this->config->readConfiguration(getcwd() . '/assets/sshtunnel-tests');
+        $this->config->readConfiguration($this->getcwd() . '/assets/sshtunnel-tests');
         $ssh_tunnel = $this->config->getHostConfig('unaltered')['sshTunnel'];
         $this->assertEquals('1.2.3.4', $ssh_tunnel['destHost']);
         $this->assertEquals('1234', $ssh_tunnel['destPort']);

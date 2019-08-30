@@ -1,0 +1,14 @@
+parameters:
+    process_timeout: 180
+    git_dir: .
+    bin_dir: vendor/bin
+    tasks:
+      composer: ~
+      git_commit_message: ~
+      phplint: ~
+      phpcs:
+        standard:
+          - PSR2
+      phpunit: ~
+      phpstan: ~
+

@@ -9,12 +9,11 @@ use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Utilities\Utilities;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class AppCreateCommandTest extends TestCase
+class AppCreateCommandTest extends PhabTestCase
 {
     /** @var Application */
     protected $application;
@@ -30,7 +29,7 @@ class AppCreateCommandTest extends TestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new DockerMethod($logger));
 
-        $configuration->readConfiguration(getcwd() . '/assets/app-create-tests/fabfile.yaml');
+        $configuration->readConfiguration($this->getcwd() . '/assets/app-create-tests/fabfile.yaml');
 
         $this->application->add(new AppCreateCommand($configuration, $method_factory));
         $this->application->add(new ResetCommand($configuration, $method_factory));
@@ -38,7 +37,7 @@ class AppCreateCommandTest extends TestCase
 
     public function testAppCreateWithoutPrepare()
     {
-        $target_folder = getcwd() . '/tmp';
+        $target_folder = $this->getcwd() . '/tmp';
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
         }
@@ -61,7 +60,7 @@ class AppCreateCommandTest extends TestCase
 
     public function testAppCreateWithPrepare()
     {
-        $target_folder = getcwd() . '/tmp';
+        $target_folder = $this->getcwd() . '/tmp';
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
         }

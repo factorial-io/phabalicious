@@ -9,7 +9,7 @@ use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
-class LocalShellProviderTest extends TestCase
+class LocalShellProviderTest extends PhabTestCase
 {
     /** @var \Phabalicious\ShellProvider\ShellProviderInterface */
     private $shellProvider;

@@ -11,7 +11,7 @@ namespace Phabalicious\Tests;
 use Phabalicious\Utilities\Utilities;
 use PHPUnit\Framework\TestCase;
 
-class UtilitiesTest extends TestCase
+class UtilitiesTest extends PhabTestCase
 {
 
     public function testExpandCommands()
@@ -33,7 +33,6 @@ class UtilitiesTest extends TestCase
             'Second Example 1 Example 1 example',
             'This Example 1 Example 2 example'
         ], $result);
-
     }
 
     public function testExpandVariables()
@@ -87,5 +86,4 @@ class UtilitiesTest extends TestCase
         $this->assertEquals('asentencewithoutwords', Utilities::slugify('A sentence without Words'));
         $this->assertEquals('a-sentence-without-words', Utilities::slugify('A sentence without Words', '-'));
     }
-
 }

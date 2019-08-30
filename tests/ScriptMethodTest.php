@@ -22,7 +22,7 @@ use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ScriptMethodTest extends TestCase
+class ScriptMethodTest extends PhabTestCase
 {
 
     /** @var ScriptMethod */
@@ -52,7 +52,7 @@ class ScriptMethodTest extends TestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $this->configurationService->readConfiguration(getcwd() . '/assets/script-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration($this->getcwd() . '/assets/script-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
@@ -206,7 +206,10 @@ class ScriptMethodTest extends TestCase
         $this->method->runScript($host_config, $this->context);
 
         $this->assertNotNull($this->context->getCommandResult());
-        $this->assertEquals([getcwd() . '/assets/script-tests'], $this->context->getCommandResult()->getOutput());
+        $this->assertEquals(
+            [$this->getcwd() . '/assets/script-tests'],
+            $this->context->getCommandResult()->getOutput()
+        );
     }
 
 

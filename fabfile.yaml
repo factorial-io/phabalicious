@@ -1,0 +1,14 @@
+name: git-tests
+
+
+hosts:
+  base:
+    type: dev
+    needs:
+      - local
+      - git
+
+  hostA:
+    inheritsFrom: base
+    branch: master
+

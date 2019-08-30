@@ -20,7 +20,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class VariantBaseCommandTest extends TestCase
+class VariantBaseCommandTest extends PhabTestCase
 {
     /** @var Application */
     protected $application;
@@ -36,7 +36,7 @@ class VariantBaseCommandTest extends TestCase
         $method_factory->addMethod(new FilesMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration(getcwd() . '/assets/variants-base-command-tests/fabfile.yaml');
+        $configuration->readConfiguration($this->getcwd() . '/assets/variants-base-command-tests/fabfile.yaml');
 
         $this->application->add(new ScriptCommand($configuration, $method_factory));
     }
@@ -76,7 +76,7 @@ class VariantBaseCommandTest extends TestCase
      */
     private function runScript($script_name)
     {
-        $executable = realpath(getcwd() . '/../bin/phab');
+        $executable = realpath($this->getcwd() . '/../bin/phab');
         putenv('PHABALICIOUS_EXECUTABLE=' . $executable);
 
         $command = $this->application->find('script');
