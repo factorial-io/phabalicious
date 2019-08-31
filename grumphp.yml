@@ -9,6 +9,7 @@ parameters:
       phpcs:
         standard:
           - PSR2
-      phpunit: ~
+      phpunit:
+        group: ['default']
       phpstan: ~
 

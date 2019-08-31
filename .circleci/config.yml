@@ -34,4 +34,4 @@ jobs:
           key: v2-dependencies-{{ checksum "composer.json" }}
 
       # run tests!
-      - run: cd tests; ../vendor/bin/phpunit --exclude-group docker .
+      - run: ./vendor/bin/phpunit --exclude-group docker .
