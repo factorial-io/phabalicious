@@ -282,7 +282,9 @@ abstract class BaseCommand extends BaseOptionsCommand
                 foreach ($input->getOptions() as $name => $value) {
                     if ($value && !in_array($name, ['verbose', 'variants', 'blueprint', 'fabfile'])) {
                         $cmd[] = '--' . $name;
-                        $cmd[]= $value;
+                        if (!in_array($name, ['no-interaction', 'no-ansi'])) {
+                            $cmd[] = $value;
+                        }
                     }
                 }
                 $cmd[] = '--no-interaction';

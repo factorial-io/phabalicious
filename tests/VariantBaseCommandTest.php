@@ -71,12 +71,10 @@ class VariantBaseCommandTest extends PhabTestCase
         ));
     }
 
-    /**
-     * @group docker
-     */
     private function runScript($script_name)
     {
-        $executable = realpath($this->getcwd() . '/../bin/phab');
+        $path = $this->getcwd() . '/../bin/phab';
+        $executable = realpath($path);
         putenv('PHABALICIOUS_EXECUTABLE=' . $executable);
 
         $command = $this->application->find('script');
@@ -99,11 +97,17 @@ class VariantBaseCommandTest extends PhabTestCase
         $this->assertContains('XX-test-c-XX', $output);
     }
 
+    /**
+     * @group docker
+     */
     public function testAllVariants()
     {
         $this->runScript('test');
     }
 
+    /**
+     * @group docker
+     */
     public function testAllVariantsWithStdErr()
     {
         $this->runScript('testErr');
