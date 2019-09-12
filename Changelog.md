@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.22 / 2019-09-12
+
+### New
+
+  * Add support sql-sanitize for reset task
+
+### Fixed
+
+  * Fix for exception after certain docker commands.
+
 ## 3.0.21 / 2019-08-21
 
 ### Fixed
