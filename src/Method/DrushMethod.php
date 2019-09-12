@@ -93,8 +93,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $config['drushVersion'] = in_array('drush9', $host_config['needs'])
             ? 9
             : $configuration_service->getSetting('drushVersion', 8);
-        
+
         $config['sqlDumpCommand'] = 'sql-dump';
+        $config['sanitizeOnReset'] = false;
         $config['supportsZippedBackups'] = true;
         $config['siteFolder'] = '/sites/default';
         $config['filesFolder'] = '/sites/default/files';
@@ -175,6 +176,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         /** @var ScriptMethod $script_method */
         $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
+
+        if ($host_config->get('sanitizeOnReset', false)) {
+            $this->runDrush( $shell,'sql-sanitize -y');
+        }
 
         if ($host_config->isType(HostType::DEV)) {
             $admin_user = $host_config['adminUser'];

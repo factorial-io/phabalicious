@@ -173,7 +173,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         /** @var CommandResult $cr */
         $cr = $context->getResult('commandResult', false);
-        if ($cr->failed()) {
+        if ($cr && $cr->failed()) {
             $cr->throwException(sprintf('Docker task `%s` failed!', $task));
         }
     }
