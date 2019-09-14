@@ -5,13 +5,16 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\EarlyTaskExitException;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\MissingScriptCallbackImplementation;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\AppDefaultStages;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Console\Helper\QuestionHelper;
 
-class FtpSyncMethod extends BaseMethod implements MethodInterface
+class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
 {
 
     const DEFAULT_FILE_SOURCES = [
@@ -21,12 +24,12 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
 
     public function getName(): string
     {
-        return 'ftp-sync';
+        return 'artefacts--ftp-sync';
     }
 
     public function supports(string $method_name): bool
     {
-        return $method_name === $this->getName();
+        return in_array($method_name, array('ftp-sync', $this->getName()));
     }
 
     public function getGlobalSettings(): array
@@ -72,6 +75,10 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
         if ($config['deployMethod'] !== 'ftp-sync') {
             $errors->addError('deployMethod', 'deployMethod must be `ftp-sync`!');
         }
+        if (in_array('ftp-sync', $config['needs'])) {
+            $errors->addWarning('needs', sprintf('`ftp-sync` is deprecated, please use `%s`', $this->getName()));
+        }
+
         $service = new ValidationService($config, $errors, 'Host-config '. $config['configName']);
         $service->isArray('ftp', 'Please provide ftp-credentials!');
         if (!empty($config['ftp'])) {
@@ -89,58 +96,9 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @param ShellProviderInterface $shell
-     * @param string $install_dir
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-     */
-    protected function createAppCode(
-        HostConfig $host_config,
-        TaskContextInterface $context,
-        ShellProviderInterface $shell,
-        string $install_dir
-    ) {
-        // First, create an app in a temporary-folder.
-        $stages = $context->getConfigurationService()->getSetting(
-            'appStages.createCode',
-            AppDefaultStages::CREATE_CODE
-        );
-
-        $cloned_host_config = clone $host_config;
-        $keys = ['rootFolder', 'composerRootFolder', 'gitRootFolder'];
-        foreach ($keys as $key) {
-            $cloned_host_config[$key] = $install_dir;
-        }
-        $shell->cd($cloned_host_config['tmpFolder']);
-        $context->set('outerShell', $shell);
-
-        AppDefaultStages::executeStages(
-            $context->getConfigurationService()->getMethodFactory(),
-            $cloned_host_config,
-            $stages,
-            'appCreate',
-            $context,
-            'Creating code'
-        );
-
-        // Run deploy scripts
-        /** @var ScriptMethod $script_method */
-        $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
-        $context->set('variables', [
-            'installFolder' => $install_dir
-        ]);
-        $context->set('rootFolder', $install_dir);
-        $script_method->runTaskSpecificScripts($cloned_host_config, 'deploy', $context);
-
-        $context->setResult('skipResetStep', true);
-    }
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws MethodNotFoundException
+     * @throws MissingScriptCallbackImplementation
+     * @throws TaskNotFoundInMethodException
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -158,7 +116,13 @@ class FtpSyncMethod extends BaseMethod implements MethodInterface
         $context->set('installDir', $install_dir);
 
         $shell = $this->getShell($host_config, $context);
-        $this->createAppCode($host_config, $context, $shell, $install_dir);
+
+        // First, create an app in a temporary-folder.
+        $stages = $context->getConfigurationService()->getSetting(
+            'appStages.createCode',
+            AppDefaultStages::CREATE_CODE
+        );
+        $this->buildArtifact($host_config, $context, $shell, $install_dir, $stages);
 
         $exclude = $context->getConfigurationService()->getSetting('excludeFiles.ftpSync', []);
         $options = implode(' ', $host_config['ftp']['lftpOptions']);

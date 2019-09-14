@@ -69,7 +69,7 @@ class AppDefaultStages
         string $message
     ) {
         foreach ($stages as $stage) {
-            $context->getOutput()->writeln(sprintf('%s, stage %s', $message, $stage['stage']));
+            $context->io()->comment(sprintf('%s, stage %s', $message, $stage['stage']));
             $context->set('currentStage', $stage);
             $method_factory->runTask($command, $host_config, $context);
         }
