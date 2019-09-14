@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class GetPropertyCommandTest extends TestCase
+class GetPropertyCommandTest extends PhabTestCase
 {
     /** @var Application */
     protected $application;
@@ -32,7 +32,7 @@ class GetPropertyCommandTest extends TestCase
         $method_factory = new MethodFactory($configuration, $logger);
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration(getcwd() . '/assets/getproperty-tests/fabfile.yaml');
+        $configuration->readConfiguration($this->getcwd() . '/assets/getproperty-tests/fabfile.yaml');
 
         $this->application->add(new GetPropertyCommand($configuration, $method_factory));
     }
@@ -84,5 +84,4 @@ class GetPropertyCommandTest extends TestCase
         $output = $commandTester->getDisplay();
         $this->assertContains('getproperty-test-valuefromblueprint', $output);
     }
-
 }

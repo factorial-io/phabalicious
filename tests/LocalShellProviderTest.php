@@ -9,7 +9,7 @@ use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
-class LocalShellProviderTest extends TestCase
+class LocalShellProviderTest extends PhabTestCase
 {
     /** @var \Phabalicious\ShellProvider\ShellProviderInterface */
     private $shellProvider;
@@ -70,7 +70,7 @@ class LocalShellProviderTest extends TestCase
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/sh',
             'rootFolder' => dirname(__FILE__)
-        ], $this->shellProvider);
+        ], $this->shellProvider, $this->config);
 
         $test_dir = dirname(__FILE__) . '/assets/local-shell-provider';
 
@@ -97,7 +97,7 @@ class LocalShellProviderTest extends TestCase
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/bash',
             'rootFolder' => dirname(__FILE__)
-        ], $this->shellProvider);
+        ], $this->shellProvider, $this->config);
 
         $test_dir = dirname(__FILE__) . '/assets/local-shell-providerxxx';
 
@@ -110,5 +110,46 @@ class LocalShellProviderTest extends TestCase
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->failed());
         $this->assertNotContains(LocalShellProvider::RESULT_IDENTIFIER, $output);
+    }
+
+    public function testHostEnvironment()
+    {
+        $host_config = new HostConfig([
+            'shellExecutable' => '/bin/bash',
+            'rootFolder' => dirname(__FILE__),
+            'varC' => 'variable_c',
+            'environment' => [
+                'VAR_A' => 'variable_a',
+                'VAR_B' => 'variable_b',
+                'VAR_C' => '%host.varC%',
+            ],
+        ], $this->shellProvider, $this->config);
+
+        $test_dir = dirname(__FILE__) . '/assets/local-shell-provider';
+
+        $this->shellProvider->setHostConfig($host_config);
+
+        $result = $this->shellProvider
+            ->cd($test_dir)
+            ->run('echo $VAR_A', true, false);
+
+        $output = implode(PHP_EOL, $result->getOutput());
+        $this->assertTrue($result->succeeded());
+        $this->assertNotContains(LocalShellProvider::RESULT_IDENTIFIER, $output);
+        $this->assertContains('variable_a', $output);
+
+        $result = $this->shellProvider
+            ->cd($test_dir)
+            ->run('echo "XX${VAR_B}XX"', true, false);
+
+        $output = implode(PHP_EOL, $result->getOutput());
+        $this->assertContains('XXvariable_bXX', $output);
+
+        $result = $this->shellProvider
+            ->cd($test_dir)
+            ->run('echo "XX${VAR_C}XX"', true, false);
+
+        $output = implode(PHP_EOL, $result->getOutput());
+        $this->assertContains('XXvariable_cXX', $output);
     }
 }

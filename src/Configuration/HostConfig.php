@@ -3,6 +3,7 @@
 namespace Phabalicious\Configuration;
 
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use PHPUnit\Util\Configuration;
 
 class HostConfig implements \ArrayAccess
 {
@@ -10,16 +11,25 @@ class HostConfig implements \ArrayAccess
 
     private $shell;
 
-    public function __construct($data, ShellProviderInterface $shell)
+    private $configurationService;
+
+    public function __construct($data, ShellProviderInterface $shell, ConfigurationService $parent)
     {
+        $this->configurationService = $parent;
         $this->data = $data;
         $this->shell = $shell;
+
         $shell->setHostConfig($this);
     }
 
     public function shell(): ShellProviderInterface
     {
         return $this->shell;
+    }
+
+    public function getConfigurationService(): ConfigurationService
+    {
+        return $this->configurationService;
     }
 
     public function raw(): array
@@ -114,5 +124,4 @@ class HostConfig implements \ArrayAccess
     {
         return $this['type'] == $type;
     }
-
 }

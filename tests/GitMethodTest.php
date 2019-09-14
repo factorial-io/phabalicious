@@ -22,7 +22,7 @@ use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GitMethodTest extends TestCase
+class GitMethodTest extends PhabTestCase
 {
     /** @var GitMethod */
     private $method;
@@ -52,7 +52,7 @@ class GitMethodTest extends TestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration(getcwd() . '/assets/git-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration($this->getcwd() . '/assets/git-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),

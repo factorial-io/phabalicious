@@ -557,7 +557,7 @@ class ConfigurationService
         }
 
         // Create host-config and return.
-        return new HostConfig($data, $shell_provider);
+        return new HostConfig($data, $shell_provider, $this);
     }
 
     /**
@@ -603,7 +603,7 @@ class ConfigurationService
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
         }
-        $data = new DockerConfig($data, $shell_provider);
+        $data = new DockerConfig($data, $shell_provider, $this);
 
         $this->cache[$cid] = $data;
         return $data;

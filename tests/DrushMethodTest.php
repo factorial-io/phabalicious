@@ -3,11 +3,12 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Tests\PhabTestCase;
 use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
-class DrushMethodTest extends TestCase
+class DrushMethodTest extends PhabTestCase
 {
     /** @var DrushMethod */
     private $method;
@@ -26,7 +27,7 @@ class DrushMethodTest extends TestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration(getcwd() . '/assets/drush-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration($this->getcwd() . '/assets/drush-tests/fabfile.yaml');
     }
 
     public function testGetDefaultConfig()

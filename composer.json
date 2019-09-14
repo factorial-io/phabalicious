@@ -31,10 +31,15 @@
         "symfony/phpunit-bridge": "^2.8|^3|^4.1",
         "phpunit/phpunit": "^7.3",
         "phpstan/phpstan": "^0.11.9",
-        "phpstan/phpstan-symfony": "^0.11.6"
+        "phpstan/phpstan-symfony": "^0.11.6",
+        "phpro/grumphp": "^0.15.2",
+        "jakub-onderka/php-parallel-lint": "^1.0"
     },
     "autoload": {
-        "psr-4": {"Phabalicious\\": "src/"}
+        "psr-4": {
+          "Phabalicious\\": "src/",
+          "Phabalicious\\Tests\\": "tests/"
+        }
     },
     "authors": [
         {

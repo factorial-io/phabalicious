@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class InstallCommandTest extends TestCase
+class InstallCommandTest extends PhabTestCase
 {
     /** @var Application */
     protected $application;
@@ -29,7 +29,7 @@ class InstallCommandTest extends TestCase
         $method_factory->addMethod(new FilesMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration(getcwd() . '/assets/install-command/fabfile.yaml');
+        $configuration->readConfiguration($this->getcwd() . '/assets/install-command/fabfile.yaml');
 
         $this->application->add(new InstallCommand($configuration, $method_factory));
     }

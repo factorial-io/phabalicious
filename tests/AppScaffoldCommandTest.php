@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class AppScaffoldCommandTest extends TestCase
+class AppScaffoldCommandTest extends PhabTestCase
 {
     /** @var Application */
     protected $application;
@@ -40,7 +40,7 @@ class AppScaffoldCommandTest extends TestCase
      */
     public function testAppScaffolder()
     {
-        $target_folder = getcwd() . '/tmp';
+        $target_folder = $this->getcwd() . '/tmp';
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
         }
@@ -52,7 +52,7 @@ class AppScaffoldCommandTest extends TestCase
             '--name' => 'Test',
             '--output' => $target_folder,
             '--override' => true,
-            'scaffold-url' => getcwd() . '/assets/scaffold-tests/scaffold-drupal-commerce.yml'
+            'scaffold-url' => $this->getcwd() . '/assets/scaffold-tests/scaffold-drupal-commerce.yml'
         ));
 
         // the output of the command in the console
@@ -81,7 +81,7 @@ class AppScaffoldCommandTest extends TestCase
      */
     public function testScaffoldWithRelativeFolder()
     {
-        $root = getcwd();
+        $root = $this->getcwd();
         $target_folder = $root . '/tmp';
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
@@ -123,7 +123,7 @@ class AppScaffoldCommandTest extends TestCase
 
     public function testScaffoldQuestions()
     {
-        $root = getcwd();
+        $root = $this->getcwd();
         $target_folder = $root . '/tmp';
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
@@ -150,7 +150,7 @@ class AppScaffoldCommandTest extends TestCase
 
     public function testScaffoldSubfolder()
     {
-        $root = getcwd();
+        $root = $this->getcwd();
         $target_folder = $root . '/tmp/here';
         if (!is_dir($target_folder)) {
             mkdir($target_folder, 0777, true);
@@ -180,7 +180,7 @@ class AppScaffoldCommandTest extends TestCase
 
     public function testScaffoldExistingProjectFolder()
     {
-        $root = getcwd();
+        $root = $this->getcwd();
         $target_folder = $root . '/tmp/tst-test';
         if (!is_dir($target_folder)) {
             mkdir($target_folder, 0777, true);
@@ -213,7 +213,7 @@ class AppScaffoldCommandTest extends TestCase
      */
     public function testErrorWhileScaffolding()
     {
-        $root = getcwd();
+        $root = $this->getcwd();
         $target_folder = $root . '/tmp/tst-test';
         if (!is_dir($target_folder)) {
             mkdir($target_folder, 0777, true);

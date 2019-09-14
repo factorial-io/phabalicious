@@ -392,8 +392,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $shell->run(sprintf('rm -f %s', $backup_file_name));
             $return = $backup_file_name;
         }
-
-        $this->runDrush($shell, 'sql-dump %s --result-file=%s', $dump_options, $backup_file_name);
+        
+        $sql_dump_cmd = $host_config->get('sqlDumpCommand', 'sql-dump');
+        $this->runDrush($shell, '%s %s --result-file=%s', $sql_dump_cmd, $dump_options, $backup_file_name);
         return $return;
     }
 

@@ -5,12 +5,10 @@ namespace Phabalicious\Tests;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\GitMethod;
 use Phabalicious\Method\MethodFactory;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Psr\Log\Test\LoggerInterfaceTest;
 use Symfony\Component\Console\Application;
 
-class ConfigurationServiceValidationTest extends TestCase
+class ConfigurationServiceValidationTest extends PhabTestCase
 {
 
     /**
@@ -35,7 +33,7 @@ class ConfigurationServiceValidationTest extends TestCase
         $method_factory->addMethod(new GitMethod($this->logger));
 
         $this->config->setMethodFactory($method_factory);
-        $this->config->readConfiguration(getcwd() . '/assets/validation-tests');
+        $this->config->readConfiguration($this->getcwd() . '/assets/validation-tests');
     }
 
 
