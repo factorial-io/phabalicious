@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.1.0-beta.1 / 2019-09-14
+
+### New
+
+  * Get drush command to dump sql from configuration
+  * Allow environment for host-configs, fixes #56
+  * Support replacements for host-environment variables
+
+### Fixed
+
+  * Refactor tests, so they can be run from root foldergit
+  * Push and restore working dir
+  * Fix build script regarding not enough file handles
+
 ## 3.0.22 / 2019-09-12
 
 ### New
