@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0 / 2019-09-27
+
+### New
+
+  * Switched to vuepress as documentation tool
+
 ## 3.1.0-beta.1 / 2019-09-14
 
 ### New
