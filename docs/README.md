@@ -6,11 +6,11 @@ tagline: A deployment system and general purpose helper.
 actionText: Get Started →
 actionLink: /guide/
 features:
-  - title: Deploy
-    details: Easily deploy new code to a remote installation.
-  - title: Reset
-    details: Reset a remote installation to its defaults.
-  - title: Backup
-    details: Restore data from an earlier state.
+  - title: Every-day tasks
+    details: Reset, backup or deploy your application, copy data from one instance to another.
+  - title: Docker integration
+    details: Administer your docker based stack, local or remote.
+  - title: Scaffolding
+    details: Scaffold new projects, create or destroy projects e.g with your CI.
 footer: A Factorial Open Source Project
 ---
