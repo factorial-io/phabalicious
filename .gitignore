@@ -13,3 +13,5 @@
 /bin/phpunit
 /build/phabalicious.phar
 /docs/site
+node_modules
+docs/.vuepress/dist

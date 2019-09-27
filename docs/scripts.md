@@ -18,7 +18,7 @@ script:
 
 Calling this script via
 
-```shell
+``` bash
 phab config:mbb script:test
 ```
 
