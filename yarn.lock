@@ -669,10 +669,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@factorial/vuepress-theme@1.0.0-alpha.0":
-  version "1.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@factorial/vuepress-theme/-/vuepress-theme-1.0.0-alpha.0.tgz#e7c1718bb37a3503825b14342e4a94b47c3a649e"
-  integrity sha512-aVV9w265PDAyqWfjB4MoGhB/xAENs7P62YtnTCsD2Qeuz/7p/uDGZVzJplkRjck87H78JPq8tJ30mQ5Bie8n/Q==
+"@factorial/vuepress-theme@1.0.0-alpha.1":
+  version "1.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@factorial/vuepress-theme/-/vuepress-theme-1.0.0-alpha.1.tgz#60e4c73a56dc6eab2af2274e02b0fc94620d185e"
+  integrity sha512-C0/HFDWM4Vzd0Vf6nrg9Kr20hcPUx8aEUySnZ1j3pmFIGI84Naxqef7p9W/ewAkwrR22yX0+4Th+XHNoTEBEKQ==
   dependencies:
     "@vuepress/theme-default" "^1.1.0"
 
