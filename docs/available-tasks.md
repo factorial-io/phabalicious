@@ -1,10 +1,12 @@
+# Available tasks
+
 ## -v/ -vv/ -vvv/ -vvvv
 
 Setting this option will increase the verbosity of phabalicious. Without this settings you'll get only warnings and errors and some informational stuff. If you encounter a problem try increasing the verbosity-level.
 
 ## --config
 
-```shell
+``` bash
 phab --config=<your-config>
 ```
 
@@ -12,14 +14,14 @@ Most of the phabalicious tasks need the option `config`. Setting the option will
 
 ## --offline
 
-```shell
+``` bash
 phab --offline=1 --config=<your-config> <task>
 ```
 
 This task will disable remote configuration files. As phabalicious keeps copies of remote configuration-files in `~/.phabalicious` it will try to load the configuration-file from there.
 
 ## --fabfile
-```shell
+``` bash
 Phab --fabfile=<path-to-your-fabfile ...
 ```
 
@@ -27,7 +29,7 @@ This will try to load the `fabfile.yaml` from a different location: `path-to-you
 
 ## --blueprint
 
-```shell
+``` bash
 phab --config=<your-config> --blueprint=<branch-name> <task>
 ```
 
@@ -112,14 +114,14 @@ hosts:
 
 ## list
 
-```shell
+``` bash
 phab list
 ```
 
 This command will list all available tasks. You can get specific help for a task with the next command:
 
 ## help
-```shell
+``` bash
 phab help:<task>
 ```
 
@@ -127,7 +129,7 @@ Will display all available arguments and options for that given `<task>` and som
 
 ## list:hosts
 
-```shell
+``` bash
 phab list:hosts
 ```
 
@@ -135,7 +137,7 @@ This task will list all your hosts defined in your `hosts`-section of your `fabf
 
 ## list:blueprints
 
-```shell
+``` bash
 Phab list:blueprints
 ```
 
@@ -143,7 +145,7 @@ This command will list all found blueprint configurations.
 
 ## about
 
-```shell
+``` bash
 phab --config=<your-config> about
 ```
 
@@ -151,7 +153,7 @@ will display the configuration of host `<your-config>`.
 
 ## output
 
-```shell
+``` bash
 Phab config=<your-config> --blueprint=<your-blueprint-config> output
 ```
 
@@ -159,7 +161,7 @@ This command will print the computed configuration from a blueprint as yams. You
 
 ## get:property
 
-```shell
+``` bash
 phab --config=<your-config> get:property <name-of-property>
 ```
 
@@ -173,7 +175,7 @@ This will print the property-value to the console. Suitable if you want to use p
 
 ## version
 
-```shell
+``` bash
 phab --config=<your-config> version
 ```
 
@@ -185,7 +187,7 @@ This command will display the installed version of the code on the installation 
 
 ## deploy
 
-```shell
+``` bash
 phab --config=<your-config> deploy
 phab --config=<your-config> deploy <branch-to-deploy>
 ```
@@ -207,7 +209,7 @@ After a successfull deployment the `reset`-task will be run.
 
 ## reset
 
-```shell
+``` bash
 phab config=<your-config> reset
 ```
 
@@ -232,7 +234,7 @@ This task will reset your installation
 
 ## install
 
-```shell
+``` bash
 phab config=<your-config> install
 ```
 
@@ -261,7 +263,7 @@ installOptions:
 
 ## install:from
 
-```shell
+``` bash
 phab --config=<your-config> install:from <source-config> <what>
 ```
 
@@ -274,7 +276,7 @@ This task will install a new installation (see the `install`-task) and afterward
 
 ## backup
 
-```shell
+``` bash
 phab --config=<your-config> backup <what>
 ```
 
@@ -301,7 +303,7 @@ If `<what>` is omitted, files and db gets backupped, you can limit this by provi
 
 ## list:backups
 
-```shell
+``` bash
 phab --config=<your-config> list:backups
 ```
 
@@ -310,7 +312,7 @@ This command will print all available backups to the console.
 
 ## restore
 
-```shell
+``` bash
 phab --config=<your-config> restore <commit-hash|file-name>
 ```
 
@@ -325,7 +327,7 @@ This will restore a backup-set. A backup-set consists typically of a database-du
 
 ## get:backup
 
-```shell
+``` bash
 phab --config:<config> get:backup <commit-hash|file-name>
 ```
 
@@ -339,7 +341,7 @@ This command will copy a remote backup-set to your local computer into the curre
 
 ## copy-from
 
-```shell
+``` bash
 phab --config=<dest-config> copy-from <source-config> <what>
 ```
 
@@ -364,11 +366,11 @@ You can limit what to copy by adding `db` or `files`  as arguments.
 
 ## drush
 
-```shell
+``` bash
 phab --config=<config> drush "<drush-command>"
 ```
 
-This task will execute the `drush-command` on the remote host specified in <config>. Please note, that you'll have to quote the drush-command when it contains spaces.
+This task will execute the `drush-command` on the remote host specified in `<config>`. Please note, that you'll have to quote the drush-command when it contains spaces.
 
 **Available methods**
 
@@ -395,7 +397,7 @@ This task will execute a drupal-console task on the remote host. Please note, th
 
 ## platform
 
-```shell
+``` bash
 phab --config=<config> platform <command>
 ```
 
@@ -403,7 +405,7 @@ Runs a specific platform-command.
 
 ## get:file
 
-```shell
+``` bash
 phab --config=<config> get:file <path-to-remote-file>
 ```
 
@@ -411,7 +413,7 @@ Copy a remote file to the current working directory of your current machine.
 
 ## put:file
 
-```shell
+``` bash
 phab --config=<config> put:file <path-to-local-file>
 ```
 
@@ -424,7 +426,7 @@ Copy a local file to the tmp-folder of a remote machine.
 
 ## get:files-dump
 
-```shell
+``` bash
 phab --config=<config> get:files-dump
 ```
 
@@ -437,7 +439,7 @@ This task will tar all files in `filesFolder` and `privateFilesFolder` and downl
 
 ## get:sql-dump
 
-```shell
+``` bash
 phab --config=<config> get:sql-dump
 ```
 
@@ -450,7 +452,7 @@ Get a current dump of the remote database and copy it to the local machine into 
 
 ## restore:sql-from-file
 
-```shell
+``` bash
 phab --config=<config> restore:sql-from-file <path-to-local-sql-dump>
 ```
 
@@ -463,7 +465,7 @@ This command will copy the dump-file `path-to-local-sql-dump` to the remote mach
 
 ## script
 
-```shell
+``` bash
 phab --config=<config> script <script-name>
 ```
 
@@ -481,7 +483,7 @@ The `script`-command is rather powerful, have a read about it in the extra secti
 
 ## docker
 
-```shell
+``` bash
 phab --config=<config> docker <docker-task>
 ```
 
@@ -493,7 +495,7 @@ There are three implicit tasks available:
 
 ### copySSHKeys
 
-```shell
+``` bash
 phab --config=mbb docker copySSHKeys
 ```
 
@@ -512,7 +514,7 @@ This task will try to run `supervisorctl status` in the container and  waits unt
 
 ## start-remote-access
 
-```shell
+``` bash
 phab --config=<config> start-remote-access
 phab --config=<config> start-remote-access --port=<port> --public-port=<public-port> --public-ip=<public-ip>
 ```
@@ -526,11 +528,11 @@ This task will run a command to forward a local port to a remote port. It starts
 
 ## notify
 
-```shell
+``` bash
 phab --config=<config> notify <message> <channel>
 ```
 
-This command will send the notification <message> to Mattermosts channel <channel>. For a detailed description have a look into the dedicated documentation.
+This command will send the notification `<message>` to Mattermosts channel `<channel>`. For a detailed description have a look into the dedicated documentation.
 
 **Examples**
 
@@ -538,7 +540,7 @@ This command will send the notification <message> to Mattermosts channel <channe
 
 ## app:scaffold
 
-```shell
+``` bash
 phab app:scaffold <path/url-to-scaffold-files> --name=<name of app> --short-name="short name of app" --output=<path to output> --override="1|0"
 ```
 
@@ -551,7 +553,7 @@ This command will scaffold a new project from a set of scaffold-files. See the d
 
 ## app:create
 
-```shell
+``` bash
 phab --config=<config> app:create --config-from=<other-config>
 ```
 
@@ -563,7 +565,7 @@ For a deeper explanation please have a look into the dedicated documentation
 
 ## app:update
 
-```shell
+``` bash
 phab --config=<config> app:update
 ```
 
@@ -576,7 +578,7 @@ This command will update the code-base to the latest changes. When using the cru
 
 ## app:destroy
 
-```shell
+``` bash
 phab --config=<config> app:destroy
 ```
 
@@ -584,7 +586,7 @@ This command will destroy an app from a given configuration. The process has sev
 
 ## self-update
 
-```shell
+``` bash
 phab self-update
 Phan self-update --allow-unstable=1
 ```
@@ -593,10 +595,8 @@ This will download the latest version of phab and replace the current installed 
 
 ## jira
 
-```shell
+``` bash
 phab jira
 ```
 
 This command will display your open tasks for that given project. For this to work, the command needs some configuration-options.
-
-
