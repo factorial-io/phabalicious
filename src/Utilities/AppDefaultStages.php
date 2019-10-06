@@ -40,7 +40,7 @@ class AppDefaultStages
         ],
     ];
 
-    const CREATE_CODE = [
+    const FTP_SYNC = [
         [
             'stage' => 'installCode',
         ],

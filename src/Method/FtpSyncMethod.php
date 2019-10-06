@@ -119,8 +119,8 @@ class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
 
         // First, create an app in a temporary-folder.
         $stages = $context->getConfigurationService()->getSetting(
-            'appStages.createCode',
-            AppDefaultStages::CREATE_CODE
+            'appStages.ftpSync',
+            AppDefaultStages::FTP_SYNC
         );
         $this->buildArtifact($host_config, $context, $shell, $install_dir, $stages);
 
