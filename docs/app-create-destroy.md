@@ -32,7 +32,7 @@ appStages:
   gitSync:
     useLocalRepository:
       - stage: installDependencies
-      - stage: getChangeLog
+      - stage: getSourceCommitInfo
       - stage: pullTargetRepository
       - stage: copyFilesToTargetRepository
       - stage: runDeployScript
@@ -40,7 +40,7 @@ appStages:
     pullTargetRepository:
       - stage: installCode
       - stage: installDependencies
-      - stage: getChangeLog
+      - stage: getSourceCommitInfo
       - stage: pullTargetRepository
       - stage: copyFilesToTargetRepository
       - stage: runDeployScript
@@ -78,3 +78,11 @@ phab --config=some-config --blueprint=feature/<some-feature> create:app
 ```
 
 Will create a new app from a blueprinted config.
+
+## Customizing via scripts
+
+* You can add custom scripts to your host-configuration which will be run before a stage is entered or after a stage is finished. They follow a naming-convention:
+    * `appCreate<NameOfStage>Before`
+    * `appCreate<NameOfStage>Finished`
+    
+   e.g. `appCreateInstallDependenciesBefore` or `appCreateSpinDownFinished`. All context variables are exposed to scripts as `context.data.*` or `context.results.*`

@@ -69,7 +69,7 @@ It is using the following stages:
 
 * `installCode`, creates a temporary folder and pulls the source repository. (only when `useLocalRepository` is set to false)
 * `installDependencies` to install the dependencies
-* `getChangeLog` get the commit hash from the source repo.
+* `getSourceCommitInfo` get the commit hash from the source repo.
 * `pullTargetRepository` pulls the target repository into an temporary folder
 * `copyFilesToTargetDirectory`, copy specified `files` to the target directory, removes all files listed in `excludeFiles.gitSync`
 * `runDeployScript` run the deploy script of the host-config.

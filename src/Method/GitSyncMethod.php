@@ -19,7 +19,7 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
     const PULL_SOURCE_AND_TARGET_REPOSITORY_STAGES = [
         ['stage' => 'installCode'],
         ['stage' => 'installDependencies'],
-        ['stage' => 'getChangeLog'],
+        ['stage' => 'getSourceCommitInfo'],
         ['stage' => 'pullTargetRepository'],
         ['stage' => 'copyFilesToTargetDirectory'],
         ['stage' => 'runDeployScript'],
@@ -28,18 +28,25 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
 
     const USE_LOCAL_REPOSITORY_STAGES = [
         ['stage' => 'installDependencies'],
-        ['stage' => 'getChangeLog'],
+        ['stage' => 'getSourceCommitInfo'],
         ['stage' => 'pullTargetRepository'],
         ['stage' => 'copyFilesToTargetDirectory'],
         ['stage' => 'runDeployScript'],
         ['stage' => 'pushToTargetRepository']
     ];
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return 'artifacts--git-sync';
     }
 
+    /**
+     * @param string $method_name
+     * @return bool
+     */
     public function supports(string $method_name): bool
     {
         return $method_name === $this->getName();
@@ -60,6 +67,13 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         return $defaults;
     }
 
+    /**
+     * Get default config.
+     *
+     * @param ConfigurationService $configuration_service
+     * @param array $host_config
+     * @return array
+     */
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $return = parent::getDefaultConfig($configuration_service, $host_config);
@@ -77,6 +91,12 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         return $return;
     }
 
+    /**
+     * Validate config.
+     *
+     * @param array $config
+     * @param ValidationErrorBagInterface $errors
+     */
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
@@ -129,6 +149,10 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         // $shell->run(sprintf('rm -rf %s', $target_dir));
     }
 
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
         if (!$current_stage = $context->get('currentStage', false)) {
@@ -138,7 +162,7 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
             'pullTargetRepository',
             'copyFilesToTargetDirectory',
             'pushToTargetRepository',
-            'getChangeLog',
+            'getSourceCommitInfo',
             'runDeployScript',
         ];
         if (in_array($current_stage['stage'], $whitelisted_fns)) {
@@ -159,11 +183,13 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
     }
 
     /**
+     * Get current tag and commit-hash from source repo.
+     * 
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @throws MethodNotFoundException
      */
-    protected function getChangeLog(HostConfig $host_config, TaskContextInterface $context)
+    protected function getSourceCommitInfo(HostConfig $host_config, TaskContextInterface $context)
     {
         if (!$git_method = $this->getGitMethod($context)) {
             return;
@@ -178,6 +204,8 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
     }
 
     /**
+     * Pull target repository and find last source commit hash in log.
+     * 
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      */
