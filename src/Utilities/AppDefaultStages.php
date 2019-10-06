@@ -47,6 +47,9 @@ class AppDefaultStages
         [
             'stage' => 'installDependencies',
         ],
+        [
+            'stage' => 'runDeployScript',
+        ],
     ];
 
 

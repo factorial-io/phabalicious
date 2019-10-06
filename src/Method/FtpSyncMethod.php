@@ -24,7 +24,7 @@ class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
 
     public function getName(): string
     {
-        return 'artefacts--ftp-sync';
+        return 'artifacts--ftp-sync';
     }
 
     public function supports(string $method_name): bool
@@ -159,5 +159,16 @@ class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
 
         // Do not run any next tasks.
         $context->setResult('runNextTasks', []);
+    }
+
+    public function createApp(HostConfig $host_config, TaskContextInterface $context)
+    {
+        if (!$current_stage = $context->get('currentStage', false)) {
+            throw new \InvalidArgumentException('Missing currentStage on context!');
+        }
+
+        if ($current_stage['stage'] == 'runDeployScript') {
+            $this->runDeployScript($host_config, $context);
+        }
     }
 }

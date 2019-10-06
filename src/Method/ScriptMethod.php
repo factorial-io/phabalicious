@@ -82,6 +82,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $environment = Utilities::mergeData($environment, $host_config['environment']);
         }
         $variables = Utilities::mergeData($variables, [
+            'context' => [
+                'data' => $context->getData(),
+                'results' => $context->getResults(),
+            ],
             'host' => $host_config->raw(),
             'settings' => $context->getConfigurationService()
                 ->getAllSettings(['hosts', 'dockerHosts']),
@@ -365,6 +369,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     {
         parent::preflightTask($task, $config, $context);
         $this->runTaskSpecificScripts($config, $task . 'Prepare', $context);
+        if ($current_stage = $context->get('currentStage')) {
+            $current_stage = ucfirst($current_stage['stage']);
+            $this->runTaskSpecificScripts($config, $task . $current_stage . 'Prepare', $context);
+        }
     }
 
     /**
@@ -385,6 +393,11 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         if (empty($this->handledTaskSpecificScripts[$task])) {
             $this->runTaskSpecificScripts($config, $task, $context);
         }
+        if ($current_stage = $context->get('currentStage')) {
+            $current_stage = ucfirst($current_stage['stage']);
+            $this->runTaskSpecificScripts($config, $task . $current_stage . 'Finished', $context);
+        }
+
         $this->runTaskSpecificScripts($config, $task . 'Finished', $context);
 
         foreach ([$task . 'Prepare', $task, $task . 'Finished'] as $t) {

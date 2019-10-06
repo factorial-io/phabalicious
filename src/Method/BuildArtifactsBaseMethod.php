@@ -21,8 +21,8 @@ abstract class BuildArtifactsBaseMethod extends BaseMethod
      * @param string $install_dir
      * @param array $stages
      * @throws MethodNotFoundException
-     * @throws MissingScriptCallbackImplementation
      * @throws TaskNotFoundInMethodException
+     * @throws MissingScriptCallbackImplementation
      */
     protected function buildArtifact(
         HostConfig $host_config,
@@ -38,6 +38,7 @@ abstract class BuildArtifactsBaseMethod extends BaseMethod
         }
         $shell->cd($cloned_host_config['tmpFolder']);
         $context->set('outerShell', $shell);
+        $context->set('installDir', $install_dir);
 
         AppDefaultStages::executeStages(
             $context->getConfigurationService()->getMethodFactory(),
@@ -48,14 +49,25 @@ abstract class BuildArtifactsBaseMethod extends BaseMethod
             'Creating code'
         );
 
-        // Run deploy scripts
+        $this->runDeployScript($cloned_host_config, $context);
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws MethodNotFoundException
+     * @throws MissingScriptCallbackImplementation
+     */
+    protected function runDeployScript(HostConfig $host_config, TaskContextInterface $context)
+    {
         /** @var ScriptMethod $script_method */
         $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
+        $install_dir = $context->get('installDir');
         $context->set('variables', [
-            'installFolder' => $install_dir
+            'installFolder' => $install_dir,
         ]);
         $context->set('rootFolder', $install_dir);
-        $script_method->runTaskSpecificScripts($cloned_host_config, 'deploy', $context);
+        $script_method->runTaskSpecificScripts($host_config, 'deploy', $context);
 
         $context->setResult('skipResetStep', true);
     }
