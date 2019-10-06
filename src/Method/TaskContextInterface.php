@@ -18,6 +18,8 @@ interface TaskContextInterface
 
     public function get(string $key, $default = null);
 
+    public function getData(): array;
+
     public function setInput(InputInterface $input);
 
     public function getInput(): InputInterface;
