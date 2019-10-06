@@ -35,7 +35,7 @@ appStages:
 
 Run the phab-command as usual. If you want to copy from an existing installation, add the `--copy-from`-option.
 
-```shell
+``` bash
 phab --config=<your-config> app:create
 ```
 
@@ -45,7 +45,7 @@ If the app is not created yet, all `create`-stages will be executed. If nothing 
 
 ## Destroying an app
 
-```shell
+``` bash
 phab --config=<your-config> app:destroy
 ```
 
@@ -57,7 +57,7 @@ Both commands work best when using blueprints. This will allow to create a confi
 
 Some examples:
 
-```shell
+``` bash
 phab --config=some-config --blueprint=feature/<some-feature> create:app
 ```
 

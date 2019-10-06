@@ -14,3 +14,5 @@
 /build/phabalicious.phar
 /docs/site
 /tests/tmp
+node_modules
+docs/.vuepress/dist

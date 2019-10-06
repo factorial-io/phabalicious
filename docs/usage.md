@@ -2,12 +2,12 @@
 
 To execute a task with the help of phabalicious, just
 
-```shell
+``` bash
 cd <your-project-folder>
 phab --config=<your-config-key> <task>
 ```
 
-This will read your fabfile.yaml, look for `<your-config-key>` in the host-section and run the task <task>
+This will read your fabfile.yaml, look for `<your-config-key>` in the host-section and run the task `<task>`
 
 # Tasks
 
@@ -29,7 +29,7 @@ Phabalicious provides a set of so-called methods which implement all listed func
 
 You declare your needs in the fabfile.yaml with the key `needs`, e.g.
 
-```yaml
+``` yaml
 needs:
   - git
   - ssh
@@ -44,6 +44,6 @@ Have a look at the file-format documentation for more info.
 
 You can get a list of available commands with
 
-```shell
+``` bash
 phab list
 ```

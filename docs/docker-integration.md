@@ -61,7 +61,7 @@ hosts:
 
 This snippet will expose 3 docker-commands for the host `testHostA`, you can execute them via
 
-```shell
+``` bash
 phab --config=testHostA docker run|build|all
 ```
 

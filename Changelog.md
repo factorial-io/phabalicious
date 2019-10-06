@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0 / 2019-09-27
+
+### New
+
+  * Switched to vuepress as documentation tool
+
 ## 3.1.0-beta.1 / 2019-09-14
 
 ### New
@@ -342,7 +348,7 @@ There's a lot of change going on here, but the structure of the fabfile.yaml is 
 
 As fabric (the underlying lib we used for fabalicious) is quite different to symfony console apps there are more subtle changes. For example you can invoke only one task per run. With fabalicious it was easy to run multiple commands:
 
-```shell
+``` bash
 fab config:mbb docker:run reset ssh
 ```
 
@@ -459,4 +465,3 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * `sshCommand` is deprecated and got renamed to `shell:command` and will return the command to run a shell with the given configuration
 * the needs `drush7`, `drush8` and `drush9` are deprecated, use the need `drush` and the newly introduced options `drupalVersion` and `drushVersion` instead,
 * the `slack`-configuration got removed and got replaced by a general notification solution, currently only with a mattermost implementation.
-

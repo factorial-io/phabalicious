@@ -103,7 +103,7 @@ hosts:
 
 You can get all host-information including the default values using the phabalicious command `about`:
 
-```shell
+``` bash
 phab --config=staging about
 ```
 
@@ -277,7 +277,7 @@ The first key is the task-name (`reset`, `deploy`, ...), the second key is the t
 
 A keyed list of available scripts. This scripts may be defined globally (on the root level) or on a per host-level. The key is the name of the script and can be executed via
 
-```shell
+``` bash
 phab --config=<configuration> script <key>
 ```
 
@@ -452,4 +452,3 @@ host:
       config: my-blueprint-config
       varian: the-variant
 ```
-
