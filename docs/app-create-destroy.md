@@ -5,7 +5,7 @@ Phabalicious can create or delete a complete app with two commands:
   * `phab --config=<config> app:create --copy-from=<other-config>`
   * `phab --config=<config> app:destroy`
 
-Both commands executes a list of stages, which can be influenced via configuration
+Both commands executes a list of stages, which can be influenced via configuration. Every method can react to the different stages and run some tasks if needed.
 
 ## the standard stages
 
@@ -19,17 +19,33 @@ appStages:
     - stage: spinUp
     - stage: installDependencies
     - stage: install
-  createCode:
-    - stage: installCode
-    - stage: installDependencies
   deploy:
     - stage: spinUp
   destroy:
     - stage: spinDown
     - stage: deleteContainers
+  # ftpSync and gitSync are only used for deploying artifacts.
+  ftpSync:
+    - stage: installCode
+    - stage: installDependencies
+    - stage: runDeployScript
+  gitSync:
+    useLocalRepository:
+      - stage: installDependencies
+      - stage: getChangeLog
+      - stage: pullTargetRepository
+      - stage: copyFilesToTargetRepository
+      - stage: runDeployScript
+      - stage: pushToTargetRepository
+    pullTargetRepository:
+      - stage: installCode
+      - stage: installDependencies
+      - stage: getChangeLog
+      - stage: pullTargetRepository
+      - stage: copyFilesToTargetRepository
+      - stage: runDeployScript
+      - stage: pushToTargetRepository
 ```
-
-`createCode` is only used by the `ftp-sync`-method, to create a complete code version of an app.
 
 ## Creating a new app
 
