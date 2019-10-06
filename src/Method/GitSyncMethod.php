@@ -146,7 +146,8 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         if (!$use_local_repository) {
             $shell->run(sprintf('rm -rf %s', $install_dir));
         }
-        // $shell->run(sprintf('rm -rf %s', $target_dir));
+
+        $shell->run(sprintf('rm -rf %s', $target_dir));
     }
 
     /**
@@ -288,9 +289,9 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         /** @var ShellProviderInterface $shell */
         $shell->pushWorkingDir($target_dir);
 
-        $shell->run('git add -A .');
-        $shell->run(sprintf('git commit -m "%s" -m "%s" || true', $message, implode('" -m "', $detailed_message)));
-        $shell->run('git push origin');
+        $shell->run('#!git add -A .');
+        $shell->run(sprintf('#!git commit -m "%s" -m "%s" || true', $message, implode('" -m "', $detailed_message)));
+        $shell->run('#!git push origin');
 
         $shell->popWorkingDir();
     }
@@ -325,7 +326,7 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         $install_dir = $context->get('installDir', false);
         $shell->pushWorkingDir($install_dir);
 
-        $log = $shell->run(sprintf('git log %s..%s --oneline', $last_commit_hash, $current_commit_hash), true);
+        $log = $shell->run(sprintf('#!git log %s..%s --oneline', $last_commit_hash, $current_commit_hash), true);
 
         $shell->popWorkingDir();
         return $log->getOutput();
