@@ -22,6 +22,7 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         ['stage' => 'getChangeLog'],
         ['stage' => 'pullTargetRepository'],
         ['stage' => 'copyFilesToTargetDirectory'],
+        ['stage' => 'runDeployScript'],
         ['stage' => 'pushToTargetRepository']
     ];
 
@@ -30,6 +31,7 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         ['stage' => 'getChangeLog'],
         ['stage' => 'pullTargetRepository'],
         ['stage' => 'copyFilesToTargetDirectory'],
+        ['stage' => 'runDeployScript'],
         ['stage' => 'pushToTargetRepository']
     ];
 
@@ -137,17 +139,33 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
             'copyFilesToTargetDirectory',
             'pushToTargetRepository',
             'getChangeLog',
+            'runDeployScript',
         ];
         if (in_array($current_stage['stage'], $whitelisted_fns)) {
             $this->{$current_stage['stage']}($host_config, $context);
         }
     }
 
+    /**
+     * Return the git method.
+     *
+     * @param TaskContextInterface $context
+     * @return GitMethod
+     * @throws MethodNotFoundException
+     */
+    private function getGitMethod(TaskContextInterface $context)
+    {
+        return $context->getConfigurationService()->getMethodFactory()->getMethod('git');
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @throws MethodNotFoundException
+     */
     protected function getChangeLog(HostConfig $host_config, TaskContextInterface $context)
     {
-        /** @var GitMethod $git_method */
-        $git_method = $context->getConfigurationService()->getMethodFactory()->getMethod('git');
-        if (!$git_method) {
+        if (!$git_method = $this->getGitMethod($context)) {
             return;
         }
 
@@ -159,6 +177,10 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         $context->setResult('commitHash', $hash);
     }
 
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     */
     protected function pullTargetRepository(HostConfig $host_config, TaskContextInterface $context)
     {
         $target_dir = $context->get('targetDir', false);
@@ -168,8 +190,24 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('outerShell', $host_config->shell());
         $shell->run(sprintf('#!git clone --depth 30 -b %s %s %s', $target_branch, $target_repository, $target_dir));
+        $shell->pushWorkingDir($target_dir);
+        $log = $shell->run('#!git log --format="%H|%s"', true);
+        $found = false;
+        foreach ($log->getOutput() as $line) {
+            list(, $subject) = explode('|', $line);
+            if (preg_match('/\[[0-9a-f]{5,40}\]/', $subject, $result)) {
+                $found = substr($result[0], 1, strlen($result[0]) - 2);
+                break;
+            }
+        }
+        $context->setResult('lastArtifactCommitHash', $found);
+        $shell->popWorkingDir();
     }
 
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     */
     protected function copyFilesToTargetDirectory(HostConfig $host_config, TaskContextInterface $context)
     {
         /** @var ShellProviderInterface $shell */
@@ -203,6 +241,10 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         $shell->popWorkingDir();
     }
 
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     */
     protected function pushToTargetRepository(HostConfig $host_config, TaskContextInterface $context)
     {
         $shell = $context->get('outerShell', $host_config->shell());
@@ -210,22 +252,54 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
         $message = $context->getResult('commitMessage', 'Commit build artifact');
         $detailed_message = $context->getResult('detailedCommitMessage', '');
 
+        if ($last_commit_hash = $context->getResult('lastArtifactCommitHash')) {
+            $current_commit_hash = $context->getResult('commitHash', 'HEAD');
+            $detailed_message = $this->getSourceGitLog($shell, $context, $last_commit_hash, $current_commit_hash);
+        }
+
         /** @var ShellProviderInterface $shell */
         $shell->pushWorkingDir($target_dir);
 
         $shell->run('git add -A .');
-        $shell->run(sprintf('git commit -m "%s" -m "%s" || true', $message, $detailed_message));
+        $shell->run(sprintf('git commit -m "%s" -m "%s" || true', $message, implode('" -m "', $detailed_message)));
         $shell->run('git push origin');
 
         $shell->popWorkingDir();
     }
 
 
+    /**
+     * @param ShellProviderInterface $shell
+     * @param $install_dir
+     * @return array
+     */
     private function getDirectoryContents(ShellProviderInterface $shell, $install_dir)
     {
         $contents = $shell->run('ls -1a ' . $install_dir, true);
         return array_filter($contents->getOutput(), function ($elem) {
             return !in_array($elem, ['.', '..']);
         });
+    }
+
+    /**
+     * @param ShellProviderInterface $shell
+     * @param TaskContextInterface $context
+     * @param $last_commit_hash
+     * @param $current_commit_hash
+     * @return array
+     */
+    private function getSourceGitLog(
+        ShellProviderInterface $shell,
+        TaskContextInterface $context,
+        $last_commit_hash,
+        $current_commit_hash
+    ) {
+        $install_dir = $context->get('installDir', false);
+        $shell->pushWorkingDir($install_dir);
+
+        $log = $shell->run(sprintf('git log %s..%s --oneline', $last_commit_hash, $current_commit_hash), true);
+
+        $shell->popWorkingDir();
+        return $log->getOutput();
     }
 }
