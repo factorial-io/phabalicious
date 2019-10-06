@@ -13,3 +13,4 @@
 /bin/phpunit
 /build/phabalicious.phar
 /docs/site
+/tests/tmp
