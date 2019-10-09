@@ -10,7 +10,7 @@ use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
-class ArticactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
+class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 {
 
     const DEFAULT_FILE_SOURCES = [
