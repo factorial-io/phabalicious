@@ -10,7 +10,7 @@ Both methods create a new application from scratch and deploy all or parts of it
 ```yaml
 excludeFiles:
   ftpSync:
-    - .gitignoreo
+    - .gitignore
   gitSync:
     - .fabfile.yaml
     - .env.*
@@ -81,7 +81,7 @@ If you run phabalicious as part of a CI-setup, it might make sense to set `useLo
 
 ```yaml
 excludeFiles:
-  ftpSync:
+  gitSync:
     - ".fabfile.yaml"
     - ".gitlab-ci.yml"
     - "composer.*"
