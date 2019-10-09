@@ -8,49 +8,22 @@ use Phabalicious\Method\TaskContextInterface;
 class AppDefaultStages
 {
     const CREATE = [
-        [
-            'stage' => 'prepareDestination',
-        ],
-        [
-            'stage' => 'installCode',
-        ],
-        [
-            'stage' => 'spinUp',
-        ],
-        [
-            'stage' => 'installDependencies',
-        ],
-        [
-            'stage' => 'install',
-        ],
+        'prepareDestination',
+        'installCode',
+        'spinUp',
+        'installDependencies',
+        'install',
     ];
 
     const DEPLOY = [
-        [
-            'stage' => 'spinUp',
-        ]
+        'spinUp',
     ];
 
     const DESTROY = [
-        [
-            'stage' => 'spinDown',
-        ],
-        [
-            'stage' => 'deleteContainer',
-        ],
+        'spinDown',
+        'deleteContainer',
     ];
 
-    const FTP_SYNC = [
-        [
-            'stage' => 'installCode',
-        ],
-        [
-            'stage' => 'installDependencies',
-        ],
-        [
-            'stage' => 'runDeployScript',
-        ],
-    ];
 
 
     /**
@@ -72,7 +45,7 @@ class AppDefaultStages
         string $message
     ) {
         foreach ($stages as $stage) {
-            $context->io()->comment(sprintf('%s, stage %s', $message, $stage['stage']));
+            $context->io()->comment(sprintf('%s, stage %s', $message, $stage));
             $context->set('currentStage', $stage);
             $method_factory->runTask($command, $host_config, $context);
         }

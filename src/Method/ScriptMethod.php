@@ -370,7 +370,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         parent::preflightTask($task, $config, $context);
         $this->runTaskSpecificScripts($config, $task . 'Prepare', $context);
         if ($current_stage = $context->get('currentStage')) {
-            $current_stage = ucfirst($current_stage['stage']);
+            $current_stage = ucfirst($current_stage);
             $this->runTaskSpecificScripts($config, $task . $current_stage . 'Prepare', $context);
         }
     }
@@ -394,7 +394,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $this->runTaskSpecificScripts($config, $task, $context);
         }
         if ($current_stage = $context->get('currentStage')) {
-            $current_stage = ucfirst($current_stage['stage']);
+            $current_stage = ucfirst($current_stage);
             $this->runTaskSpecificScripts($config, $task . $current_stage . 'Finished', $context);
         }
 

@@ -95,7 +95,7 @@ class ComposerMethod extends BaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        if ($current_stage['stage'] == 'installDependencies') {
+        if ($current_stage == 'installDependencies') {
             $this->resetPrepare($host_config, $context);
         }
     }

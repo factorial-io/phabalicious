@@ -4,17 +4,13 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Phabalicious\ShellProvider\ShellProviderInterface;
-use Phabalicious\Utilities\AppDefaultStages;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
-use Symfony\Component\Console\Helper\QuestionHelper;
 
-class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
+class ArticactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 {
 
     const DEFAULT_FILE_SOURCES = [
@@ -22,9 +18,17 @@ class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
         'private' => 'privateFilesFolder'
     ];
 
+    const STAGES = [
+        'installCode',
+        'installDependencies',
+        'runActions',
+        'runDeployScript',
+        'syncToFtp'
+    ];
+
     public function getName(): string
     {
-        return 'artifacts--ftp-sync';
+        return 'artifacts--ftp';
     }
 
     public function supports(string $method_name): bool
@@ -52,15 +56,31 @@ class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
             'lftp' => 'lftp',
         ];
 
-        $return['deployMethod'] = 'ftp-sync';
-        $return['ftp'] = [
+        $return['deployMethod'] = $this->getName();
+        $return[self::PREFS_KEY] = [
             'port' => 21,
             'lftpOptions' => [
                 '--verbose=1',
                 '--no-perms',
                 '--no-symlinks',
                 '-P 20',
-            ]
+            ],
+            'actions' => [
+                [
+                    'action' => 'copy',
+                    'arguments' => [
+                        '*'
+                    ],
+                ],
+                [
+                    'action' => 'exclude',
+                    'arguments' => [
+                        '.git/',
+                        'node_modules/',
+                        'fabfile.yaml'
+                    ],
+                ]
+            ],
         ];
 
         return $return;
@@ -70,19 +90,21 @@ class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
     {
         parent::validateConfig($config, $errors);
         if (in_array('drush', $config['needs'])) {
-            $errors->addError('needs', 'The method `ftp-sync` is incompatible with the `drush`-method!');
+            $errors->addError('needs', sprintf('The method `%s` is incompatible with the `drush`-method!', $this->getName()));
         }
-        if ($config['deployMethod'] !== 'ftp-sync') {
-            $errors->addError('deployMethod', 'deployMethod must be `ftp-sync`!');
+        if ($config['deployMethod'] !== $this->getName()) {
+            $errors->addError('deployMethod', sprintf('deployMethod must be `%s`!', $this->getName()));
         }
         if (in_array('ftp-sync', $config['needs'])) {
             $errors->addWarning('needs', sprintf('`ftp-sync` is deprecated, please use `%s`', $this->getName()));
         }
+        if (isset($config['ftp'])) {
+            $errors->addError('ftp', sprintf('`ftp` is deprecated, please use `%s` instead!', self::PREFS_KEY));
+        }
 
-        $service = new ValidationService($config, $errors, 'Host-config '. $config['configName']);
-        $service->isArray('ftp', 'Please provide ftp-credentials!');
-        if (!empty($config['ftp'])) {
-            $service = new ValidationService($config['ftp'], $errors, 'host-config.ftp '. $config['configName']);
+        if (!empty($config[self::PREFS_KEY])) {
+            $service = new ValidationService($config[self::PREFS_KEY], $errors, sprintf(
+                'host-config.%s.%s', $config['configName'], self::PREFS_KEY));
             $service->hasKeys([
                 'user' => 'the ftp user-name',
                 'host' => 'the ftp host to connect to',
@@ -102,30 +124,50 @@ class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
-        if ($host_config['deployMethod'] !== 'ftp-sync') {
+        if ($host_config['deployMethod'] !== $this->getName()) {
             return;
         }
 
-        if (empty($host_config['ftp']['password'])) {
-            $ftp = $host_config['ftp'];
+        if (empty($host_config[self::PREFS_KEY]['password'])) {
+            $ftp = $host_config[self::PREFS_KEY];
             $ftp['password'] = $context->getPasswordManager()->getPasswordFor($ftp['host'], $ftp['port'], $ftp['user']);
-            $host_config['ftp'] = $ftp;
+            $host_config[self::PREFS_KEY] = $ftp;
         }
 
         $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . time();
+        $target_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-target-' . time();
         $context->set('installDir', $install_dir);
+        $context->set('targetDir', $target_dir);
 
         $shell = $this->getShell($host_config, $context);
+        $shell->run(sprintf('mkdir -p %s', $target_dir));
 
         // First, create an app in a temporary-folder.
         $stages = $context->getConfigurationService()->getSetting(
-            'appStages.ftpSync',
-            AppDefaultStages::FTP_SYNC
+            'appStages.artifacts.ftp',
+            self::STAGES
         );
         $this->buildArtifact($host_config, $context, $shell, $install_dir, $stages);
 
+        $shell->run(sprintf('rm -rf %s', $install_dir));
+        $shell->run(sprintf('rm -rf %s', $target_dir));
+
+        // Do not run any next tasks.
+        $context->setResult('runNextTasks', []);
+    }
+
+    public function appCreate(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $this->runStageSteps($host_config, $context, [
+            'syncToFtp'
+        ]);
+    }
+
+    protected function syncToFtp(HostConfig $host_config, TaskContextInterface $context) {
+        $shell = $this->getShell($host_config, $context);
+        $target_dir = $context->get('targetDir', false);
         $exclude = $context->getConfigurationService()->getSetting('excludeFiles.ftpSync', []);
-        $options = implode(' ', $host_config['ftp']['lftpOptions']);
+        $options = implode(' ', $host_config[self::PREFS_KEY]['lftpOptions']);
         if (count($exclude)) {
             $options .= ' --exclude ' . implode(' --exclude ', $exclude);
         }
@@ -135,17 +177,17 @@ class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
         $shell->run(sprintf('touch %s', $command_file));
         $shell->run(sprintf(
             "echo 'open -u %s,%s -p%s %s' >> %s",
-            $host_config['ftp']['user'],
-            $host_config['ftp']['password'],
-            $host_config['ftp']['port'],
-            $host_config['ftp']['host'],
+            $host_config[self::PREFS_KEY]['user'],
+            $host_config[self::PREFS_KEY]['password'],
+            $host_config[self::PREFS_KEY]['port'],
+            $host_config[self::PREFS_KEY]['host'],
             $command_file
         ));
         $shell->run(sprintf(
             'echo "mirror %s -c -e -R  %s %s" >> %s',
             $options,
-            $install_dir,
-            $host_config['ftp']['rootFolder'],
+            $target_dir,
+            $host_config[self::PREFS_KEY]['rootFolder'],
             $command_file
         ));
 
@@ -155,20 +197,5 @@ class FtpSyncMethod extends BuildArtifactsBaseMethod implements MethodInterface
 
         // Cleanup.
         $shell->run(sprintf('rm %s', $command_file));
-        $shell->run(sprintf('rm -rf %s', $install_dir));
-
-        // Do not run any next tasks.
-        $context->setResult('runNextTasks', []);
-    }
-
-    public function createApp(HostConfig $host_config, TaskContextInterface $context)
-    {
-        if (!$current_stage = $context->get('currentStage', false)) {
-            throw new \InvalidArgumentException('Missing currentStage on context!');
-        }
-
-        if ($current_stage['stage'] == 'runDeployScript') {
-            $this->runDeployScript($host_config, $context);
-        }
     }
 }

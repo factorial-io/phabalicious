@@ -9,30 +9,29 @@ use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
-use Phabalicious\Utilities\AppDefaultStages;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
-class GitSyncMethod extends BuildArtifactsBaseMethod
+class ArtifactsGitMethod extends ArtifactsBaseMethod
 {
 
     const PULL_SOURCE_AND_TARGET_REPOSITORY_STAGES = [
-        ['stage' => 'installCode'],
-        ['stage' => 'installDependencies'],
-        ['stage' => 'getSourceCommitInfo'],
-        ['stage' => 'pullTargetRepository'],
-        ['stage' => 'copyFilesToTargetDirectory'],
-        ['stage' => 'runDeployScript'],
-        ['stage' => 'pushToTargetRepository']
+         'installCode',
+         'installDependencies',
+         'getSourceCommitInfo',
+         'pullTargetRepository',
+         'runActions',
+         'runDeployScript',
+         'pushToTargetRepository'
     ];
 
     const USE_LOCAL_REPOSITORY_STAGES = [
-        ['stage' => 'installDependencies'],
-        ['stage' => 'getSourceCommitInfo'],
-        ['stage' => 'pullTargetRepository'],
-        ['stage' => 'copyFilesToTargetDirectory'],
-        ['stage' => 'runDeployScript'],
-        ['stage' => 'pushToTargetRepository']
+         'installDependencies',
+         'getSourceCommitInfo',
+         'pullTargetRepository',
+         'runActions',
+         'runDeployScript',
+         'pushToTargetRepository'
     ];
 
     /**
@@ -40,7 +39,7 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
      */
     public function getName(): string
     {
-        return 'artifacts--git-sync';
+        return 'artifacts--git';
     }
 
     /**
@@ -156,19 +155,11 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
      */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
-        if (!$current_stage = $context->get('currentStage', false)) {
-            throw new \InvalidArgumentException('Missing currentStage on context!');
-        }
-        $whitelisted_fns = [
-            'pullTargetRepository',
-            'copyFilesToTargetDirectory',
-            'pushToTargetRepository',
-            'getSourceCommitInfo',
-            'runDeployScript',
-        ];
-        if (in_array($current_stage['stage'], $whitelisted_fns)) {
-            $this->{$current_stage['stage']}($host_config, $context);
-        }
+       $this->runStageSteps($host_config, $context, [
+           'getSourceCommitInfo',
+           'pullTargetRepository',
+           'pushToTargetRepository',
+       ]);
     }
 
     /**
@@ -237,43 +228,6 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      */
-    protected function copyFilesToTargetDirectory(HostConfig $host_config, TaskContextInterface $context)
-    {
-        /** @var ShellProviderInterface $shell */
-        $shell = $context->get('outerShell', $host_config->shell());
-        $install_dir = $context->get('installDir', false);
-        $target_dir = $context->get('targetDir', false);
-
-        $shell->pushWorkingDir($install_dir);
-
-        $files_to_copy = $host_config['gitSync']['files'] ?? $this->getDirectoryContents($shell, $install_dir);
-        $files_to_skip = $context->getConfigurationService()->getSetting('excludeFiles.gitSync', []);
-
-        // Make sure that git-related files are skipped.
-        $files_to_skip[] = ".git";
-        $files_to_skip[] = ".gitignore";
-
-        foreach ($files_to_copy as $file) {
-            if (!in_array($file, $files_to_skip)) {
-                $shell->run(sprintf('cp -a %s %s', $file, $target_dir));
-            }
-        }
-
-        // Delete skipped files in target.
-        $shell->cd($target_dir);
-        // Keep .git
-        $files_to_skip = array_diff($files_to_skip, ['.git']);
-        foreach ($files_to_skip as $file) {
-            $full_path = $target_dir . '/' . $file;
-            $shell->run(sprintf('rm -rf %s', $full_path));
-        }
-        $shell->popWorkingDir();
-    }
-
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     */
     protected function pushToTargetRepository(HostConfig $host_config, TaskContextInterface $context)
     {
         $shell = $context->get('outerShell', $host_config->shell());
@@ -297,18 +251,7 @@ class GitSyncMethod extends BuildArtifactsBaseMethod
     }
 
 
-    /**
-     * @param ShellProviderInterface $shell
-     * @param $install_dir
-     * @return array
-     */
-    private function getDirectoryContents(ShellProviderInterface $shell, $install_dir)
-    {
-        $contents = $shell->run('ls -1a ' . $install_dir, true);
-        return array_filter($contents->getOutput(), function ($elem) {
-            return !in_array($elem, ['.', '..']);
-        });
-    }
+
 
     /**
      * @param ShellProviderInterface $shell
