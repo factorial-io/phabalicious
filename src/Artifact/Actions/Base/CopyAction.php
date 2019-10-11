@@ -3,7 +3,6 @@
 
 namespace Phabalicious\Artifact\Actions\Base;
 
-
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
@@ -45,8 +44,7 @@ class CopyAction extends ActionBase
         if (!is_array($files_to_copy)) {
             if ($files_to_copy == '*') {
                 $files_to_copy = $this->getDirectoryContents($shell, $install_dir);
-            }
-            else {
+            } else {
                 $files_to_copy = [$files_to_copy];
             }
         }
@@ -56,6 +54,9 @@ class CopyAction extends ActionBase
         // Make sure that git-related files are skipped.
         $files_to_skip[] = ".git";
         $to = $target_dir . '/' . $this->getArgument('to');
+
+        // Make sure the target directory exists before copying.
+        $shell->run(sprintf('mkdir -p %s', $to));
 
         foreach ($files_to_copy as $file) {
             if (!in_array($file, $files_to_skip)) {
