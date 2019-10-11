@@ -35,7 +35,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
-        ActionFactory::register($this->getName(), 'exclude', ExcludeAction::class );
+        ActionFactory::register($this->getName(), 'exclude', ExcludeAction::class);
     }
     /**
      * @return string
@@ -122,7 +122,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         if ($config['deployMethod'] !== 'git-sync') {
             $errors->addError('deployMethod', 'deployMethod must be `git-sync`!');
         }
-        $service = new ValidationService($config[self::PREFS_KEY], $errors, 'gitSnyc config');
+        $service = new ValidationService($config[self::PREFS_KEY], $errors, 'gitSync config');
         $service->hasKey('branch', 'gitSync needs a target branch to push build artifacts to!');
         $service->hasKey('repository', 'gitSync needs a target repository to push build artifacts to!');
     }
@@ -140,7 +140,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             return ;
         }
 
-        $stages = $context->getConfigurationService()->getSetting( 'appStages.artifacts.git', self::STAGES );
+        $stages = $context->getConfigurationService()->getSetting('appStages.artifacts.git', self::STAGES);
         $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages);
 
         $shell = $this->getShell($host_config, $context);
@@ -162,11 +162,11 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
      */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
-       $this->runStageSteps($host_config, $context, [
+        $this->runStageSteps($host_config, $context, [
            'getSourceCommitInfo',
            'pullTargetRepository',
            'pushToTargetRepository',
-       ]);
+        ]);
     }
 
     /**
@@ -183,7 +183,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
 
     /**
      * Get current tag and commit-hash from source repo.
-     * 
+     *
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @throws MethodNotFoundException
@@ -204,7 +204,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
 
     /**
      * Pull target repository and find last source commit hash in log.
-     * 
+     *
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      */
