@@ -4,12 +4,12 @@
 
 ### Changed
 
-  * Refactored and renamed method `ftp-sync` to `artifacts--ftp-sync` in preparation of git-sync.
+  * Refactored and renamed method `ftp-sync` to `artifacts--ftp` in preparation of git-sync.
  
 ### New
   * `rootFolder` is set by default now
   * All context variables are exposed as replacement patterns for using in scripts.
-  * new method `artifacts--git-sync` to build an artifact and push it to a git repository, see new documentation about artifacts.
+  * new method `artifacts--git` to build an artifact and push it to a git repository, see new documentation about artifacts.
 
 ## 3.1.0 / 2019-09-27
 
