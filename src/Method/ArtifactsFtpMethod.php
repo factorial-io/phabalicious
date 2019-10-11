@@ -2,21 +2,20 @@
 
 namespace Phabalicious\Method;
 
+use Phabalicious\Artifact\Actions\ActionFactory;
+use Phabalicious\Artifact\Actions\Ftp\ExcludeAction;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Psr\Log\LoggerInterface;
 
 class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 {
-
-    const DEFAULT_FILE_SOURCES = [
-        'public' => 'filesFolder',
-        'private' => 'privateFilesFolder'
-    ];
 
     const STAGES = [
         'installCode',
@@ -26,6 +25,12 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         'syncToFtp'
     ];
 
+    public function __construct(LoggerInterface $logger)
+    {
+        parent::__construct($logger);
+        ActionFactory::register($this->getName(), 'exclude', ExcludeAction::class );
+    }
+
     public function getName(): string
     {
         return 'artifacts--ftp';
@@ -34,18 +39,6 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
     public function supports(string $method_name): bool
     {
         return in_array($method_name, array('ftp-sync', $this->getName()));
-    }
-
-    public function getGlobalSettings(): array
-    {
-        $defaults = parent::getGlobalSettings();
-        $defaults['excludeFiles']['ftpSync'] = [
-            '.git/',
-            'node_modules/',
-            'fabfile.yaml'
-        ];
-
-        return $defaults;
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
@@ -58,6 +51,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 
         $return['deployMethod'] = $this->getName();
         $return[self::PREFS_KEY] = [
+            'useLocalRepository' => false,
             'port' => 21,
             'lftpOptions' => [
                 '--verbose=1',
@@ -69,7 +63,8 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
                 [
                     'action' => 'copy',
                     'arguments' => [
-                        '*'
+                        'from' => '*',
+                        'to' => '.'
                     ],
                 ],
                 [
@@ -77,6 +72,8 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
                     'arguments' => [
                         '.git/',
                         'node_modules/',
+                        '.fabfile.yaml',
+                        '.projectCreated.yaml',
                         'fabfile.yaml'
                     ],
                 ]
@@ -86,9 +83,14 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         return $return;
     }
 
+    /**
+     * @param array $config
+     * @param ValidationErrorBagInterface $errors
+     */
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
+
         if (in_array('drush', $config['needs'])) {
             $errors->addError('needs', sprintf('The method `%s` is incompatible with the `drush`-method!', $this->getName()));
         }
@@ -134,19 +136,15 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
             $host_config[self::PREFS_KEY] = $ftp;
         }
 
-        $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . time();
-        $target_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-target-' . time();
-        $context->set('installDir', $install_dir);
-        $context->set('targetDir', $target_dir);
+        $stages = $context->getConfigurationService()->getSetting( 'appStages.artifacts.ftp', self::STAGES );
+        $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages);
 
         $shell = $this->getShell($host_config, $context);
+        $install_dir = $context->get('installDir');
+        $target_dir = $context->get('targetDir');
+
         $shell->run(sprintf('mkdir -p %s', $target_dir));
 
-        // First, create an app in a temporary-folder.
-        $stages = $context->getConfigurationService()->getSetting(
-            'appStages.artifacts.ftp',
-            self::STAGES
-        );
         $this->buildArtifact($host_config, $context, $shell, $install_dir, $stages);
 
         $shell->run(sprintf('rm -rf %s', $install_dir));
@@ -156,6 +154,10 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         $context->setResult('runNextTasks', []);
     }
 
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
         $this->runStageSteps($host_config, $context, [
@@ -163,10 +165,15 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         ]);
     }
 
-    protected function syncToFtp(HostConfig $host_config, TaskContextInterface $context) {
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     */
+    protected function syncToFtp(HostConfig $host_config, TaskContextInterface $context)
+    {
         $shell = $this->getShell($host_config, $context);
         $target_dir = $context->get('targetDir', false);
-        $exclude = $context->getConfigurationService()->getSetting('excludeFiles.ftpSync', []);
+        $exclude = $context->getResult(ExcludeAction::FTP_SYNC_EXCLUDES, []);
         $options = implode(' ', $host_config[self::PREFS_KEY]['lftpOptions']);
         if (count($exclude)) {
             $options .= ' --exclude ' . implode(' --exclude ', $exclude);

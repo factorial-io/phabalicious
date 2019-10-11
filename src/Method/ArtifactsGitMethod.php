@@ -3,6 +3,8 @@
 
 namespace Phabalicious\Method;
 
+use Phabalicious\Artifact\Actions\ActionFactory;
+use Phabalicious\Artifact\Actions\Git\ExcludeAction;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\MethodNotFoundException;
@@ -11,11 +13,12 @@ use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Psr\Log\LoggerInterface;
 
 class ArtifactsGitMethod extends ArtifactsBaseMethod
 {
 
-    const PULL_SOURCE_AND_TARGET_REPOSITORY_STAGES = [
+    const STAGES = [
          'installCode',
          'installDependencies',
          'getSourceCommitInfo',
@@ -25,15 +28,15 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
          'pushToTargetRepository'
     ];
 
-    const USE_LOCAL_REPOSITORY_STAGES = [
-         'installDependencies',
-         'getSourceCommitInfo',
-         'pullTargetRepository',
-         'runActions',
-         'runDeployScript',
-         'pushToTargetRepository'
-    ];
-
+    /**
+     * ArtifactsGitMethod constructor.
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        parent::__construct($logger);
+        ActionFactory::register($this->getName(), 'exclude', ExcludeAction::class );
+    }
     /**
      * @return string
      */
@@ -80,9 +83,26 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $return['executables'] = [
             'git' => 'git',
         ];
-        $return['gitSync'] =[
+        $return[self::PREFS_KEY] =[
             'targetBranch' => 'build',
             'useLocalRepository' => false,
+            'actions' => [
+                [
+                    'action' => 'copy',
+                    'arguments' => [
+                        'to' => '.',
+                        'from' => '*',
+                    ],
+                ],
+                [
+                    'action' => 'delete',
+                    'arguments' => [
+                        '.fabfile.yaml',
+                        'fabfile.yaml',
+                        '.projectsCreated'
+                        ],
+                ],
+            ],
         ];
 
         $return['deployMethod'] = 'git-sync';
@@ -102,9 +122,9 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         if ($config['deployMethod'] !== 'git-sync') {
             $errors->addError('deployMethod', 'deployMethod must be `git-sync`!');
         }
-        $service = new ValidationService($config['gitSync'], $errors, 'gitSnyc config');
-        $service->hasKey('targetBranch', 'gitSync needs a target branch to push build artifacts to!');
-        $service->hasKey('targetRepository', 'gitSync needs a target repository to push build artifacts to!');
+        $service = new ValidationService($config[self::PREFS_KEY], $errors, 'gitSnyc config');
+        $service->hasKey('branch', 'gitSync needs a target branch to push build artifacts to!');
+        $service->hasKey('repository', 'gitSync needs a target repository to push build artifacts to!');
     }
 
     /**
@@ -120,33 +140,20 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             return ;
         }
 
-        if ($use_local_repository = $host_config['gitSync']['useLocalRepository']) {
-            $stages = $context->getConfigurationService()->getSetting(
-                'appStages.gitSync.useLocalRepository',
-                self::USE_LOCAL_REPOSITORY_STAGES
-            );
-            $install_dir = $host_config['gitRootFolder'];
-        } else {
-            $stages = $context->getConfigurationService()->getSetting(
-                'appStages.gitSync.pullTargetRepository',
-                self::PULL_SOURCE_AND_TARGET_REPOSITORY_STAGES
-            );
-            $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . time();
-        }
-
-        $target_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-target-' . time();
-        $context->set('installDir', $install_dir);
-        $context->set('targetDir', $target_dir);
+        $stages = $context->getConfigurationService()->getSetting( 'appStages.artifacts.git', self::STAGES );
+        $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages);
 
         $shell = $this->getShell($host_config, $context);
+        $install_dir = $context->get('installDir');
+        $target_dir = $context->get('targetDir');
 
         $this->buildArtifact($host_config, $context, $shell, $install_dir, $stages);
 
-        if (!$use_local_repository) {
+        $shell->run(sprintf('rm -rf %s', $target_dir));
+
+        if (!$context->get('useLocalRepository')) {
             $shell->run(sprintf('rm -rf %s', $install_dir));
         }
-
-        $shell->run(sprintf('rm -rf %s', $target_dir));
     }
 
     /**
@@ -204,8 +211,8 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
     protected function pullTargetRepository(HostConfig $host_config, TaskContextInterface $context)
     {
         $target_dir = $context->get('targetDir', false);
-        $target_branch = $host_config['gitSync']['targetBranch'];
-        $target_repository = $host_config['gitSync']['targetRepository'];
+        $target_branch = $host_config[self::PREFS_KEY]['branch'];
+        $target_repository = $host_config[self::PREFS_KEY]['repository'];
             
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('outerShell', $host_config->shell());
