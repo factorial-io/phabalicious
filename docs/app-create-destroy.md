@@ -5,7 +5,7 @@ Phabalicious can create or delete a complete app with two commands:
   * `phab --config=<config> app:create --copy-from=<other-config>`
   * `phab --config=<config> app:destroy`
 
-Both commands executes a list of stages, which can be influenced via configuration
+Both commands executes a list of stages, which can be influenced via configuration. Every method can react to the different stages and run some tasks if needed.
 
 ## the standard stages
 
@@ -19,17 +19,33 @@ appStages:
     - stage: spinUp
     - stage: installDependencies
     - stage: install
-  createCode:
-    - stage: installCode
-    - stage: installDependencies
   deploy:
     - stage: spinUp
   destroy:
     - stage: spinDown
     - stage: deleteContainers
+  # ftpSync and gitSync are only used for deploying artifacts.
+  ftpSync:
+    - stage: installCode
+    - stage: installDependencies
+    - stage: runDeployScript
+  gitSync:
+    useLocalRepository:
+      - stage: installDependencies
+      - stage: getSourceCommitInfo
+      - stage: pullTargetRepository
+      - stage: copyFilesToTargetRepository
+      - stage: runDeployScript
+      - stage: pushToTargetRepository
+    pullTargetRepository:
+      - stage: installCode
+      - stage: installDependencies
+      - stage: getSourceCommitInfo
+      - stage: pullTargetRepository
+      - stage: copyFilesToTargetRepository
+      - stage: runDeployScript
+      - stage: pushToTargetRepository
 ```
-
-`createCode` is only used by the `ftp-sync`-method, to create a complete code version of an app.
 
 ## Creating a new app
 
@@ -62,3 +78,11 @@ phab --config=some-config --blueprint=feature/<some-feature> create:app
 ```
 
 Will create a new app from a blueprinted config.
+
+## Customizing via scripts
+
+* You can add custom scripts to your host-configuration which will be run before a stage is entered or after a stage is finished. They follow a naming-convention:
+    * `appCreate<NameOfStage>Before`
+    * `appCreate<NameOfStage>Finished`
+    
+   e.g. `appCreateInstallDependenciesBefore` or `appCreateSpinDownFinished`. All context variables are exposed to scripts as `context.data.*` or `context.results.*`

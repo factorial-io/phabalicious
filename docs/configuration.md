@@ -41,7 +41,8 @@ List here all needed methods for that type of project. Available methods are:
   * `composer` for composer support
   * `drupalconsole` for drupal-concole support
   * `platform` for deploying to platform.sh
-  * `ftp-sync` to deploy to a ftp-server
+  * `artifacts--ftp-sync` to deploy to a ftp-server
+  * `artifacts--git-sync` to deploy an artifact to a git repository
 
 **Example for drupal 7**
 
@@ -88,7 +89,6 @@ hosts:
     backupFolder: /var/www/backups
     supportsInstalls: true|false
     supportsCopyFrom: true|false
-    type: dev
     branch: develop
     docker:
       ...
@@ -124,6 +124,7 @@ This will print all host configuration for the host `staging`.
 * `supportsCopyFrom`, default is true. If set to true, you can use that configuration as a source for the `copy-from`-task.
 * `backupBeforeDeploy` is set to true for `types` `stage` and `prod`, if set to true, a backup of the DB is made before a deployment.
 * `tmpFolder`, default is `/tmp`.
+* `environment` contains a list of environment variables to set before running any command
 * `shellProvider` defines how to run a shell, where commands are executed, current values are
     * `local`: all commands are run locally
     * `ssh`: all commands are run via a ssh-shell
@@ -184,7 +185,7 @@ This will print all host configuration for the host `staging`.
 * `drushVersion` set the used crush-version, default is `8`. Drush is not 100% backwards-compatible, for phabalicious needs to know its version.
 * `supportsZippedBackups` default is true, set to false, when zipped backups are not supported
 
-#### Configuration of the ftp-sync-method
+#### Configuration of the artifacts--ftp-sync-method
 
 * `ftp` keeps all configuration bundled:
   * `user` the ftp-user
@@ -193,6 +194,28 @@ This will print all host configuration for the host `staging`.
   * `port`, default is 21, the port to connect to
   * `rootFolder` the folder to copy the app into on the ftp-host.
   * `lftpOptions`, an array of options to pass when executing `lftp`
+* The global `excludeFiles` can be extended with a `ftpSync` section, e.g.
+  
+  ```yaml
+    excludeFiles:
+      ftpSync:
+        - node_modules/
+  ``` 
+  
+#### Configuration of the artifacts--git-sync method
+
+* `gitSync` contains the following options
+  * `targetRepository` the url of the target repository
+  * `targetBranch` the branch to use for commits
+  * `useLocalRepository` if set to true, phab will use the current directory as a source for the artifact, if set to false, phab will create a new app in a temporary folder and use that as a artifact
+  * `files` a list of files and folders, which should be copied from the artifact into the repository. If not provided, then all files gets copied (minus the files declared under excludeFiles)
+* The global `excludeFiles` can be extended with a `gitSync` section, e.g.
+  
+  ```yaml
+    excludeFiles:
+      gitSync:
+        - node_modules/
+  ``` 
 
 #### Configuration of the docker-method
 
@@ -201,7 +224,7 @@ This will print all host configuration for the host `staging`.
     * `name` contains the name of the docker-container. This is needed to get the IP-address of the particular docker-container when using ssh-tunnels (see above).
     * for docker-compose-base setups you can provide the `service` instead the name, phabalicious will get the docker name automatically from the service.
 
-### Configuration of the mattermost-method
+#### Configuration of the mattermost-method
 
 * `notifyOn`: a list of all tasks where to send a message to a Mattermost channel. Have a look at the global Mattermost-configuration-example below.
 

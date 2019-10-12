@@ -19,6 +19,7 @@ module.exports = {
       "/scripts.html",
       "/app-scaffold.html",
       "/app-create-destroy.html",
+      "/deploying-artifacts.html",
       "/passwords.html",
       "/contribute.html",
       "/Changelog.html"

@@ -612,7 +612,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         if (!$current_stage = $context->get('currentStage', false)) {
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
-        if ($current_stage['stage'] === 'install') {
+        if ($current_stage === 'install') {
             $this->waitForDatabase($host_config, $context);
             $this->install($host_config, $context);
         }

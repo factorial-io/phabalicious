@@ -44,6 +44,10 @@ class Utilities
         foreach ($variables as $key => $value) {
             if (is_array($value)) {
                 self::expandVariablesImpl($prefix . '.' . $key, $value, $result);
+            } elseif (is_object($value)) {
+                if (method_exists($value, '__toString')) {
+                    $result["%$prefix.$key%"] = (string) ($value);
+                }
             } else {
                 $result["%$prefix.$key%"] = (string) ($value);
             }
