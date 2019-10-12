@@ -41,8 +41,8 @@ List here all needed methods for that type of project. Available methods are:
   * `composer` for composer support
   * `drupalconsole` for drupal-concole support
   * `platform` for deploying to platform.sh
-  * `artifacts--ftp-sync` to deploy to a ftp-server
-  * `artifacts--git-sync` to deploy an artifact to a git repository
+  * `artifacts--ftp to deploy to a ftp-server
+  * `artifacts--git to deploy an artifact to a git repository
 
 **Example for drupal 7**
 
@@ -185,37 +185,25 @@ This will print all host configuration for the host `staging`.
 * `drushVersion` set the used crush-version, default is `8`. Drush is not 100% backwards-compatible, for phabalicious needs to know its version.
 * `supportsZippedBackups` default is true, set to false, when zipped backups are not supported
 
-#### Configuration of the artifacts--ftp-sync-method
+#### Configuration of the artifacts--ftp-method
 
-* `ftp` keeps all configuration bundled:
+* `target` keeps all configuration bundled:
   * `user` the ftp-user
   * `password` the ftp password
   * `host` the ftp host
   * `port`, default is 21, the port to connect to
   * `rootFolder` the folder to copy the app into on the ftp-host.
   * `lftpOptions`, an array of options to pass when executing `lftp`
-* The global `excludeFiles` can be extended with a `ftpSync` section, e.g.
-  
-  ```yaml
-    excludeFiles:
-      ftpSync:
-        - node_modules/
-  ``` 
-  
-#### Configuration of the artifacts--git-sync method
+  * `actions` a list of actions to perform. See detailed documentation for more info.
 
-* `gitSync` contains the following options
-  * `targetRepository` the url of the target repository
-  * `targetBranch` the branch to use for commits
+
+#### Configuration of the artifacts--git method
+
+* `target` contains the following options
+  * `repository` the url of the target repository
+  * `branch` the branch to use for commits
   * `useLocalRepository` if set to true, phab will use the current directory as a source for the artifact, if set to false, phab will create a new app in a temporary folder and use that as a artifact
-  * `files` a list of files and folders, which should be copied from the artifact into the repository. If not provided, then all files gets copied (minus the files declared under excludeFiles)
-* The global `excludeFiles` can be extended with a `gitSync` section, e.g.
-  
-  ```yaml
-    excludeFiles:
-      gitSync:
-        - node_modules/
-  ``` 
+  * `actions` a list of actions to perform. See detailed documentation for more info.
 
 #### Configuration of the docker-method
 

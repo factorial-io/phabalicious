@@ -4,10 +4,10 @@
 
 ### Changed
 
-  * Refactored and renamed method `ftp-sync` to `artifacts--ftp` in preparation of git-sync.
- 
+  * Refactored and renamed method `ftp-sync` to `artifacts--ftp` in preparation of artifacts--git.
+
 ### New
-  * `rootFolder` is set by default now
+  * `rootFolder` is set by default now to the folder where the fabfile is located.
   * All context variables are exposed as replacement patterns for using in scripts.
   * new method `artifacts--git` to build an artifact and push it to a git repository, see new documentation about artifacts.
 
