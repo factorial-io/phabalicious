@@ -532,10 +532,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
         $shell = $docker_config->shell();
 
-        if (isset($docker_config['tasks'][$current_stage['stage']]) ||
-            in_array($current_stage['stage'], array('spinUp', 'spinDown', 'deleteContainer'))
+        if (isset($docker_config['tasks'][$current_stage]) ||
+            in_array($current_stage, array('spinUp', 'spinDown', 'deleteContainer'))
         ) {
-            $this->runTaskImpl($host_config, $context, $current_stage['stage'], false);
+            $this->runTaskImpl($host_config, $context, $current_stage, false);
         }
     }
 

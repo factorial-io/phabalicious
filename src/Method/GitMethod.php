@@ -155,7 +155,7 @@ class GitMethod extends BaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        if ($current_stage['stage'] !== 'installCode') {
+        if ($current_stage !== 'installCode') {
             return;
         }
         /** @var ShellProviderInterface $shell */

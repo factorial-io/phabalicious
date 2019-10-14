@@ -57,6 +57,11 @@ class TaskContext implements TaskContextInterface
          return isset($this->data[$key]) ? $this->data[$key] : $default;
     }
 
+    public function getData(): array
+    {
+        return $this->data;
+    }
+
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;

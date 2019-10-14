@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.2.0 / 2019-10-14
+
+### New:
+
+  * `rootFolder` is set by default now to the folder where the fabfile is located.
+  * All context variables are exposed as replacement patterns for using in scripts.
+  * new method `artifacts--git` to build an artifact and push it to a git repository, see new documentation about artifacts.
+  * Update documentation regarding the new artifact workflow
+
+### Changed
+
+  * Refactored and renamed method `ftp-sync` to `artifacts--ftp` in preparation of artifacts--git. Be aware that you might need to change existing configuration!
+
+### New
+
 ## 3.1.0 / 2019-09-27
 
 ### New

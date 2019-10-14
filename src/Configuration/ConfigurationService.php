@@ -479,6 +479,7 @@ class ConfigurationService
                 ? true
                 : false,
             'tmpFolder' => '/tmp',
+            'rootFolder' => $this->getFabfilePath(),
         ];
 
         if (empty($data['needs'])) {

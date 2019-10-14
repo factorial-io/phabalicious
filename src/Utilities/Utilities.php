@@ -5,7 +5,7 @@ namespace Phabalicious\Utilities;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.0.21';
+    const FALLBACK_VERSION = '3.2.0';
 
     public static function mergeData(array $data, array $override_data): array
     {
@@ -44,6 +44,10 @@ class Utilities
         foreach ($variables as $key => $value) {
             if (is_array($value)) {
                 self::expandVariablesImpl($prefix . '.' . $key, $value, $result);
+            } elseif (is_object($value)) {
+                if (method_exists($value, '__toString')) {
+                    $result["%$prefix.$key%"] = (string) ($value);
+                }
             } else {
                 $result["%$prefix.$key%"] = (string) ($value);
             }
