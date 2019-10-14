@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.1 / 2019-10-14
+
+### Fixed:
+
+  * Include version number for temporary folder
+
 ## 3.2.0 / 2019-10-14
 
 ### New:
@@ -12,8 +18,6 @@
 ### Changed
 
   * Refactored and renamed method `ftp-sync` to `artifacts--ftp` in preparation of artifacts--git. Be aware that you might need to change existing configuration!
-
-### New
 
 ## 3.1.0 / 2019-09-27
 
