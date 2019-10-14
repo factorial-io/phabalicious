@@ -13,8 +13,6 @@
 
   * Refactored and renamed method `ftp-sync` to `artifacts--ftp` in preparation of artifacts--git. Be aware that you might need to change existing configuration!
 
-### New
-
 ## 3.1.0 / 2019-09-27
 
 ### New
