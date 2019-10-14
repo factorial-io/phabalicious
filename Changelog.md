@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.1 / 2019-10-14
+
+### Fixed:
+
+  * Include version number for temporary folder
+
 ## 3.2.0 / 2019-10-14
 
 ### New:
