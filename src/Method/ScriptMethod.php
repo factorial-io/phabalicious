@@ -5,13 +5,11 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\CommandResult;
-use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ScriptMethod extends BaseMethod implements MethodInterface
 {

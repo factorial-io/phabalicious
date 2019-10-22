@@ -2,31 +2,34 @@
 
 namespace Phabalicious\Method;
 
-use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\ShellProvider\ShellProviderInterface;
-use Phabalicious\Validation\ValidationErrorBagInterface;
-use Phabalicious\Validation\ValidationService;
 
-class NpmMethod extends RunCommandBaseMethod
+class YarnMethod extends RunCommandBaseMethod
 {
 
     public function getName(): string
     {
-        return 'npm';
+        return 'yarn';
     }
 
     protected function getExecutableName(): string
     {
-        // TODO: Implement getExecutableName() method.
+        return 'yarn';
     }
 
     protected function getRootFolderKey(): string
     {
-        // TODO: Implement getRootFolderKey() method.
+        return 'yarnRootFolder';
     }
 
+    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
+    {
+        $production = !in_array($host_config['type'], array('dev', 'test'));
+        $command .= sprintf(' --production=%s', $production ? 'true' : 'false');
+        $command .= ' --no-interaction  --silent';
+
+        return $command;
+    }
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
@@ -52,10 +55,4 @@ class NpmMethod extends RunCommandBaseMethod
             $this->resetPrepare($host_config, $context);
         }
     }
-
-    public function appUpdate(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $this->runCommand($host_config, $context, 'update');
-    }
-
 }
