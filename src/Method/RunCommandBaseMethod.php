@@ -4,30 +4,30 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
-class NpmMethod extends BaseMethod
+class ComposerMethod extends BaseMethod implements MethodInterface
 {
 
     public function getName(): string
     {
-        return 'node';
+        return 'composer';
     }
 
     public function supports(string $method_name): bool
     {
-        return $method_name === $this->getName();
+        return $method_name === 'composer';
     }
 
     public function getGlobalSettings(): array
     {
         return [
             'executables' => [
-                'npm' => 'npm',
-                'yarn' => 'yarn',
+                'composer' => 'composer',
             ],
         ];
     }
@@ -35,7 +35,7 @@ class NpmMethod extends BaseMethod
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         return [
-            'npmRootFolder' => isset($host_config['gitRootFolder'])
+            'composerRootFolder' => isset($host_config['gitRootFolder'])
                 ? $host_config['gitRootFolder']
                 : $host_config['rootFolder'],
         ];
@@ -44,8 +44,8 @@ class NpmMethod extends BaseMethod
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
         $validation = new ValidationService($config, $errors, 'host-config');
-        $validation->hasKey('npmRootFolder', 'npmRootFolder should point to your composer root folder.');
-        $validation->checkForValidFolderName('npmRootFolder');
+        $validation->hasKey('composerRootFolder', 'composerRootFolder should point to your composer root folder.');
+        $validation->checkForValidFolderName('composerRootFolder');
     }
 
     private function runCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
