@@ -4,30 +4,28 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
-use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
-class ComposerMethod extends BaseMethod implements MethodInterface
+abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterface
 {
 
-    public function getName(): string
-    {
-        return 'composer';
-    }
+
+    abstract protected function getExecutableName() : string;
+    abstract protected function getRootFolderKey(): string;
 
     public function supports(string $method_name): bool
     {
-        return $method_name === 'composer';
+        return $method_name === $this->getName();
     }
 
     public function getGlobalSettings(): array
     {
+        $executable = $this->getExecutableName();
         return [
             'executables' => [
-                'composer' => 'composer',
+                $executable => $executable,
             ],
         ];
     }
@@ -35,7 +33,7 @@ class ComposerMethod extends BaseMethod implements MethodInterface
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         return [
-            'composerRootFolder' => isset($host_config['gitRootFolder'])
+            $this->getRootFolderKey() => isset($host_config['gitRootFolder'])
                 ? $host_config['gitRootFolder']
                 : $host_config['rootFolder'],
         ];
@@ -44,68 +42,24 @@ class ComposerMethod extends BaseMethod implements MethodInterface
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
         $validation = new ValidationService($config, $errors, 'host-config');
-        $validation->hasKey('composerRootFolder', 'composerRootFolder should point to your composer root folder.');
-        $validation->checkForValidFolderName('composerRootFolder');
+        $args = $this->getRootFolderKey();
+        $validation->hasKey($args, sprintf('%s should point to your root folder for %s.', $args, $this->getName()));
+        $validation->checkForValidFolderName($args);
     }
 
-    private function runCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
+    protected function runCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
     {
+        $command = $this->prepareCommand($host_config, $context, $command);
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($host_config, $context);
-        $pwd = $shell->getWorkingDir();
-        $shell->cd($host_config['composerRootFolder']);
-        $result = $shell->run('#!composer ' . $command);
-        $shell->cd($pwd);
+        $shell->pushWorkingDir($host_config[$this->getRootFolderKey()]);
+        $result = $shell->run('#!' . $this->getExecutableName(). ' ' . $command);
         $context->setResult('exitCode', $result->getExitCode());
+        $shell->popWorkingDir();
     }
 
-    private function prepareCommand(HostConfig $host_config, string $command)
+    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
     {
-        if (!in_array($host_config['type'], array('dev', 'test'))) {
-            $command .= ' --no-dev --optimize-autoloader';
-        }
         return $command;
-    }
-
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     */
-    public function resetPrepare(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $command = 'install ';
-        $command = $this->prepareCommand($host_config, $command);
-        $this->runCommand($host_config, $context, $command);
-    }
-
-    public function installPrepare(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $this->resetPrepare($host_config, $context);
-    }
-
-    public function composer(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $command = $context->get('command');
-        $this->runCommand($host_config, $context, $command);
-    }
-
-    public function appCreate(HostConfig $host_config, TaskContextInterface $context)
-    {
-        if (!$current_stage = $context->get('currentStage', false)) {
-            throw new \InvalidArgumentException('Missing currentStage on context!');
-        }
-
-        if ($current_stage == 'installDependencies') {
-            $this->resetPrepare($host_config, $context);
-        }
-    }
-
-    public function appUpdate(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $this->runCommand(
-            $host_config,
-            $context,
-            $this->prepareCommand($host_config, 'update')
-        );
     }
 }
