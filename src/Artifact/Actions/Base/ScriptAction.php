@@ -3,7 +3,6 @@
 
 namespace Phabalicious\Artifact\Actions\Base;
 
-
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\ScriptMethod;
@@ -13,25 +12,34 @@ use Phabalicious\Validation\ValidationService;
 
 class ScriptAction extends ActionBase
 {
+    private $runInTargetDir = true;
+
+    public function __construct($runInTargetDir = true)
+    {
+        $this->runInTargetDir = $runInTargetDir;
+    }
+
     protected function validateArgumentsConfig(array $action_arguments, ValidationService $validation)
     {
     }
 
-
-    public function run(HostConfig $host_config, TaskContextInterface $context)
-    {
-        /** @var ShellProviderInterface $shell */
-        $shell = $context->get('outerShell', $host_config->shell());
-        $target_dir = $context->get('targetDir', false);
-
-        $shell->pushWorkingDir($target_dir);
+    protected function runImplementation(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        string $install_dir,
+        string $target_dir
+    ) {
+        $dir = $this->runInTargetDir ? $target_dir : $install_dir;
+        $shell->pushWorkingDir($dir);
 
         /** @var ScriptMethod $script */
         $script = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
 
         $cloned_context = clone $context;
-        $cloned_context->set('rootFolder', $target_dir);
+        $cloned_context->set('rootFolder', $dir);
         $cloned_context->set('scriptData', $this->getArguments());
+        $cloned_context->set('variables', $context->get('deployArguments'));
 
         $script->runScript($host_config, $cloned_context);
 
@@ -39,5 +47,4 @@ class ScriptAction extends ActionBase
 
         $shell->popWorkingDir();
     }
-
 }
