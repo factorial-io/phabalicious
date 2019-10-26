@@ -118,6 +118,10 @@ hosts:
 
 the default actions for the git-artifact-method will copy all files to the target repo and remove the fabfile.
 
+### artifacts--custom
+
+@TODO
+
 ## Available actions
 
 You can customize the list of actions be run when deploying an artifact. Here's a list of available actions
