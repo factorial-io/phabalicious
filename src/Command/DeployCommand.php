@@ -27,8 +27,9 @@ class DeployCommand extends BaseCommand
             ->addOption(
                 'arguments',
                 'a',
-                InputOption::VALUE_OPTIONAL,
-                'Pass optional arguments'
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Pass optional arguments',
+                []
             )
             ->setHelp('Deploys the current application to a given host-configuration.');
     }

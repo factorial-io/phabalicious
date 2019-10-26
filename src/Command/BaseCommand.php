@@ -319,10 +319,11 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     protected function parseScriptArguments(array $defaults, $arguments_string)
     {
-        $args = explode(' ', $arguments_string);
-        if (empty(trim($arguments_string))) {
+        if (empty($arguments_string)) {
             return ['arguments' => $defaults];
         }
+
+        $args = is_array($arguments_string) ? $arguments_string : explode(' ', $arguments_string);
 
         $unnamed_args = array_filter($args, function ($elem) {
             return strpos($elem, '=') === false;

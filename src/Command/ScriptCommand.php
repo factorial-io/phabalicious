@@ -29,7 +29,7 @@ class ScriptCommand extends BaseCommand
             ->addOption(
                 'arguments',
                 'a',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'Pass optional arguments to the script'
             )
             ->setHelp(
