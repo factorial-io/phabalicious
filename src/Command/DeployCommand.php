@@ -6,6 +6,7 @@ use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DeployCommand extends BaseCommand
@@ -22,6 +23,12 @@ class DeployCommand extends BaseCommand
                 'branch',
                 InputArgument::OPTIONAL,
                 'Branch to deploy, if not set, the host-config is used'
+            )
+            ->addOption(
+                'arguments',
+                'a',
+                InputOption::VALUE_OPTIONAL,
+                'Pass optional arguments'
             )
             ->setHelp('Deploys the current application to a given host-configuration.');
     }
@@ -52,6 +59,10 @@ class DeployCommand extends BaseCommand
             $context->set('branch', $branch);
         }
 
+        $deploy_arguments = $this->parseScriptArguments([], $input->getOption('arguments'));
+        $context->set('variables', $deploy_arguments);
+        $context->set('deployArguments', $deploy_arguments);
+
         if ($this->getHostConfig()['backupBeforeDeploy']) {
             $this->runBackup($input, $output);
         }
@@ -69,5 +80,4 @@ class DeployCommand extends BaseCommand
     {
         return $this->runCommand('backup', [ 'what' => ['db'] ], $original_input, $output);
     }
-
 }
