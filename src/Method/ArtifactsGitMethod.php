@@ -141,19 +141,14 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         }
 
         $stages = $context->getConfigurationService()->getSetting('appStages.artifacts.git', self::STAGES);
-        $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages);
 
-        $shell = $this->getShell($host_config, $context);
-        $install_dir = $context->get('installDir');
-        $target_dir = $context->get('targetDir');
+        $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages, false);
 
-        $this->buildArtifact($host_config, $context, $shell, $install_dir, $stages);
+        $this->buildArtifact($host_config, $context, $stages);
 
-        $shell->run(sprintf('rm -rf %s', $target_dir));
+        $this->cleanupDirectories($host_config, $context);
 
-        if (!$context->get('useLocalRepository')) {
-            $shell->run(sprintf('rm -rf %s', $install_dir));
-        }
+        $context->setResult('runNextTasks', []);
     }
 
     /**
