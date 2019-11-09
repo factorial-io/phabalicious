@@ -60,6 +60,7 @@ class CopyAction extends ActionBase
 
         foreach ($files_to_copy as $file) {
             if (!in_array($file, $files_to_skip)) {
+                $shell->run(sprintf('rm -rf %s', $to . '/' . $file));
                 $shell->run(sprintf('cp -a %s %s', $file, $to));
             }
         }
