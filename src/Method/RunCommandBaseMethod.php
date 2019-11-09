@@ -47,9 +47,13 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $validation->checkForValidFolderName($args);
     }
 
-    protected function runCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
-    {
+    protected function runCommand(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        string $command
+    ) {
         $command = $this->prepareCommand($host_config, $context, $command);
+
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($host_config, $context);
         $shell->pushWorkingDir($host_config[$this->getRootFolderKey()]);
