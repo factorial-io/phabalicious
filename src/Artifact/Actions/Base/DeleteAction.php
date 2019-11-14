@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Artifact\Actions\Base;
 
-
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
@@ -16,13 +15,13 @@ class DeleteAction extends ActionBase
     {
     }
 
-
-    public function run(HostConfig $host_config, TaskContextInterface $context)
-    {
-        /** @var ShellProviderInterface $shell */
-        $shell = $context->get('outerShell', $host_config->shell());
-        $target_dir = $context->get('targetDir', false);
-
+    protected function runImplementation(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        string $install_dir,
+        string $target_dir
+    ) {
         $shell->pushWorkingDir($target_dir);
 
         $files_to_delete = $this->getArguments();

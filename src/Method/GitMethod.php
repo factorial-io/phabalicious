@@ -64,24 +64,34 @@ class GitMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    public function getTag(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
+        $result = $host_config->shell()->run('#!git describe --exact-match', true);
+        $host_config->shell()->popWorkingDir();
+        return $result->succeeded() ? str_replace('/', '-', $result->getOutput()[0]) : false;
+    }
     public function getVersion(HostConfig $host_config, TaskContextInterface $context)
     {
-        $host_config->shell()->cd($host_config['gitRootFolder']);
+        $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
         $result = $host_config->shell()->run('#!git describe --always --tags', true);
+        $host_config->shell()->popWorkingDir();
         return $result->succeeded() ? str_replace('/', '-', $result->getOutput()[0]) : '';
     }
 
     public function getCommitHash(HostConfig $host_config, TaskContextInterface $context)
     {
-        $host_config->shell()->cd($host_config['gitRootFolder']);
+        $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
         $result = $host_config->shell()->run('#!git rev-parse HEAD', true);
+        $host_config->shell()->popWorkingDir();
         return $result->getOutput()[0];
     }
 
     public function isWorkingcopyClean(HostConfig $host_config, TaskContextInterface $context)
     {
-        $host_config->shell()->cd($host_config['gitRootFolder']);
+        $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
         $result = $host_config->shell()->run('#!git diff --exit-code --quiet', true);
+        $host_config->shell()->popWorkingDir();
         return $result->succeeded();
     }
 

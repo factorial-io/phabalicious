@@ -27,7 +27,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
-        ActionFactory::register($this->getName(), 'exclude', ExcludeAction::class );
+        ActionFactory::register($this->getName(), 'exclude', ExcludeAction::class);
     }
 
     public function getName(): string
@@ -91,7 +91,10 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         parent::validateConfig($config, $errors);
 
         if (in_array('drush', $config['needs'])) {
-            $errors->addError('needs', sprintf('The method `%s` is incompatible with the `drush`-method!', $this->getName()));
+            $errors->addError(
+                'needs',
+                sprintf('The method `%s` is incompatible with the `drush`-method!', $this->getName())
+            );
         }
         if ($config['deployMethod'] !== $this->getName()) {
             $errors->addError('deployMethod', sprintf('deployMethod must be `%s`!', $this->getName()));
@@ -105,7 +108,10 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 
         if (!empty($config[self::PREFS_KEY])) {
             $service = new ValidationService($config[self::PREFS_KEY], $errors, sprintf(
-                'host-config.%s.%s', $config['configName'], self::PREFS_KEY));
+                'host-config.%s.%s',
+                $config['configName'],
+                self::PREFS_KEY
+            ));
             $service->hasKeys([
                 'user' => 'the ftp user-name',
                 'host' => 'the ftp host to connect to',
@@ -135,19 +141,13 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
             $host_config[self::PREFS_KEY] = $ftp;
         }
 
-        $stages = $context->getConfigurationService()->getSetting( 'appStages.artifacts.ftp', self::STAGES );
-        $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages);
+        $stages = $context->getConfigurationService()->getSetting('appStages.artifacts.ftp', self::STAGES);
+        $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages, true);
 
-        $shell = $this->getShell($host_config, $context);
-        $install_dir = $context->get('installDir');
-        $target_dir = $context->get('targetDir');
+        $this->buildArtifact($host_config, $context, $stages);
 
-        $shell->run(sprintf('mkdir -p %s', $target_dir));
+        $this->cleanupDirectories($host_config, $context);
 
-        $this->buildArtifact($host_config, $context, $shell, $install_dir, $stages);
-
-        $shell->run(sprintf('rm -rf %s', $install_dir));
-        $shell->run(sprintf('rm -rf %s', $target_dir));
 
         // Do not run any next tasks.
         $context->setResult('runNextTasks', []);

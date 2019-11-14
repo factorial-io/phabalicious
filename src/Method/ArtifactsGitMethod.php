@@ -82,9 +82,10 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $return['tmpFolder'] = '/tmp';
         $return['executables'] = [
             'git' => 'git',
+            'find' => 'find',
         ];
         $return[self::PREFS_KEY] =[
-            'targetBranch' => 'build',
+            'branch' => $host_config['branch'] ?? 'build',
             'useLocalRepository' => false,
             'actions' => [
                 [
@@ -122,9 +123,9 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         if ($config['deployMethod'] !== 'git-sync') {
             $errors->addError('deployMethod', 'deployMethod must be `git-sync`!');
         }
-        $service = new ValidationService($config[self::PREFS_KEY], $errors, 'gitSync config');
-        $service->hasKey('branch', 'gitSync needs a target branch to push build artifacts to!');
-        $service->hasKey('repository', 'gitSync needs a target repository to push build artifacts to!');
+        $service = new ValidationService($config[self::PREFS_KEY], $errors, 'artifacts--git config');
+        $service->hasKey('branch', 'artifacts--git needs a target branch to push build artifacts to!');
+        $service->hasKey('repository', 'artifacts--git needs a target repository to push build artifacts to!');
     }
 
     /**
@@ -141,19 +142,14 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         }
 
         $stages = $context->getConfigurationService()->getSetting('appStages.artifacts.git', self::STAGES);
-        $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages);
 
-        $shell = $this->getShell($host_config, $context);
-        $install_dir = $context->get('installDir');
-        $target_dir = $context->get('targetDir');
+        $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages, false);
 
-        $this->buildArtifact($host_config, $context, $shell, $install_dir, $stages);
+        $this->buildArtifact($host_config, $context, $stages);
 
-        $shell->run(sprintf('rm -rf %s', $target_dir));
+        $this->cleanupDirectories($host_config, $context);
 
-        if (!$context->get('useLocalRepository')) {
-            $shell->run(sprintf('rm -rf %s', $install_dir));
-        }
+        $context->setResult('runNextTasks', []);
     }
 
     /**
@@ -194,12 +190,14 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             return;
         }
 
-        $tag = $git_method->getVersion($host_config, $context);
+        $version = $git_method->getVersion($host_config, $context);
+        $tag = $git_method->getTag($host_config, $context);
         $hash = $git_method->getCommitHash($host_config, $context);
 
         // We need to store the commit-data as result, otherwise the won't persist.
-        $context->setResult('commitMessage', sprintf("Commit build artifact for tag %s [%s]", $tag, $hash));
+        $context->setResult('commitMessage', sprintf("Commit build artifact for version %s [%s]", $version, $hash));
         $context->setResult('commitHash', $hash);
+        $context->setResult('commitTag', $tag);
     }
 
     /**
@@ -250,9 +248,18 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         /** @var ShellProviderInterface $shell */
         $shell->pushWorkingDir($target_dir);
 
+        // Delete all .git-subdirectories.
+        $shell->run('#!find . -name .git -not -path "./.git" -type d -exec rm -rf {} +');
+
         $shell->run('#!git add -A .');
         $shell->run(sprintf('#!git commit -m "%s" -m "%s" || true', $message, implode('" -m "', $detailed_message)));
+        if ($tag = $context->getResult('commitTag')) {
+            $shell->run(sprintf('#!git push origin :refs/tags/%s || true', $tag));
+            $shell->run(sprintf('#!git tag --delete %s || true', $tag));
+            $shell->run(sprintf('#!git tag %s', $tag));
+        }
         $shell->run('#!git push origin');
+        $shell->run('#!git push --tags origin');
 
         $shell->popWorkingDir();
     }
