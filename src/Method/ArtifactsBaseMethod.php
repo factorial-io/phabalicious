@@ -127,9 +127,14 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         $install_dir = $context->get('installDir');
 
         $cloned_host_config = clone $host_config;
-        $keys = ['rootFolder', 'composerRootFolder', 'gitRootFolder'];
+        $keys = ['rootFolder', 'composerRootFolder', 'gitRootFolder', 'yarnRootFolder'];
         foreach ($keys as $key) {
-            $cloned_host_config[$key] = $install_dir;
+            if ($host_config->get($key, 'ignore')[0] == '.') {
+                 $dir = $install_dir . '/' . $host_config[$key];
+            } else {
+                $dir = $install_dir;
+            }
+            $cloned_host_config[$key] = $dir;
         }
         $shell->cd($cloned_host_config['tmpFolder']);
         $context->set('outerShell', $shell);
