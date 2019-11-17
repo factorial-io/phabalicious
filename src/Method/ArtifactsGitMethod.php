@@ -252,7 +252,8 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $shell->run('#!find . -name .git -not -path "./.git" -type d -exec rm -rf {} +');
 
         $shell->run('#!git add -A .');
-        $shell->run(sprintf('#!git commit -m "%s" -m "%s" || true', $message, implode('" -m "', $detailed_message)));
+        $formatted_message = implode('" -m "', addslashes($detailed_message));
+        $shell->run(sprintf('#!git commit -m "%s" -m "%s" || true', $message, $formatted_message));
         if ($tag = $context->getResult('commitTag')) {
             $shell->run(sprintf('#!git push origin :refs/tags/%s || true', $tag));
             $shell->run(sprintf('#!git tag --delete %s || true', $tag));
