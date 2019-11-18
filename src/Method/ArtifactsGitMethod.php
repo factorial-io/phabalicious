@@ -238,11 +238,11 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $shell = $context->get('outerShell', $host_config->shell());
         $target_dir = $context->get('targetDir', false);
         $message = $context->getResult('commitMessage', 'Commit build artifact');
-        $detailed_message = $context->getResult('detailedCommitMessage', '');
+        $detailed_messages = $context->getResult('detailedCommitMessage', '');
 
         if ($last_commit_hash = $context->getResult('lastArtifactCommitHash')) {
             $current_commit_hash = $context->getResult('commitHash', 'HEAD');
-            $detailed_message = $this->getSourceGitLog($shell, $context, $last_commit_hash, $current_commit_hash);
+            $detailed_messages = $this->getSourceGitLog($shell, $context, $last_commit_hash, $current_commit_hash);
         }
 
         /** @var ShellProviderInterface $shell */
@@ -252,7 +252,12 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $shell->run('#!find . -name .git -not -path "./.git" -type d -exec rm -rf {} +');
 
         $shell->run('#!git add -A .');
-        $shell->run(sprintf('#!git commit -m "%s" -m "%s" || true', $message, implode('" -m "', $detailed_message)));
+
+        // Reformat each message by escaping them with backslash.
+        foreach ($detailed_messages as &$detailed_message) {
+            $detailed_message = addslashes($detailed_message);
+        }
+        $shell->run(sprintf('#!git commit -m "%s" -m "%s" || true', $message, implode('" -m "', $detailed_messages)));
         if ($tag = $context->getResult('commitTag')) {
             $shell->run(sprintf('#!git push origin :refs/tags/%s || true', $tag));
             $shell->run(sprintf('#!git tag --delete %s || true', $tag));
