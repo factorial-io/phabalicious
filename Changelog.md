@@ -1,5 +1,28 @@
 # Changelog
 
+## 3.2.2 / 2019-11-14
+
+### New:
+
+  * new method `yarn`, which will run yarn install on install/reset task and a custom build command when running the reset-task
+  * new custom build artifact available, with full control over the stages
+
+### Fixed:
+
+  * Require grumphp only for dev
+  * Use latest grumphp
+  * Update precommit config
+  * Report script errors early
+  * Delete target file/folder before copying
+  * Tag build artifact with existing tag of source repository
+  * Disregard confirm action if --force option is set
+  * Fix tests and keep option `override`
+  * Fix possible exception, when using -v show possible tokens
+  * Allow multiple options '--arguments'
+  * Allow --arguments for deploy command
+  * Refactor actions, add new action installScript
+  * Set the type as `installation_type` as state in drupal 8
+
 ## 3.2.1 / 2019-10-14
 
 ### Fixed:
