@@ -255,7 +255,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
 
         // Reformat each message by escaping them with backslash.
         foreach ($detailed_messages as &$detailed_message) {
-            $detailed_message = addslashes($detailed_message);
+            $detailed_message = escapeshellarg($detailed_message);
         }
         $shell->run(sprintf('#!git commit -m "%s" -m "%s" || true', $message, implode('" -m "', $detailed_messages)));
         if ($tag = $context->getResult('commitTag')) {
