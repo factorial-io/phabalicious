@@ -316,4 +316,34 @@ abstract class BaseCommand extends BaseOptionsCommand
             return 1;
         }
     }
+
+    protected function parseScriptArguments(array $defaults, $arguments_string)
+    {
+        if (empty($arguments_string)) {
+            return ['arguments' => $defaults];
+        }
+
+        $args = is_array($arguments_string) ? $arguments_string : explode(' ', $arguments_string);
+
+        $unnamed_args = array_filter($args, function ($elem) {
+            return strpos($elem, '=') === false;
+        });
+        $temp = array_filter($args, function ($elem) {
+            return strpos($elem, '=') !== false;
+        });
+        $named_args = [];
+        foreach ($temp as $value) {
+            $a = explode('=', $value);
+            $named_args[$a[0]] = $a[1];
+        }
+
+        $named_args = Utilities::mergeData($named_args, [
+            'combined' => implode(' ', $unnamed_args),
+            'unnamedArguments' => $unnamed_args,
+        ]);
+
+        return [
+            'arguments' => Utilities::mergeData($defaults, $named_args),
+        ];
+    }
 }

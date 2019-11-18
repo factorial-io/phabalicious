@@ -213,13 +213,16 @@ class AppScaffoldCommand extends BaseOptionsCommand
         ));
 
 
-        if (empty($input->getOption('override')) && is_dir($tokens['rootFolder'])) {
+        if (is_dir($tokens['rootFolder']) && empty($input->getOption('force')) && empty($input->getOption('override'))) {
             if (!$context->io()->confirm(
                 'Destination folder exists! Continue anyways?',
                 false
             )) {
                 return 1;
             }
+        }
+        if ($output->getVerbosity() == OutputInterface::VERBOSITY_VERBOSE) {
+            $context->io()->note('Available tokens:' . PHP_EOL . print_r($tokens, true));
         }
 
         $context->io()->comment('Create destination folder ...');
@@ -230,7 +233,7 @@ class AppScaffoldCommand extends BaseOptionsCommand
 
         /** @var CommandResult $result */
         $result = $context->getResult('commandResult');
-        if ($result->failed()) {
+        if ($result && $result->failed()) {
             throw new \RuntimeException(sprintf(
                 "Scaffolding failed with exit-code %d\n%s",
                 $result->getExitCode(),

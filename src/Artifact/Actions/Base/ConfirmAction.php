@@ -3,7 +3,6 @@
 
 namespace Phabalicious\Artifact\Actions\Base;
 
-
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
@@ -19,6 +18,9 @@ class ConfirmAction extends ActionBase
 
     public function run(HostConfig $host_config, TaskContextInterface $context)
     {
+        if (!empty($context->getInput()->getOption('force'))) {
+            return;
+        }
         if (!$context->io()->confirm($this->getArgument('question'), false)) {
             throw new \RuntimeException('Cancelled by user!');
         }

@@ -146,6 +146,8 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $scoped_capture_output = new SetAndRestoreObjProperty('captureOutput', $this, $capture_output);
 
         $this->setup();
+        $this->process->clearErrorOutput();
+        $this->process->clearOutput();
 
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
         if (substr($command, -1) == ';') {
@@ -153,8 +155,10 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
         $this->logger->log($this->loglevel->get(), $command);
 
+        
         // Send to shell.
-        $this->input->write($command . '; echo "' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL);
+        $input = $command . '; echo "' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL;
+        $this->input->write($input);
 
         // Get result.
         $result = '';

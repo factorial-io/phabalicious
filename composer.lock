@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8014ada1b8bd894667531b070b988f3",
+    "content-hash": "717fa4141ee7de7967e33c67bc83cfd6",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -3678,51 +3678,49 @@
         },
         {
             "name": "phpro/grumphp",
-            "version": "v0.15.2",
+            "version": "v0.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpro/grumphp.git",
-                "reference": "c153840bead6fbed370d35cc84c63dca33de0ca4"
+                "reference": "079cb90c740d8a83a769b6484d74645eedb7f74c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpro/grumphp/zipball/c153840bead6fbed370d35cc84c63dca33de0ca4",
-                "reference": "c153840bead6fbed370d35cc84c63dca33de0ca4",
+                "url": "https://api.github.com/repos/phpro/grumphp/zipball/079cb90c740d8a83a769b6484d74645eedb7f74c",
+                "reference": "079cb90c740d8a83a769b6484d74645eedb7f74c",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "~1.0",
-                "composer/composer": "^1.0",
                 "doctrine/collections": "~1.2",
+                "ext-json": "*",
                 "gitonomy/gitlib": "^1.0.3",
-                "monolog/monolog": "~1.16",
-                "php": ">=7.0",
+                "monolog/monolog": "~1.16 || ^2.0",
+                "php": "^7.1",
                 "seld/jsonlint": "~1.1",
-                "symfony/config": "~3.4|~4.0",
-                "symfony/console": "~3.4|~4.0",
-                "symfony/dependency-injection": "~3.4|~4.0",
-                "symfony/event-dispatcher": "~3.4|~4.0",
-                "symfony/filesystem": "~3.4|~4.0",
-                "symfony/finder": "~3.4|~4.0",
-                "symfony/options-resolver": "~3.4|~4.0",
-                "symfony/process": "~3.4|~4.0",
-                "symfony/yaml": "~3.4|~4.0"
+                "symfony/config": "~3.4 || ~4.0",
+                "symfony/console": "~3.4 || ~4.0",
+                "symfony/dependency-injection": "~3.4 || ~4.0",
+                "symfony/event-dispatcher": "~3.4 || ~4.0",
+                "symfony/filesystem": "~3.4 || ~4.0",
+                "symfony/finder": "~3.4 || ~4.0",
+                "symfony/options-resolver": "~3.4 || ~4.0",
+                "symfony/process": "~3.4 || ~4.0",
+                "symfony/yaml": "~3.4 || ~4.0"
             },
             "require-dev": {
+                "brianium/paratest": "^2.2.0",
+                "composer/composer": "^1.8.5",
                 "friendsofphp/php-cs-fixer": "~2",
                 "jakub-onderka/php-parallel-lint": "^0.9.2",
-                "nikic/php-parser": "~2.1",
-                "phpspec/phpspec": "^3.2.2",
-                "phpspec/prophecy": "^1.6.2",
-                "phpunit/phpunit": "^6.5|^7.0",
-                "sebastian/comparator": "^2.1",
-                "sebastian/diff": "^2.0",
-                "sebastian/exporter": "^3.1",
+                "localheinz/composer-normalize": "^1.2",
+                "nikic/php-parser": "^3.0",
+                "phpspec/phpspec": "^5.1",
+                "phpunit/phpunit": "^7.5.12",
                 "sensiolabs/security-checker": "^5.0",
                 "squizlabs/php_codesniffer": "~2.9"
             },
             "suggest": {
-                "allocine/twigcs": "Lets GrumPHP check Twig coding standard.",
                 "atoum/atoum": "Lets GrumPHP run your unit tests.",
                 "behat/behat": "Lets GrumPHP validate your project features.",
                 "brianium/paratest": "Lets GrumPHP run PHPUnit in parallel.",
@@ -3731,6 +3729,7 @@
                 "designsecurity/progpilot": "Lets GrumPHP be sure that there are no vulnerabilities in your code.",
                 "doctrine/orm": "Lets GrumPHP validate your Doctrine mapping files.",
                 "friendsofphp/php-cs-fixer": "Lets GrumPHP automatically fix your codestyle.",
+                "friendsoftwig/twigcs": "Lets GrumPHP check Twig coding standard.",
                 "infection/infection": "Lets GrumPHP evaluate the quality your unit tests",
                 "jakub-onderka/php-parallel-lint": "Lets GrumPHP quickly lint your entire code base.",
                 "localheinz/composer-normalize": "Lets GrumPHP tidy and normalize your composer.json file.",
@@ -3780,7 +3779,7 @@
                 }
             ],
             "description": "A composer plugin that enables source code quality checks.",
-            "time": "2019-05-17T11:56:59+00:00"
+            "time": "2019-09-22T07:37:49+00:00"
         },
         {
             "name": "phpspec/prophecy",

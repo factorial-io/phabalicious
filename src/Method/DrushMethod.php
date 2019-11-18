@@ -178,7 +178,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
 
         if ($host_config->get('sanitizeOnReset', false)) {
-            $this->runDrush( $shell,'sql-sanitize -y');
+            $this->runDrush($shell, 'sql-sanitize -y');
         }
 
         if ($host_config->isType(HostType::DEV)) {
@@ -236,6 +236,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         // Keep calm and clear the cache.
         if ($host_config['drupalVersion'] >= 8) {
             $this->runDrush($shell, 'cr -y');
+            $this->runDrush($shell, sprintf('state-set installation_type %s', $host_config['type']));
         } else {
             $this->runDrush($shell, 'cc all -y');
         }
@@ -392,7 +393,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $shell->run(sprintf('rm -f %s', $backup_file_name));
             $return = $backup_file_name;
         }
-        
+
         $sql_dump_cmd = $host_config->get('sqlDumpCommand', 'sql-dump');
         $this->runDrush($shell, '%s %s --result-file=%s', $sql_dump_cmd, $dump_options, $backup_file_name);
         return $return;

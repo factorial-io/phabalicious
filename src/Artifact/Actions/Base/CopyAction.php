@@ -31,13 +31,13 @@ class CopyAction extends ActionBase
         });
     }
 
-    public function run(HostConfig $host_config, TaskContextInterface $context)
-    {
-        /** @var ShellProviderInterface $shell */
-        $shell = $context->get('outerShell', $host_config->shell());
-        $install_dir = $context->get('installDir', false);
-        $target_dir = $context->get('targetDir', false);
-
+    protected function runImplementation(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        string $install_dir,
+        string $target_dir
+    ) {
         $shell->pushWorkingDir($install_dir);
 
         $files_to_copy = $this->getArgument('from');
@@ -60,6 +60,7 @@ class CopyAction extends ActionBase
 
         foreach ($files_to_copy as $file) {
             if (!in_array($file, $files_to_skip)) {
+                $shell->run(sprintf('rm -rf %s', $to . '/' . $file));
                 $shell->run(sprintf('cp -a %s %s', $file, $to));
             }
         }
