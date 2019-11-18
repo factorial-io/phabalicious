@@ -185,6 +185,11 @@ This will print all host configuration for the host `staging`.
 * `drushVersion` set the used crush-version, default is `8`. Drush is not 100% backwards-compatible, for phabalicious needs to know its version.
 * `supportsZippedBackups` default is true, set to false, when zipped backups are not supported
 
+#### Configuration of the yarn-method
+
+* `yarnRootFolder` folder where the package.json is located.
+* `yarnBuildCommand` build-command for yarn to execute when running the install- or reset-task.
+
 #### Configuration of the artifacts--ftp-method
 
 * `target` keeps all configuration bundled:
@@ -204,6 +209,19 @@ This will print all host configuration for the host `staging`.
   * `branch` the branch to use for commits
   * `useLocalRepository` if set to true, phab will use the current directory as a source for the artifact, if set to false, phab will create a new app in a temporary folder and use that as a artifact
   * `actions` a list of actions to perform. See detailed documentation for more info.
+  
+#### Configuration of the artifacts--custom method
+
+* `target` contains the following options
+  * `actions` a list of actions to perform. See detailed documentation for more info.
+  * `stages` a list of custom stages to perform. A combination of these values:
+    
+    ```
+    - installCode
+    - installDependencies
+    - runActions
+    - runDeployScript
+    ```
 
 #### Configuration of the docker-method
 

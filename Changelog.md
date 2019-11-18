@@ -21,6 +21,7 @@
   * Allow multiple options '--arguments'
   * Allow --arguments for deploy command
   * Refactor actions, add new action installScript
+  * Set the type as `installation_type` as state in drupal 8
 
 ## 3.2.1 / 2019-10-14
 
