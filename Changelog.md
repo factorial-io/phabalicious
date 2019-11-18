@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.3 / 2019-11-18
+
+### Fixed:
+
+  * Fixed a security alert in a symfony dependency
+
 ## 3.2.2 / 2019-11-14
 
 ### New:
