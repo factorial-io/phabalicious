@@ -155,6 +155,9 @@
             "ref": "c276fa48d4713de91eb410289b3b1834acb7e403"
         }
     },
+    "psr/cache": {
+        "version": "1.0.1"
+    },
     "psr/container": {
         "version": "1.0.0"
     },

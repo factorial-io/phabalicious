@@ -14,37 +14,31 @@ These are the standard stages. You can override them by adding them to the globa
 ```yaml
 appStages:
   create:
-    - stage: prepareDestination
-    - stage: installCode
-    - stage: spinUp
-    - stage: installDependencies
-    - stage: install
+    - prepareDestination
+    - installCode
+    - spinUp
+    - installDependencies
+    - install
   deploy:
-    - stage: spinUp
+    - spinUp
   destroy:
-    - stage: spinDown
-    - stage: deleteContainers
+    - spinDown
+    - deleteContainers
   # ftpSync and gitSync are only used for deploying artifacts.
-  ftpSync:
-    - stage: installCode
-    - stage: installDependencies
-    - stage: runDeployScript
-  gitSync:
-    useLocalRepository:
-      - stage: installDependencies
-      - stage: getSourceCommitInfo
-      - stage: pullTargetRepository
-      - stage: copyFilesToTargetRepository
-      - stage: runDeployScript
-      - stage: pushToTargetRepository
-    pullTargetRepository:
-      - stage: installCode
-      - stage: installDependencies
-      - stage: getSourceCommitInfo
-      - stage: pullTargetRepository
-      - stage: copyFilesToTargetRepository
-      - stage: runDeployScript
-      - stage: pushToTargetRepository
+  artifacts.ftp:
+    - installCode
+    - installDependencies
+    - runActions
+    - runDeployScript
+    - syncToFtp
+  artifacts.git:
+    - installCode
+    - installDependencies
+    - getSourceCommitInfo
+    - pullTargetRepository
+    - runActions
+    - runDeployScript
+    - pushToTargetRepository
 ```
 
 ## Creating a new app
