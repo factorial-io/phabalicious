@@ -211,7 +211,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $target_dir = $context->get('targetDir', false);
         $target_branch = $host_config[self::PREFS_KEY]['branch'];
         $target_repository = $host_config[self::PREFS_KEY]['repository'];
-            
+
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('outerShell', $host_config->shell());
         $shell->run(sprintf('#!git clone --depth 30 -b %s %s %s', $target_branch, $target_repository, $target_dir));
@@ -252,12 +252,13 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $shell->run('#!find . -name .git -not -path "./.git" -type d -exec rm -rf {} +');
 
         $shell->run('#!git add -A .');
-
-        // Reformat each message by escaping them with backslash.
-        foreach ($detailed_messages as &$detailed_message) {
-            $detailed_message = addslashes($detailed_message);
+        $formatted_message = $message;
+        // Add two new lines to the end of the short message for detailed messages.
+        if (!empty($detailed_messages)) {
+            $formatted_message .= "\n\n  * " . implode("\n  * ", $detailed_messages);
         }
-        $shell->run(sprintf('#!git commit -m "%s" -m "%s" || true', $message, implode('" -m "', $detailed_messages)));
+
+        $shell->run(sprintf('#!git commit -m "%s" || true', escapeshellarg($formatted_message)));
         if ($tag = $context->getResult('commitTag')) {
             $shell->run(sprintf('#!git push origin :refs/tags/%s || true', $tag));
             $shell->run(sprintf('#!git tag --delete %s || true', $tag));
