@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.2.4 / 2019-11-23
+
+### New:
+
+  * Add dedicated `npm` method, similar to yarn-method.
+
+### Fixed:
+
+  * Issue #62: Switch to using single -m for commit message
+
 ## 3.2.3 / 2019-11-18
 
 ### Fixed:
