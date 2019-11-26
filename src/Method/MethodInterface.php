@@ -20,6 +20,8 @@ interface MethodInterface
     public function getGlobalSettings(): array;
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array;
+    
+    public function validateGlobalSettings(array $settings, ValidationErrorBagInterface $errors);
 
     public function validateConfig(array $config, ValidationErrorBagInterface $errors);
 
@@ -32,7 +34,4 @@ interface MethodInterface
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context);
 
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context);
-
-
-
 }
