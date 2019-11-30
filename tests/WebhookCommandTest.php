@@ -21,8 +21,6 @@ class WebhookCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    protected $debugOutput = [];
-
     public function setup()
     {
         $this->application = new Application();
@@ -39,6 +37,7 @@ class WebhookCommandTest extends PhabTestCase
         $configuration->readConfiguration($this->getcwd() . '/assets/webhook-tests/fabfile.yaml');
 
         $this->application->add(new WebhookCommand($configuration, $method_factory));
+        $this->application->add(new DeployCommand($configuration, $method_factory));
     }
 
     public function testNonexistingWebhookCommand()
@@ -100,5 +99,20 @@ class WebhookCommandTest extends PhabTestCase
         $output = $commandTester->getDisplay();
 
         $this->assertContains('"args":{"q":"hello-from-commandline"}', $output);
+    }
+
+    public function testTaskSpecificWebhooks()
+    {
+        $command = $this->application->find('deploy');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            '--config' => 'hostA',
+        ));
+
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains('[test2Get]', $output);
+        $this->assertContains('config.factorial.io', $output);
     }
 }

@@ -22,6 +22,10 @@ webhooks:
     method: get
     payload:
       q: "%arguments.q%"
+  test2Get:
+    url: https://config.factorial.io
+    method: get
+    payload: []
   testArguments:
     url: https://postman-echo.com/get
     method: get
@@ -42,7 +46,7 @@ hosts:
     inheritsFrom: base
     var1: "This is var1 from hostA"
     webhooks:
-      deployFinished: testGet
+      deployFinished: test2Get
 
     deployPrepare:
       - execute(webhook, testPost)

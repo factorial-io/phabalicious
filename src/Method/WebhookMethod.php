@@ -44,22 +44,6 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         return $settings;
     }
 
-    /**
-     * @param HostConfig $config
-     * @param string $task
-     * @param TaskContextInterface $context
-     */
-    public function runTaskSpecificWebhooks(HostConfig $config, string $task, TaskContextInterface $context)
-    {
-        $mapping = $config->get(
-            'webhooks',
-            $context->getConfigurationService()->getSetting('webhooks', [])
-        );
-
-        if (!empty($mapping[$task])) {
-            $this->runWebhook($mapping[$task], $config, $context);
-        }
-    }
 
     public function validateGlobalSettings(array $settings, ValidationErrorBagInterface $errors)
     {
@@ -85,6 +69,36 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    /**
+     * @param HostConfig $config
+     * @param string $task
+     * @param TaskContextInterface $context
+     */
+    public function runTaskSpecificWebhooks(HostConfig $config, string $task, TaskContextInterface $context)
+    {
+        $mapping = $config->get(
+            'webhooks',
+            $context->getConfigurationService()->getSetting('webhooks', [])
+        );
+
+        if (!empty($mapping[$task])) {
+            $webhook_name = $mapping[$task];
+            $this->logger->info(sprintf('Invoking webhook `%s` for task `%s`', $webhook_name, $task));
+            $result = $this->runWebhook($webhook_name, $config, $context);
+            if (!$result) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Could not find webhook `%s` invoked for taskt `%s`',
+                    $webhook_name,
+                    $task
+                ));
+            } else {
+                $result = (string) $result->getBody();
+                if (!empty($result)) {
+                    $context->io()->block($result, $webhook_name);
+                }
+            }
+        }
+    }
     /**
      * Run fallback scripts.
      *
