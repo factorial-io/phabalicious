@@ -65,6 +65,15 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $callbacks = $context->get('callbacks', []);
         $callbacks = Utilities::mergeData($this->callbacks, $callbacks);
 
+        // Allow other methods to add their callbacks.
+        if (!empty($host_config['needs'])) {
+            $context->getConfigurationService()->getMethodFactory()->alter(
+                $host_config['needs'],
+                'scriptCallbacks',
+                $callbacks
+            );
+        }
+        
         $environment = $context->get('environment', []);
         if (!$context->getShell()) {
             $context->setShell($host_config->shell());

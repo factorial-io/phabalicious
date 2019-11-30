@@ -33,6 +33,7 @@ class WebhookCommandTest extends PhabTestCase
 
         $method_factory->addMethod($method);
         $method_factory->addMethod(new LocalMethod($logger));
+        $method_factory->addMethod(new ScriptMethod($logger));
 
         $configuration->readConfiguration($this->getcwd() . '/assets/webhook-tests/fabfile.yaml');
 
@@ -113,6 +114,8 @@ class WebhookCommandTest extends PhabTestCase
         $output = $commandTester->getDisplay();
 
         $this->assertContains('[test2Get]', $output);
+        $this->assertContains('[testArguments]', $output);
+        $this->assertContains('"args":{"q":"foo"}', $output);
         $this->assertContains('config.factorial.io', $output);
     }
 }

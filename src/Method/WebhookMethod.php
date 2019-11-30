@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Monolog\Handler\Curl\Util;
 use Phabalicious\Configuration\ConfigurationService;
@@ -85,18 +86,12 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             $webhook_name = $mapping[$task];
             $this->logger->info(sprintf('Invoking webhook `%s` for task `%s`', $webhook_name, $task));
             $result = $this->runWebhook($webhook_name, $config, $context);
-            if (!$result) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Could not find webhook `%s` invoked for taskt `%s`',
-                    $webhook_name,
-                    $task
-                ));
-            } else {
-                $result = (string) $result->getBody();
-                if (!empty($result)) {
-                    $context->io()->block($result, $webhook_name);
-                }
-            }
+            $this->handleWebhookResult(
+                $context,
+                $result,
+                $webhook_name,
+                sprintf('Could not find webhook `%s` invoked for taskt `%s`', $webhook_name, $task)
+            );
         }
     }
     /**
@@ -194,5 +189,52 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         );
 
         return $response;
+    }
+
+
+    /**
+     * Implements alter hook script callbacks
+     */
+    public function alterScriptCallbacks(&$callbacks)
+    {
+        $callbacks['webhook'] = [$this, 'webhookScriptCallback'];
+    }
+    
+    public function webhookScriptCallback(TaskContextInterface $context, $webhook_name, ...$args)
+    {
+        $cloned_context = clone $context;
+        if (!empty($args)) {
+            $named_args = Utilities::parseArguments($args);
+
+            $variables = $cloned_context->get('variables', []);
+            $variables['arguments'] = $named_args;
+            $cloned_context->set('variables', $variables);
+        }
+        $host_config = $context->get('host_config');
+        $result = $this->runWebhook($webhook_name, $host_config, $cloned_context);
+        $this->handleWebhookResult(
+            $cloned_context,
+            $result,
+            $webhook_name,
+            sprintf('Could not find webhook `%s`', $webhook_name)
+        );
+    }
+
+    /**
+     * @param TaskContextInterface $context
+     * @param Response|bool $result
+     * @param string $webhook_name
+     * @param string $msg
+     */
+    protected function handleWebhookResult(TaskContextInterface $context, $result, string $webhook_name, string $msg)
+    {
+        if (!$result) {
+            throw new \InvalidArgumentException($msg);
+        } else {
+            $result = (string)$result->getBody();
+            if (!empty($result)) {
+                $context->io()->block($result, $webhook_name);
+            }
+        }
     }
 }

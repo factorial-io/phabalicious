@@ -1,7 +1,5 @@
 name: webhook-tests
 
-disableScripts: true
-
 webhooks:
   testDelete:
     url: https://posthere.io/8744-4033-8ea9l
@@ -49,4 +47,4 @@ hosts:
       deployFinished: test2Get
 
     deployPrepare:
-      - execute(webhook, testPost)
+      - webhook(testArguments, q=foo)
