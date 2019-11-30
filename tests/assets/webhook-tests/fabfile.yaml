@@ -1,4 +1,6 @@
-name: script-tests
+name: webhook-tests
+
+disableScripts: true
 
 webhooks:
   testDelete:
@@ -15,6 +17,16 @@ webhooks:
     payload:
       var1: "%host.var1%"
       var2: "%settings.var2%"
+  test404:
+    url: https://config.factorial.io/unknown
+    method: get
+    payload:
+      q: "%arguments.q%"
+  testArguments:
+    url: https://postman-echo.com/get
+    method: get
+    payload:
+      q: "%arguments.q%"
 
 
 var2: "This is global settings var 2"

@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Monolog\Handler\Curl\Util;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Utilities\Utilities;
@@ -134,6 +135,17 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             unset($this->handletaskSpecificWebhooks[$t]);
         }
     }
+    
+    public function webhook(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $webhook_name = $context->get('webhook_name');
+        if (!$webhook_name) {
+            throw new \InvalidArgumentException('Missing webhook_name in context');
+        }
+
+        $result = $this->runWebhook($webhook_name, $host_config, $context);
+        $context->setResult('webhook_result', $result ? $result->getBody() : false);
+    }
 
     public function runWebhook($webhook_name, HostConfig $config, TaskContextInterface $context)
     {
@@ -145,12 +157,18 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         $defaults = $context->getConfigurationService()->getSetting('webhooks.defaults', []);
         $webhook = Utilities::mergeData($defaults, $webhook);
         
+
+        
         if (!empty($webhook['payload'])) {
+            $payload = $webhook['payload'];
+            $variables = Utilities::buildVariablesFrom($config, $context);
+            $replacements = Utilities::expandVariables($variables);
+            $payload = Utilities::expandStrings($payload, $replacements);
             if ($webhook['method'] == 'get') {
-                $webhook['url'] .= '?' . http_build_query($webhook['payload']);
+                $webhook['url'] .= '?' . http_build_query($payload);
             } elseif ($webhook['method'] == 'post') {
                 $format = $webhook['format'];
-                $webhook['options'][$format] = $webhook['payload'];
+                $webhook['options'][$format] = $payload;
             }
         }
         

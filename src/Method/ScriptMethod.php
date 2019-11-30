@@ -62,7 +62,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     public function runScript(HostConfig $host_config, TaskContextInterface $context)
     {
         $commands = $context->get('scriptData', []);
-        $variables = $context->get('variables', []);
         $callbacks = $context->get('callbacks', []);
         $callbacks = Utilities::mergeData($this->callbacks, $callbacks);
 
@@ -79,16 +78,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         if (!empty($host_config['environment'])) {
             $environment = Utilities::mergeData($environment, $host_config['environment']);
         }
-        $variables = Utilities::mergeData($variables, [
-            'context' => [
-                'data' => $context->getData(),
-                'results' => $context->getResults(),
-            ],
-            'host' => $host_config->raw(),
-            'settings' => $context->getConfigurationService()
-                ->getAllSettings(['hosts', 'dockerHosts']),
-        ]);
-
+        $variables = Utilities::buildVariablesFrom($host_config, $context);
         $replacements = Utilities::expandVariables($variables);
         $commands = Utilities::expandStrings($commands, $replacements);
         $commands = Utilities::expandStrings($commands, $replacements);
