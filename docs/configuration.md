@@ -428,7 +428,7 @@ webhooks:
       someOtherValue: "%arguments.foo%"
 ```
 
-`webhooks` has a special entry called `defaults` where you can add comman defaults for all webhook invokations like special headers, etc
+`webhooks` has a special entry called `defaults` where you can add common defaults for all webhook invokations like special headers, etc
 
 The current defaults are:
 ```yaml

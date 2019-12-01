@@ -84,7 +84,7 @@ class WebhookCommand extends BaseCommand
             $this->getMethods()->call('webhook', 'webhook', $this->getHostConfig(), $context);
             $result = $context->getResult('webhook_result', false);
             if (!$result) {
-                throw new \RuntimeException(sprintf('Could not find webhooks `%s`', $webhook_name));
+                throw new \RuntimeException(sprintf('Could not find webhook `%s`', $webhook_name));
             }
 
             $output->writeln($result);
