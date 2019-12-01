@@ -605,8 +605,9 @@ This command will display your open tasks for that given project. For this to wo
 ## webhook
 
 ```bash
+phab webhook --config hostA
 phab webhook nameOfWebhook --config hostA
 phab webhook nameOfWebhook --arguments foo=bar --arguments token=my-token --config hostA
 ```
 
-This command will invoke the webhook named `nameOfWebhook` and pass the optional arguments to it. 
+This command will invoke the webhook named `nameOfWebhook` and pass the optional arguments to it. Omitting the name of the webhook will list all available webhooks.
