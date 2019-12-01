@@ -65,8 +65,8 @@ class DeployCommand extends BaseCommand
         $context = new TaskContext($this, $input, $output);
 
         // Override branch in config.
-        if ($input->hasArgument('branch')) {
-            $branch = $input->getArgument('branch');
+        $branch = $input->getArgument('branch');
+        if (!empty($branch)) {
             $this->getHostConfig()['branch'] = $branch;
         }
 
