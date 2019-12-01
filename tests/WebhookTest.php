@@ -65,7 +65,7 @@ class WebhookTest extends PhabTestCase
 
         $result = $this->method->runWebhook('testGet', $host_config, $this->context);
         $this->assertEquals(200, $result->getStatusCode());
-        $body = (string) $result->getBody()->getContents();
+        $body = (string) $result->getBody();
         $json = json_decode($body);
 
         $this->assertNotEmpty($json[0]->body, 'Response body is empty');

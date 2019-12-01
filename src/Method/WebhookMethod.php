@@ -181,12 +181,26 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             }
         }
         
+        $this->logger->info(sprintf(
+            'Invoking webhook at `%s`, method `%s` and format `%s`',
+            $webhook['url'],
+            $webhook['method'],
+            $webhook['format']
+        ));
+        $this->logger->debug('guzzle options: ' . print_r($webhook['options'], true));
+        
         $client = new Client();
         $response = $client->request(
             $webhook['method'],
             $webhook['url'],
             $webhook['options']
         );
+        
+        $this->logger->debug(sprintf(
+            'Response status code: %d, body: `%s`',
+            $response->getStatusCode(),
+            (string) $response->getBody()
+        ));
 
         return $response;
     }
