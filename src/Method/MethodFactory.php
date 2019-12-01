@@ -22,7 +22,7 @@ class MethodFactory
     protected $configuration;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -32,7 +32,7 @@ class MethodFactory
      * MethodFactory constructor.
      *
      * @param ConfigurationService $configuration
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param LoggerInterface $logger
      */
     public function __construct(ConfigurationService $configuration, LoggerInterface $logger)
     {
@@ -45,7 +45,7 @@ class MethodFactory
     /**
      * Add a method.
      *
-     * @param \Phabalicious\Method\MethodInterface $method
+     * @param MethodInterface $method
      */
     public function addMethod(MethodInterface $method)
     {
@@ -57,7 +57,7 @@ class MethodFactory
      *
      * @param string $name
      *
-     * @return \Phabalicious\Method\MethodInterface
+     * @return MethodInterface
      * @throws MethodNotFoundException
      */
     public function getMethod(string $name): MethodInterface
@@ -80,11 +80,11 @@ class MethodFactory
      * Run a task.
      *
      * @param string $task_name
-     * @param \Phabalicious\Configuration\HostConfig $configuration
+     * @param HostConfig $configuration
      * @param TaskContextInterface|NULL $context
      * @param array $nextTasks
      *
-     * @return \Phabalicious\Method\TaskContext|TaskContextInterface
+     * @return TaskContext|TaskContextInterface
      * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
      */
@@ -152,9 +152,9 @@ class MethodFactory
     /**
      * Call a method (implementation).
      *
-     * @param \Phabalicious\Method\MethodInterface $method
+     * @param MethodInterface $method
      * @param string $task_name
-     * @param \Phabalicious\Configuration\HostConfig $configuration
+     * @param HostConfig $configuration
      * @param TaskContextInterface $in_context
      * @param bool $optional
      * @throws MethodNotFoundException
@@ -198,7 +198,7 @@ class MethodFactory
      *
      * @param string $method_name
      * @param string $task_name
-     * @param \Phabalicious\Configuration\HostConfig $configuration
+     * @param HostConfig $configuration
      * @param TaskContextInterface $context
      *
      * @return TaskContextInterface
@@ -244,7 +244,7 @@ class MethodFactory
     /**
      * Get all registered methods.
      *
-     * @return \Phabalicious\Method\MethodInterface[]
+     * @return MethodInterface[]
      */
     public function all()
     {
@@ -256,12 +256,22 @@ class MethodFactory
      *
      * @param array $needs
      *
-     * @return \Phabalicious\Method\MethodInterface[]
+     * @return MethodInterface[]
      */
     public function getSubset(array $needs)
     {
         return array_map(function ($elem) {
             return $this->getMethod($elem);
         }, $needs);
+    }
+    
+    public function alter(array $needs, $func_name, &$data)
+    {
+        $fn = 'alter' . ucwords($func_name);
+        foreach ($this->getSubset($needs) as $method) {
+            if (method_exists($method, $fn)) {
+                $method->{$fn}($data);
+            }
+        }
     }
 }

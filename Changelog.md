@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.2.5 / 2019-12-01
+
+### New:
+
+  * Add preliminary documentation for webhooks
+  * Allow methods to alter script callbacks
+  * Add test for task-specific webhooks
+  * Implement new command `webhook` which allows the user to invoke a webhook defined in a fabfile.
+
+### Fixed:
+
+  * Fix non-working branch argument-handling, old code did not respect the argument at all
+
 ## 3.2.4 / 2019-11-23
 
 ### New:

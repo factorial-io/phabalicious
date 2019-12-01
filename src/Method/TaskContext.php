@@ -51,7 +51,7 @@ class TaskContext implements TaskContextInterface
     {
         $this->data[$key] = $value;
     }
-
+    
     public function get(string $key, $default = null)
     {
          return isset($this->data[$key]) ? $this->data[$key] : $default;

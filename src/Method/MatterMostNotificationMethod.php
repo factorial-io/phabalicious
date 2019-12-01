@@ -3,7 +3,6 @@
 namespace Phabalicious\Method;
 
 use GuzzleHttp\Client;
-use MacFJA\PharBuilder\Commands\Base;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\ValidationFailedException;

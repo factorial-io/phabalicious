@@ -589,7 +589,7 @@ This command will destroy an app from a given configuration. The process has sev
 
 ``` bash
 phab self-update
-Phan self-update --allow-unstable=1
+phab self-update --allow-unstable=1
 ```
 
 This will download the latest version of phab and replace the current installed one with the downloaded version. If `allow-unstable` is set, the latest-dev-version will be downloaded.
@@ -601,3 +601,13 @@ phab jira
 ```
 
 This command will display your open tasks for that given project. For this to work, the command needs some configuration-options.
+
+## webhook
+
+```bash
+phab webhook --config hostA
+phab webhook nameOfWebhook --config hostA
+phab webhook nameOfWebhook --arguments foo=bar --arguments token=my-token --config hostA
+```
+
+This command will invoke the webhook named `nameOfWebhook` and pass the optional arguments to it. Omitting the name of the webhook will list all available webhooks.

@@ -2,7 +2,15 @@
 
 namespace Phabalicious\Command;
 
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\EarlyTaskExitException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\ShellProviderNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,14 +47,14 @@ class DeployCommand extends BaseCommand
      * @param OutputInterface $output
      *
      * @return int|null
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -55,9 +63,11 @@ class DeployCommand extends BaseCommand
         }
 
         $context = new TaskContext($this, $input, $output);
+
+        // Override branch in config.
         if ($input->hasArgument('branch')) {
             $branch = $input->getArgument('branch');
-            $context->set('branch', $branch);
+            $this->getHostConfig()['branch'] = $branch;
         }
 
         $deploy_arguments = $this->parseScriptArguments([], $input->getOption('arguments'));

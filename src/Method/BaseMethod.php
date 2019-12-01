@@ -43,6 +43,10 @@ abstract class BaseMethod implements MethodInterface
         return [];
     }
 
+    public function validateGlobalSettings(array $settings, ValidationErrorBagInterface $errors)
+    {
+    }
+
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         return [];

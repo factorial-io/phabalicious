@@ -2,10 +2,13 @@
 
 namespace Phabalicious\Utilities;
 
+use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\TaskContextInterface;
+
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.2.1';
+    const FALLBACK_VERSION = '3.2.5';
 
     public static function mergeData(array $data, array $override_data): array
     {
@@ -33,7 +36,7 @@ class Utilities
             if (is_array($value)) {
                 self::expandVariablesImpl($key, $value, $result);
             } else {
-                $result["%$key%"] = (string) ($value);
+                $result["%$key%"] = (string)($value);
             }
         }
         return $result;
@@ -46,10 +49,10 @@ class Utilities
                 self::expandVariablesImpl($prefix . '.' . $key, $value, $result);
             } elseif (is_object($value)) {
                 if (method_exists($value, '__toString')) {
-                    $result["%$prefix.$key%"] = (string) ($value);
+                    $result["%$prefix.$key%"] = (string)($value);
                 }
             } else {
-                $result["%$prefix.$key%"] = (string) ($value);
+                $result["%$prefix.$key%"] = (string)($value);
             }
         }
     }
@@ -59,15 +62,42 @@ class Utilities
         if (empty($strings)) {
             return [];
         }
-        $result = [];
         $pattern = implode('|', array_filter(array_keys($replacements), 'preg_quote'));
+        return self::expandStringsImpl($strings, $replacements, $pattern);
+    }
+
+    private static function expandStringsImpl(array $strings, array &$replacements, string $pattern)
+    {
+        $result = [];
         foreach ($strings as $key => $line) {
-             $result[$key] = preg_replace_callback('/' . $pattern . '/', function ($found) use ($replacements) {
-                return $replacements[$found[0]];
-             }, $line);
+            if (is_array($line)) {
+                $result[$key] = self::expandStringsImpl($line, $replacements, $pattern);
+            } else {
+                $result[$key] = preg_replace_callback('/' . $pattern . '/', function ($found) use ($replacements) {
+                    return $replacements[$found[0]];
+                }, $line);
+            }
         }
 
         return $result;
+    }
+
+
+    public static function buildVariablesFrom(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $variables = $context->get('variables', []);
+
+        $variables = Utilities::mergeData($variables, [
+            'context' => [
+                'data' => $context->getData(),
+                'results' => $context->getResults(),
+            ],
+            'host' => $host_config->raw(),
+            'settings' => $context->getConfigurationService()
+                ->getAllSettings(['hosts', 'dockerHosts']),
+        ]);
+
+        return $variables;
     }
 
     public static function extractCallback($line)
@@ -181,5 +211,32 @@ class Utilities
             }
         }
         return implode('/', $relPath);
+    }
+
+    /**
+     * @param $arguments_string
+     * @return array
+     */
+    public static function parseArguments($arguments_string): array
+    {
+        $args = is_array($arguments_string) ? $arguments_string : explode(' ', $arguments_string);
+
+        $unnamed_args = array_filter($args, function ($elem) {
+            return strpos($elem, '=') === false;
+        });
+        $temp = array_filter($args, function ($elem) {
+            return strpos($elem, '=') !== false;
+        });
+        $named_args = [];
+        foreach ($temp as $value) {
+            $a = explode('=', $value);
+            $named_args[$a[0]] = $a[1];
+        }
+
+        $named_args = Utilities::mergeData($named_args, [
+            'combined' => implode(' ', $unnamed_args),
+            'unnamedArguments' => $unnamed_args,
+        ]);
+        return $named_args;
     }
 }
