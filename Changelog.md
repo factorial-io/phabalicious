@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.6 / 2019-12-01
+
+### Fixed:
+
+  * Fix branch handling in deploy command
+
 ## 3.2.5 / 2019-12-01
 
 ### New:
