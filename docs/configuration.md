@@ -37,12 +37,13 @@ List here all needed methods for that type of project. Available methods are:
   * `drush` for support of drupal installations
   * `files`
   * `mattermost` for slack-notifications
+  * `webhook` to invoke webhooks when running specific tasks
   * `docker` for docker-support
   * `composer` for composer support
   * `drupalconsole` for drupal-concole support
   * `platform` for deploying to platform.sh
-  * `artifacts--ftp to deploy to a ftp-server
-  * `artifacts--git to deploy an artifact to a git repository
+  * `artifacts--ftp` to deploy to a ftp-server
+  * `artifacts--git` to deploy an artifact to a git repository
 
 **Example for drupal 7**
 
@@ -392,6 +393,81 @@ You can test the Mattermost config via
 
 ```
 phab notify "hello world" --config <your-config>
+```
+
+### webhooks
+
+Phabalicious provides a command to invoke webhooks from the command line, but also integrates invoking webhooks when running a specific task or as a callback for scripts. 
+
+Webhooks are declared in the global namespace:
+
+```yaml
+webhooks:
+  nameOfWebhook:
+    url: <url-of-webhook>
+    method: <get|post|delete>
+    format: <json|form_params>
+    payload:
+      prop1: value1
+      prop2: value2
+    # a list of options passed directly to guzzle.
+    options: []
+  ...
+```
+
+The data in payload get submitted depending on the chosen format, e.g. as JSON or as form-values. You can use the replacement patterns for entries in the payload known similar to scripts, e.g.
+
+```yaml
+webhooks:
+  demoWebhook:
+    url: <url>
+    method: get
+    payload:
+      branch: "%host.branch%"
+      token: "%settings.token%"
+      someOtherValue: "%arguments.foo%"
+```
+
+`webhooks` has a special entry called `defaults` where you can add common defaults for all webhook invokations like special headers, etc
+
+The current defaults are:
+```yaml
+webhooks:
+  defaults:
+    format: json
+    options:
+      headers:
+        User-Agent: phabalicous
+        Accept: application/json
+        
+```
+
+To invoke a webhook from a script-section, use the built-in function `webhook(name-of-webhook, arguments)`:
+
+```yaml
+host:
+  demo:
+    needs:
+      - git
+      - artifacts--git
+      - webhook
+    deployFinished:
+      - echo "Invoking webhook ..."
+      - webhook(myWebhook, foo=bar)
+```
+
+Alternatively you can use the `webhooks`-keyword to provide a mapping of task and webhook to invoke:
+
+```yaml
+host:
+  demo:
+    needs:
+      - git
+      - artifacts--git
+      - webhook
+    webhooks:
+      deployPrepare: myWebhook1
+      deployFinished: myWebhook2
 ```
 
 ### other

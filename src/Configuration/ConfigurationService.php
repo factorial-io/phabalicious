@@ -154,6 +154,13 @@ class ConfigurationService
                     $disallow_deep_merge_for_keys
                 );
             }
+            $errors = new ValidationErrorBag();
+            foreach ($this->methods->all() as $method) {
+                $method->validateGlobalSettings($data, $errors);
+            }
+            if ($errors->hasErrors()) {
+                throw new ValidationFailedException($errors);
+            }
         }
 
         $this->disallowDeepMergeForKeys = $disallow_deep_merge_for_keys;
