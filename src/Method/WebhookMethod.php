@@ -95,7 +95,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         }
     }
     /**
-     * Run fallback scripts.
+     * Run fallback webhooks.
      *
      * @param string $task
      * @param HostConfig $config
@@ -108,7 +108,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * Run preflight scripts.
+     * Run preflight webhooks.
      *
      * @param string $task
      * @param HostConfig $config
@@ -121,7 +121,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * Run postflight scripts.
+     * Run postflight webhooks.
      *
      * @param string $task
      * @param HostConfig $config
@@ -131,9 +131,9 @@ class WebhookMethod extends BaseMethod implements MethodInterface
     {
         parent::postflightTask($task, $config, $context);
 
-        // Make sure, that task-specific scripts get called.
+        // Make sure, that task-specific webhooks get called.
         // Other methods may have called them already, so
-        // handledTaskSpecificScripts keep track of them.
+        // handledTaskSpecificWebhooks keep track of them.
         if (empty($this->handletaskSpecificWebhooks[$task])) {
             $this->runTaskSpecificWebhooks($config, $task, $context);
         }
