@@ -8,7 +8,7 @@ use Phabalicious\Method\TaskContextInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.2.1';
+    const FALLBACK_VERSION = '3.2.5';
 
     public static function mergeData(array $data, array $override_data): array
     {
@@ -96,7 +96,7 @@ class Utilities
             'settings' => $context->getConfigurationService()
                 ->getAllSettings(['hosts', 'dockerHosts']),
         ]);
-        
+
         return $variables;
     }
 
