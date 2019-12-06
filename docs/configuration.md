@@ -190,11 +190,13 @@ This will print all host configuration for the host `staging`.
 
 * `yarnRootFolder` folder where the package.json is located.
 * `yarnBuildCommand` build-command for yarn to execute when running the install- or reset-task.
+* `yarnRunContext`, set it to `dockerHost`  to instruct phabalicious to run the yarn commands in the docker context.
 
 #### Configuration of the npm-method
 
 * `npmRootFolder` folder where the package.json is located.
 * `npmBuildCommand` build-command for npm to execute when running the install- or reset-task.
+* `npmRunContext`, set it to `dockerHost`  to instruct phabalicious to run the yarn commands in the docker context.
 
 #### Configuration of the artifacts--ftp-method
 
@@ -397,7 +399,7 @@ phab notify "hello world" --config <your-config>
 
 ### webhooks
 
-Phabalicious provides a command to invoke webhooks from the command line, but also integrates invoking webhooks when running a specific task or as a callback for scripts. 
+Phabalicious provides a command to invoke webhooks from the command line, but also integrates invoking webhooks when running a specific task or as a callback for scripts.
 
 Webhooks are declared in the global namespace:
 
@@ -439,7 +441,7 @@ webhooks:
       headers:
         User-Agent: phabalicous
         Accept: application/json
-        
+
 ```
 
 To invoke a webhook from a script-section, use the built-in function `webhook(name-of-webhook, arguments)`:
