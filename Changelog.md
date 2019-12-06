@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.2.7 / 2019-12-06
+
+### New/Fixed:
+
+  * Ignore ssl errors when running tests'
+  * Better way of handling relative paths in LocalShell
+  * Refactor RunCommandBase to define a runContext. Could be host, or dockerHost
+  * Bump symfony/http-foundation from 4.2.3 to 4.4.1
+
 ## 3.2.6 / 2019-12-01
 
 ### Fixed:
