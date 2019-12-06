@@ -12,12 +12,32 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
 {
 
 
-    abstract protected function getExecutableName() : string;
-    abstract protected function getRootFolderKey(): string;
+    const HOST_CONTEXT = 'host';
+    const DOCKER_HOST_CONTEXT = 'dockerHost';
 
     public function supports(string $method_name): bool
     {
         return $method_name === $this->getName();
+    }
+
+    protected function getExecutableName() : string
+    {
+        return $this->getName();
+    }
+
+    protected function getConfigPrefix() : string
+    {
+        return $this->getName();
+    }
+
+    protected function getRootFolderKey(): string
+    {
+        return $this->getConfigPrefix() . 'RootFolder';
+    }
+
+    protected function getRunContextKey()
+    {
+        return "{$this->getConfigPrefix()}RunContext";
     }
 
     public function getGlobalSettings(): array
@@ -36,6 +56,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
             $this->getRootFolderKey() => isset($host_config['gitRootFolder'])
                 ? $host_config['gitRootFolder']
                 : $host_config['rootFolder'],
+            $this->getRunContextKey() => self::HOST_CONTEXT,
         ];
     }
 
@@ -45,6 +66,17 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $args = $this->getRootFolderKey();
         $validation->hasKey($args, sprintf('%s should point to your root folder for %s.', $args, $this->getName()));
         $validation->checkForValidFolderName($args);
+
+        $runContextKey = $this->getRunContextKey();
+        $validation->isOneOf($runContextKey, [self::HOST_CONTEXT, self::DOCKER_HOST_CONTEXT]);
+
+        if ($config[$runContextKey] == self::DOCKER_HOST_CONTEXT && !in_array('docker', $config['needs'])) {
+            $errors->addError($runContextKey, sprintf(
+                '`%s` is set to `%s`, this requires `docker` as part of the hosts needs.',
+                $runContextKey,
+                self::DOCKER_HOST_CONTEXT
+            ));
+        }
     }
 
     protected function runCommand(
@@ -55,8 +87,18 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $command = $this->prepareCommand($host_config, $context, $command);
 
         /** @var ShellProviderInterface $shell */
-        $shell = $this->getShell($host_config, $context);
-        $shell->pushWorkingDir($host_config[$this->getRootFolderKey()]);
+        if ($host_config[$this->getRunContextKey()] == self::DOCKER_HOST_CONTEXT) {
+            /** @var DockerMethod $docker_method */
+            $docker_method = $context->getConfigurationService()->getMethodFactory()->getMethod('docker');
+            $docker_config = DockerMethod::getDockerConfig($host_config, $context->getConfigurationService());
+            $shell = $docker_config->shell();
+            $shell->pushWorkingDir($docker_method->getProjectFolder($docker_config, $host_config));
+            $shell->cd($host_config[$this->getRootFolderKey()]);
+        } else {
+            $shell = $this->getShell($host_config, $context);
+            $shell->pushWorkingDir($host_config[$this->getRootFolderKey()]);
+        }
+
         $result = $shell->run('#!' . $this->getExecutableName(). ' ' . $command);
         $context->setResult('exitCode', $result->getExitCode());
         $shell->popWorkingDir();
