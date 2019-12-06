@@ -12,16 +12,6 @@ class ComposerMethod extends RunCommandBaseMethod implements MethodInterface
         return 'composer';
     }
 
-    protected function getExecutableName(): string
-    {
-        return 'composer';
-    }
-
-    protected function getRootFolderKey(): string
-    {
-        return 'composerRootFolder';
-    }
-
     protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
     {
         if (!in_array($host_config['type'], array('dev', 'test'))) {
@@ -66,5 +56,4 @@ class ComposerMethod extends RunCommandBaseMethod implements MethodInterface
     {
         $this->runCommand($host_config, $context, 'update');
     }
-
 }
