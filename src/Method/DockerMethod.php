@@ -165,7 +165,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         ]);
         $context->set('environment', $environment);
         $context->set('callbacks', $callbacks);
-        $context->set('rootFolder', $docker_config['rootFolder']);
+        $context->set('rootFolder', self::getProjectFolder($docker_config, $host_config));
         $context->setShell($docker_config->shell());
         $docker_config->shell()->setOutput($context->getOutput());
 
@@ -245,6 +245,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $this->logger->error('Supervisord not coming up at all!');
     }
 
+    public static function getProjectFolder(DockerConfig $docker_config, HostConfig $host_config)
+    {
+        return $docker_config['rootFolder'] . '/'. $host_config['docker']['projectFolder'];
+    }
+
     /**
      * @param HostConfig $hostconfig
      * @param TaskContextInterface $context
@@ -299,7 +304,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
 
         $docker_config = $this->getDockerConfig($hostconfig, $context->getConfigurationService());
-        $root_folder = $docker_config['rootFolder'] . '/' . $hostconfig['docker']['projectFolder'];
+        $root_folder = $this->getProjectFolder($docker_config, $hostconfig);
 
         /** @var ShellProviderInterface $shell */
         $shell = $docker_config->shell();
@@ -479,8 +484,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         // Set outer-shell to the one provided by the docker-configuration.
         $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
         $context->setResult('outerShell', $docker_config->shell());
-        $context->setResult('installDir', $docker_config['rootFolder'] .
-            '/' . $host_config['docker']['projectFolder']);
+        $context->setResult('installDir', $this->getProjectFolder($docker_config, $host_config));
     }
 
     /**
@@ -556,7 +560,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $docker_config = self::getDockerConfig($host_config, $config);
             $shell = $docker_config->shell();
             $cwd = $shell->getWorkingDir();
-            $shell->cd($docker_config['rootFolder'] . '/' . $host_config['docker']['projectFolder']);
+            $shell->cd(self::getProjectFolder($docker_config, $host_config));
             $result = $shell->run('#!docker-compose ps', true);
             $shell->cd($cwd);
             $docker_name = false;
