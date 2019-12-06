@@ -1,6 +1,9 @@
 name: webhook-tests
 
 webhooks:
+  defaults:
+    options:
+      verify: false # ignore SSL errors
   testDelete:
     url: https://posthere.io/8744-4033-8ea9l
     method: delete
