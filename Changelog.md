@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.8 / 2019-12-10
+
+### Fixed
+
+  * Harden behavior of committing artifacts.
+
 ## 3.2.7 / 2019-12-06
 
 ### New/Fixed:
