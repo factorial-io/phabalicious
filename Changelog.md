@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.9 / 2019-12-11
+
+### Fixed:
+
+  * Harden handling of getting actual container name from a service
+
 ## 3.2.8 / 2019-12-10
 
 ### Fixed
