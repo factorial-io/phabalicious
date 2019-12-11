@@ -207,7 +207,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         if (!$this->isContainerRunning($docker_config, $container_name)) {
             throw new \RuntimeException(sprintf(
-                'Docker container %s not running, check your `host.docker.name` configuration!',
+                'Docker container %s is not running or could not be discovered! Check your docker config!',
                 $container_name
             ));
         }
@@ -561,20 +561,18 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $shell = $docker_config->shell();
             $cwd = $shell->getWorkingDir();
             $shell->cd(self::getProjectFolder($docker_config, $host_config));
-            $result = $shell->run('#!docker-compose ps', true);
+            $result = $shell->run(sprintf('#!docker-compose ps -q %s', $composer_service), true);
             $shell->cd($cwd);
             $docker_name = false;
+            if ($result->succeeded()) {
+                $docker_name = $result->getOutput()[0];
+                $cfg = $host_config['docker'];
+                $cfg['name'] = $docker_name;
+                $host_config['docker'] = $cfg;
 
-            foreach ($result->getOutput() as $line) {
-                if (strpos($line, '_' . $composer_service . '_') !== false) {
-                    list($docker_name) = explode(' ', $line);
-                    $cfg = $host_config['docker'];
-                    $cfg['name'] = $docker_name;
-                    $host_config['docker'] = $cfg;
-
-                    return $docker_name;
-                }
+                return $docker_name;
             }
+
             throw new \RuntimeException(sprintf(
                 'Could not get the name of the docker container running the service `%s`',
                 $composer_service
