@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.10 / 2019-12-12
+
+### Fixed:
+
+* Fix error when deleting existing files in copyAction
+
 ## 3.2.9 / 2019-12-11
 
 ### Fixed:
