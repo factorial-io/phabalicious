@@ -15,6 +15,7 @@ use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -31,6 +32,13 @@ class DockerCommand extends BaseCommand
                 'docker',
                 InputArgument::IS_ARRAY | InputArgument::REQUIRED,
                 'docker tasks to run'
+            )
+            ->addOption(
+                'arguments',
+                'a',
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Pass optional arguments',
+                []
             )
             ->setHelp('Run one or more specific docker tasks');
     }
@@ -71,6 +79,10 @@ class DockerCommand extends BaseCommand
         $docker_config = $this->getDockerConfig();
         $context->set('docker_config', $docker_config);
 
+        $arguments = $this->parseScriptArguments([], $input->getOption('arguments'));
+        $context->set('variables', $arguments);
+        $context->set('deployArguments', $arguments);
+
         $tasks = $input->getArgument('docker');
         if (!is_array($tasks)) {
             $tasks = [$tasks];
@@ -89,7 +101,6 @@ class DockerCommand extends BaseCommand
             }
 
             return $context->getResult('exitCode', 0);
-
         } catch (EarlyTaskExitException $e) {
             return 1;
         }
@@ -118,5 +129,4 @@ class DockerCommand extends BaseCommand
         $io->title('List of docker tasks:');
         $io->listing(array_keys($tasks));
     }
-
 }

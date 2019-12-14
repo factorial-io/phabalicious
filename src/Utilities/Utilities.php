@@ -8,7 +8,7 @@ use Phabalicious\Method\TaskContextInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.2.10';
+    const FALLBACK_VERSION = '3.2.11';
 
     public static function mergeData(array $data, array $override_data): array
     {
