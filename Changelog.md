@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.12 / 2019-12-14
+
+### Fixed:
+
+  * Fix php declaration error
+
 ## 3.2.11 / 2019-12-14
 
 ### Fixed:
