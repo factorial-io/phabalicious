@@ -51,6 +51,13 @@ class TaskContext implements TaskContextInterface
     {
         $this->data[$key] = $value;
     }
+
+    public function mergeAndSet(string $key, $value)
+    {
+        $stored_value = $this->get($key, []);
+        $stored_value = Utilities::mergeData($stored_value, $value);
+        $this->set($key, $stored_value);
+    }
     
     public function get(string $key, $default = null)
     {
