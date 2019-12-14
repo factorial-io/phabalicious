@@ -160,7 +160,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         /** @var ScriptMethod $method */
         $method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
         $context->set('scriptData', $script);
-        $context->set('variables', [
+        $context->mergeAndSet('variables', [
             'dockerHost' => $docker_config->raw(),
         ]);
         $context->set('environment', $environment);

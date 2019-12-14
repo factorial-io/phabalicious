@@ -16,6 +16,8 @@ interface TaskContextInterface
 {
     public function set(string $key, $data);
 
+    public function mergeAndSet(string $string, array $array);
+
     public function get(string $key, $default = null);
 
     public function getData(): array;

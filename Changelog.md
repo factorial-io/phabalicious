@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.11 / 2019-12-14
+
+### Fixed:
+
+  * Allow arguments for the docker command, merge scripts variables instead of replacing them
+
 ## 3.2.10 / 2019-12-12
 
 ### Fixed:
