@@ -126,6 +126,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 return [$key, $value];
             }, array_keys($replacements));
             $context->io()->table(['Key', 'Replacement'], $printed_replacements);
+            
+            throw $e;
         }
     }
 

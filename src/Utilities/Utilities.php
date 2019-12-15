@@ -10,6 +10,9 @@ class Utilities
 
     const FALLBACK_VERSION = '3.2.12';
 
+    const COMBINED_ARGUMENTS = 'combined';
+    const UNNAMED_ARGUMENTS = 'unnamedArguments';
+
     public static function mergeData(array $data, array $override_data): array
     {
         $result = $data;
@@ -234,9 +237,33 @@ class Utilities
         }
 
         $named_args = Utilities::mergeData($named_args, [
-            'combined' => implode(' ', $unnamed_args),
-            'unnamedArguments' => $unnamed_args,
+            self::COMBINED_ARGUMENTS => implode(' ', $unnamed_args),
+            self::UNNAMED_ARGUMENTS => $unnamed_args,
         ]);
         return $named_args;
+    }
+
+    /**
+     * Build an array suitable for InputOptions from an arbitrary array.
+     *
+     * @param array $array
+     * @return array
+     * @see Utilities::parseArguments()
+     */
+    public static function buildOptionsForArguments(array $array): array
+    {
+        $return = [];
+        foreach ($array as $key => $value) {
+            if ($key == Utilities::COMBINED_ARGUMENTS) {
+                continue;
+            } elseif ($key == Utilities::UNNAMED_ARGUMENTS) {
+                foreach ($value as $item) {
+                    $return[] = $item;
+                }
+            } else {
+                $return[] = sprintf('%s=%s', $key, $value);
+            }
+        }
+        return $return;
     }
 }
