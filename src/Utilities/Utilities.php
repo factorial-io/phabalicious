@@ -8,7 +8,7 @@ use Phabalicious\Method\TaskContextInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.2.12';
+    const FALLBACK_VERSION = '3.2.13';
 
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';

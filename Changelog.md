@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.2.13 / 2019-12-15
+
+### Fixed:
+
+  * Pass arguments to subsequent commands
+  * If a replacement can't be parsed, throw an exception
+
 ## 3.2.12 / 2019-12-14
 
 ### Fixed:
