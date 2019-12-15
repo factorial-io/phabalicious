@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -89,6 +90,13 @@ abstract class BaseMethod implements MethodInterface
         if (isset($args[0])) {
             $args[$command_name] = $args[0];
             unset($args[0]);
+        }
+        $variables = $context->get('variables', []);
+        if ($command->getDefinition()->hasOption('arguments') &&
+            !empty($variables['arguments']) &&
+            is_array($variables['arguments'])
+        ) {
+            $args['--arguments'] = Utilities::buildOptionsForArguments($variables['arguments']);
         }
         $args['--config'] = $context->get('host_config')['configName'];
         $input = new ArrayInput($args);
