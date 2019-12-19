@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.14 / 2019-12-19
+
+### Fixed:
+
+  * Add support for Drupal 8.8 and changed behavior regarding config-sync
+
 ## 3.2.13 / 2019-12-15
 
 ### Fixed:
