@@ -667,7 +667,12 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $shell->run('chmod u+w settings.php');
 
         $shell->run('sed -i "/\$config_directories\[/d" settings.php');
+        $shell->run('sed -i "/\$settings\[\'config_sync_directory/d" settings.php');
         foreach ($host_config['configurationManagement'] as $key => $data) {
+            $shell->run(sprintf(
+                'echo "\$settings[\'config_sync_directory\'] = \'%s\';" >> settings.php',
+                '../config/' . $key
+            ));
             $shell->run(sprintf(
                 'echo "\$config_directories[\'%s\'] = \'%s\';" >> settings.php',
                 $key,
