@@ -5,27 +5,22 @@ namespace Phabalicious\Command;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AppScaffoldCommand extends ScaffoldBaseCommand
+class WorkspaceCreateCommand extends ScaffoldBaseCommand
 {
+
+    protected $twig;
+
     protected function configure()
     {
         parent::configure();
         $this
-            ->setName('app:scaffold')
-            ->setDescription('Scaffolds an app from a remote scaffold-instruction')
-            ->setHelp('Scaffolds an app from a remote scaffold-instruction');
-
-        $this->addArgument(
-            'scaffold-url',
-            InputArgument::REQUIRED,
-            'the url/path to load the scaffold-yaml from'
-        );
-
+            ->setName('workspace:create')
+            ->setDescription('Creates a multibasebox workspace')
+            ->setHelp('Scaffolds a multibasebox workspace on your local.');
 
         $this->addOption(
             'output',
@@ -56,7 +51,8 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $url = $input->getArgument('scaffold-url');
+        $url  = $this->getLocalScaffoldFile('mbb/mbb.yml');
+        $output->writeln($url);
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
         $context = new TaskContext($this, $input, $output);
 
