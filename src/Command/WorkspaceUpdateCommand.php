@@ -9,13 +9,10 @@ use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class WorkspaceUpdateCommand extends ScaffoldBaseCommand
 {
-
-    protected $twig;
 
     protected function configure()
     {
