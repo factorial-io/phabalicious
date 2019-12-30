@@ -214,8 +214,20 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
 
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('outerShell', $host_config->shell());
-        $shell->run(sprintf('#!git clone --depth 30 -b %s %s %s', $target_branch, $target_repository, $target_dir));
+        $branch_exists = $shell->run(
+            sprintf('#!git ls-remote -h --exit-code %s %s', $target_repository, $target_branch),
+            true
+        )->succeeded();
+        $branch_to_clone = $branch_exists ? $target_branch : 'master';
+        $shell->run(sprintf('#!git clone --depth 30 -b %s %s %s', $branch_to_clone, $target_repository, $target_dir));
         $shell->pushWorkingDir($target_dir);
+
+        if (!$branch_exists) {
+            // Create newly branch and push it back to remote.
+            $shell->run(sprintf('#!git checkout -b %s', $target_branch));
+            $shell->run(sprintf('#!git push --set-upstream origin %s', $target_branch));
+        }
+
         $log = $shell->run('#!git log --format="%H|%s"', true);
         $found = false;
         foreach ($log->getOutput() as $line) {

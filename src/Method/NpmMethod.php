@@ -53,4 +53,10 @@ class NpmMethod extends RunCommandBaseMethod
             $this->resetPrepare($host_config, $context);
         }
     }
+    
+    public function npm(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $command = $context->get('command');
+        $this->runCommand($host_config, $context, $command);
+    }
 }
