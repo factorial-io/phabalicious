@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.2.15 / 2019-12-30
+
+### Changed/ New
+
+  * Refactor composer command to a base class, so functionality can be shared with new commands yarn and npm
+  * Drush will try to run an install, even when no database-settings were found in the current host-config.
+
 ## 3.2.14 / 2019-12-19
 
 ### Fixed:
