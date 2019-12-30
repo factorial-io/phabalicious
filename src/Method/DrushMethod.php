@@ -37,6 +37,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 'mysqladmin' => 'mysqladmin',
                 'gunzip' => 'gunzip',
                 'chmod' => 'chmod',
+                'sed' => 'sed',
             ],
             'sqlSkipTables' => [
                 'cache',
@@ -311,10 +312,6 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
     public function install(HostConfig $host_config, TaskContextInterface $context)
     {
-        if (empty($host_config['database'])) {
-            throw new \InvalidArgumentException('Missing database confiuration!');
-        }
-
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($host_config, $context);
 
@@ -323,8 +320,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         // Create DB.
         $shell->cd($host_config['siteFolder']);
-        $o = $host_config['database'];
-        if (!$host_config['database']['skipCreateDatabase']) {
+        $o = $host_config['database'] ?? false;
+        if ($o && !$host_config['database']['skipCreateDatabase']) {
             $cmd = 'CREATE DATABASE IF NOT EXISTS ' . $o['name'] . '; ' .
                 'GRANT ALL PRIVILEGES ON ' . $o['name'] . '.* ' .
                 'TO \'' . $o['user'] . '\'@\'%\' ' .
@@ -359,10 +356,13 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $cmd_options .= ' --account-name=' . $host_config['adminUser'];
         $cmd_options .= ' --account-pass=admin';
         $cmd_options .= ' --locale=' . $host_config['installOptions']['locale'];
-        if ($host_config['database']['prefix']) {
-            $cmd_options .= ' --db-prefix=' . $host_config['database']['prefix'];
+
+        if ($o) {
+            if ($host_config['database']['prefix']) {
+                $cmd_options .= ' --db-prefix=' . $host_config['database']['prefix'];
+            }
+            $cmd_options .= ' --db-url=mysql://' . $o['user'] . ':' . $o['pass'] . '@' . $o['host'] . '/' . $o['name'];
         }
-        $cmd_options .= ' --db-url=mysql://' . $o['user'] . ':' . $o['pass'] . '@' . $o['host'] . '/' . $o['name'];
         $cmd_options .= ' ' . $host_config['installOptions']['options'];
         $this->runDrush($shell, 'site-install %s %s', $host_config['installOptions']['distribution'], $cmd_options);
         $this->setupConfigurationManagement($host_config, $context);
@@ -663,11 +663,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShell($host_config, $context);
         $cwd = $shell->getWorkingDir();
         $shell->cd($host_config['siteFolder']);
-        $shell->run('chmod u+w .');
-        $shell->run('chmod u+w settings.php');
+        $shell->run('#!chmod u+w .');
+        $shell->run('#!chmod u+w settings.php');
 
-        $shell->run('sed -i "/\$config_directories\[/d" settings.php');
-        $shell->run('sed -i "/\$settings\[\'config_sync_directory/d" settings.php');
+        $shell->run('#!sed -i "/\$config_directories\[/d" settings.php');
+        $shell->run('#!sed -i "/\$settings\[\'config_sync_directory/d" settings.php');
         foreach ($host_config['configurationManagement'] as $key => $data) {
             $shell->run(sprintf(
                 'echo "\$settings[\'config_sync_directory\'] = \'%s\';" >> settings.php',
