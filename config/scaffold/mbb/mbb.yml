@@ -1,0 +1,33 @@
+inheritsFrom:
+  - ./mbb-base.yml
+
+questions:
+  name:
+    question: "What folder name would you want to use"
+    default: multibasebox
+
+
+assets:
+  - fabfile.local.yaml
+
+
+scaffold:
+  - log_message(Cloning multibasebox from https://github.com/factorial-io/multibasebox.git ...)
+  - cd %rootFolder%; git clone https://github.com/factorial-io/multibasebox.git --branch %branch% .
+  - copy_assets(%rootFolder%)
+  - log_message(The next step might require your admin-password to setup nfs and other things ...)
+  - cd %rootFolder%; bash ./setup-docker.sh
+
+successMessage:
+  - |
+    If you are on linux:
+    - please configure dnsmasq to resolve .test-domains to 127.0.0.1
+    - otherwise add your hosts to /etc/hosts and point them to 127.0.0.1, e.g. multibasebox.test
+
+    Then try visiting http://multibasebox.test:1936 (haproxy/yxorpah), this should give you the admin page of haproxy
+
+    Try visiting http://muitbasebox.test this should give you an 503 error message, which is fine!
+
+    For troubleshooting visit https://github.com/factorial-io/multibasebox
+
+    Happy hacking!

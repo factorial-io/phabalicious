@@ -1,0 +1,18 @@
+{% set remote_host = platform == 'mac' ? 'docker.for.mac.localhost' : '172.17.0.1' %}
+dockerHosts:
+  mbb:
+    runLocally: true
+    rootFolder: {{ rootFolder }}/projects
+{% if platform == 'mac' %}
+    environment:
+      COMPOSE_FILE: "docker-compose.yml:docker-compose-mbb.yml:../../docker-compose-nfs.yml"
+{% endif %}
+
+hosts:
+  mbb:
+    xdebug:
+      remote_host: {{ remote_host }}
+    blueprint:
+      xdebug:
+        remote_host: {{ remote_host }}
+

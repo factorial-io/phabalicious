@@ -2,33 +2,23 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Exception\FabfileNotReadableException;
-use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
-use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AppScaffoldCommand extends ScaffoldBaseCommand
+class WorkspaceCreateCommand extends ScaffoldBaseCommand
 {
+
     protected function configure()
     {
         parent::configure();
         $this
-            ->setName('app:scaffold')
-            ->setDescription('Scaffolds an app from a remote scaffold-instruction')
-            ->setHelp('Scaffolds an app from a remote scaffold-instruction');
-
-        $this->addArgument(
-            'scaffold-url',
-            InputArgument::REQUIRED,
-            'the url/path to load the scaffold-yaml from'
-        );
-
+            ->setName('workspace:create')
+            ->setDescription('Creates a multibasebox workspace')
+            ->setHelp('Scaffolds a multibasebox workspace on your local.');
 
         $this->addOption(
             'output',
@@ -53,13 +43,13 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
      * @return int
      * @throws MismatchedVersionException
      * @throws ValidationFailedException
-     * @throws FabfileNotReadableException
-     * @throws FailedShellCommandException
-     * @throws MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $url = $input->getArgument('scaffold-url');
+        $url  = $this->getLocalScaffoldFile('mbb/mbb.yml');
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
         $context = new TaskContext($this, $input, $output);
 
