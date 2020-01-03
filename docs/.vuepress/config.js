@@ -14,6 +14,7 @@ module.exports = {
       "/usage.html",
       "/available-tasks.html",
       "/configuration.html",
+      "/inheritance.html",
       "/docker-integration.html",
       "/workspace.html",
       "/scripts.html",
