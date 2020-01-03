@@ -1,0 +1,13 @@
+questions:
+  platform:
+    question: "What platform are you working on (mac|linux)"
+    default: mac
+    validation: (mac|linux)
+    error: "Only `mac` and `linux` are currently supported"
+  branch:
+    question: "What branch should I use to checkout?"
+    default: master
+
+variables:
+  name: MultiBaseBox
+

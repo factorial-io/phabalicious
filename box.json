@@ -5,6 +5,12 @@
     "config/services.yml",
     "vendor/twig/twig/lib/Twig/Test.php"
   ],
+  "directories-bin": [
+    "config/scaffold"
+  ],
+  "blacklist": [
+    "tests/"
+  ],
   "git-tag": "git_tag",
   "output": "build/phabalicious.phar",
   "compression": "GZ"

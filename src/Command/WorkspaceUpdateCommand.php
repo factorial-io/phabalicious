@@ -8,42 +8,19 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AppScaffoldCommand extends ScaffoldBaseCommand
+class WorkspaceUpdateCommand extends ScaffoldBaseCommand
 {
+
     protected function configure()
     {
         parent::configure();
         $this
-            ->setName('app:scaffold')
-            ->setDescription('Scaffolds an app from a remote scaffold-instruction')
-            ->setHelp('Scaffolds an app from a remote scaffold-instruction');
-
-        $this->addArgument(
-            'scaffold-url',
-            InputArgument::REQUIRED,
-            'the url/path to load the scaffold-yaml from'
-        );
-
-
-        $this->addOption(
-            'output',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'the folder where to create the new project',
-            false
-        );
-        $this->addOption(
-            'override',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'Set to true if you want to override existing folders',
-            false
-        );
+            ->setName('workspace:update')
+            ->setDescription('Updates a multibasebox workspace')
+            ->setHelp('Updates a multibasebox workspace on your local.');
     }
 
     /**
@@ -59,11 +36,29 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $url = $input->getArgument('scaffold-url');
-        $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
+        $url  = $this->getLocalScaffoldFile('mbb/mbb-update.yml');
+        $root_folder = $this->findRootFolder(getcwd());
+        if (!$root_folder) {
+            throw new \InvalidArgumentException('Could not find multibasebox root folder!');
+        }
         $context = new TaskContext($this, $input, $output);
 
-        $this->scaffold($url, $root_folder, $context);
+        $name = basename($root_folder);
+        $root_folder = dirname($root_folder);
+        $this->scaffold($url, $root_folder, $context, ['name' => $name]);
         return 0;
+    }
+    
+    private function findRootFolder($start_folder, $max_level = 10)
+    {
+        if (file_exists($start_folder . '/setup-docker.sh')) {
+            return $start_folder;
+        }
+        $max_level--;
+        $start_folder = dirname($start_folder);
+        if ($max_level == 0 || $start_folder == DIRECTORY_SEPARATOR) {
+            return false;
+        }
+        return $this->findRootFolder($start_folder, $max_level - 1);
     }
 }

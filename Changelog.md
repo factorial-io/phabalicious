@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.3.0 / 2020-01-03
+
+### New:
+
+  * New command `workspace:create`, which will run the multibasebox scaffolder
+  * Add `workspace:update` command and refactor scaffold code
+  * scaffolder will store tokens in `.phab-scaffold-tokens` in the scaffolded folder. Subsequent scaffold-runs will load and use these tokens (and do not ask for them)
+  * when scaffolding a project the warning that the target folder exists can be suppressed by adding `allowOverride: 1` to the variables-section.
+  * Add coding-style standards config file, apply them.
+
 ## 3.2.15 / 2019-12-30
 
 ### Changed/ New

@@ -1,6 +1,6 @@
 # Scaffolding a new app
 
-Phabalicious has a simple but powerful scaffold-command. It will read a yml-file and interpret the contents. It will use the existing pattern-replacement used for scripts and twig for changing file-contents. The scaffolding and fixture-files can live remotely or on your file-system.
+Phabalicious has a simple but powerful scaffold-command. It will read a yml-file and interpret the contents. It will use the existing pattern-replacement used for scripts and twig for changing file-contents. The scaffolding and fixture-files can live on a remote server or on your file-system.
 
 Here's an example of a scaffold-file:
 
@@ -15,16 +15,17 @@ questions:
     # Questions can have a default:
     default: "SP"
     transform: lowercase
-    
+
 variables:
   composerProject: drupal-composer/drupal-project:8.x-dev
   webRoot: web
+  allowOverride: 0 # Setting it to 1 will not show a warning if the target folder exists.
 
 assets:
   - .fabfile.yaml
   - docker-compose.yml
   - docker-compose-mbb.yml
-  
+
 deployModuleAssets:
   - deployModule/%shortName%_deploy.info.yml
   - deployModule/%shortName%_deploy.module
@@ -48,25 +49,28 @@ The fabfile needs at least the `questions`and the `scaffold`-section. The `scaff
 
 This section contains a list of questions to be asked when running the scaffold-command. The yaml-key will get the value inputted by the user and can be used as a replacement pattern or in twig-templates. Answers can be validated against a regex and/or transformed to lower- or uppercase.
 
+
 An example:
 
-```
+```yaml
 questions:
-  <key>: 
-    question: <the text to display>
-    validation: <the regex to check the input against to>
-    error: <the error message to display, when validation fails>
-    default: <optional default-value>
-    transform: <lowercase|uppercase>
+  [key]:
+    question: [the text to display]
+    validation: [the regex to check the input against to]
+    error: [the error message to display, when validation fails]
+    default: [optional default-value]
+    transform: [lowercase|uppercase]
 ```
 
-For non-interactive usage you can pass the values via commandline-options, where the option-name is the same as the key, for the above example: 
+For non-interactive usage you can pass the values via commandline-options, where the option-name is the same as the key, for the above example:
 
 |command-line option|Question key|
 |------|------|
-| --\<key\> | \<key\> |
+| --[key] | [key] |
 | --name | name |
 | --short-name | shortName |
+
+The scaffolder stores the answers in a hidden file called `.phab-scaffold-tokens` in the newly created folder and will reuse if the scaffolder runs aagain.
 
 ## The `scaffold`-section
 Phabalicious will provide the following replacement-patterns out of the box:
@@ -105,7 +109,7 @@ Similar to other parts of Phabalicious, scaffold-files can use inheritance, for 
 ```yaml
 inheritsFrom:
   - drupal-8.yml
-  - 
+  -
 variables:
   composerProject: drupalcommerce/project-base
 ```
@@ -176,7 +180,7 @@ variables:
 variables:
   composerProject: laravel/laravel:5.4
   webRoot: public
-  
+
 assets:
   - .fabfile.yaml
   - docker-compose.yml
@@ -223,4 +227,4 @@ hosts:
       pass: admin
       host: mysql
 ```
-  
+
