@@ -565,7 +565,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $shell->cd($cwd);
             $docker_name = false;
             if ($result->succeeded()) {
-                $docker_name = $result->getOutput()[0];
+                $docker_name = $result->getOutput()[0] ?? false;
+            }
+            if ($docker_name) {
                 $cfg = $host_config['docker'];
                 $cfg['name'] = $docker_name;
                 $host_config['docker'] = $cfg;
