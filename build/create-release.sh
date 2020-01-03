@@ -7,7 +7,7 @@ VERSION=`git describe --tags | sed 's/-[0-9]-g[a-z0-9]\{7\}//'`
 echo "Releasing ${VERSION} ..."
 cd ..
 ulimit -Sn 4096
-composer install --no-dev
+composer install
 composer build-phar
 cd build
 
