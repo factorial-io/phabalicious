@@ -1,3 +1,7 @@
+---
+sidebarDepth: 3
+---
+
 # Structure of the configuration file
 
 ## Overview

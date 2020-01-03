@@ -1,6 +1,6 @@
-# Workspace
+# Setup a local dev environment (multibasebox)
 
-Phabalicious 3.3 incorporates two new commands to scaffold a local dev environment based on [multibasebox](https://github.com/factorial-io/multibasebox). Multibasebox is a lightweight, docker based solution, which allows you to run your local environment via docker.
+Phabalicious 3.3 incorporates two new commands to scaffold a local dev environment based on [multibasebox](https://github.com/factorial-io/multibasebox). Multibasebox is a lightweight, docker based solution, which allows you to run your local app-stack via docker.
 
 It uses a dockerized haproxy container to intercept the traffic to your localhost and forward it to the corresponding docker container with your local stack. For mac there's a second docker container resolving DNS-entries for `*.test` to localhost. It is similar to other solutions like [pygmy](https://github.com/amazeeio/pygmy), [ddev]( https://www.ddev.com/) or [lando](https://lando.dev/).
 

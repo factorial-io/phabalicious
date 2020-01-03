@@ -1,3 +1,6 @@
+---
+sidebarDepth: 3
+---
 # Scaffolding a new app
 
 Phabalicious has a simple but powerful scaffold-command. It will read a yml-file and interpret the contents. It will use the existing pattern-replacement used for scripts and twig for changing file-contents. The scaffolding and fixture-files can live on a remote server or on your file-system.

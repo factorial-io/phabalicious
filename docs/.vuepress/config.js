@@ -15,11 +15,12 @@ module.exports = {
       "/available-tasks.html",
       "/configuration.html",
       "/docker-integration.html",
-      "/local-overrides.html",
+      "/workspace.html",
       "/scripts.html",
       "/app-scaffold.html",
       "/app-create-destroy.html",
       "/deploying-artifacts.html",
+      "/local-overrides.html",
       "/passwords.html",
       "/contribute.html",
       "/Changelog.html"
