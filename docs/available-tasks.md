@@ -517,7 +517,10 @@ This task will try to run `supervisorctl status` in the container and  waits unt
 
 ``` bash
 phab --config=<config> start-remote-access
-phab --config=<config> start-remote-access --port=<port> --public-port=<public-port> --public-ip=<public-ip>
+phab --config=<config> start-remote-access \
+  --port=<port> \
+  --public-port=<public-port> \
+  --public-ip=<public-ip>
 ```
 
 This task will run a command to forward a local port to a remote port. It starts a new ssh-session which will do the forwarding. When finished, type `exit`.
@@ -542,7 +545,11 @@ This command will send the notification `<message>` to Mattermosts channel `<cha
 ## app:scaffold
 
 ``` bash
-phab app:scaffold <path/url-to-scaffold-files> --name=<name of app> --short-name="short name of app" --output=<path to output> --override="1|0"
+phab app:scaffold <path/url-to-scaffold-files> \
+  --name=<name of app> \
+  --short-name="short name of app" \
+  --output=<path to output> \
+  --override="1|0"
 ```
 
 This command will scaffold a new project from a set of scaffold-files. See the dedicated documentation for how to create these files.
@@ -610,4 +617,22 @@ phab webhook nameOfWebhook --config hostA
 phab webhook nameOfWebhook --arguments foo=bar --arguments token=my-token --config hostA
 ```
 
-This command will invoke the webhook named `nameOfWebhook` and pass the optional arguments to it. Omitting the name of the webhook will list all available webhooks.
+This command will invoke the webhook named `nameOfWebhook` and pass the optional arguments to it. Omitting the name of the webhook will list all available webhooks. Have a look into the webhook-documentation.
+
+## npm
+
+```bash
+phab npm run build:css --config hostA
+phab npm run lint --config hostB
+```
+
+This will run an npm task on the given configuration. Make sure, that your host config has `npm` as a need a `npmRootFolder` points to the folder containing package.json.
+
+## yarn
+
+```bash
+phab npm yarn build:css --config hostA
+phab npm yarn lint --config hostB
+```
+
+This will run a yarn command on the given configuration. Make sure, that your host config has `yarn` as a need a `yarnRootFolder` points to the folder containing package.json.
