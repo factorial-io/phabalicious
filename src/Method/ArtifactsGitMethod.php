@@ -84,8 +84,8 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             'git' => 'git',
             'find' => 'find',
         ];
-        $return[self::PREFS_KEY] =[
-            'branch' => $host_config['branch'] ?? 'build',
+        $return[self::PREFS_KEY] = [
+            'branch' => false,
             'useLocalRepository' => false,
             'actions' => [
                 [
@@ -124,7 +124,6 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             $errors->addError('deployMethod', 'deployMethod must be `git-sync`!');
         }
         $service = new ValidationService($config[self::PREFS_KEY], $errors, 'artifacts--git config');
-        $service->hasKey('branch', 'artifacts--git needs a target branch to push build artifacts to!');
         $service->hasKey('repository', 'artifacts--git needs a target repository to push build artifacts to!');
     }
 
@@ -210,6 +209,9 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
     {
         $target_dir = $context->get('targetDir', false);
         $target_branch = $host_config[self::PREFS_KEY]['branch'];
+        if (!$target_branch) {
+            $target_branch = $host_config['branch'];
+        }
         $target_repository = $host_config[self::PREFS_KEY]['repository'];
 
         /** @var ShellProviderInterface $shell */
