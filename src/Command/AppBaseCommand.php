@@ -31,6 +31,4 @@ abstract class AppBaseCommand extends BaseCommand
             $message
         );
     }
-
-
 }

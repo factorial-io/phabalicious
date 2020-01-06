@@ -51,5 +51,4 @@ class ResetCommand extends BaseCommand
 
         return $context->getResult('exitCode', 0);
     }
-
 }

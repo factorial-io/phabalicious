@@ -90,5 +90,4 @@ class RestoreCommand extends BaseCommand
 
         return $context->getResult('exitCode', 0);
     }
-
 }

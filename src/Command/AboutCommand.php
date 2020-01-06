@@ -67,6 +67,4 @@ class AboutCommand extends BaseCommand
             }
         }
     }
-
-
 }

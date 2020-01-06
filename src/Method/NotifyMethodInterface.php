@@ -18,5 +18,4 @@ interface NotifyMethodInterface
     );
 
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context);
-
 }
