@@ -3,7 +3,6 @@
 
 namespace Phabalicious\Artifact\Actions\Ftp;
 
-
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;

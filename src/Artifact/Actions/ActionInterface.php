@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Artifact\Actions;
 
-
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;

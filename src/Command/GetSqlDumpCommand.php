@@ -70,5 +70,4 @@ class GetSqlDumpCommand extends BaseCommand
 
         return 0;
     }
-
 }

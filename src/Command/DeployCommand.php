@@ -74,6 +74,14 @@ class DeployCommand extends BaseCommand
         $context->set('variables', $deploy_arguments);
         $context->set('deployArguments', $deploy_arguments);
 
+        if ($this->getHostConfig()->get('branch')) {
+            $context->io()->comment(sprintf(
+                'Deploying branch `%s` with config `%s` ...',
+                $this->getHostConfig()['branch'],
+                $this->getHostConfig()['configName']
+            ));
+        }
+
         if ($this->getHostConfig()['backupBeforeDeploy']) {
             $this->runBackup($input, $output);
         }
