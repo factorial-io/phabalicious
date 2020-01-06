@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.3.1 / 2020-01-06
+
+### Fixed:
+
+  * Fixed a bug inheriting the target branch from the source branch
+
+
 ## 3.3.0 / 2020-01-03
 
 ### New:
