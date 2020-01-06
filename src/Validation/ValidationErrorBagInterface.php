@@ -14,6 +14,4 @@ interface ValidationErrorBagInterface
     public function addWarning(string $key, string $warning_message);
 
     public function getWarnings();
-
-
 }

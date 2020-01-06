@@ -19,5 +19,4 @@ class MissingScriptCallbackImplementation extends \Exception
     {
         return $this->callback;
     }
-
 }

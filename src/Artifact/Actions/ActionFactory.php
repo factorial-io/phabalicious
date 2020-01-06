@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Artifact\Actions;
 
-
 use Phabalicious\Method\ArtifactsBaseMethod;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -10,14 +9,16 @@ use Phabalicious\Validation\ValidationService;
 class ActionFactory
 {
 
-    static $availableActions = [];
+    protected static $availableActions = [];
 
 
-    static function register($method, $name, $class) {
+    public static function register($method, $name, $class)
+    {
         self::$availableActions["$method--$name"] = $class;
     }
 
-    static function get($method, $name) : ActionInterface {
+    public static function get($method, $name) : ActionInterface
+    {
         if (isset(self::$availableActions["$method--$name"])) {
             return new self::$availableActions["$method--$name"]();
         }

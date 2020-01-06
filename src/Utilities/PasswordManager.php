@@ -53,5 +53,4 @@ class PasswordManager implements PasswordManagerInterface
 
         $this->passwords = $data;
     }
-
 }

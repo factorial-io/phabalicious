@@ -3,7 +3,6 @@
 
 namespace Phabalicious\Artifact\Actions\Git;
 
-
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;

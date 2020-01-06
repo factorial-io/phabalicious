@@ -60,5 +60,4 @@ class GetPropertyCommand extends BaseCommand
         }
         return 0;
     }
-
 }

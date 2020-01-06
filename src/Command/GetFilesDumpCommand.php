@@ -71,5 +71,4 @@ class GetFilesDumpCommand extends BaseCommand
 
         return 0;
     }
-
 }
