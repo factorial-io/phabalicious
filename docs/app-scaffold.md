@@ -20,6 +20,7 @@ variables:
   composerProject: drupal-composer/drupal-project:8.x-dev
   webRoot: web
   allowOverride: 0 # Setting it to 1 will not show a warning if the target folder exists.
+  skipSubfolder: 0 # Setting it to 1 will instruct phabalicious to not create a subfolder.
 
 assets:
   - .fabfile.yaml
