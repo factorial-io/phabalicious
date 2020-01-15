@@ -8,7 +8,7 @@ use Phabalicious\Method\TaskContextInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.3.1';
+    const FALLBACK_VERSION = '3.3.3';
 
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
@@ -166,7 +166,6 @@ class Utilities
 
         $filter = [
             ' ' => '-',
-            '_' => '-',
             '/' => '-',
             '[' => '-',
             ']' => '',
