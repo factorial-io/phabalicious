@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.3.3 / 2020-01-15
+
+### Fixed
+
+  * Add new internal method to modify a json file when scaffolding.
+  * New option `skipSubfolder`, so that scaffold wont create a subfolder.
+  * Update vuepress
+
+
+## 3.3.1 / 2020-01-06
+
+### Fixed:
+
+  * Fixed a bug inheriting the target branch from the source branch
+
+
 ## 3.3.0 / 2020-01-03
 
 ### New:

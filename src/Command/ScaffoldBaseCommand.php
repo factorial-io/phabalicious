@@ -75,14 +75,15 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
      * @param $url
      * @param $root_folder
      * @param TaskContextInterface $context
+     * @param array $tokens
      * @return int
-     * @throws MismatchedVersionException
-     * @throws ValidationFailedException
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
+     * @throws MismatchedVersionException
      * @throws MissingScriptCallbackImplementation
+     * @throws ValidationFailedException
      */
-    protected function scaffold($url, $root_folder, TaskContextInterface $context, $tokens = [])
+    protected function scaffold($url, $root_folder, TaskContextInterface $context, array $tokens = [])
     {
         $is_remote = false;
         if (substr($url, 0, 4) !== 'http') {
@@ -140,6 +141,11 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
             throw new ValidationFailedException($errors);
         }
 
+        if (!empty($data['variables']['skipSubfolder']) && !empty($data['variables']['allowOverride'])) {
+            $tokens['name'] = basename($root_folder);
+            $root_folder = dirname($root_folder);
+        }
+
         $tokens['uuid'] = $this->fakeUUID();
         if (isset($tokens['name'])) {
             $tokens = Utilities::mergeData($this->readTokens($root_folder, $tokens['name']), $tokens);
@@ -147,12 +153,13 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 
         $questions = !empty($data['questions']) ? $data['questions'] : [];
         $tokens = $this->askQuestions($context->getInput(), $questions, $context, $tokens);
-        if (empty($tokens['name'])) {
-            throw new InvalidArgumentException('Missing `name` in questions, aborting!');
-        }
         if (!empty($data['variables'])) {
             $tokens = Utilities::mergeData($data['variables'], $tokens);
         }
+        if (empty($tokens['name'])) {
+            throw new InvalidArgumentException('Missing `name` in questions, aborting!');
+        }
+
         if (empty($tokens['projectFolder'])) {
             $tokens['projectFolder'] = $tokens['name'];
         }
@@ -179,7 +186,8 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         $context->set('variables', $tokens);
         $context->set('callbacks', [
             'copy_assets' => [$this, 'copyAssets'],
-            'log_message' => [$this, 'logMessage']
+            'log_message' => [$this, 'logMessage'],
+            'alter_json_file' => [$this, 'alterJsonFile']
         ]);
         $context->set('scaffoldData', $data);
         $context->set('tokens', $tokens);
@@ -249,6 +257,27 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
             $context->io()->note($log_message);
         }
     }
+
+    public function alterJsonFile(
+        TaskContextInterface $context,
+        $json_file_name,
+        $data_key
+    ) {
+
+        $data = $context->get('scaffoldData');
+        $tokens = $context->get('tokens');
+        $json_file_path = $tokens['rootFolder'] . '/' . $json_file_name;
+        if (!file_exists($json_file_path)) {
+            $context->io()->warning('Could not find json file ' . $json_file_path);
+            return;
+        }
+        $json = json_decode(file_get_contents($json_file_path), true);
+        if (isset($data[$data_key])) {
+            $json = Utilities::mergeData($json, $data[$data_key]);
+            file_put_contents($json_file_path, json_encode($json, JSON_PRETTY_PRINT));
+        }
+    }
+
 
     /**
      * @param TaskContextInterface $context
@@ -422,7 +451,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 
         return $rootFolder . '/' . $name;
     }
-    
+
     protected function writeTokens($root_folder, $tokens)
     {
         file_put_contents($root_folder . '/.phab-scaffold-tokens', YAML::dump($tokens));
