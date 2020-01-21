@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.3.4 / 2020-01-21
+
+### Fixed
+
+  * Skip precommit hooks for committing artifacts
+  * Silence a warning, if shell exits unexpectedly throw exception only on error
+
 ## 3.3.3 / 2020-01-15
 
 ### Fixed

@@ -272,7 +272,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             $formatted_message .= "\n\n  * " . implode("\n  * ", $detailed_messages);
         }
 
-        $shell->run(sprintf('#!git commit --allow-empty -m "%s"', addslashes($formatted_message)));
+        $shell->run(sprintf('#!git commit --allow-empty -n -m "%s"', addslashes($formatted_message)));
 
         if ($tag = $context->getResult('commitTag')) {
             $shell->run(sprintf('#!git push origin :refs/tags/%s || true', $tag));
