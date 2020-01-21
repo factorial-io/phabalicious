@@ -155,7 +155,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
         $this->logger->log($this->loglevel->get(), $command);
 
-        
+
         // Send to shell.
         $input = $command . '; echo "' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL;
         $this->input->write($input);
@@ -170,13 +170,15 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             }
         }
         if ($this->process->isTerminated()) {
-            $this->logger->log($this->errorLogLevel->get(), 'Local shell terminated unexpected!');
+            $this->logger->log($this->loglevel->get(), 'Local shell terminated unexpected, will start a new one!');
             $error_output = trim($this->process->getErrorOutput());
-            $this->logger->log($this->errorLogLevel->get(), $error_output);
+            if (!empty($error_output)) {
+                $this->logger->log($this->errorLogLevel->get(), $error_output);
+            }
             $exit_code = $this->process->getExitCode();
             $this->process = null;
             $cr = new CommandResult($exit_code, explode(PHP_EOL, $error_output));
-            if ($throw_exception_on_error) {
+            if ($throw_exception_on_error && $exit_code) {
                 $cr->throwException(sprintf('`%s` failed!', $command));
             }
             return $cr;
