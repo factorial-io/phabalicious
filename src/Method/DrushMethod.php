@@ -535,7 +535,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $from_filename = $from_config['tmpFolder'] . '/' . $from_config['configName'] . '.' . date('YmdHms') . '.sql';
         $from_filename = $this->backupSQL($from_config, $context, $from_shell, $from_filename);
 
-        $to_filename = $host_config['tmpFolder'] . '/' . basename($from_filename);
+        $to_filename = $host_config['tmpFolder'] . '/to--' . basename($from_filename);
 
         // Copy filename to host
         $context->io()->comment(sprintf(
