@@ -186,4 +186,11 @@ This action comes handy when degugging the build process, as it will stop the ex
     - cp .env.production .env
 ```
 
-The `script`-action will run the script from the arguments section line by line. You can use the usual replacement patterns as for other scripts.
+The `script`-action will run the script from the arguments section line by line. You can use the usual replacement patterns as for other scripts. Most helpful are:
+
+| Pattern | Description |
+|---------|-------------|
+| `%context.data.installDir%` | The installation dir, where the app got installed into |
+| `%context.data.targetDir%` | The targetdir, where the app got copied to, which gets committed or synced |
+
+
