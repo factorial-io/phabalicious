@@ -117,6 +117,16 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                 }
             }
         });
+        if ($this->process->isTerminated() && !$this->process->isSuccessful()) {
+            print 'XXXX';
+            throw new \RuntimeException(sprintf(
+                'Could not start shell via `%s`, exited with exit code %d, %s',
+                $this->process->getCommandLine(),
+                $this->process->getExitCode(),
+                $this->process->getErrorOutput()
+            ));
+        }
+
         if (!empty($this->hostConfig['environment'])) {
             $environment = $this->hostConfig['environment'];
 
@@ -178,7 +188,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             $exit_code = $this->process->getExitCode();
             $this->process = null;
             $cr = new CommandResult($exit_code, explode(PHP_EOL, $error_output));
-            if ($throw_exception_on_error && $exit_code) {
+            if ($throw_exception_on_error || $exit_code) {
                 $cr->throwException(sprintf('`%s` failed!', $command));
             }
             return $cr;
