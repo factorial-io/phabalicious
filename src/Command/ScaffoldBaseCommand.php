@@ -83,8 +83,13 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
      * @throws MissingScriptCallbackImplementation
      * @throws ValidationFailedException
      */
-    protected function scaffold($url, $root_folder, TaskContextInterface $context, array $tokens = [])
-    {
+    protected function scaffold(
+        $url,
+        $root_folder,
+        TaskContextInterface $context,
+        array $tokens = [],
+        $plugin_registration_callback = null
+    ) {
         $is_remote = false;
         if (substr($url, 0, 4) !== 'http') {
             $data = Yaml::parseFile($url);
@@ -130,6 +135,9 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         }
 
         $data = $this->configuration->resolveInheritance($data, [], dirname($url));
+        if (!empty($data['plugins']) && $plugin_registration_callback) {
+            $plugin_registration_callback($data['plugins']);
+        }
 
         $errors = new ValidationErrorBag();
         $validation = new ValidationService($data, $errors, 'scaffold');
@@ -146,7 +154,8 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
             $root_folder = dirname($root_folder);
         }
 
-        $tokens['uuid'] = $this->fakeUUID();
+        $tokens['uuid'] = Utilities::generateUUID();
+
         if (isset($tokens['name'])) {
             $tokens = Utilities::mergeData($this->readTokens($root_folder, $tokens['name']), $tokens);
         }
@@ -184,10 +193,10 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 
         $context->set('scriptData', $data['scaffold']);
         $context->set('variables', $tokens);
-        $context->set('callbacks', [
+        $context->mergeAndSet('callbacks', [
             'copy_assets' => [$this, 'copyAssets'],
             'log_message' => [$this, 'logMessage'],
-            'alter_json_file' => [$this, 'alterJsonFile']
+            'alter_json_file' => [$this, 'alterJsonFile'],
         ]);
         $context->set('scaffoldData', $data);
         $context->set('tokens', $tokens);
@@ -360,14 +369,6 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         }
     }
 
-    private function fakeUUID()
-    {
-        return bin2hex(openssl_random_pseudo_bytes(4)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(6));
-    }
 
     /**
      * @param InputInterface $input

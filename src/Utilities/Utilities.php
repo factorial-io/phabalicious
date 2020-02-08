@@ -265,4 +265,14 @@ class Utilities
         }
         return $return;
     }
+
+
+    public static function generateUUID()
+    {
+        return bin2hex(openssl_random_pseudo_bytes(4)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(6));
+    }
 }
