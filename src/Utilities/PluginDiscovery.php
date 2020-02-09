@@ -2,22 +2,25 @@
 
 namespace Phabalicious\Utilities;
 
+use Composer\Semver\Comparator;
+use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Scaffolder\DataTransformerInterface;
+use Symfony\Component\Console\Application;
 
 class PluginDiscovery
 {
 
-    public static function discover($paths, $interface_to_implement)
+    public static function discover(Application $application, $paths, $interface_to_implement)
     {
         $result = [];
         foreach ($paths as $path) {
-            self::scanAndRegister($result, $path, $interface_to_implement);
+            self::scanAndRegister($application, $result, $path, $interface_to_implement);
         }
 
         return $result;
     }
 
-    protected static function scanAndRegister(&$result, $path, $interface_to_implement)
+    protected static function scanAndRegister(Application $application, &$result, $path, $interface_to_implement)
     {
         if (!is_dir($path)) {
             return;
@@ -33,7 +36,21 @@ class PluginDiscovery
 
             foreach ($diff as $class) {
                 $reflection = new \ReflectionClass($class);
-                if ($reflection->isInstantiable() && $reflection->implementsInterface($interface_to_implement)) {
+                if ($reflection->isInstantiable()
+                    && $reflection->implementsInterface('Phabalicious\Utilities\PluginInterface')
+                    && $reflection->implementsInterface($interface_to_implement)
+                ) {
+                    if (Comparator::greaterThan($class::requires(), $application->getVersion())) {
+                        throw new MismatchedVersionException(
+                            sprintf(
+                                'Could not use plugin from %s. %s is required, current app is %s',
+                                $path . '/' . $filename,
+                                $class::requires(),
+                                $application->getVersion()
+                            )
+                        );
+                    }
+
                     $instance = new $class;
                     $result[$instance->getName()] = $instance;
                 }

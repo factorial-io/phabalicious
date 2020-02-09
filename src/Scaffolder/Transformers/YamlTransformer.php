@@ -1,6 +1,6 @@
 <?php
 
-namespace Phabalicious\Scaffolder;
+namespace Phabalicious\Scaffolder\Transformers;
 
 use Phabalicious\Method\TaskContextInterface;
 use Symfony\Component\Yaml\Dumper;
@@ -11,6 +11,9 @@ abstract class YamlTransformer implements DataTransformerInterface
 
     /**
      * Iterate over a bunch of yaml files.
+     * @param TaskContextInterface $context
+     * @param array $files
+     * @return \Generator
      */
     protected function iterateOverFiles(TaskContextInterface $context, array $files)
     {
@@ -38,9 +41,12 @@ abstract class YamlTransformer implements DataTransformerInterface
     }
 
     /**
-     * Returrn result as yaml-data.
+     * Return result as yaml-data.
+     *
+     * @param array $result
+     * @return array
      */
-    protected function asYamlFiles(array $result)
+    protected function asYamlFiles(array $result): array
     {
         $dumper = new Dumper(2);
         return array_map(function ($data) use ($dumper) {
