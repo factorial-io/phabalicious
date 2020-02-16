@@ -44,12 +44,12 @@ class VersionCommand extends BaseCommand
 
         $this->getMethods()->runTask('version', $this->getHostConfig(), $context);
 
-        if ($version = $context->get('version')) {
-            $output->writeln($version);
+        if ($version = $context->getResult('version')) {
+            $context->io()->success($version);
             return 0;
         }
 
-        $output->writeln('<error>Could not determine the current version</error>');
+        $context->io()->error('Could not determine the current version');
         return 1;
     }
 }
