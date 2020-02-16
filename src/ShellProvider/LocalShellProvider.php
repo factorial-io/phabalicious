@@ -75,6 +75,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         return $process;
     }
 
+
     /**
      * Setup local shell.
      *
@@ -118,7 +119,6 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             }
         });
         if ($this->process->isTerminated() && !$this->process->isSuccessful()) {
-            print 'XXXX';
             throw new \RuntimeException(sprintf(
                 'Could not start shell via `%s`, exited with exit code %d, %s',
                 $this->process->getCommandLine(),
