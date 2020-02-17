@@ -26,6 +26,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 use Twig_Environment;
 use Twig_Loader_Filesystem;
 
@@ -194,8 +196,9 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         $context->set('loaderBase', $twig_loader_base);
 
         // Setup twig
-        $loader = new Twig_Loader_Filesystem($twig_loader_base);
-        $this->twig = new Twig_Environment($loader, array(
+        $loader = new FilesystemLoader($twig_loader_base);
+        $this->twig = new Environment($loader, array(
+
         ));
 
 
