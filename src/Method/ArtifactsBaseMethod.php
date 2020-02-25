@@ -10,6 +10,7 @@ use Phabalicious\Artifact\Actions\Base\InstallScriptAction;
 use Phabalicious\Artifact\Actions\Base\ScriptAction;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
@@ -114,9 +115,11 @@ abstract class ArtifactsBaseMethod extends BaseMethod
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @param array $stages
+     *
      * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
      * @throws MissingScriptCallbackImplementation
+     * @throws FailedShellCommandException
      */
     protected function buildArtifact(
         HostConfig $host_config,
@@ -139,6 +142,12 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         $shell->cd($cloned_host_config['tmpFolder']);
         $context->set('outerShell', $shell);
         $context->set('installDir', $install_dir);
+        
+        $this->ensureKnownHosts(
+            $context->getConfigurationService(),
+            $this->getKnownHosts($host_config, $context),
+            $shell
+        );
 
         AppDefaultStages::executeStages(
             $context->getConfigurationService()->getMethodFactory(),

@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderFactory;
@@ -15,6 +16,7 @@ class SshMethod extends BaseMethod implements MethodInterface
 
     protected $creatingTunnel = false;
     protected $tunnels = [];
+    protected $knownHostsChecked = [];
 
     public function getName(): string
     {
@@ -151,6 +153,7 @@ class SshMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
+     * @throws FailedShellCommandException
      */
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -170,11 +173,18 @@ class SshMethod extends BaseMethod implements MethodInterface
                 $this->createRemoteToHostTunnel($config, $from_config, $context);
             }
         }
+        if (empty($this->knownHostsChecked[$config->get('configName')])) {
+            $this->knownHostsChecked[$config->get('configName')] = true;
+            $known_hosts = $this->getKnownHosts($config, $context);
+            $known_hosts[] = $config['host'] . ':' . $config->get('port', 22);
+            $this->ensureKnownHosts($context->getConfigurationService(), $known_hosts);
+        }
         $this->creatingTunnel = false;
     }
 
     public function shell(HostConfig $config, TaskContextInterface $context)
     {
+
         if (!empty($config['sshTunnel'])) {
             $tunnel = $config['sshTunnel'];
             $ssh_command = [

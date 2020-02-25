@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
@@ -160,5 +161,55 @@ abstract class BaseMethod implements MethodInterface
             'hash' => $hash,
             'file' => $file
         ];
+    }
+    
+    public function getKnownHosts(HostConfig $host_config, TaskContextInterface $context)
+    {
+        return $host_config->get('knownHosts', $context->getConfigurationService()->getSetting('knownHosts', []));
+    }
+
+    /**
+     * Ensure a list oj known hosts.
+     *
+     * @param ConfigurationService $config
+     * @param array $known_hosts
+     * @param ShellProviderInterface|null $shell
+     *
+     * @throws FailedShellCommandException
+     */
+    public function ensureKnownHosts(
+        ConfigurationService $config,
+        array $known_hosts,
+        ShellProviderInterface $shell = null
+    ) {
+        if (!$shell) {
+            $shell = ShellProviderFactory::create('local', $this->logger);
+            $host_config = new HostConfig([
+                'rootFolder' => getcwd(),
+                'shellExecutable' => '/bin/bash'
+            ], $shell, $config);
+            $shell->setHostConfig($host_config);
+        }
+        foreach ($known_hosts as $host) {
+            if (strpos($host, ":") !== false) {
+                list($h, $p) = @explode(':', $host);
+                $host_str = sprintf('[%s]:%d', $h, $p);
+            } else {
+                $p = 22;
+                $host_str = $host;
+            }
+            $result = $shell->run(sprintf('ssh-keygen -F %s  2>/dev/null 1>/dev/null', $host_str), true);
+            if ($result->failed()) {
+                $this->logger->info(sprintf('%s not in known_hosts, adding it now.', $host));
+                $result = $shell->run(sprintf(
+                    'ssh-keyscan -t rsa -T 10 -p %d %s  >> ~/.ssh/known_hosts',
+                    $p,
+                    $h
+                ), true);
+                if ($result->failed()) {
+                    $this->logger->warning(sprintf('Could not add host %s to known_hosts', $host));
+                }
+            }
+        }
     }
 }
