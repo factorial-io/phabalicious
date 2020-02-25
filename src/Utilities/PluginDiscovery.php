@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Utilities;
 
+use Composer\Autoload\ClassLoader;
 use Composer\Semver\Comparator;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Scaffolder\DataTransformerInterface;
@@ -25,6 +26,10 @@ class PluginDiscovery
         if (!is_dir($path)) {
             return;
         }
+        $autoloader = new ClassLoader();
+        $autoloader->addPsr4('Phabalicious\Scaffolder\Transformers\\', $path);
+        $autoloader->register();
+
         $contents = scandir($path);
         foreach ($contents as $filename) {
             if (pathinfo($filename, PATHINFO_EXTENSION) !== 'php') {
@@ -56,5 +61,7 @@ class PluginDiscovery
                 }
             }
         }
+
+        $autoloader->unregister();
     }
 }
