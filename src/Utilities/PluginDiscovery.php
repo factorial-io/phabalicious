@@ -26,7 +26,23 @@ class PluginDiscovery
         if (!is_dir($path)) {
             return;
         }
-        $autoloader = require(__DIR__ . '/../../vendor/autoload.php');
+        
+        // Find composer.json
+        $directory = __DIR__;
+        $root = null;
+        do {
+            $directory = dirname($directory);
+            $vendor = $directory . '/vendor';
+            if (is_dir($vendor)) {
+                $root = $directory;
+            }
+        } while (is_null($root) && $directory !== '/');
+        if ($root == null) {
+            throw new \RuntimeException('Could not detect vendor-directory');
+        }
+        
+        // Get autoloader and register plugins namespace.
+        $autoloader = require($root . '/vendor/autoload.php');
         $autoloader->addPsr4('Phabalicious\Scaffolder\Transformers\\', realpath($path));
 
         $contents = scandir($path);

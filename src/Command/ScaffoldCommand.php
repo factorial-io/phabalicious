@@ -57,8 +57,12 @@ class ScaffoldCommand extends ScaffoldBaseCommand
         ]);
 
         $context->mergeAndSet('dataOverrides', [
-            'allowOverride' => true,
-            'skipSubfolder' => true,
+            'variables' => [
+                'allowOverride' => true,
+                'skipSubfolder' => true,
+            ],
+            'questions' => [],
+            'assets' => [],
         ]);
 
         return $this->scaffold($url, $root_folder, $context, [], function ($paths) use ($callback) {
