@@ -14,9 +14,11 @@ interface DataTransformerInterface extends PluginInterface
      *   The current context.
      * @param array $files
      *   The input files.
+     * @param string $target_path
+     *   The target path where files get written.
      *
      * @return array
      *   An associative array of filename => file contents.
      */
-    public function transform(TaskContextInterface $context, array $files): array;
+    public function transform(TaskContextInterface $context, array $files, $target_path): array;
 }

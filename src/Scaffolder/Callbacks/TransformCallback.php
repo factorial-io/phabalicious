@@ -68,13 +68,15 @@ class TransformCallback implements CallbackInterface
             ));
         }
 
+        $target_path = $tokens['rootFolder'] . '/' . $target_folder;
+
         $context->io()->comment(sprintf('Transforming %s ...', $files_key));
 
-        $result = $transformer->transform($context, $files);
+        $result = $transformer->transform($context, $files, $target_path);
 
         $context->io()->progressStart(count($result));
         foreach ($result as $file_name => $file_content) {
-            $full_path = $tokens['rootFolder'] . '/' . $target_folder . '/' . $file_name;
+            $full_path =  $target_path . '/' . $file_name;
             $dir = dirname($full_path);
             if (!is_dir($dir)) {
                 mkdir($dir, 0775, true);
