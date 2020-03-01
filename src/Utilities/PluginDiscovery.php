@@ -26,9 +26,8 @@ class PluginDiscovery
         if (!is_dir($path)) {
             return;
         }
-        $autoloader = new ClassLoader();
-        $autoloader->addPsr4('Phabalicious\Scaffolder\Transformers\\', $path);
-        $autoloader->register();
+        $autoloader = require(__DIR__ . '/../../vendor/autoload.php');
+        $autoloader->addPsr4('Phabalicious\Scaffolder\Transformers\\', realpath($path));
 
         $contents = scandir($path);
         foreach ($contents as $filename) {
@@ -61,7 +60,5 @@ class PluginDiscovery
                 }
             }
         }
-
-        $autoloader->unregister();
     }
 }
