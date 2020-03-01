@@ -31,7 +31,7 @@ abstract class YamlTransformer implements DataTransformerInterface
                 foreach ($this->iterateOverFiles($context, $contents) as $data) {
                     yield $data;
                 }
-            } else {
+            } elseif (in_array(pathinfo($filename, PATHINFO_EXTENSION), ['yml', 'yaml'])) {
                 $data = Yaml::parseFile($filename);
                 if ($data) {
                     yield $data;
