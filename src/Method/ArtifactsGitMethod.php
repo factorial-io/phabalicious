@@ -269,8 +269,8 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $formatted_message = $message;
         // Add two new lines to the end of the short message for detailed messages.
         if (!empty($detailed_messages)) {
-            if (count($detailed_messages) > 20) {
-                array_slice($detailed_messages, 0, 20);
+            if (count($detailed_messages) > 40) {
+                $detailed_messages = array_slice($detailed_messages, 0, 40);
             }
             $formatted_message .= "\n\n  * " . implode("\n  * ", $detailed_messages);
         }
