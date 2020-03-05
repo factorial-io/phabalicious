@@ -177,7 +177,10 @@ class GitMethod extends BaseMethod implements MethodInterface
         if (!$repository) {
             throw new \InvalidArgumentException('Missing `repository` in fabfile! Cannot proceed!');
         }
-        
+
+        $cwd = $shell->getWorkingDir();
+        $shell->cd(dirname($install_dir));
+
         $this->ensureKnownHosts(
             $context->getConfigurationService(),
             $this->getKnownHosts($host_config, $context),
@@ -191,7 +194,6 @@ class GitMethod extends BaseMethod implements MethodInterface
             $install_dir
         ));
 
-        $cwd = $shell->getWorkingDir();
 
         if (!$host_config['ignoreSubmodules']) {
             $shell->cd($install_dir);
