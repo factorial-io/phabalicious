@@ -14,6 +14,9 @@ use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Scaffolder\Callbacks\AlterJsonFileCallback;
+use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
+use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\Utilities;
@@ -85,8 +88,13 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
      * @throws MissingScriptCallbackImplementation
      * @throws ValidationFailedException
      */
-    protected function scaffold($url, $root_folder, TaskContextInterface $context, array $tokens = [])
-    {
+    protected function scaffold(
+        $url,
+        $root_folder,
+        TaskContextInterface $context,
+        array $tokens = [],
+        $plugin_registration_callback = null
+    ) {
         $is_remote = false;
         if (substr($url, 0, 4) !== 'http') {
             $data = Yaml::parseFile($url);
@@ -100,6 +108,9 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         if (!$data) {
             throw new InvalidArgumentException('Could not read yaml from ' . $url);
         }
+
+        // Allow implementation to override parts of the data.
+        $data = Utilities::mergeData($data, $context->get('dataOverrides', []));
 
         if ($data && isset($data['requires'])) {
             $required_version = $data['requires'];
@@ -132,6 +143,9 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         }
 
         $data = $this->configuration->resolveInheritance($data, [], dirname($url));
+        if (!empty($data['plugins']) && $plugin_registration_callback) {
+            $plugin_registration_callback($data['plugins']);
+        }
 
         $errors = new ValidationErrorBag();
         $validation = new ValidationService($data, $errors, 'scaffold');
@@ -148,7 +162,8 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
             $root_folder = dirname($root_folder);
         }
 
-        $tokens['uuid'] = $this->fakeUUID();
+        $tokens['uuid'] = Utilities::generateUUID();
+
         if (isset($tokens['name'])) {
             $tokens = Utilities::mergeData($this->readTokens($root_folder, $tokens['name']), $tokens);
         }
@@ -167,7 +182,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         }
 
         // Do a first round of replacements.
-        $replacements = $this->getReplacements($tokens);
+        $replacements = Utilities::getReplacements($tokens);
         foreach ($tokens as $ndx => $token) {
             $tokens[$ndx] = strtr($token, $replacements);
         }
@@ -186,11 +201,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 
         $context->set('scriptData', $data['scaffold']);
         $context->set('variables', $tokens);
-        $context->set('callbacks', [
-            'copy_assets' => [$this, 'copyAssets'],
-            'log_message' => [$this, 'logMessage'],
-            'alter_json_file' => [$this, 'alterJsonFile']
-        ]);
+
         $context->set('scaffoldData', $data);
         $context->set('tokens', $tokens);
         $context->set('loaderBase', $twig_loader_base);
@@ -201,6 +212,12 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 
         ));
 
+        $context->mergeAndSet('callbacks', [
+            CopyAssetsCallback::getName() => [new CopyAssetsCallback($this->configuration, $this->twig), 'handle'],
+            LogMessageCallback::getName() => [new LogMessageCallback(), 'handle'],
+            AlterJsonFileCallback::getName() => [new AlterJsonFileCallback(), 'handle'],
+        ]);
+        
 
         if (is_dir($tokens['rootFolder'])
             && empty($context->getInput()->getOption('force'))
@@ -241,135 +258,6 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 
         $context->io()->success('Scaffolding finished successfully!');
         return 0;
-    }
-
-    public function logMessage(TaskContextInterface $context, $log_level, $log_message = '')
-    {
-        if (empty($log_message)) {
-            $log_message = $log_level;
-            $log_level = 'info';
-        }
-        $log_level = strtolower($log_level);
-        if ($log_level == 'success') {
-            $context->io()->success($log_message);
-        } elseif ($log_level == 'warning') {
-            $context->io()->warning($log_message);
-        } elseif ($log_level == 'error') {
-            $context->io()->warning($log_message);
-        } else {
-            $context->io()->note($log_message);
-        }
-    }
-
-    public function alterJsonFile(
-        TaskContextInterface $context,
-        $json_file_name,
-        $data_key
-    ) {
-
-        $data = $context->get('scaffoldData');
-        $tokens = $context->get('tokens');
-        $json_file_path = $tokens['rootFolder'] . '/' . $json_file_name;
-        if (!file_exists($json_file_path)) {
-            $context->io()->warning('Could not find json file ' . $json_file_path);
-            return;
-        }
-        $json = json_decode(file_get_contents($json_file_path), true);
-        if (isset($data[$data_key])) {
-            $json = Utilities::mergeData($json, $data[$data_key]);
-            file_put_contents($json_file_path, json_encode($json, JSON_PRETTY_PRINT));
-        }
-    }
-
-
-    /**
-     * @param TaskContextInterface $context
-     * @param string $target_folder
-     * @param string $data_key
-     * @param bool $limitedForTwigExtension
-     */
-    public function copyAssets(
-        TaskContextInterface $context,
-        $target_folder,
-        $data_key = 'assets',
-        $limitedForTwigExtension = false
-    ) {
-        if (!is_dir($target_folder)) {
-            mkdir($target_folder, 0777, true);
-        }
-        $data = $context->get('scaffoldData');
-        $tokens = $context->get('tokens');
-        $is_remote = substr($data['base_path'], 0, 4) == 'http';
-        $replacements = $this->getReplacements($tokens);
-
-        if (empty($data[$data_key])) {
-            throw new InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
-        }
-
-        $context->io()->comment(sprintf('Copying assets `%s`', $data_key));
-        $use_progress = count($data[$data_key]) > 3;
-
-        if ($use_progress) {
-            $context->io()->progressStart(count($data[$data_key]));
-        }
-
-        foreach ($data[$data_key] as $file_name) {
-            $tmp_target_file = false;
-            if ($is_remote) {
-                $tmpl = $this->configuration->readHttpResource($data['base_path'] . '/' . $file_name);
-                if ($tmpl === false) {
-                    throw new RuntimeException('Could not read remote asset: '. $data['base_path'] . '/' . $file_name);
-                }
-                $tmp_target_file = '/tmp/' . $file_name;
-                if (!is_dir(dirname($tmp_target_file))) {
-                    mkdir(dirname($tmp_target_file), 0777, true);
-                }
-                file_put_contents('/tmp/' . $file_name, $tmpl);
-            }
-
-            if ($limitedForTwigExtension &&
-                ('.' . pathinfo($file_name, PATHINFO_EXTENSION) !== $limitedForTwigExtension)
-            ) {
-                $converted = file_get_contents($context->get('loaderBase') . '/' . $file_name);
-            } else {
-                $converted = $this->twig->render($file_name, $tokens);
-            }
-
-            if ($limitedForTwigExtension) {
-                $file_name = str_replace($limitedForTwigExtension, '', $file_name);
-            }
-
-            if ($tmp_target_file) {
-                unlink($tmp_target_file);
-            }
-
-            $file_name = strtr($file_name, $replacements);
-            if (strpos($file_name, '/') !== false) {
-                $file_name = substr($file_name, strpos($file_name, '/', 1) + 1);
-            }
-
-            $target_file_path = $target_folder . '/' . $file_name;
-            if (!is_dir(dirname($target_file_path))) {
-                mkdir(dirname($target_file_path), 0777, true);
-            }
-
-            if ($use_progress) {
-                $context->io()->progressAdvance();
-            }
-            file_put_contents($target_file_path, $converted);
-        }
-        if ($use_progress) {
-            $context->io()->progressFinish();
-        }
-    }
-
-    private function fakeUUID()
-    {
-        return bin2hex(openssl_random_pseudo_bytes(4)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(6));
     }
 
     /**
@@ -430,21 +318,11 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         return $tokens;
     }
 
-    /**
-     * @param array $tokens
-     * @return array
-     */
-    protected function getReplacements($tokens): array
-    {
-        $replacements = [];
-        foreach ($tokens as $key => $value) {
-            $replacements['%' . $key . '%'] = $value;
-        }
-        return $replacements;
-    }
 
     /**
      * Get local scaffold file.
+     * @param $name
+     * @return string
      */
     protected function getLocalScaffoldFile($name)
     {
@@ -455,11 +333,20 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         return $rootFolder . '/' . $name;
     }
 
+    /**
+     * @param $root_folder
+     * @param $tokens
+     */
     protected function writeTokens($root_folder, $tokens)
     {
         file_put_contents($root_folder . '/.phab-scaffold-tokens', YAML::dump($tokens));
     }
 
+    /**
+     * @param $root_folder
+     * @param $name
+     * @return array|mixed
+     */
     protected function readTokens($root_folder, $name)
     {
         $full_path = "$root_folder/$name/.phab-scaffold-tokens";
