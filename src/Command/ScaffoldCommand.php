@@ -67,9 +67,10 @@ class ScaffoldCommand extends ScaffoldBaseCommand
 
         return $this->scaffold($url, $root_folder, $context, [], function ($paths) use ($callback) {
             $callback->setTransformers(PluginDiscovery::discover(
-                $this->getApplication(),
+                $this->getApplication()->getVersion(),
                 $paths,
-                'Phabalicious\Scaffolder\Transformers\DataTransformerInterface'
+                'Phabalicious\Scaffolder\Transformers\DataTransformerInterface',
+                $this->getConfiguration()->getLogger()
             ));
         });
     }

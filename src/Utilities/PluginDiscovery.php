@@ -6,23 +6,29 @@ use Composer\Autoload\ClassLoader;
 use Composer\Semver\Comparator;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Scaffolder\DataTransformerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 
 class PluginDiscovery
 {
 
-    public static function discover(Application $application, $paths, $interface_to_implement)
+    public static function discover($application_version, $paths, $interface_to_implement, LoggerInterface $logger)
     {
         $result = [];
         foreach ($paths as $path) {
-            self::scanAndRegister($application, $result, $path, $interface_to_implement);
+            self::scanAndRegister($application_version, $result, $path, $interface_to_implement, $logger);
         }
 
         return $result;
     }
 
-    protected static function scanAndRegister(Application $application, &$result, $path, $interface_to_implement)
-    {
+    protected static function scanAndRegister(
+        $application_version,
+        &$result,
+        $path,
+        $interface_to_implement,
+        LoggerInterface $logger
+    ) {
         if (!is_dir($path)) {
             return;
         }
@@ -40,7 +46,9 @@ class PluginDiscovery
         if ($root == null) {
             throw new \RuntimeException('Could not detect vendor-directory');
         }
-        
+
+        $logger->debug('Found autoloader at ' . $root . '/vendor/autoload.php');
+
         // Get autoloader and register plugins namespace.
         $autoloader = require($root . '/vendor/autoload.php');
         $autoloader->addPsr4('Phabalicious\Scaffolder\Transformers\\', realpath($path));
@@ -50,6 +58,7 @@ class PluginDiscovery
             if (pathinfo($filename, PATHINFO_EXTENSION) !== 'php') {
                 continue;
             }
+            $logger->debug('Inspecting php-file ' . $filename);
             $st = get_declared_classes();
             require_once $path . '/' . $filename;
             $diff = array_diff(get_declared_classes(), $st);
@@ -60,19 +69,20 @@ class PluginDiscovery
                     && $reflection->implementsInterface('Phabalicious\Utilities\PluginInterface')
                     && $reflection->implementsInterface($interface_to_implement)
                 ) {
-                    if (Comparator::greaterThan($class::requires(), $application->getVersion())) {
+                    if (Comparator::greaterThan($class::requires(), $application_version)) {
                         throw new MismatchedVersionException(
                             sprintf(
                                 'Could not use plugin from %s. %s is required, current app is %s',
                                 $path . '/' . $filename,
                                 $class::requires(),
-                                $application->getVersion()
+                                $application_version
                             )
                         );
                     }
 
                     $instance = new $class;
                     $result[$instance->getName()] = $instance;
+                    $logger->debug('Adding phabalicious plugin ' . $reflection->getName());
                 }
             }
         }
