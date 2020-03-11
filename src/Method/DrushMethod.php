@@ -688,6 +688,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $result = $context->get('data', []);
         $what = $context->get('action', 'pull');
 
+        $context->io()->progressStart(count($result));
+
         foreach ($result as $key => $value) {
             if ($what == 'pull') {
                 $this->logger->info(sprintf('Pulling `%s` from `%s`', $key, $host_config['configName']));
@@ -696,7 +698,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 $this->logger->info(sprintf('Pushing `%s` to `%s`', $key, $host_config['configName']));
                 $this->putVariable($host_config, $context, $key, $value);
             }
+            $context->io()->progressAdvance();
         }
+        $context->io()->progressFinish();
         $context->setResult('data', $result);
     }
 
@@ -714,7 +718,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             return isset($json[$key]) ? $json[$key] : null;
         }
 
-        return null;
+        throw new \InvalidArgumentException('getVariable is not implemented for that particular drupal version.');
     }
 
     private function putVariable(HostConfig $host_config, TaskContextInterface $context, $key, $value)
@@ -726,10 +730,12 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 '#!drush variable-set --yes --format=json %s \'%s\'',
                 $key,
                 json_encode($value)
-            ), false);
+            ), true);
             if ($output->failed()) {
                 throw new \RuntimeException($output->getOutput());
             }
+            return;
         }
+        throw new \InvalidArgumentException('putVariable is not implemented for that particular drupal version.');
     }
 }
