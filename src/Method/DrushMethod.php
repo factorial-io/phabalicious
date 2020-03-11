@@ -682,4 +682,54 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         $shell->cd($cwd);
     }
+
+    public function variables(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $result = $context->get('data', []);
+        $what = $context->get('action', 'pull');
+
+        foreach ($result as $key => $value) {
+            if ($what == 'pull') {
+                $this->logger->info(sprintf('Pulling `%s` from `%s`', $key, $host_config['configName']));
+                $result[$key] = $this->getVariable($host_config, $context, $key);
+            } elseif ($what == 'push' && !is_null($value)) {
+                $this->logger->info(sprintf('Pushing `%s` to `%s`', $key, $host_config['configName']));
+                $this->putVariable($host_config, $context, $key, $value);
+            }
+        }
+        $context->setResult('data', $result);
+    }
+
+    private function getVariable(HostConfig $host_config, TaskContextInterface $context, $key)
+    {
+        /** @var ShellProviderInterface $shell */
+        $shell = $context->get('shell', $host_config->shell());
+        if ($host_config['drupalVersion'] == 7) {
+            $output = $shell->run(sprintf('#!drush variable-get --format=json %s', $key), true);
+            if ($output->failed()) {
+                $this->logger->error(implode("\n", $output->getOutput()));
+                return null;
+            }
+            $json = json_decode(implode("\n", $output->getOutput()), true);
+            return isset($json[$key]) ? $json[$key] : null;
+        }
+
+        return null;
+    }
+
+    private function putVariable(HostConfig $host_config, TaskContextInterface $context, $key, $value)
+    {
+        /** @var ShellProviderInterface $shell */
+        $shell = $context->get('shell', $host_config->shell());
+        if ($host_config['drupalVersion'] == 7) {
+            $output = $shell->run(sprintf(
+                '#!drush variable-set --yes --format=json %s \'%s\'',
+                $key,
+                json_encode($value)
+            ), false);
+            if ($output->failed()) {
+                throw new \RuntimeException($output->getOutput());
+            }
+        }
+    }
 }
