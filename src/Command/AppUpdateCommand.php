@@ -41,7 +41,7 @@ class AppUpdateCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
 
         try {
             $this->getMethods()->runTask('appUpdate', $this->getHostConfig(), $context);

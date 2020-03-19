@@ -12,6 +12,7 @@ use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\ParallelExecutor;
 use Phabalicious\Utilities\Utilities;
@@ -301,7 +302,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                 if ($output->isVeryVerbose()) {
                     $cmd[] = '-vv';
                 } elseif ($output->isVerbose()) {
-                    $cmd[]= '-v';
+                    $cmd[] = '-v';
                 }
 
                 $cmd_lines[] = $cmd;
@@ -320,18 +321,5 @@ abstract class BaseCommand extends BaseOptionsCommand
 
             return 1;
         }
-    }
-
-    protected function parseScriptArguments(array $defaults, $arguments_string)
-    {
-        if (empty($arguments_string)) {
-            return ['arguments' => $defaults];
-        }
-
-        $named_args = Utilities::parseArguments($arguments_string);
-
-        return [
-            'arguments' => Utilities::mergeData($defaults, $named_args),
-        ];
     }
 }

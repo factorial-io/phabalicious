@@ -47,14 +47,12 @@ class InstallCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
-
+        $context = $this->createContext($input, $output);
         $host_config = $this->getHostConfig();
+
         if ($host_config['supportsInstalls'] == false) {
             throw new \InvalidArgumentException('This configuration disallows installs!');
         }
-
-        $context = new TaskContext($this, $input, $output);
 
         if (!$input->getOption('force') !== false) {
             if (!$context->io()->confirm(sprintf(

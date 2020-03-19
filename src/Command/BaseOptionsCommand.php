@@ -4,11 +4,14 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\TaskContext;
+use Phabalicious\Utilities\Utilities;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class BaseOptionsCommand extends Command implements CompletionAwareInterface
 {
@@ -44,6 +47,13 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
                 InputOption::VALUE_OPTIONAL,
                 'Do not try to load data from remote hosts, use cached versions if possible',
                 false
+            )
+            ->addOption(
+                'arguments',
+                'a',
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Pass optional arguments',
+                []
             );
     }
 
@@ -114,5 +124,34 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         if (count($errors)) {
             throw new \InvalidArgumentException(implode("\n\n", $errors));
         }
+    }
+    protected function parseScriptArguments(array $defaults, $arguments_string)
+    {
+        if (empty($arguments_string)) {
+            return ['arguments' => $defaults];
+        }
+
+        $named_args = Utilities::parseArguments($arguments_string);
+
+        return [
+            'arguments' => Utilities::mergeData($defaults, $named_args),
+        ];
+    }
+
+    /**
+     * Create a TaskContextInterface and prefill it.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return TaskContext
+     */
+    protected function createContext(InputInterface $input, OutputInterface $output, $default_arguments = [])
+    {
+        $context = new TaskContext($this, $input, $output);
+        $arguments = $this->parseScriptArguments($default_arguments, $input->getOption('arguments'));
+        $context->set('variables', $arguments);
+        $context->set('deployArguments', $arguments);
+
+        return $context;
     }
 }

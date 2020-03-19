@@ -62,7 +62,7 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $context->set('command', implode(' ', $input->getArgument('command-arguments')));
 
         try {
