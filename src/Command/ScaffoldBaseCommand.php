@@ -13,6 +13,7 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\ScriptMethod;
+use Phabalicious\Method\TaskContext;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\AlterJsonFileCallback;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
@@ -31,8 +32,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Twig_Environment;
-use Twig_Loader_Filesystem;
 
 abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 {
@@ -81,6 +80,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
      * @param $root_folder
      * @param TaskContextInterface $context
      * @param array $tokens
+     * @param callable|null $plugin_registration_callback
      * @return int
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
@@ -93,7 +93,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         $root_folder,
         TaskContextInterface $context,
         array $tokens = [],
-        $plugin_registration_callback = null
+        callable $plugin_registration_callback = null
     ) {
         $is_remote = false;
         if (substr($url, 0, 4) !== 'http') {

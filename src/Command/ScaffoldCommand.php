@@ -50,7 +50,7 @@ class ScaffoldCommand extends ScaffoldBaseCommand
         $url  = $input->getArgument('scaffold-path');
         $root_folder = getcwd();
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $callback = new TransformCallback();
         $context->mergeAndSet('callbacks', [
             'transform' => [$callback, 'handle']

@@ -11,6 +11,7 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ShellProviderNotFoundException;
+use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
@@ -63,13 +64,14 @@ class ScriptMethodTest extends PhabTestCase
     }
 
     /**
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
      * @throws MismatchedVersionException
      * @throws MissingHostConfigException
      * @throws MissingScriptCallbackImplementation
      * @throws ShellProviderNotFoundException
      * @throws ValidationFailedException
-     * @throws BlueprintTemplateNotFoundException
-     * @throws FabfileNotReadableException
+     * @throws UnknownReplacementPatternException
      */
     public function testRunScript()
     {
@@ -93,6 +95,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws MissingHostConfigException
      * @throws MissingScriptCallbackImplementation
      * @throws ShellProviderNotFoundException
+     * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
     public function testExitOnExitCode()
@@ -115,6 +118,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws MissingHostConfigException
      * @throws MissingScriptCallbackImplementation
      * @throws ShellProviderNotFoundException
+     * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
     public function testIgnoreExitCode()
@@ -141,6 +145,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws MissingHostConfigException
      * @throws MissingScriptCallbackImplementation
      * @throws ShellProviderNotFoundException
+     * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
     public function testEnvironmentVariables()
@@ -167,6 +172,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws MissingHostConfigException
      * @throws MissingScriptCallbackImplementation
      * @throws ShellProviderNotFoundException
+     * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
     public function testExpandedEnvironmentVariables()
@@ -193,6 +199,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws MissingHostConfigException
      * @throws MissingScriptCallbackImplementation
      * @throws ShellProviderNotFoundException
+     * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
     public function testExpandedEnvironmentVariablesFromHostConfig()

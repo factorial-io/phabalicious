@@ -32,8 +32,8 @@
         "phpunit/phpunit": "^7.3",
         "phpstan/phpstan": "^0.11.9",
         "phpstan/phpstan-symfony": "^0.11.6",
-        "jakub-onderka/php-parallel-lint": "^1.0",
-        "phpro/grumphp": "0.16.*"
+        "phpro/grumphp": "0.16.*",
+        "php-parallel-lint/php-parallel-lint": "^1.1"
     },
     "autoload": {
         "psr-4": {
