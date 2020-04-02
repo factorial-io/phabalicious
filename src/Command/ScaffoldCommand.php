@@ -17,8 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ScaffoldCommand extends ScaffoldBaseCommand
 {
 
-    protected $transformers = [];
-
     protected function configure()
     {
         parent::configure();

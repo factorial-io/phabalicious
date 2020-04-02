@@ -8,7 +8,7 @@ use Phabalicious\Scaffolder\Transformers\DataTransformerInterface;
 class TransformCallback implements CallbackInterface
 {
 
-    protected $transformers = [];
+    protected static $transformers = [];
 
 
     /**
@@ -29,7 +29,9 @@ class TransformCallback implements CallbackInterface
 
     public function setTransformers($transformers)
     {
-        $this->transformers = $transformers;
+        foreach ($transformers as $name => $instance) {
+            self::$transformers[$name] = $instance;
+        }
     }
 
     /**
@@ -55,7 +57,7 @@ class TransformCallback implements CallbackInterface
 
         $files = $data[$files_key] ?? [];
         /** @var DataTransformerInterface $transformer */
-        $transformer = $this->transformers[$transformer_key] ?? false;
+        $transformer = self::$transformers[$transformer_key] ?? false;
 
         if (empty($files)) {
             throw new \InvalidArgumentException('Could not find key in scaffold file ' . $files_key);
@@ -64,7 +66,7 @@ class TransformCallback implements CallbackInterface
             throw new \InvalidArgumentException(sprintf(
                 'Unknown transformer %s, available transformers %s,',
                 $transformer_key,
-                implode(', ', array_keys($this->transformers))
+                implode(', ', array_keys(self::$transformers))
             ));
         }
 
