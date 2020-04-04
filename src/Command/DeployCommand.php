@@ -62,17 +62,13 @@ class DeployCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
 
         // Override branch in config.
         $branch = $input->getArgument('branch');
         if (!empty($branch)) {
             $this->getHostConfig()['branch'] = $branch;
         }
-
-        $deploy_arguments = $this->parseScriptArguments([], $input->getOption('arguments'));
-        $context->set('variables', $deploy_arguments);
-        $context->set('deployArguments', $deploy_arguments);
 
         if ($this->getHostConfig()->get('branch')) {
             $context->io()->comment(sprintf(

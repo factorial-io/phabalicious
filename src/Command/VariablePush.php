@@ -1,10 +1,8 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MethodNotFoundException;
@@ -12,40 +10,30 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
-abstract class SimpleExecutableInvocationCommand extends BaseCommand
+class VariablePush extends BaseCommand
 {
-    protected $executableName;
-    
-    public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $executable_name)
-    {
-        $this->executableName = $executable_name;
-        parent::__construct($configuration, $method_factory);
-    }
 
     protected function configure()
     {
         parent::configure();
         $this
-            ->setName($this->executableName)
-            ->setDescription('Runs ' . $this->executableName)
-            ->setHelp('Runs a ' . $this->executableName . ' command against the given host-config');
-        $this->addArgument(
-            'command-arguments',
-            InputArgument::REQUIRED | InputArgument::IS_ARRAY,
-            'The command to run'
-        );
+            ->setName('variable:push')
+            ->setDescription('Pushes a list of variables to a host.')
+            ->setHelp('Pushes a list of variables to a host.');
+        $this->addArgument('file', InputArgument::REQUIRED, 'yaml file to update, will be created if not existing');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     *
      * @return int|null
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
@@ -63,14 +51,13 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
         }
 
         $context = $this->createContext($input, $output);
-        $context->set('command', implode(' ', $input->getArgument('command-arguments')));
 
-        try {
-            $this->getMethods()->runTask($this->executableName, $this->getHostConfig(), $context);
-        } catch (EarlyTaskExitException $e) {
-            return 1;
-        }
+        $context->set('action', 'push');
+        $filename = $input->getArgument('file');
+        $data = Yaml::parseFile($filename);
+        $context->set('data', $data);
+        $this->getMethods()->runTask('variables', $this->getHostConfig(), $context);
 
-        return $context->getResult('exitCode', 0);
+        return 0;
     }
 }

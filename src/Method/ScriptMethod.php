@@ -58,6 +58,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @throws MissingScriptCallbackImplementation
+     * @throws UnknownReplacementPatternException
      */
     public function runScript(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -116,7 +117,15 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
             $context->setResult('commandResult', $result);
         } catch (UnknownReplacementPatternException $e) {
-            $context->io()->error('Unknown replacement in line ' . $e->getOffendingLine());
+            $context->io()->error('Unknown replacement in line `' . $e->getOffendingLine() .'`');
+
+            $matches = [];
+            if (preg_match_all('/%arguments\.(.*?)%/', $e->getOffendingLine(), $matches)) {
+                foreach ($matches[1] as $a) {
+                    $context->io()->error('Missing argument: `' . $a . '`!');
+                }
+                throw $e;
+            }
 
             $printed_replacements = array_map(function ($key) use ($replacements) {
                 $value = $replacements[$key];
@@ -125,6 +134,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 }
                 return [$key, $value];
             }, array_keys($replacements));
+
             $context->io()->table(['Key', 'Replacement'], $printed_replacements);
             
             throw $e;

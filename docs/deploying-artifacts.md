@@ -1,3 +1,6 @@
+---
+sidebarDepth: 3
+---
 # Deploying artifacts
 
 If you want to deploy artifacts, phabalicious can help you here, currently there are two methods supported:
@@ -5,7 +8,7 @@ If you want to deploy artifacts, phabalicious can help you here, currently there
 * artifacts--git
 * artifacts--ftp
 
-Both methods create a new application from scratch and deploy all or parts of it to a ftp server or store the artifacts in a git repository. Both methods are using the same stage mechanisms as in `app:create`. 
+Both methods create a new application from scratch and deploy all or parts of it to a ftp server or store the artifacts in a git repository. Both methods are using the same stage mechanisms as in `app:create`.
 
 Both methods needs the global `repository`-config, so they can pull the app into a new temporary folder.
 
@@ -131,7 +134,7 @@ You can customize the list of actions be run when deploying an artifact. Here's 
 ```yaml
 - action: copy
   argumnents:
-    from: 
+    from:
       - file1
       - folder2
       - subfolder/file3
@@ -144,7 +147,7 @@ This will copy the three mentioned files and folders into the subfolder `targets
 
 ```yaml
 - action: delete
-  arguments: 
+  arguments:
     - file1
     - folder2
     - subfolder/file3
@@ -156,7 +159,7 @@ This action will delete the list of files and folders in the target folder. Here
 
 ```yaml
 - action: exclude
-  arguments: 
+  arguments:
     - file1
     - folder2
     - subfolder/file3
@@ -168,7 +171,7 @@ Similar to `delete` this will exclude the list of file and folders from be trans
 
 ```yaml
 - action: confirm
-  arguments: 
+  arguments:
     question: Do you want to continue?
 ```
 
@@ -178,9 +181,16 @@ This action comes handy when degugging the build process, as it will stop the ex
 
 ```yaml
 - action: script
-  arguments: 
+  arguments:
     - echo "Hello world"
     - cp .env.production .env
 ```
 
-The `script`-action will run the script from the arguments section line by line. You can use the usual replacement patterns as for other scripts.
+The `script`-action will run the script from the arguments section line by line. You can use the usual replacement patterns as for other scripts. Most helpful are:
+
+| Pattern | Description |
+|---------|-------------|
+| `%context.data.installDir%` | The installation dir, where the app got installed into |
+| `%context.data.targetDir%` | The targetdir, where the app got copied to, which gets committed or synced |
+
+

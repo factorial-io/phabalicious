@@ -42,7 +42,7 @@ class GetSqlDumpCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
 
         $this->getMethods()->runTask('getSQLDump', $this->getHostConfig(), $context);
         $to_copy = $context->getResult('files');

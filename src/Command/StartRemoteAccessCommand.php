@@ -36,6 +36,12 @@ class StartRemoteAccessCommand extends BaseCommand
             80
         )
         ->addOption(
+            'ip',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Host/IP to connect to',
+        )
+        ->addOption(
             'public-ip',
             null,
             InputOption::VALUE_OPTIONAL,
@@ -70,11 +76,11 @@ class StartRemoteAccessCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $host_config = $this->getHostConfig();
         $this->getMethods()->runTask('startRemoteAccess', $host_config, $context);
 
-        $ip = $context->getResult('ip', '127.0.0.1');
+        $ip = $input->getOption('ip') ? $input->getOption('ip') : $context->getResult('ip', '127.0.0.1');
         $port = $input->getOption('port');
         $config = $context->getResult('config', $host_config);
 

@@ -49,7 +49,7 @@ class GetFileCommand extends BaseCommand
         $file = $input->getArgument('file');
 
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $context->set('sourceFile', $file);
         $context->set('destFile', getcwd());
 

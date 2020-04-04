@@ -30,20 +30,19 @@ class JiraCommand extends BaseOptionsCommand
      * @param OutputInterface $output
      *
      * @return int|null
+     * @throws ValidationFailedException
+     * @throws \JiraRestApi\JiraException
+     * @throws \JsonMapper_Exception
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->checkAllRequiredOptionsAreNotEmpty($input);
         $this->readConfiguration($input);
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
 
         $jira_config = $this->configuration->getSetting('jira', []);
         $errors = new ValidationErrorBag();

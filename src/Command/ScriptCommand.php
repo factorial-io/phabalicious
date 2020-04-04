@@ -86,8 +86,7 @@ class ScriptCommand extends BaseCommand
                 $script_data = $script_data['script'];
             }
 
-            $context = new TaskContext($this, $input, $output);
-            $context->set('variables', $script_arguments);
+            $context = $this->createContext($input, $output, $script_arguments);
             $context->set('scriptData', $script_data);
 
             $this->getMethods()->call('script', 'runScript', $this->getHostConfig(), $context);

@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.5 / 2020-03-02
+
+### Fixed
+
+  * limit amount of commit messages to 20 when doing artifacts deployment
+
 ## 3.3.4 / 2020-01-21
 
 ### Fixed

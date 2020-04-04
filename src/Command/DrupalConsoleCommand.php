@@ -46,7 +46,7 @@ class DrupalConsoleCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $context->set('command', $input->getArgument('drupal-command'));
         $host_config = $this->getHostConfig();
 
