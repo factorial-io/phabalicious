@@ -41,7 +41,7 @@ class WorkspaceUpdateCommand extends ScaffoldBaseCommand
         if (!$root_folder) {
             throw new \InvalidArgumentException('Could not find multibasebox root folder!');
         }
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
 
         $name = basename($root_folder);
         $root_folder = dirname($root_folder);

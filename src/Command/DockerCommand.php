@@ -33,13 +33,6 @@ class DockerCommand extends BaseCommand
                 InputArgument::IS_ARRAY | InputArgument::REQUIRED,
                 'docker tasks to run'
             )
-            ->addOption(
-                'arguments',
-                'a',
-                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'Pass optional arguments',
-                []
-            )
             ->setHelp('Run one or more specific docker tasks');
     }
 
@@ -75,13 +68,10 @@ class DockerCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $docker_config = $this->getDockerConfig();
         $context->set('docker_config', $docker_config);
 
-        $arguments = $this->parseScriptArguments([], $input->getOption('arguments'));
-        $context->set('variables', $arguments);
-        $context->set('deployArguments', $arguments);
 
         $tasks = $input->getArgument('docker');
         if (!is_array($tasks)) {

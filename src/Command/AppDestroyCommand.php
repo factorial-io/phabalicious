@@ -43,7 +43,7 @@ class AppDestroyCommand extends AppBaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $host_config = $this->getHostConfig();
 
         $this->configuration->getMethodFactory()->runTask('appCheckExisting', $host_config, $context);

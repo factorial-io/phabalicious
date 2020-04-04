@@ -61,7 +61,7 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
     {
         $url = $input->getArgument('scaffold-url');
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
 
         $this->scaffold($url, $root_folder, $context);
         return 0;

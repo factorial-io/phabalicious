@@ -48,7 +48,7 @@ class AboutCommand extends BaseCommand
             $this->write($output, $this->getDockerConfig()->raw(), 2);
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $this->getMethods()->runTask('about', $this->getHostConfig(), $context);
     }
 

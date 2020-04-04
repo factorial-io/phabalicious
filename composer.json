@@ -20,7 +20,7 @@
         "stecman/symfony-console-completion": "^0.10.0",
         "symfony/finder": "^4.1",
         "thibaud-dauce/mattermost-php": "^1.2",
-        "twig/twig": "^2.5",
+        "twig/twig": "^2.7",
         "ext-openssl": "*",
         "jakeasmith/http_build_url": "^1.0",
         "padraic/phar-updater": "^1.0",
@@ -32,8 +32,8 @@
         "phpunit/phpunit": "^7.3",
         "phpstan/phpstan": "^0.11.9",
         "phpstan/phpstan-symfony": "^0.11.6",
-        "jakub-onderka/php-parallel-lint": "^1.0",
-        "phpro/grumphp": "0.16.*"
+        "phpro/grumphp": "0.16.*",
+        "php-parallel-lint/php-parallel-lint": "^1.1"
     },
     "autoload": {
         "psr-4": {
@@ -56,6 +56,11 @@
         },
         "build-phar": "box compile",
         "install-phar": "cp ./build/phabalicious.phar /usr/local/bin/phab; chmod u+x /usr/local/bin/phab"
+    },
+    "config": {
+        "platform": {
+            "php": "7.1.3"
+        }
     },
     "extra": {
       "phar-builder": {

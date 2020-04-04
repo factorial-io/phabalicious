@@ -3,7 +3,7 @@
   "files": [
     ".env",
     "config/services.yml",
-    "vendor/twig/twig/lib/Twig/Test.php"
+    "vendor/twig/twig/src/TwigTest.php"
   ],
   "directories-bin": [
     "config/scaffold"

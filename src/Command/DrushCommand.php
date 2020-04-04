@@ -43,7 +43,7 @@ class DrushCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $context->set('command', implode(' ', $input->getArgument('drush')));
 
         // Allow methods to override the used shellProvider:
