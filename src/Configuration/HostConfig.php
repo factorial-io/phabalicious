@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Configuration;
 
+use Phabalicious\Method\BaseMethod;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use PHPUnit\Util\Configuration;
 
@@ -123,5 +124,15 @@ class HostConfig implements \ArrayAccess
     public function isType(string $type)
     {
         return $this['type'] == $type;
+    }
+
+    public function isMethodSupported(BaseMethod $method)
+    {
+        foreach ($this->get('needs') as $need) {
+            if ($method->supports($need)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

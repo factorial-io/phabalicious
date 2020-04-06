@@ -173,7 +173,9 @@ class SshMethod extends BaseMethod implements MethodInterface
                 $this->createRemoteToHostTunnel($config, $from_config, $context);
             }
         }
-        if (empty($this->knownHostsChecked[$config->get('configName')])) {
+        if (empty($this->knownHostsChecked[$config->get('configName')])
+          && $config->isMethodSupported($this)
+        ) {
             $this->knownHostsChecked[$config->get('configName')] = true;
             $known_hosts = $this->getKnownHosts($config, $context);
             $known_hosts[] = $config['host'] . ':' . $config->get('port', 22);
