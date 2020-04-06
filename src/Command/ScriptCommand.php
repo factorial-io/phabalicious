@@ -81,12 +81,11 @@ class ScriptCommand extends BaseCommand
                 return 1;
             }
             $defaults = $script_data['defaults'] ?? [];
-            $script_arguments = $this->parseScriptArguments($defaults, $input->getOption('arguments'));
             if (!empty($script_data['script'])) {
                 $script_data = $script_data['script'];
             }
 
-            $context = $this->createContext($input, $output, $script_arguments);
+            $context = $this->createContext($input, $output, $defaults);
             $context->set('scriptData', $script_data);
 
             $this->getMethods()->call('script', 'runScript', $this->getHostConfig(), $context);

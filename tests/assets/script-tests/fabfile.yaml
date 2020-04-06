@@ -13,6 +13,14 @@ common:
       - debug(deployFinished on dev)
 
 
+scripts:
+  testDefaults:
+    defaults:
+      valueA: a
+      valueB: b
+    script:
+      - "echo Value A: %arguments.valueA%"
+      - "echo Value B: %arguments.valueB%"
 
 hosts:
   base:
