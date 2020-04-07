@@ -39,7 +39,7 @@ class StartRemoteAccessCommand extends BaseCommand
             'ip',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Host/IP to connect to',
+            'Host/IP to connect to'
         )
         ->addOption(
             'public-ip',
