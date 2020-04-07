@@ -39,6 +39,8 @@ This will pull the latest changes from the repository. If you want to update to 
 phab workspace:update --branch docker-for-mac-catalina
 ```
 
+Please note: if you changed the contents of the fabfile.local.yaml, these changes will be overridden. Better to keep them in `fabfile.local.override.yml`.
+
 ## Read more
 
 For more information visit the github repositories of the projects:
