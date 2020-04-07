@@ -191,11 +191,13 @@ This will print all host configuration for the host `staging`.
 
 * `yarnRootFolder` folder where the package.json is located.
 * `yarnBuildCommand` build-command for yarn to execute when running the install- or reset-task.
+* `yarnRunContext` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the yarn command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the yarn executable by a docker exec method.
 
 ### Configuration of the npm-method
 
 * `npmRootFolder` folder where the package.json is located.
 * `npmBuildCommand` build-command for npm to execute when running the install- or reset-task.
+* `npmRunContext` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the npm command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the npm executable by a docker exec method.
 
 ### Configuration of the artifacts--ftp-method
 
