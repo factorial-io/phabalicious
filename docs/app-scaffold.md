@@ -96,41 +96,13 @@ To add a new asset-section, just use a new root-level key (in the above example 
 
 The assets-paths must be relative to the yaml-file containing the scaffold-commands.
 
-## the internal command `copy_assets`
+## List of supported internal commands
 
-`copy_assets` can be used in the scaffold-section to copy assets  into a specific location. The syntax is
+* `copy_assets`
+* `alter_json_file`
+* `log_message`
 
-```
-copy_assets(<targetFolder>, <assetsKey=assets>)
-```
-
-Phabalicious will load the asset-file, apply the replacement-patterns to the file-name (see the deploymentAssets for an example) and parse the content via twig. The result will bee stored inside the `<targetFolder>`
-
-## the internal command `log_message`
-
-`log_message` will log a string to the output of phabalicious. It supports several notification levels, e.g.
-
-```yaml
-scaffold:
-  - log_message(info|warning|error|success, the message to display)
-```
-
-## the internal command `alter_json_file`
-
-This internal command can alter a json-file. It will merge the data from a yaml section into the json file. Here's an example:
-
-```yaml
-
-dataToInject:
-  one: foo
-  two: bar
-  dict:
-    one: boo
-    two: far
-
-scaffold:
-  alter_json_file(package.json, dataToInject)
-```
+These are documented [here](scaffolder.md).
 
 
 ## Inheritance

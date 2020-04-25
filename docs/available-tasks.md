@@ -636,3 +636,19 @@ phab npm yarn lint --config hostB
 ```
 
 This will run a yarn command on the given configuration. Make sure, that your host config has `yarn` as a need a `yarnRootFolder` points to the folder containing package.json.
+
+###variable:pull
+
+```bash
+phab -chost variable:pull path/to/yaml.file
+```
+
+This will pull all variables listed in `path/to/yaml.file` and put the values into the yaml file and store it again. (Works currently only for D7). `variable:pull` and `variable:push` are usefull to retrieve a list of variables and restore them at some point in the future.
+
+###variable:push
+
+```bash
+phab -chost variable:push path/to/yaml.file
+```
+
+This will push all variables listed in `path/to/yaml.file` and set them on the remote instance. (Works currently only for D7)

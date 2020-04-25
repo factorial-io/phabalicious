@@ -43,13 +43,16 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
 
     private function getRootFolder(HostConfig $host_config)
     {
-        $root_folder = !empty($host_config['composerRootFolder'])
-            ? $host_config['composerRootFolder']
-            : !empty($host_config['gitRootFolder'])
-                ? $host_config['gitRootFolder']
-                : $host_config['rootFolder'];
-
-        return $root_folder;
+        $keys = [
+            'composerRootFolder',
+            'gitRootFolder',
+            'rootFolder'
+        ];
+        foreach ($keys as $key) {
+            if (!empty($host_config[$key])) {
+                return $host_config[$key];
+            }
+        }
     }
 
     public function drupalConsole(HostConfig $host_config, TaskContextInterface $context)

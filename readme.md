@@ -2,6 +2,8 @@
 
 Phabalicious is the successor of the python tool [fabalicious](https://github.com/factorial-io/fabalicious), a deployment helper based on [fabric](http:fabfile.org). Phabalicious is a complete rewrite in PHP using the symfony framework. It uses the same fabfile.yaml as fabalicious.
 
+[![factorial-io](https://circleci.com/gh/factorial-io/phabalicious.svg?style=shield)](https://circleci.com/gh/factorial-io/phabalicious)
+
 ## Installation
 
 * Download the latest version from [Github](https://github.com/factorial-io/phabalicious/releases)
