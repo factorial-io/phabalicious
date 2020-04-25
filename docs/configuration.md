@@ -134,7 +134,14 @@ This will print all host configuration for the host `staging`.
 * `inheritFromBlueprint` this will apply the blueprint to the current configuration. This makes it easy to base the common configuration on a blueprint and just override some parts of it.
     * `config` this is the blueprint-configuration used as a base.
     * `variant` this is the variant to pass to the blueprint
-
+* `knownHosts` a list of hosts which should be added to the known-hosts file before running a ssh-/git-command. Here's an example:
+  ```yaml
+  knownHosts:
+    - github.com
+    - source.factorial.io:2222
+  ```  
+  They can be overridden on a per host-basis. 
+  
 ### Configuration for the local-method
 
 * `shellProvider` default is `local`, see above.
@@ -225,7 +232,7 @@ This will print all host configuration for the host `staging`.
   * `actions` a list of actions to perform. See detailed documentation for more info.
   * `stages` a list of custom stages to perform. A combination of these values:
 
-    ```
+    ```yaml
     - installCode
     - installDependencies
     - runActions
@@ -353,7 +360,7 @@ For more information see the main scripts section below.
 
 The jira-command needs some configuration. It is advised to store this configuration in your user folder (`~/.fabfile.local.yaml`) or somewhere upstream of your project folder, as it might contain sensitive information.
 
-```
+```yaml
 jira:
   host: <jira-host>
   user: <jira-user>
@@ -362,7 +369,7 @@ jira:
 
 The command will use the global `key` as project-key, you can override that via the following configuration:
 
-```
+```yaml
 jira:
   projectKey: <jira project-key>
 ```
@@ -371,7 +378,7 @@ jira:
 
 Phabalicious can send notifications to a running Mattermost instance. You need to create an incoming web hook in your instance and pass this to your configuration. Here's an example
 
-```
+```yaml
 mattermost:
   username: phabalicious
   webhook: https://chat.your.server.tld/hooks/...
@@ -394,7 +401,7 @@ hosts:
 
 You can test the Mattermost config via
 
-```
+```bash
 phab notify "hello world" --config <your-config>
 ```
 

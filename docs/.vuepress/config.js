@@ -22,6 +22,7 @@ module.exports = {
       "/docker-integration.html",
       "/workspace.html",
       "/scripts.html",
+      "/scaffolder.html",
       "/app-scaffold.html",
       "/app-create-destroy.html",
       "/deploying-artifacts.html",
