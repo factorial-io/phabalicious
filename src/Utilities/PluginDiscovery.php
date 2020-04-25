@@ -5,12 +5,15 @@ namespace Phabalicious\Utilities;
 use Composer\Autoload\ClassLoader;
 use Composer\Semver\Comparator;
 use Phabalicious\Exception\MismatchedVersionException;
-use Phabalicious\Scaffolder\DataTransformerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Application;
 
 class PluginDiscovery
 {
+
+    /**
+     * @var ClassLoader|null;
+     */
+    protected static $autoloader = null;
 
     public static function discover($application_version, $paths, $interface_to_implement, LoggerInterface $logger)
     {
@@ -33,25 +36,16 @@ class PluginDiscovery
             return;
         }
         
-        // Find composer.json
-        $directory = __DIR__;
-        $root = null;
-        do {
-            $directory = dirname($directory);
-            $vendor = $directory . '/vendor';
-            if (is_dir($vendor)) {
-                $root = $directory;
-            }
-        } while (is_null($root) && $directory !== '/');
-        if ($root == null) {
-            throw new \RuntimeException('Could not detect vendor-directory');
-        }
-
-        $logger->debug('Found autoloader at ' . $root . '/vendor/autoload.php');
-
         // Get autoloader and register plugins namespace.
-        $autoloader = require($root . '/vendor/autoload.php');
-        $autoloader->addPsr4('Phabalicious\Scaffolder\Transformers\\', realpath($path));
+        // We cant use the autoloader part of the phar, as it is optimized using the classmap authoritative mode
+        // which prevents dynamic loading of classes.
+        if (!self::$autoloader) {
+            self::$autoloader = new ClassLoader();
+            self::$autoloader->register(true);
+        }
+        $realpath = realpath($path);
+        $logger->debug(sprintf('Registering %s for namespace Phabalicious\\Scaffolder\\Transformers', $realpath));
+        self::$autoloader->addPsr4('Phabalicious\\Scaffolder\\Transformers\\', $realpath);
 
         $contents = scandir($path);
         foreach ($contents as $filename) {
