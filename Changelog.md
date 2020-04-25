@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.1 / 2020-04-25
+
+### Fixed
+
+  * Fix for non-working plugin autoloader when using bundled as phar
+
 ## 3.4.0
 
 ### New
