@@ -57,7 +57,7 @@ class GetBackupCommand extends BaseCommand
             return trim(strtolower($elem));
         }, $input->getArgument('what'));
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $context->set('what', $what);
 
         $hash = $input->getArgument('hash');

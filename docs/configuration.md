@@ -1,6 +1,7 @@
+---
+sidebarDepth: 3
+---
 # Structure of the configuration file
-
-## Overview
 
 The configuration is fetched from the file `fabfile.yaml` and should have the following structure:
 
@@ -23,11 +24,11 @@ hosts:
 
 Here's the documentation of the supported and used keys:
 
-### name
+## name
 
 The name of the project, it's only used for output.
 
-### needs
+## needs
 
 List here all needed methods for that type of project. Available methods are:
 
@@ -68,11 +69,11 @@ needs:
 ```
 
 
-### requires
+## requires
 
 The file-format of phabalicious changed over time. Set this to the lowest version of phabalicious which can handle the file. Should bei `2.0`
 
-### hosts
+## hosts
 
 Hosts is a list of host-definitions which contain all needed data to connect to a remote host. Here's an example
 
@@ -110,7 +111,7 @@ phab --config=staging about
 
 This will print all host configuration for the host `staging`.
 
-#### General keys
+### General keys
 
 * `type` defines the type of installation. Currently there are four types available:
     * `dev` for dev-installations, they won't backup the databases on deployment
@@ -133,14 +134,21 @@ This will print all host configuration for the host `staging`.
 * `inheritFromBlueprint` this will apply the blueprint to the current configuration. This makes it easy to base the common configuration on a blueprint and just override some parts of it.
     * `config` this is the blueprint-configuration used as a base.
     * `variant` this is the variant to pass to the blueprint
-
-#### Configuration for the local-method
+* `knownHosts` a list of hosts which should be added to the known-hosts file before running a ssh-/git-command. Here's an example:
+  ```yaml
+  knownHosts:
+    - github.com
+    - source.factorial.io:2222
+  ```  
+  They can be overridden on a per host-basis. 
+  
+### Configuration for the local-method
 
 * `shellProvider` default is `local`, see above.
 * `shellExecutable` default is `/bin/bash` The executable for running a shell. Please note, that phabalicious requires a sh-compatible shell.
 * `shellProviderExecutable`, the command, which will create the process for a shell, here `/bin/bash`
 
-#### Configuration for the ssh-method
+### Configuration for the ssh-method
 
 * `host`, `user`, `port` are used to connect via SSH to the remote machine. Please make sure SSH key forwarding is enabled on your installation.
 * `disableKnownHosts`, default is false, set to true to ignore the known_hosts-file.
@@ -155,18 +163,18 @@ This will print all host configuration for the host `staging`.
   * `shellProviderExecutable`, default is `/usr/bin/ssh`, the executable to establish the connection.
 
 
-#### Configuration for the git-method
+### Configuration for the git-method
 
 * `gitRootFolder`  the folder, where the git-repository lies. Defaults to `rootFolder`
 * `branch` the name of the branch to use for deployments, they get usually checked out and pulled from origin.
 * `ignoreSubmodules` default is false, set to false, if you don't want to update a projects' submodule on deploy.
 * `gitOptions` a keyed list of options to apply to a git command. Currently only pull is supported. If your git-version does not support `--rebase` you can disable it via an empty array: `pull: []`
 
-#### Configuration for the composer-method
+### Configuration for the composer-method
 
 * `composerRootFolder` the folder where the composer.json for the project is stored, defaults to `gitRootFolder`.
 
-#### Configuration for the drush-method
+### Configuration for the drush-method
 
 * `siteFolder` is a drupal-specific folder, where the settings.php resides for the given installation. This allows to interact with multisites etc.
 * `filesFolder` the path to the files-folder, where user-assets get stored and which should be backed up by the `files`-method
@@ -186,19 +194,19 @@ This will print all host configuration for the host `staging`.
 * `drushVersion` set the used crush-version, default is `8`. Drush is not 100% backwards-compatible, for phabalicious needs to know its version.
 * `supportsZippedBackups` default is true, set to false, when zipped backups are not supported
 
-#### Configuration of the yarn-method
+### Configuration of the yarn-method
 
 * `yarnRootFolder` folder where the package.json is located.
 * `yarnBuildCommand` build-command for yarn to execute when running the install- or reset-task.
-* `yarnRunContext`, set it to `dockerHost`  to instruct phabalicious to run the yarn commands in the docker context.
+* `yarnRunContext` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the yarn command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the yarn executable by a docker exec method.
 
-#### Configuration of the npm-method
+### Configuration of the npm-method
 
 * `npmRootFolder` folder where the package.json is located.
 * `npmBuildCommand` build-command for npm to execute when running the install- or reset-task.
-* `npmRunContext`, set it to `dockerHost`  to instruct phabalicious to run the yarn commands in the docker context.
+* `npmRunContext` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the npm command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the npm executable by a docker exec method.
 
-#### Configuration of the artifacts--ftp-method
+### Configuration of the artifacts--ftp-method
 
 * `target` keeps all configuration bundled:
   * `user` the ftp-user
@@ -210,7 +218,7 @@ This will print all host configuration for the host `staging`.
   * `actions` a list of actions to perform. See detailed documentation for more info.
 
 
-#### Configuration of the artifacts--git method
+### Configuration of the artifacts--git method
 
 * `target` contains the following options
   * `repository` the url of the target repository
@@ -218,31 +226,31 @@ This will print all host configuration for the host `staging`.
   * `useLocalRepository` if set to true, phab will use the current directory as a source for the artifact, if set to false, phab will create a new app in a temporary folder and use that as a artifact
   * `actions` a list of actions to perform. See detailed documentation for more info.
 
-#### Configuration of the artifacts--custom method
+### Configuration of the artifacts--custom method
 
 * `target` contains the following options
   * `actions` a list of actions to perform. See detailed documentation for more info.
   * `stages` a list of custom stages to perform. A combination of these values:
 
-    ```
+    ```yaml
     - installCode
     - installDependencies
     - runActions
     - runDeployScript
     ```
 
-#### Configuration of the docker-method
+### Configuration of the docker-method
 
 * `docker` for all docker-relevant configuration. `configuration` and `name`/`service` are the only required keys, all other are optional and used by the docker-tasks.
     * `configuration` should contain the key of the dockerHost-configuration in `dockerHosts`
     * `name` contains the name of the docker-container. This is needed to get the IP-address of the particular docker-container when using ssh-tunnels (see above).
     * for docker-compose-base setups you can provide the `service` instead the name, phabalicious will get the docker name automatically from the service.
 
-#### Configuration of the mattermost-method
+### Configuration of the mattermost-method
 
 * `notifyOn`: a list of all tasks where to send a message to a Mattermost channel. Have a look at the global Mattermost-configuration-example below.
 
-### dockerHosts
+## dockerHosts
 
 `dockerHosts` is similar structured as the `hosts`-entry. It's a keyed lists of hosts containing all necessary information to create a ssh-connection to the host, controlling the docker-instances, and a list of tasks, the user might call via the `docker`-command. See the `docker`-entry for a more birds-eye-view of the concepts.
 
@@ -283,7 +291,7 @@ hosts:
       configuration: mbb
 ```
 
-### common
+## common
 
 common contains a list of commands, keyed by task and type which gets executed when the task is executed.
 
@@ -310,7 +318,7 @@ common:
 
 The first key is the task-name (`reset`, `deploy`, ...), the second key is the type of the installation (`dev`, `stage`, `prod`, `test`). Every task is prepended by a prepare-stage and appended by a finished-stage, so you can call scripts before and after an actual task. You can even run other scripts via the `execute`-command, see the `scripts`-section.
 
-### scripts
+## scripts
 
 A keyed list of available scripts. This scripts may be defined globally (on the root level) or on a per host-level. The key is the name of the script and can be executed via
 
@@ -348,11 +356,11 @@ Running the script via `phab config:mbb script:defaultArgumentTest,name="Julia"`
 
 For more information see the main scripts section below.
 
-### jira
+## jira
 
 The jira-command needs some configuration. It is advised to store this configuration in your user folder (`~/.fabfile.local.yaml`) or somewhere upstream of your project folder, as it might contain sensitive information.
 
-```
+```yaml
 jira:
   host: <jira-host>
   user: <jira-user>
@@ -361,16 +369,16 @@ jira:
 
 The command will use the global `key` as project-key, you can override that via the following configuration:
 
-```
+```yaml
 jira:
   projectKey: <jira project-key>
 ```
 
-### mattermost
+## mattermost
 
 Phabalicious can send notifications to a running Mattermost instance. You need to create an incoming web hook in your instance and pass this to your configuration. Here's an example
 
-```
+```yaml
 mattermost:
   username: phabalicious
   webhook: https://chat.your.server.tld/hooks/...
@@ -393,11 +401,11 @@ hosts:
 
 You can test the Mattermost config via
 
-```
+```bash
 phab notify "hello world" --config <your-config>
 ```
 
-### webhooks
+## webhooks
 
 Phabalicious provides a command to invoke webhooks from the command line, but also integrates invoking webhooks when running a specific task or as a callback for scripts.
 
@@ -472,7 +480,7 @@ host:
       deployFinished: myWebhook2
 ```
 
-### other
+## other
 
 * `deploymentModule` name of the deployment-module the drush-method enables when doing a deploy
 * `sqlSkipTables` a list of table-names drush should omit when doing a backup.
@@ -499,68 +507,3 @@ configurationManagement:
 ```
 
 
-## Inheritance
-
-Sometimes it make sense to extend an existing configuration or to include configuration from other places from the file-system or from remote locations. There's a special key `inheritsFrom` which will include the yaml found at the location and merge it with the data. This is supported for entries in `hosts` and `dockerHosts` and for the fabfile itself.
-
-If a `host`, a `dockerHost` or the fabfile itself has the key `inheritsFrom`, then the given key is used as a base-configuration. Here's a simple example:
-
-```yaml
-hosts:
-  default:
-    port: 22
-    host: localhost
-    user: default
-  example1:
-    inheritsFrom: default
-    port: 23
-  example2:
-    inheritsFrom: example1
-    user: example2
-```
-
-`example1` will store the merged configuration from `default` with the configuration of `example1`. `example2` is a merge of all three configurations: `example2` with `example1` with `default`.
-
-```yaml
-hosts:
-  example1:
-    port: 23
-    host: localhost
-    user: default
-  example2:
-    port: 23
-    host: localhost
-    user: example2
-```
-
-You can even reference external files to inherit from:
-
-```yaml
-hosts:
-  fileExample:
-    inheritsFrom: ./path/to/config/file.yaml
-  httpExample:
-    inheritsFrom: http://my.tld/path/to/config_file.yaml
-```
-
-This mechanism works also for the fabfile.yaml / index.yaml itself, and is not limited to one entry:
-
-```yaml
-name: test fabfile
-
-inheritsFrom:
-  - ./mbb.yaml
-  - ./drupal.yaml
-```
-
-### Inherit from a blueprint
-
-You can even inherit from a blueprint configuration for a host-config. This host-config can then override specific parts.
-
-```
-host:
-  demo:
-    inheritsFromBlueprint:
-      config: my-blueprint-config
-      varian: the-variant
-```

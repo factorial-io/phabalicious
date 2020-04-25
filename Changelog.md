@@ -1,5 +1,55 @@
 # Changelog
 
+## 3.4.0
+
+### New
+
+  * Support override-mechanism. If a yaml-file with the extension `override.yml` or `override.yaml` exists, its data will be merged with the original file.
+  * Add ip option to start-remote-access command to connect to a specific host
+  * Initial implementation of `variable:pull` and `variable:push` for D7 via drush
+  * add new command `scaffold` which allows to scaffold and transform not only apps but also other types of files.
+  * Introducing plugin mechanism to add functionality via external php files for the scaffolder. Will be used by `phab-entity-scaffolder`
+	  * Use static array of discovered transformers, to fix unit testing, as php does not allow to discover a php-class multiple times
+	  * Add logging to plugin discovery
+	  * Fix options with multiple values
+	  * Implement better approach to find vendor-folder
+	  * Expose target_path to transformers
+	  * Make sure, that only yaml files get transformed
+	  * Use global autoloader, so registering new namespaces are permanent
+	  * Use autoloader to register plugin classes
+	  * Refactor scaffold callbacks in dedicated classes, so they can be externally loaded
+	  * First draft of a plugin mechanism to decouple scaffolding from phabalicious, as an effort to port entityscaffolder to d8
+  * Support for knownHosts. Setting `knownHosts` for a host- or dockerHost-configurtion will make sure, that the keys for that hosts are added to the known_hosts-file.
+  * Update known_hosts before specific commands, needs possibly more work #70
+
+### Changed
+
+  * Remove entity-updates option during drush reset
+  * Better error message for missing arguments
+  * Refactor task context creation to allow arguments for all commands
+  * Upgrade vuepress dependencies
+  * Update dependencies
+  * Update docs
+
+### Fixed
+
+  * Satisfy PHP 7.2
+  * Document yarnRunContext and npmRunContext
+  * Fix regression with script default arguments, added test-case. Fixes  #77
+  * Fix exclude action for git artifact deployments #73
+  * Fix race condition on app:create
+  * Remove deprecated code
+  * If the underlying shell terminates with an exit code, throw an exception
+  * Use a different name for the target filename to prevent name-clashes
+  * Fix version command, nicer output
+
+
+## 3.3.5 / 2020-03-02
+
+### Fixed
+
+  * limit amount of commit messages to 20 when doing artifacts deployment
+
 ## 3.3.4 / 2020-01-21
 
 ### Fixed

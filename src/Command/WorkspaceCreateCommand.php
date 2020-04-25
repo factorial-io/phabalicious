@@ -51,7 +51,7 @@ class WorkspaceCreateCommand extends ScaffoldBaseCommand
     {
         $url  = $this->getLocalScaffoldFile('mbb/mbb.yml');
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
 
         $this->scaffold($url, $root_folder, $context);
         return 0;

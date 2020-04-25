@@ -211,8 +211,15 @@ class ConfigurationService
             return $this->cache[$cid];
         }
 
-        $data = Yaml::parseFile($file);
         $this->logger->info(sprintf('Read data from `%s`', $file));
+        $data = Yaml::parseFile($file);
+        $ext = '.' . pathinfo($file, PATHINFO_EXTENSION);
+        $override_file = str_replace($ext, '.override' . $ext, $file);
+        $this->logger->info(sprintf('Trying to read data from override `%s`', $override_file));
+
+        if (file_exists($override_file)) {
+            $data = Utilities::mergeData($data, Yaml::parseFile($override_file));
+        }
 
         if ($data && isset($data['requires'])) {
             $required_version = $data['requires'];

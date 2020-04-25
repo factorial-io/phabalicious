@@ -50,7 +50,7 @@ class ListBackupsCommand extends BaseCommand
             return $result;
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $what = array_map(function ($elem) {
             return trim(strtolower($elem));
         }, $input->getArgument('what'));

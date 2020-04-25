@@ -2,6 +2,7 @@
 
 `fabfile.local.yaml` is used to override parts of your fabfile-configuration. If you run a fab-command the code will try to find a `fabfile.local.yaml` up to five folder levels up, or in your user-folder (`~/.fabfile.local.yaml`) and merge the data with your fabfile.yaml.
 
+
 A small example:
 
 ```
@@ -36,3 +37,9 @@ Using a local `.netrc`-file in the docker-container
 ```
 dockerNetRcFile: /home/user/.netrc
 ```
+
+## Overrides on the same level
+
+Another possibility is to place a socalled override file side by side to the original ymal-file. Name it the same as the original file, and add `.override` before the file extension, e.g. `fabfile.yml` becomes `fabfile.override.yml`.
+
+The data of the override will be merged with the data of the original file. No inheritance or other advanced features are supported.

@@ -24,7 +24,7 @@ class ExcludeAction extends ActionBase
 
         $shell->pushWorkingDir($target_dir);
         foreach ($this->getArguments() as $argument) {
-            $shell->run(sprintf('#! git checkout %s', $argument));
+            $shell->run(sprintf('#!git checkout %s', $argument));
         }
         $shell->popWorkingDir();
     }

@@ -8,7 +8,7 @@ use Phabalicious\Method\TaskContextInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.3.4';
+    const FALLBACK_VERSION = '3.4.0';
 
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
@@ -264,5 +264,28 @@ class Utilities
             }
         }
         return $return;
+    }
+
+
+    public static function generateUUID()
+    {
+        return bin2hex(openssl_random_pseudo_bytes(4)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+            bin2hex(openssl_random_pseudo_bytes(6));
+    }
+
+    /**
+     * @param array $tokens
+     * @return array
+     */
+    public static function getReplacements($tokens): array
+    {
+        $replacements = [];
+        foreach ($tokens as $key => $value) {
+            $replacements['%' . $key . '%'] = $value;
+        }
+        return $replacements;
     }
 }

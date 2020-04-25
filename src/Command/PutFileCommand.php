@@ -52,7 +52,7 @@ class PutFileCommand extends BaseCommand
             throw new \RuntimeException('Could not find file `' . $file . '`!');
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $context->set('sourceFile', $file);
 
         $context->io()->comment('Putting file `' . $file . '` to `' . $this->getHostConfig()['configName']. '`');

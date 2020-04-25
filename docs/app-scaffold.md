@@ -1,3 +1,6 @@
+---
+sidebarDepth: 3
+---
 # Scaffolding a new app
 
 Phabalicious has a simple but powerful scaffold-command. It will read a yml-file and interpret the contents. It will use the existing pattern-replacement used for scripts and twig for changing file-contents. The scaffolding and fixture-files can live on a remote server or on your file-system.
@@ -93,15 +96,14 @@ To add a new asset-section, just use a new root-level key (in the above example 
 
 The assets-paths must be relative to the yaml-file containing the scaffold-commands.
 
-## the internal command `copy_assets`
+## List of supported internal commands
 
-`copy_assets` can be used in the scaffold-section to copy assets  into a specific location. The syntax is
+* `copy_assets`
+* `alter_json_file`
+* `log_message`
 
-```
-copyAssets(<targetFolder>, <assetsKey=assets>)
-```
+These are documented [here](scaffolder.md).
 
-Phabalicious will load the asset-file, apply the replacement-patterns to the file-name (see the deploymentAssets for an example) and parse the content via twig. The result will bee stored inside the `<targetFolder>`
 
 ## Inheritance
 

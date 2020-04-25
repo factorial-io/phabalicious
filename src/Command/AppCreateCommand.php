@@ -67,7 +67,7 @@ class AppCreateCommand extends AppBaseCommand
             $copy_from = $this->getConfiguration()->getHostConfig($copy_from);
         }
 
-        $context = new TaskContext($this, $input, $output);
+        $context = $this->createContext($input, $output);
         $host_config = $this->getHostConfig();
 
         $this->configuration->getMethodFactory()->runTask('appCheckExisting', $host_config, $context);
