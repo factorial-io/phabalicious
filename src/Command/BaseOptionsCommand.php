@@ -15,8 +15,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class BaseOptionsCommand extends Command implements CompletionAwareInterface
 {
+    /**
+     * @var ConfigurationService
+     */
     protected $configuration;
 
+    /**
+     * @var MethodFactory
+     */
     protected $methods;
 
 
@@ -143,6 +149,7 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
      *
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @param array $default_arguments
      * @return TaskContext
      */
     protected function createContext(InputInterface $input, OutputInterface $output, $default_arguments = [])
