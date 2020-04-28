@@ -173,7 +173,10 @@ class GitMethod extends BaseMethod implements MethodInterface
         $shell = $context->get('outerShell', $host_config->shell());
         $install_dir = $context->get('installDir', $host_config['gitRootFolder']);
 
-        $repository = $context->getConfigurationService()->getSetting('repository', false);
+        $repository = $host_config->get(
+            'repository',
+            $context->getConfigurationService()->getSetting('repository', false)
+        );
         if (!$repository) {
             throw new \InvalidArgumentException('Missing `repository` in fabfile! Cannot proceed!');
         }
