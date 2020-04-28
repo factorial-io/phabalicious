@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.2 / 2020-04-28
+
+### New
+
+  * Allow per host repository settings
+
 ## 3.4.1 / 2020-04-25
 
 ### Fixed
