@@ -220,7 +220,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             sprintf('#!git ls-remote -h --exit-code %s %s', $target_repository, $target_branch),
             true
         )->succeeded();
-        $branch_to_clone = $branch_exists ? $target_branch : 'master';
+        $branch_to_clone = $branch_exists ? $target_branch : $host_config[self::PREFS_KEY]['baseBranch'] ?? 'master';
         $shell->run(sprintf('#!git clone --depth 30 -b %s %s %s', $branch_to_clone, $target_repository, $target_dir));
         $shell->pushWorkingDir($target_dir);
 
