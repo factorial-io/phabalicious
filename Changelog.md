@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.3 / 2020-04-29
+
+##Fixed
+
+ * Previous versions did not check the version constraints of imported yaml files.
+
 ## 3.4.2 / 2020-04-28
 
 ### New
