@@ -199,6 +199,33 @@ class ConfigurationService
     }
 
     /**
+     * Check requires of data.
+     *
+     * @param array $data
+     * @param $file
+     * @throws MismatchedVersionException
+     */
+    protected function checkRequires(array $data, $file)
+    {
+
+        if ($data && isset($data['requires'])) {
+            $required_version = $data['requires'];
+            $app_version = $this->application->getVersion();
+            $this->getLogger()->info(sprintf("required %s in %s, app hasL %s", $required_version, $file, $app_version));
+            if (Comparator::greaterThan($required_version, $app_version)) {
+                throw new MismatchedVersionException(
+                    sprintf(
+                        'Could not read from %s because of version mismatch. %s is required, current app is %s',
+                        $file,
+                        $required_version,
+                        $app_version
+                    )
+                );
+            }
+        }
+    }
+
+    /**
      * @param string $file
      *
      * @return mixed
@@ -220,21 +247,9 @@ class ConfigurationService
         if (file_exists($override_file)) {
             $data = Utilities::mergeData($data, Yaml::parseFile($override_file));
         }
+        
+        $this->checkRequires($data, $file);
 
-        if ($data && isset($data['requires'])) {
-            $required_version = $data['requires'];
-            $app_version = $this->application->getVersion();
-            if (Comparator::greaterThan($required_version, $app_version)) {
-                throw new MismatchedVersionException(
-                    sprintf(
-                        'Could not read from %s because of version mismatch. %s is required, current app is %s',
-                        $file,
-                        $required_version,
-                        $app_version
-                    )
-                );
-            }
-        }
 
         $this->cache[$cid] = $data;
         return $data;
@@ -303,6 +318,7 @@ class ConfigurationService
                 $add_data = $lookup[$resource];
             } elseif (strpos($resource, 'http') !== false) {
                 $add_data = Yaml::parse($this->readHttpResource($resource));
+                $this->checkRequires($add_data, $resource);
             } elseif (file_exists($root_folder . '/' . $resource)) {
                 $add_data = $this->readFile($root_folder . '/' . $resource);
             } else {
