@@ -38,6 +38,8 @@ class SshShellProvider extends LocalShellProvider
 
             if (isset($host_config['docker']['name'])) {
                 $result['sshTunnel']['destHostFromDockerContainer'] = $host_config['docker']['name'];
+            } elseif (isset($host_config['docker']['service'])) {
+                $result['sshTunnel']['destHostFromDockerContainer'] = $host_config['docker']['service'];
             }
         }
 
