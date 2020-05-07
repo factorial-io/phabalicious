@@ -3,6 +3,7 @@
 namespace Phabalicious\Configuration;
 
 use Composer\Semver\Comparator;
+use http\Exception\InvalidArgumentException;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
@@ -293,11 +294,14 @@ class ConfigurationService
      * @param array $data
      * @param array $lookup
      *
+     * @param bool $root_folder
+     * @param array $stack
      * @return array
-     * @throws MismatchedVersionException
+     *
      * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
      */
-    public function resolveInheritance(array $data, $lookup, $root_folder = false): array
+    public function resolveInheritance(array $data, $lookup, $root_folder = false, $stack = []): array
     {
         if (!isset($data['inheritsFrom'])) {
             return $data;
@@ -313,6 +317,13 @@ class ConfigurationService
         unset($data['inheritsFrom']);
 
         foreach (array_reverse($inheritsFrom) as $resource) {
+            if (in_array($resource, $stack)) {
+                throw new \InvalidArgumentException(sprintf(
+                    "Possible recursion in inheritsFrom detected! `%s `in [%s]",
+                    $resource,
+                    implode(', ', $stack)
+                ));
+            }
             $add_data = false;
             if (isset($lookup[$resource])) {
                 $add_data = $lookup[$resource];
@@ -337,7 +348,8 @@ class ConfigurationService
             }
             if ($add_data) {
                 if (isset($add_data['inheritsFrom'])) {
-                    $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder);
+                    $stack[] = $resource;
+                    $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder, $stack);
                 }
 
                 // Clear inheritOnly from to be merged data, so it does not bleed into final data.
