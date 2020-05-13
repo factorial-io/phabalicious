@@ -39,20 +39,26 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
     }
 
 
-    public function getShellCommand(array $options = []): array
+    public function getShellCommand(array $program_to_call, array $options = []): array
     {
-        $command = parent::getShellCommand($options);
-        $command = array_merge($command, [
+        $command = [
             $this->hostConfig['dockerExecutable'],
             'exec',
             (empty($options['tty']) ? '-i' : '-it'),
             $this->hostConfig['docker']['name']
-        ]);
+        ];
         if (!empty($options['tty']) && empty($options['shell_provided'])) {
             $command[] = $this->hostConfig['shellExecutable'];
         }
 
-        return $command;
+        $ssh_command = parent::getShellCommand([], $options);
+
+        if (count($program_to_call)) {
+            $command[] = implode(' ', $program_to_call);
+        }
+        $ssh_command[] = implode(' ', $command);
+
+        return $ssh_command;
     }
 
     /**
@@ -96,12 +102,11 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
      */
     public function wrapCommandInLoginShell(array $command)
     {
-        array_unshift(
-            $command,
+        return [
             '/bin/sh',
             '--login',
-            '-c'
-        );
-        return $command;
+            '-c',
+            '\'' . implode(" ", $command) . '\'',
+        ];
     }
 }
