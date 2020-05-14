@@ -15,7 +15,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $result =  parent::getDefaultConfig($configuration_service, $host_config);
-        $result['shellProviderExecutable'] = 'docker';
+        $result['dockerExecutable'] = 'docker';
         $result['shellExecutable'] = '/bin/bash';
 
         return $result;
@@ -43,7 +43,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     public function getShellCommand(array $program_to_call, array $options = []): array
     {
         $command = [
-            $this->hostConfig['shellProviderExecutable'],
+            $this->hostConfig['dockerExecutable'],
             'exec',
             (empty($options['tty']) ? '-i' : '-it'),
             $this->hostConfig['docker']['name'],
