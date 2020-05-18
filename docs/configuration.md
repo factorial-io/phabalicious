@@ -131,6 +131,7 @@ This will print all host configuration for the host `staging`.
     * `local`: all commands are run locally
     * `ssh`: all commands are run via a ssh-shell
     * `docker-exec` all commands are run via docker-exec.
+    * `docker-exec-ver-ssh` all commands are run via docker-exec on a remote instance
 * `inheritFromBlueprint` this will apply the blueprint to the current configuration. This makes it easy to base the common configuration on a blueprint and just override some parts of it.
     * `config` this is the blueprint-configuration used as a base.
     * `variant` this is the variant to pass to the blueprint
@@ -139,9 +140,9 @@ This will print all host configuration for the host `staging`.
   knownHosts:
     - github.com
     - source.factorial.io:2222
-  ```  
-  They can be overridden on a per host-basis. 
-  
+  ```
+  They can be overridden on a per host-basis.
+
 ### Configuration for the local-method
 
 * `shellProvider` default is `local`, see above.
