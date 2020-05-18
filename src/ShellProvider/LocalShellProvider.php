@@ -55,10 +55,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
     public function createShellProcess(array $command = [], array $options = []): Process
     {
-        $shell_command = $this->getShellCommand($options);
-        if (count($command) > 0) {
-            $shell_command = array_merge($shell_command, $command);
-        }
+        $shell_command = $this->getShellCommand($command, $options);
         $this->logger->info('Starting shell with ' . implode(' ', $shell_command));
 
         $process = new Process(
@@ -230,9 +227,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
     }
 
-    public function getShellCommand(array $options = []):array
+    public function getShellCommand(array $command, array $options = []):array
     {
-        return [];
+        return $command;
     }
 
     public function exists($file): bool
