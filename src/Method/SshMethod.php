@@ -175,6 +175,7 @@ class SshMethod extends BaseMethod implements MethodInterface
         }
         if (empty($this->knownHostsChecked[$config->get('configName')])
           && $config->isMethodSupported($this)
+            && !in_array($task, ['about'])
         ) {
             $this->knownHostsChecked[$config->get('configName')] = true;
             $known_hosts = $this->getKnownHosts($config, $context);

@@ -37,7 +37,7 @@ class CopyFromCommand extends BaseCommand
     {
         if ($argumentName == 'from') {
             $data = $this->configuration->getAllHostConfigs();
-            return array_keys($data);
+            return $data ? array_keys($data) : [];
         } elseif ($argumentName == 'what') {
             return [
                 'db',

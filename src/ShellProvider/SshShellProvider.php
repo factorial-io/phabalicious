@@ -38,6 +38,8 @@ class SshShellProvider extends LocalShellProvider
 
             if (isset($host_config['docker']['name'])) {
                 $result['sshTunnel']['destHostFromDockerContainer'] = $host_config['docker']['name'];
+            } elseif (isset($host_config['docker']['service'])) {
+                $result['sshTunnel']['destHostFromDockerContainer'] = $host_config['docker']['service'];
             }
         }
 
@@ -87,7 +89,7 @@ class SshShellProvider extends LocalShellProvider
         }
     }
 
-    public function getShellCommand(array $options = []): array
+    public function getShellCommand(array $program_to_call, array $options = []): array
     {
         $command = [
             $this->hostConfig['shellProviderExecutable'],
@@ -100,6 +102,9 @@ class SshShellProvider extends LocalShellProvider
             $command[] = '-t';
         }
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'];
+        if (count($program_to_call)) {
+            $command[] = implode(' ', $program_to_call);
+        }
 
         return $command;
     }

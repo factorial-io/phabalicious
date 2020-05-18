@@ -76,14 +76,17 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         array $stages,
         bool $create_target_dir
     ) {
+        $hash = md5(rand(0, PHP_INT_MAX) . '-' . time());
         if ($use_local_repository = $host_config[self::PREFS_KEY]['useLocalRepository']) {
             $install_dir = $host_config['gitRootFolder'];
             $stages = array_diff($stages, ['installCode']);
         } else {
-            $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . time();
+            $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . $hash;
         }
 
-        $target_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-target-' . time();
+        $target_dir = $host_config['tmpFolder']
+            . '/' . $host_config['configName']
+            . '-target-' . $hash;
 
         $context->set('useLocalRepository', $use_local_repository);
         $context->set('installDir', $install_dir);

@@ -4,9 +4,12 @@ Phabalicious 3.3 incorporates two new commands to scaffold a local dev environme
 
 It uses a dockerized haproxy container to intercept the traffic to your localhost and forward it to the corresponding docker container with your local stack. For mac there's a second docker container resolving DNS-entries for `*.test` to localhost. It is similar to other solutions like [pygmy](https://github.com/amazeeio/pygmy), [ddev]( https://www.ddev.com/) or [lando](https://lando.dev/).
 
-There is no requirement to use multibasebox together with phabalicious or vice-versa. Phab will wor with other local development stacks. Multibasebox has also no hard dependency to phabalicious and will work standalone.
+![Multibasebox landing page](./assets/multibasebox.png "Multibasebox landing page")
+
+There is no requirement to use multibasebox together with phabalicious or vice-versa. Phab will work with other local development stacks. Multibasebox has also no hard dependency to phabalicious and will work standalone.
 
 Multibasebox is just some convinient glue code (basically just a setup script) to get docker running on your host, without any hassle about domain names, port collisions etc. It has no hard requirements on used docker images, all it need are some environment variables so the python script can write the haproxy configuration.
+
 
 
 The scaffolder will

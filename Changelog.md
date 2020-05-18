@@ -1,10 +1,27 @@
 # Changelog
 
+## 3.4.4 / 2020-05-18
+
+### New:
+  * New shellprovider: docker-exec-over-ssh, its a concatenated shell running docker-exec on a remote instance
+
+### Fixed:
+  * Prevent folder name collision if two artifact deployements are runing at the same time
+  * Fix app:create when using a service for docker ip gathering
+  * Fix for inherit loops, fixes #78
+  * Allow per host repository settings
+
 ## 3.4.3 / 2020-04-29
 
 ##Fixed
 
  * Previous versions did not check the version constraints of imported yaml files.
+
+## 3.4.2 / 2020-04-28
+
+### New
+
+  * Allow per host repository settings
 
 ## 3.4.1 / 2020-04-25
 
