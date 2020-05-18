@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.5 / 2020-05-18
+
+### Fixed:
+
+  * Fix docker-exec-over-ssh
+
 ## 3.4.4 / 2020-05-18
 
 ### New:
