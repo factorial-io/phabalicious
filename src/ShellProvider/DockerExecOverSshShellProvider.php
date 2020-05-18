@@ -20,12 +20,19 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
      */
     protected $dockerExec;
     
+    /**
+     * Shell to run docker commands on host.
+     *
+     * @var ShellProviderInterface
+     */
+    protected $sshShell;
+
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
         $this->dockerExec = new DockerExecShellProvider($logger);
     }
-    
+
     public function setHostConfig(HostConfig $config)
     {
         parent::setHostConfig($config);
@@ -85,13 +92,30 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
 
         return $ssh_command;
     }
-
+    
     /**
      * {@inheritdoc}
      */
     public function exists($dir):bool
     {
-        return $this->dockerExec->exists($dir);
+        $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $dir), false, false);
+        return $result->succeeded();
+    }
+    
+    private function ensureSshShell()
+    {
+        if ($this->sshShell) {
+            return;
+        }
+        $docker_config = clone $this
+            ->hostConfig
+            ->getConfigurationService()
+            ->getDockerConfig($this->hostConfig['docker']['configuration']);
+
+        $this->sshShell = new SshShellProvider($this->logger);
+        $this->sshShell->setHostConfig($docker_config);
+        $this->sshShell->setOutput($this->output);
+        $this->sshShell->cd(DockerMethod::getProjectFolder($docker_config, $this->hostConfig));
     }
 
     /**
@@ -100,11 +124,18 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $tmp_dest = tempnam($this->hostConfig['tmpFolder'], $dest);
+        
         if (!parent::putFile($source, $tmp_dest, $context, $verbose)) {
             return false;
         }
         
-        return $this->dockerExec->putFile($tmp_dest, $dest, $context, $verbose);
+        $this->ensureSshShell();
+        $cmd = $this->dockerExec->getPutFileCommand($tmp_dest, $dest);
+        $result = $this->sshShell->run(implode(' ', $cmd));
+
+        $this->sshShell->run(sprintf('rm %s', escapeshellarg($tmp_dest)));
+
+        return $result->succeeded();
     }
 
     /**
@@ -113,10 +144,18 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $tmp_source = tempnam($this->hostConfig['tmpFolder'], $dest);
-        if (!$this->dockerExec->getFile($source, $tmp_source, $context, $verbose)) {
+        
+        $this->ensureSshShell();
+        $cmd = $this->dockerExec->getGetFileCommand($source, $tmp_source);
+        $result = $this->sshShell->run(implode(' ', $cmd));
+        if ($result->failed()) {
             return false;
         }
-        return parent::putFile($tmp_source, $dest, $context, $verbose);
+        
+        $result = parent::putFile($tmp_source, $dest, $context, $verbose);
+        $this->sshShell->run(sprintf('rm %s', escapeshellarg($tmp_source)));
+
+        return $result;
     }
 
 

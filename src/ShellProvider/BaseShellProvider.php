@@ -7,6 +7,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ScopedLogLevel\LogLevelStack;
 use Phabalicious\ScopedLogLevel\LoglevelStackInterface;
+use Phabalicious\Utilities\LogWithPrefix;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
@@ -34,6 +35,9 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     /** @var LogLevelStack */
     protected $errorLogLevel;
+    
+    /** @var string */
+    protected $hash;
     /**
      * @var array
      */
@@ -41,7 +45,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     public function __construct(LoggerInterface $logger)
     {
-        $this->logger = $logger;
+        $this->logger = new LogWithPrefix($logger, bin2hex(random_bytes(3)));
         $this->loglevel = new LogLevelStack(LogLevel::NOTICE);
         $this->errorLogLevel = new LogLevelStack(LogLevel::ERROR);
     }

@@ -72,25 +72,13 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
 
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
-        $command = [
-            'docker',
-            'cp',
-            $source,
-            $this->hostConfig['docker']['name'] . ':' . $dest
-        ];
-
+        $command = $this->getPutFileCommand($source, $dest);
         return $this->runProcess($command, $context, false, true);
     }
 
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
-        $command = [
-            'docker',
-            'cp',
-            $this->hostConfig['docker']['name'] . ':' . $source,
-            $dest,
-        ];
-
+        $command = $this->getGetFileCommand($source, $dest);
         return $this->runProcess($command, $context, false, true);
     }
 
@@ -105,6 +93,36 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
             '--login',
             '-c',
             '\'' . implode(' ', $command). '\'',
+        ];
+    }
+
+    /**
+     * @param string $source
+     * @param string $dest
+     * @return string[]
+     */
+    public function getPutFileCommand(string $source, string $dest): array
+    {
+        return [
+            'docker',
+            'cp',
+            $source,
+            $this->hostConfig['docker']['name'] . ':' . $dest
+        ];
+    }
+
+    /**
+     * @param string $source
+     * @param string $dest
+     * @return string[]
+     */
+    public function getGetFileCommand(string $source, string $dest): array
+    {
+        return [
+            'docker',
+            'cp',
+            $this->hostConfig['docker']['name'] . ':' . $source,
+            $dest,
         ];
     }
 }
