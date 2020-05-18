@@ -10,6 +10,8 @@ use Phabalicious\Utilities\SetAndRestoreObjProperty;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use PHPStan\Type\Symfony\InputInterfaceGetArgumentDynamicReturnTypeExtension;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
 
@@ -20,10 +22,10 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     const PROVIDER_NAME = 'local';
 
     /** @var Process|null */
-    private $process;
+    protected $process;
 
     /** @var InputStream */
-    private $input;
+    protected $input;
 
     protected $captureOutput = false;
 
@@ -296,5 +298,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             '-c'
         );
         return $command;
+    }
+    
+    protected function overrideProcessInputAndOutput(Process $process, InputStream $input, OutputInterface $output)
+    {
+        $this->process = $process;
+        $this->input = $input;
     }
 }

@@ -212,7 +212,7 @@ class ConfigurationService
         if ($data && isset($data['requires'])) {
             $required_version = $data['requires'];
             $app_version = $this->application->getVersion();
-            $this->getLogger()->info(sprintf("required %s in %s, app hasL %s", $required_version, $file, $app_version));
+            $this->getLogger()->debug(sprintf("required %s in %s, app has %s", $required_version, $file, $app_version));
             if (Comparator::greaterThan($required_version, $app_version)) {
                 throw new MismatchedVersionException(
                     sprintf(
