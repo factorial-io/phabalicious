@@ -55,13 +55,9 @@ class TransformCallback implements CallbackInterface
         $data = $context->get('scaffoldData');
         $tokens = $context->get('tokens');
 
-        $files = $data[$files_key] ?? [];
         /** @var DataTransformerInterface $transformer */
         $transformer = self::$transformers[$transformer_key] ?? false;
 
-        if (empty($files)) {
-            throw new \InvalidArgumentException('Could not find key in scaffold file ' . $files_key);
-        }
         if (!$transformer) {
             throw new \InvalidArgumentException(sprintf(
                 'Unknown transformer %s, available transformers %s,',
@@ -74,7 +70,7 @@ class TransformCallback implements CallbackInterface
 
         $context->io()->comment(sprintf('Transforming %s ...', $files_key));
 
-        $result = $transformer->transform($context, $files, $target_path);
+        $result = $transformer->transform($context, $files_key, $target_path);
 
         $context->io()->progressStart(count($result));
         foreach ($result as $file_name => $file_content) {
