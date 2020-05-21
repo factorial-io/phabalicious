@@ -70,7 +70,7 @@ class TransformCallback implements CallbackInterface
 
         $context->io()->comment(sprintf('Transforming %s ...', $files_key));
 
-        $result = $transformer->transform($context, $files_key, $target_path);
+        $result = $transformer->transform($context, [$files_key], $target_path);
 
         $context->io()->progressStart(count($result));
         foreach ($result as $file_name => $file_content) {
