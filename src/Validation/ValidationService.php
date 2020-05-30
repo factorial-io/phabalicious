@@ -26,6 +26,10 @@ class ValidationService
         $this->prefixMessage = $prefix_message;
     }
 
+    public function getErrorBag() : ValidationErrorBagInterface 
+    {
+        return $this->errors;
+    }
     public function hasKey(string $key, string $message): bool
     {
         if (!isset($this->config[$key])) {
@@ -51,6 +55,12 @@ class ValidationService
         }
     }
 
+    public function arrayContainsKey(string $key, array $haystack, string $message)
+    {
+        if (!isset($haystack[$key])) {
+            $this->errors->addError($key, 'key '. $key . ' not not found. ' . $this->prefixMessage . ': ' . $message);
+        }
+    }
     public function isArray(string $key, string $message)
     {
         if ($this->hasKey($key, $message) && !is_array($this->config[$key])) {
