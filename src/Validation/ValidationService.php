@@ -26,7 +26,7 @@ class ValidationService
         $this->prefixMessage = $prefix_message;
     }
 
-    public function getErrorBag() : ValidationErrorBagInterface 
+    public function getErrorBag() : ValidationErrorBagInterface
     {
         return $this->errors;
     }
