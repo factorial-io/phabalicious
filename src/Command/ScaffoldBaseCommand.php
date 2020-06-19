@@ -110,7 +110,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         }
 
         // Allow implementation to override parts of the data.
-        $data = Utilities::mergeData($data, $context->get('dataOverrides', []));
+        $data = Utilities::mergeData($context->get('dataOverrides', []), $data);
 
         if ($data && isset($data['requires'])) {
             $required_version = $data['requires'];
@@ -151,7 +151,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         $validation = new ValidationService($data, $errors, 'scaffold');
 
         $validation->hasKey('scaffold', 'The file needs a scaffold-section.');
-        $validation->hasKey('assets', 'The file needs a scaffold-section.');
+        $validation->hasKey('assets', 'The file needs a assets-section.');
         $validation->hasKey('questions', 'The file needs a questions-section.');
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
