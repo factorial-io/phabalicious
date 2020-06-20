@@ -53,18 +53,61 @@ The fabfile needs at least the `questions`and the `scaffold`-section. The `scaff
 
 This section contains a list of questions to be asked when running the scaffold-command. The yaml-key will get the value inputted by the user and can be used as a replacement pattern or in twig-templates. Answers can be validated against a regex and/or transformed to lower- or uppercase.
 
+The following question-types are supported:
 
-An example:
+
+### `question`
+
+A regular question, with optional default, validation and/ or autocomplete values
 
 ```yaml
-questions:
-  [key]:
-    question: [the text to display]
-    validation: [the regex to check the input against to]
-    error: [the error message to display, when validation fails]
-    default: [optional default-value]
-    transform: [lowercase|uppercase]
+key:
+  question: the prompot to show 
+  type: question
+  validation: the regex to use to validate the input
+  error: the message to display, if the validation fails
+  default: the default-value, when the user hits return
+  transform: [lowercase|uppercase]
+  autocomplete:
+    - Option 1
+    - Option 2 
+    - Option 3
 ```
+
+### `array`
+
+A question, where the use can supply multiple values. The question gets repeated until the user provides an empty answer. For possible options see `question`.
+
+
+### `confirm`
+
+A question which can be answered with yes or no. The value will be `1` or `0`. The default value can be `true` or `false`.
+
+```yaml
+key:
+  question: Should we continue?
+  type: confirm
+  default: true
+```
+
+### `choices`
+
+Choices provides a list of options, where the user can pick one or many answers from:
+
+```yaml
+key:
+  question: What fruits do you want to buy
+  type: choices
+  multiselect: true
+  choices:
+    - Apples
+    - Oranges
+    - Lemons
+    - Papayas
+    - Coconuts
+
+```
+### Non-interactive usage
 
 For non-interactive usage you can pass the values via commandline-options, where the option-name is the same as the key, for the above example:
 
