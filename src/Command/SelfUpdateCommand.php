@@ -103,10 +103,43 @@ class SelfUpdateCommand extends BaseOptionsCommand
                 'unstable' => $allow_unstable,
             ];
         } catch (\Exception $e) {
-            // Do nothing
+            // Fallback, call github directly.
+            return $this->getLatestReleaseFromGithub();
         }
 
         return false;
+    }
+
+
+    protected function getLatestReleaseFromGithub()
+    {
+        $opts = [
+            'http' => [
+                'method' => 'GET',
+                'header' => [
+                    'User-Agent: phabalicious  (factorial-io/phabalicious)' . ' Self-Update (PHP)'
+                ]
+            ]
+        ];
+
+        $context = stream_context_create($opts);
+
+        $releases = file_get_contents(
+            'https://api.github.com/repos/factorial-io/phabalicious/releases',
+            false,
+            $context
+        );
+        $releases = json_decode($releases);
+
+        if (!isset($releases[0])) {
+            throw new \Exception('API error - no release found at GitHub repository');
+        }
+
+        $version = $releases[0]->tag_name;
+        $url     = $releases[0]->assets[0]->browser_download_url;
+        
+
+        return [ 'new_version' => $version, 'unstable' => false];
     }
 
     public static function registerListener(EventDispatcher $dispatcher)
