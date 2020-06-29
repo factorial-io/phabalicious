@@ -16,6 +16,7 @@ use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\AppDefaultStages;
+use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
@@ -146,7 +147,7 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         $context->set('outerShell', $shell);
         $context->set('installDir', $install_dir);
         
-        $this->ensureKnownHosts(
+        EnsureKnownHosts::ensureKnownHosts(
             $context->getConfigurationService(),
             $this->getKnownHosts($host_config, $context),
             $shell
