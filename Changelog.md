@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.7 / 2020-06-29
+
+### Fixed:
+
+  * Fix ensureKnownHosts
+
 ## 3.4.6 / 2020-06-29
 
 ### Fixed: 
