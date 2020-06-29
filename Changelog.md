@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.4.6 / 2020-06-29
+
+### Fixed: 
+
+  * Ensure known hosts for ssh shells, some refactoring
+  * Fix smaller bugs in scaffolder
+  * Bump websocket-extensions from 0.1.3 to 0.1.4
+  * Throw an exception with the filename if transform plugin throws an exception, improve logging
+
+### New:
+
+  * Refactor Scaffoldbase to use a QuestionFactory with new types of questions
+  * Enhance validation service
+  * Pass files parameter directly to transformer
+
 ## 3.4.5 / 2020-05-18
 
 ### Fixed:

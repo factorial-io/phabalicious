@@ -6,12 +6,14 @@ namespace Phabalicious\Command;
 
 use Composer\Semver\Comparator;
 use InvalidArgumentException;
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Method\TaskContextInterface;
@@ -20,6 +22,7 @@ use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
 use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
@@ -39,6 +42,14 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
     protected $twig;
 
     protected $dynamicOptions = [];
+    
+    protected $questionFactory;
+    
+    public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
+    {
+        parent::__construct($configuration, $method_factory, $name);
+        $this->questionFactory = new QuestionFactory();
+    }
 
     protected function configure()
     {
@@ -110,7 +121,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         }
 
         // Allow implementation to override parts of the data.
-        $data = Utilities::mergeData($data, $context->get('dataOverrides', []));
+        $data = Utilities::mergeData($context->get('dataOverrides', []), $data);
 
         if ($data && isset($data['requires'])) {
             $required_version = $data['requires'];
@@ -151,7 +162,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         $validation = new ValidationService($data, $errors, 'scaffold');
 
         $validation->hasKey('scaffold', 'The file needs a scaffold-section.');
-        $validation->hasKey('assets', 'The file needs a scaffold-section.');
+        $validation->hasKey('assets', 'The file needs a assets-section.');
         $validation->hasKey('questions', 'The file needs a questions-section.');
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
@@ -184,7 +195,13 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         // Do a first round of replacements.
         $replacements = Utilities::getReplacements($tokens);
         foreach ($tokens as $ndx => $token) {
-            $tokens[$ndx] = strtr($token, $replacements);
+            if (is_array($token)) {
+                $tokens[$ndx] = array_map(function ($e) use ($replacements) {
+                    return strtr($e, $replacements);
+                }, $token);
+            } else {
+                $tokens[$ndx] = strtr($token, $replacements);
+            }
         }
 
         $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
@@ -275,45 +292,20 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         array $tokens
     ): array {
         foreach ($questions as $key => $question_data) {
-            $errors = new ValidationErrorBag();
-            $validation = new ValidationService($question_data, $errors, 'questions');
-            $validation->hasKey('question', 'Please provide a question');
-            if (!empty($question_data['validation'])) {
-                $validation->hasKey('validation', 'Please provide a regex for validation');
-                $validation->hasKey('error', 'Please provide an error message when a validation fails');
-            }
-            if ($errors->hasErrors()) {
-                throw new ValidationFailedException($errors);
-            }
-
             $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
+            $value = null;
             if (isset($tokens[$key])) {
                 $value = $tokens[$key];
             } elseif (in_array($option_name, $this->dynamicOptions)) {
                 $value = $input->getOption($option_name);
-            } else {
-                $value = $context->io()->ask(
-                    $question_data['question'],
-                    isset($question_data['default']) ? $question_data['default'] : null
-                );
             }
+            $value = $this->questionFactory->askAndValidate(
+                $context->io(),
+                $question_data,
+                $value
+            );
 
-            if (!empty($question_data['validation'])) {
-                if (!preg_match($question_data['validation'], $value)) {
-                    throw new InvalidArgumentException($question_data['error'] . ': ' . $value);
-                }
-            }
-            if (!empty($question_data['transform'])) {
-                $transform = strtolower($question_data['transform']);
-                $mapping = [
-                    'lowercase' => 'strtolower',
-                    'uppercase' => 'strtoupper',
-                ];
-                if (isset($mapping[$transform])) {
-                    $value = call_user_func($mapping[$transform], $value);
-                }
-            }
-            $tokens[$key] = trim($value);
+            $tokens[$key] = is_array($value) ? $value : trim($value);
         }
         return $tokens;
     }

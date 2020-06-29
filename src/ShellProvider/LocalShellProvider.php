@@ -126,6 +126,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             ));
         }
 
+        $environment = [];
         if (!empty($this->hostConfig['environment'])) {
             $environment = $this->hostConfig['environment'];
 
@@ -135,9 +136,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             ];
             $replacements = Utilities::expandVariables($variables);
             $environment = Utilities::expandStrings($environment, $replacements);
-
-            $this->applyEnvironment($environment);
         }
+
+        $this->applyEnvironment($environment);
     }
 
     /**
@@ -221,7 +222,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         ];
         foreach ($files as $file) {
             if ($this->exists($file)) {
-                $this->run(sprintf('. %s', $file));
+                $this->run(sprintf('. %s', $file), false, false);
             }
         }
         foreach ($environment as $key => $value) {

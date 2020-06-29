@@ -54,7 +54,8 @@ class WebhookTest extends PhabTestCase
         $this->assertFalse($this->method->runWebhook('testUnavailableWebhook', $host_config, $this->context));
     }
 
-    public function testPostAndGetWebhook()
+    // posthere.io is not working anymore, skip this test for now.
+    private function testPostAndGetWebhook()
     {
         $host_config = $this->configurationService->getHostConfig('hostA');
         $result = $this->method->runWebhook('testDelete', $host_config, $this->context);
@@ -62,6 +63,7 @@ class WebhookTest extends PhabTestCase
 
         $result = $this->method->runWebhook('testPost', $host_config, $this->context);
         $this->assertEquals(200, $result->getStatusCode());
+        $body = (string) $result->getBody();
 
         $result = $this->method->runWebhook('testGet', $host_config, $this->context);
         $this->assertEquals(200, $result->getStatusCode());

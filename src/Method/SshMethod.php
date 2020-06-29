@@ -9,6 +9,7 @@ use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\SshShellProvider;
+use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 
 class SshMethod extends BaseMethod implements MethodInterface
@@ -180,7 +181,7 @@ class SshMethod extends BaseMethod implements MethodInterface
             $this->knownHostsChecked[$config->get('configName')] = true;
             $known_hosts = $this->getKnownHosts($config, $context);
             $known_hosts[] = $config['host'] . ':' . $config->get('port', 22);
-            $this->ensureKnownHosts($context->getConfigurationService(), $known_hosts);
+            EnsureKnownHosts::ensureKnownHosts($context->getConfigurationService(), $known_hosts);
         }
         $this->creatingTunnel = false;
     }
