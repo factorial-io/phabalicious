@@ -59,7 +59,7 @@ class WebhookTest extends PhabTestCase
     {
         $host_config = $this->configurationService->getHostConfig('hostA');
         $result = $this->method->runWebhook('testDelete', $host_config, $this->context);
-        $this->assertEquals(200, $result->getStatusCode());
+        $this->assertEquals(204, $result->getStatusCode());
 
         $result = $this->method->runWebhook('testPost', $host_config, $this->context);
         $this->assertEquals(200, $result->getStatusCode());
