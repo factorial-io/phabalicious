@@ -159,17 +159,13 @@ class Scaffolder
             $tokens['projectFolder'] = $tokens['name'];
         }
 
-        // Do a first round of replacements.
-        $replacements = Utilities::getReplacements($tokens);
-        foreach ($tokens as $ndx => $token) {
-            if (is_array($token)) {
-                $tokens[$ndx] = array_map(function ($e) use ($replacements) {
-                    return strtr($e, $replacements);
-                }, $token);
-            } else {
-                $tokens[$ndx] = strtr($token, $replacements);
-            }
+        $variables = $tokens;
+        foreach ($options->getVariables() as $key => $value) {
+            $variables[$key] = $value;
         }
+        // Do a first round of replacements.
+        $replacements = Utilities::expandVariables($variables);
+        $tokens = Utilities::expandStrings($tokens, $replacements);
 
         $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
         $tokens['rootFolder'] = realpath($root_folder) . '/' . $tokens['projectFolder'];

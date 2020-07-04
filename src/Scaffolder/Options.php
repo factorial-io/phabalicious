@@ -20,6 +20,8 @@ class Options
     protected $skipSubfolder;
     
     protected $useCacheTokens = true;
+    
+    protected $variables = [];
 
     public function getAllowOverride()
     {
@@ -133,5 +135,24 @@ class Options
     public function useCacheTokens(): bool
     {
         return $this->useCacheTokens;
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @return Options
+     */
+    public function addVariable($key, $value): Options
+    {
+        $this->variables[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVariables(): array
+    {
+        return $this->variables;
     }
 }

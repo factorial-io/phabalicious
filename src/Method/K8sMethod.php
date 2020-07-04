@@ -97,7 +97,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
         $options
             ->setAllowOverride(true)
             ->setUseCacheTokens(false)
-            ->setSkipSubfolder(true);
+            ->setSkipSubfolder(true)
+            ->addVariable('host', $host_config->raw())
+            ->addVariable('context', $context->getData());
 
         $scaffolder->scaffold(
             $scaffold_url,
