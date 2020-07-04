@@ -139,7 +139,9 @@ class Options
 
     /**
      * @param $key
+     *  The key name of the variable.
      * @param $value
+     *  The value of the variable.
      * @return Options
      */
     public function addVariable($key, $value): Options
