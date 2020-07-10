@@ -2,10 +2,8 @@
 
 namespace Phabalicious\Method;
 
-use Monolog\Handler\Curl\Util;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
@@ -22,9 +20,14 @@ use Phabalicious\Validation\ValidationService;
 
 class K8sMethod extends BaseMethod implements MethodInterface
 {
+    const AVAILABLE_SUB_COMMANDS = [
+        'scaffold',
+        'kubectl',
+        'get-available-subcommands'
+    ];
 
     /** @var ShellProviderInterface */
-    protected $shell = null;
+    protected $kubectlShell;
 
     public function getName(): string
     {
@@ -104,8 +107,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         if ($kube_config['scaffoldBeforeDeploy']) {
             $this->scaffold($host_config, $context);
         }
-        $this->runKubeCtl($host_config, $context, $kube_config['deployCommand']);
-        
+        $this->kubectl($host_config, $context, $kube_config['deployCommand']);
     }
 
     /**
@@ -148,17 +150,43 @@ class K8sMethod extends BaseMethod implements MethodInterface
         );
     }
 
-    private function runKubeCtl(HostConfig $host_config, TaskContextInterface $context, $command)
+    public function kubectl(HostConfig $host_config, TaskContextInterface $context, $command)
     {
         $kube_config = $host_config['kube'];
 
-        if (!$this->shell) {
-            $this->shell = new LocalShellProvider($this->logger);
-            $this->shell->setHostConfig($host_config);
+        if (!$this->kubectlShell) {
+            $this->kubectlShell = new LocalShellProvider($this->logger);
+            $this->kubectlShell->setHostConfig($host_config);
         }
+        
         $project_folder = $context->getConfigurationService()->getFabfilePath() . '/' . $kube_config['projectFolder'];
-        $this->shell->pushWorkingDir($project_folder);
-        $this->shell->run(sprintf('#!kubectl %s', $command));
-        $this->shell->popWorkingDir();
+
+        $this->kubectlShell->pushWorkingDir($project_folder);
+        $result = $this->kubectlShell->run(sprintf('#!kubectl %s', $command));
+        $this->kubectlShell->popWorkingDir();
+        return $result;
+    }
+    
+    
+    public function k8s(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $command = explode(' ', $context->get('command'));
+
+        $subcommand = array_shift($command);
+        $arguments = implode(' ', $command);
+        
+        if (!in_array($subcommand, self::AVAILABLE_SUB_COMMANDS)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Unknown k8s subcommand `%s`, allowed are: `%s`",
+                    $subcommand,
+                    implode("`, `", self::AVAILABLE_SUB_COMMANDS)
+                )
+            );
+        }
+
+        if (method_exists($this, $subcommand)) {
+            return $this->{$subcommand}($host_config, $context, $arguments);
+        }
     }
 }

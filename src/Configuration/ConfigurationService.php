@@ -49,6 +49,7 @@ class ConfigurationService
     /** @var BlueprintConfiguration */
     private $blueprints;
     private $offlineMode = false;
+    private $skipCache = false;
     private $disallowDeepMergeForKeys = [];
 
     public function __construct(Application $application, LoggerInterface $logger)
@@ -374,7 +375,18 @@ class ConfigurationService
         if (isset($this->cache[$cid])) {
             return $this->cache[$cid];
         }
+        $cache_file = getenv("HOME")
+            . '/.phabalicious/' . md5($resource)
+            . '.' . pathinfo($resource, PATHINFO_EXTENSION);
 
+        // Check for cached version, maximum age 5 minutes.
+        if (!$this->skipCache && file_exists($cache_file) && time()-filemtime($cache_file) < 60 * 60) {
+            $this->logger->info('Using cached version for `' . $resource .'`');
+            $contents = file_get_contents($cache_file);
+            $this->cache[$cid] = $contents;
+
+            return $contents;
+        }
         if (!$this->offlineMode) {
             try {
                 $this->logger->info(sprintf('Read remote file from `%s`', $resource));
@@ -714,9 +726,10 @@ class ConfigurationService
         return $data;
     }
 
-    public function setOffline($offline)
+    public function setOffline($offline): ConfigurationService
     {
         $this->offlineMode = $offline;
+        return $this;
     }
 
     public function isOffline()
@@ -765,5 +778,23 @@ class ConfigurationService
     public function hasHostConfig($configName)
     {
         return !empty($this->hosts[$configName]);
+    }
+
+    /**
+     * @param bool $skipCache
+     * @return ConfigurationService
+     */
+    public function setSkipCache($skipCache): ConfigurationService
+    {
+        $this->skipCache = $skipCache;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSkipCache(): bool
+    {
+        return $this->skipCache;
     }
 }
