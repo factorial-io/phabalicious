@@ -22,6 +22,10 @@ class ShellProviderFactory
                 $shell_provider = new DockerExecOverSshShellProvider($logger);
                 break;
 
+            case KubetlShellProvider::PROVIDER_NAME:
+                $shell_provider = new KubetlShellProvider($logger);
+                break;
+
             default:
                 $shell_provider = false;
         }
