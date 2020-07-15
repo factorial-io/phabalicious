@@ -141,6 +141,7 @@ class Scaffolder
         }
 
         $tokens['uuid'] = Utilities::generateUUID();
+        $tokens['scaffoldTimestamp'] = (new \DateTime())->format("Y-m-d\TH:i:s\Z");
 
         if (isset($tokens['name']) && $options->useCacheTokens()) {
             $tokens = Utilities::mergeData($this->readTokens($root_folder, $tokens['name']), $tokens);

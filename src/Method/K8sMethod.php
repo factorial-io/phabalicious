@@ -159,7 +159,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
     protected function scaffold(HostConfig $host_config, TaskContextInterface $context): void
     {
         $kube_config = $host_config['kube'];
+        $host_data = $host_config->raw();
         $kube_config['parameters']['projectFolder'] = $kube_config['projectFolder'];
+        $kube_config['parameters']['host'] = $host_data;
 
         if (empty($kube_config['scaffolder'])) {
             return;
