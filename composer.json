@@ -79,6 +79,9 @@
             "chmod +x ../phabalicious.phar"
           ]
         }
-    }
+    },
+        "symfony": {
+            "allow-contrib": "false"
+        }
   }
 }
