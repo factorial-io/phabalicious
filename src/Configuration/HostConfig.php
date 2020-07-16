@@ -135,4 +135,9 @@ class HostConfig implements \ArrayAccess
         }
         return false;
     }
+
+    public function setChild(string $parent, string $child, $value)
+    {
+        $this->data[$parent][$child] = $value;
+    }
 }
