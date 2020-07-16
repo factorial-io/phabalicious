@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.4.8 / 2020-07-16
+
+### Fixed:
+
+  * Clean up any cached docker container name after a task got executed. Fixes #89
+  * Add php codesniffer as dev dependency
+  * Show available update even on linux
+
 ## 3.4.7 / 2020-06-29
 
 ### Fixed:
