@@ -139,7 +139,7 @@ class Utilities
 
     public static function slugify($str, $replacement = '')
     {
-        return preg_replace('/\s|\.|\,|_|\-|\//', $replacement, strtolower($str));
+        return preg_replace('/\s|\.|\,|_|\-|:|\//', $replacement, strtolower($str));
     }
 
     public static function isAssocArray($arr)

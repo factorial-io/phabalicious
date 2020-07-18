@@ -38,9 +38,9 @@ class Scaffolder
     protected $twig;
 
     protected $questionFactory;
-    
+
     protected $configuration;
-    
+
     public function __construct(ConfigurationService $configuration)
     {
         $this->questionFactory = new QuestionFactory();
@@ -141,7 +141,7 @@ class Scaffolder
         }
 
         $tokens['uuid'] = Utilities::generateUUID();
-        $tokens['scaffoldTimestamp'] = (new \DateTime())->format("Y-m-d\TH:i:s\Z");
+        $tokens['scaffoldTimestamp'] = (new \DateTime())->format("Ymd-His\Z");
 
         if (isset($tokens['name']) && $options->useCacheTokens()) {
             $tokens = Utilities::mergeData($this->readTokens($root_folder, $tokens['name']), $tokens);
@@ -179,7 +179,7 @@ class Scaffolder
             'rootFolder' => realpath($root_folder),
             'shellExecutable' => '/bin/bash'
         ], $shell, $this->configuration);
-        
+
         $context->set('scriptData', $data['scaffold']);
         $context->set('variables', $tokens);
 
