@@ -137,6 +137,20 @@ class Utilities
         return $value;
     }
 
+    public static function setProperty(&$data, string $dotted_key, $new_value)
+    {
+        $keys = explode('.', $dotted_key);
+
+        foreach ($keys as $key) {
+            if (!isset($data[$key])) {
+                throw new \InvalidArgumentException(sprintf("Could not find key %s in data!", $dotted_key));
+            }
+            $data = &$data[$key];
+        }
+
+        $data = $new_value;
+    }
+
     public static function slugify($str, $replacement = '')
     {
         return preg_replace('/\s|\.|\,|_|\-|:|\//', $replacement, strtolower($str));
@@ -286,5 +300,18 @@ class Utilities
             $replacements['%' . $key . '%'] = $value;
         }
         return $replacements;
+    }
+
+    public static function pushKeysAsDotNotation(array $data, &$return, $levels = [])
+    {
+        foreach ($data as $key => $value) {
+            $new_levels = $levels;
+            $new_levels[] = $key;
+            if (is_array($value)) {
+                self::pushKeysAsDotNotation($value, $return, $new_levels);
+            } else {
+                $return[] =  implode('.', $new_levels);
+            }
+        }
     }
 }
