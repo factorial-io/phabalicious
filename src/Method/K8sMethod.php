@@ -201,7 +201,11 @@ class K8sMethod extends BaseMethod implements MethodInterface
         $project_folder = $context->getConfigurationService()->getFabfilePath() . '/' . $kube_config['projectFolder'];
 
         $this->kubectlShell->pushWorkingDir($project_folder);
-        $result = $this->kubectlShell->run(sprintf('#!kubectl %s', $command), $capture_output);
+        $result = $this->kubectlShell->run(sprintf(
+            '#!kubectl %s --namespace %s',
+            $command,
+            $kube_config['namespace']
+        ), $capture_output);
         $this->kubectlShell->popWorkingDir();
         return $result;
     }
