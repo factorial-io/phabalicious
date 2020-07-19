@@ -1,6 +1,0 @@
-a: foo
-b: bar
-name: test-overrides
-uuid: 9cd9b382-9eee-5436-fa80-d22ada88a220
-projectFolder: test-overrides
-rootFolder: /opt/project/tests/test-overrides

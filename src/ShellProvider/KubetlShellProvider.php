@@ -15,7 +15,7 @@ class KubetlShellProvider extends LocalShellProvider implements ShellProviderInt
     {
         $result =  parent::getDefaultConfig($configuration_service, $host_config);
         $result['kubectlExecutable'] = 'kubectl';
-        $result['shellExecutable'] = '/bin/bash';
+        $result['shellExecutable'] = '/bin/sh';
 
         $result['kube']['namespace'] = 'default';
         return $result;
