@@ -23,9 +23,10 @@ use Symfony\Component\Yaml\Yaml;
 
 class ConfigurationService
 {
+    const MAX_FILECACHE_LIFETIME = 60 * 60;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -249,7 +250,7 @@ class ConfigurationService
         if (file_exists($override_file)) {
             $data = Utilities::mergeData($data, Yaml::parseFile($override_file));
         }
-        
+
         $this->checkRequires($data, $file);
 
 
@@ -380,7 +381,10 @@ class ConfigurationService
             . '.' . pathinfo($resource, PATHINFO_EXTENSION);
 
         // Check for cached version, maximum age 5 minutes.
-        if (!$this->skipCache && file_exists($cache_file) && time()-filemtime($cache_file) < 60 * 60) {
+        if (!$this->skipCache &&
+            file_exists($cache_file) &&
+            time()-filemtime($cache_file) < self::MAX_FILECACHE_LIFETIME
+        ) {
             $this->logger->info('Using cached version for `' . $resource .'`');
             $contents = file_get_contents($cache_file);
             $this->cache[$cid] = $contents;

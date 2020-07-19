@@ -147,11 +147,6 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
     public function deployPrepare(HostConfig $host_config, TaskContextInterface $context)
     {
-        $kube_config = $host_config['kube'];
-        if (empty($kube_config['scaffolder'])) {
-            return;
-        }
-
         $this->apply($host_config, $context);
     }
 
