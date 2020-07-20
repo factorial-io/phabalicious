@@ -25,6 +25,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         'apply',
         'scaffold',
         'kubectl',
+        'rollout',
         'get-available-subcommands'
     ];
 
@@ -65,10 +66,14 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $default['kube'] = Utilities::mergeData($global_settings, [
             'scaffoldBeforeDeploy' => true,
+            'waitAfterApply' => true,
             'projectFolder' => 'kube',
             'namespace' => 'default',
             'applyCommand' => 'apply -k .',
             'deleteCommand' => 'delete -k .',
+            'deployments' => [
+                '%host.kube.parameters.name%'
+            ],
             'scaffolder' => [
                 'template' => 'simple/index.yml',
             ],
@@ -92,6 +97,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $service->hasKey('deleteCommand', 'Provide a delte command which gets executed on deletion.');
             $service->hasKey('applyCommand', 'Provide a applyCommand which gets executed on apply.');
             $service->hasKey('scaffolder', '`scaffolder` is missing.');
+            $service->isArray('deployments', 'phab needs a list of deployment names, so it can check their status.');
             $service->isArray('parameters', '`parameters` needs to be an array.');
             if (!empty($config['kube']['parameters'])) {
                 $service = new ValidationService(
@@ -114,11 +120,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
     protected function getPodNameFromSelector(HostConfig $host_config, TaskContextInterface $context)
     {
         $pod_selectors = $host_config['kube']['podSelector'];
-        $replacements = Utilities::expandVariables([
-            'host' => $host_config->raw(),
-            'context' => $context->getData(),
-        ]);
-        $pod_selectors = Utilities::expandStrings($pod_selectors, $replacements);
+        $pod_selectors = $this->expandReplacements($host_config, $context, $pod_selectors);
         $result = $this->kubectl(
             $host_config,
             $context,
@@ -249,5 +251,40 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $this->scaffold($host_config, $context);
         }
         $this->kubectl($host_config, $context, $kube_config['applyCommand']);
+        if ($kube_config['waitAfterApply']) {
+            $this->rollout($host_config, $context, 'status');
+        }
+    }
+
+    public function rollout(HostConfig $host_config, TaskContextInterface $context, $command)
+    {
+        $kube_config = $host_config['kube'];
+        $deployments = $this->expandReplacements($host_config, $context, $kube_config['deployments']);
+        foreach ($deployments as $deployment) {
+            $this->kubectl($host_config, $context, "rollout $command deployments/$deployment");
+        }
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @param array $data
+     * @param array $vars
+     * @return array
+     */
+    protected function expandReplacements(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        array $data,
+        array $vars = []
+    ): array {
+        $replacements = Utilities::expandVariables(
+            Utilities::mergeData([
+                'host' => $host_config->raw(),
+                'context' => $context->getData(),
+            ], $vars)
+        );
+        $data = Utilities::expandStrings($data, $replacements);
+        return $data;
     }
 }
