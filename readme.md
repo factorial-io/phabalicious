@@ -4,16 +4,16 @@
 
 Phabalicious is using configuration stored in a special file in the root of your project (the fabfile.yaml) to run tasks in a shell. This shell can be provided by a docker-container, a ssh-connection or a local shell. This means, you can store all your devops-scripts in the fabfile and apply it to a list of configurations. Phabalicious tries to abstract away the inner workings of a host and give the user a handful useful commands to run common tasks, like:
 
-    deploying new code to a remote installation
-    reset a remote installation to its defaults.
-    backup/ restore data
-    copy data from one installation to another
-    scaffold new projects
-    run scripts on different local or remote installations.
-    handle SSH-tunnels transparently
-    trigger webhooks
-    send notifications via mattermost
-    optionally work with our docker-based local development-stack multibasebox
+* deploying new code to a remote installation
+* reset a remote installation to its defaults.
+* backup/ restore data
+* copy data from one installation to another
+* scaffold new projects
+* run scripts on different local or remote installations.
+* handle SSH-tunnels transparently
+* trigger webhooks
+* send notifications via mattermost
+* optionally work with our docker-based local development-stack multibasebox
 
 It integrates nicely with existing solutions like for continous integration or docker-based setups or diverse hosting environments like lagoon, platform.sh or complicated custom IT infrastructures.
 
