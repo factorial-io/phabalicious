@@ -13,7 +13,7 @@ Phabalicious is using configuration stored in a special file in the root of your
 * handle SSH-tunnels transparently
 * trigger webhooks
 * send notifications via mattermost
-* optionally work with our docker-based local development-stack multibasebox
+* brings its own local dev-stack called [multibasebox](https://github.com/factorial-io/multibasebox)
 
 It integrates nicely with existing solutions like for continous integration or docker-based setups or diverse hosting environments like lagoon, platform.sh or complicated custom IT infrastructures.
 
