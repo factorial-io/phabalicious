@@ -172,13 +172,18 @@ class Scaffolder
         $tokens['rootFolder'] = realpath($root_folder) . '/' . $tokens['projectFolder'];
 
         $logger = $this->configuration->getLogger();
-        $shell = new LocalShellProvider($logger);
         $script = new ScriptMethod($logger);
 
-        $host_config = new HostConfig([
-            'rootFolder' => realpath($root_folder),
-            'shellExecutable' => '/bin/bash'
-        ], $shell, $this->configuration);
+        if ($shell = $options->getShell()) {
+            $host_config = $shell->getHostConfig();
+        } else {
+            $shell = new LocalShellProvider($logger);
+
+            $host_config = new HostConfig([
+                'rootFolder' => realpath($root_folder),
+                'shellExecutable' => '/bin/bash'
+            ], $shell, $this->configuration);
+        }
 
         $context->set('scriptData', $data['scaffold']);
         $context->set('variables', $tokens);

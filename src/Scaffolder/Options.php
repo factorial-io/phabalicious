@@ -2,32 +2,36 @@
 
 namespace Phabalicious\Scaffolder;
 
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 
 class Options
 {
 
     protected $allowOverride = false;
-    
+
     protected $pluginRegistrationCallback = null;
-    
+
     protected $compabilityVersion = Utilities::FALLBACK_VERSION;
-    
+
     protected $dynamic_options = [];
-    
+
     protected $callbacks = [];
-    
+
     protected $skipSubfolder;
-    
+
     protected $useCacheTokens = true;
-    
+
     protected $variables = [];
+
+    /** @var ShellProviderInterface */
+    protected $shell = null;
 
     public function getAllowOverride()
     {
         return $this->allowOverride;
     }
-    
+
 
     /**
      * @param callable $pluginRegistrationCallback
@@ -107,7 +111,7 @@ class Options
         $this->skipSubfolder = $skipSubfolder;
         return $this;
     }
-    
+
     public function addCallback($name, $callable): Options
     {
         $this->callbacks[$name] = $callable;
@@ -156,5 +160,23 @@ class Options
     public function getVariables(): array
     {
         return $this->variables;
+    }
+
+    /**
+     * @param ShellProviderInterface $shell
+     * @return Options
+     */
+    public function setShell(ShellProviderInterface $shell): Options
+    {
+        $this->shell = $shell;
+        return $this;
+    }
+
+    /**
+     * @return ShellProviderInterface
+     */
+    public function getShell(): ?ShellProviderInterface
+    {
+        return $this->shell;
     }
 }

@@ -66,6 +66,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $default['kube'] = Utilities::mergeData($global_settings, [
             'scaffoldBeforeDeploy' => true,
+            'applyBeforeDeploy' => true,
             'waitAfterApply' => true,
             'projectFolder' => 'kube',
             'namespace' => 'default',
@@ -149,7 +150,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
     public function deployPrepare(HostConfig $host_config, TaskContextInterface $context)
     {
-        $this->apply($host_config, $context);
+        if (!empty($host_config['kube']['applyBeforeDeploy'])) {
+            $this->apply($host_config, $context);
+        }
     }
 
     /**
@@ -175,6 +178,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         }
         $configuration = $context->getConfigurationService();
 
+        $this->ensureShell($host_config, $context);
         $scaffold_url = $kube_config['scaffolder']['baseUrl'] . '/' . $kube_config['scaffolder']['template'];
         $scaffolder = new Scaffolder($configuration);
 
@@ -184,7 +188,8 @@ class K8sMethod extends BaseMethod implements MethodInterface
             ->setUseCacheTokens(false)
             ->setSkipSubfolder(true)
             ->addVariable('host', $host_config->raw())
-            ->addVariable('context', $context->getData());
+            ->addVariable('context', $context->getData())
+            ->setShell($this->kubectlShell);
 
         $scaffolder->scaffold(
             $scaffold_url,
@@ -198,13 +203,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
     public function kubectl(HostConfig $host_config, TaskContextInterface $context, $command, $capture_output = false)
     {
         $kube_config = $host_config['kube'];
-
-        if (!$this->kubectlShell) {
-            $this->kubectlShell = new LocalShellProvider($this->logger);
-            $this->kubectlShell->setHostConfig($host_config);
-        }
-
-        $project_folder = $context->getConfigurationService()->getFabfilePath() . '/' . $kube_config['projectFolder'];
+        $project_folder = $this->ensureShell($host_config, $context);
 
         $this->kubectlShell->pushWorkingDir($project_folder);
         $result = $this->kubectlShell->run(sprintf(
@@ -286,5 +285,35 @@ class K8sMethod extends BaseMethod implements MethodInterface
         );
         $data = Utilities::expandStrings($data, $replacements);
         return $data;
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @return string
+     * @throws FailedShellCommandException
+     */
+    protected function ensureShell(HostConfig $host_config, TaskContextInterface $context): string
+    {
+        $kube_config = $host_config['kube'];
+        $project_folder = $context->getConfigurationService()->getFabfilePath() . '/' . $kube_config['projectFolder'];
+
+        if (!$this->kubectlShell) {
+            $this->kubectlShell = new LocalShellProvider($this->logger);
+            $shell_host_config = new HostConfig([
+                'rootFolder' => realpath(dirname($project_folder)),
+                'shellExecutable' => '/bin/bash',
+                'executables' => $host_config['executables'] ?? [],
+            ], $this->kubectlShell, $context->getConfigurationService());
+            $this->kubectlShell->setHostConfig($shell_host_config);
+
+            if (!$this->kubectlShell->exists($project_folder)) {
+                $this->logger->info('Creating project folder ' . $project_folder);
+                $this->kubectlShell->cd($context->getConfigurationService()->getFabfilePath());
+                $this->kubectlShell->run(sprintf('mkdir -p %s', $project_folder));
+            }
+        }
+
+        return $project_folder;
     }
 }
