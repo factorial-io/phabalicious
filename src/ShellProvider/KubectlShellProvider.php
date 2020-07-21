@@ -7,7 +7,7 @@ use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
-class KubetlShellProvider extends LocalShellProvider implements ShellProviderInterface
+class KubectlShellProvider extends LocalShellProvider implements ShellProviderInterface
 {
     const PROVIDER_NAME = 'kubectl';
 
@@ -110,10 +110,12 @@ class KubetlShellProvider extends LocalShellProvider implements ShellProviderInt
     public function getPutFileCommand(string $source, string $dest): array
     {
         return [
-            'docker',
+            'kubectl',
             'cp',
-            $source,
-            $this->hostConfig['docker']['name'] . ':' . $dest
+            trim($source),
+            $this->hostConfig['kube']['podForCli'] . ':' . trim($dest),
+            '--namespace',
+            $this->hostConfig['kube']['namespace'],
         ];
     }
 
@@ -125,10 +127,13 @@ class KubetlShellProvider extends LocalShellProvider implements ShellProviderInt
     public function getGetFileCommand(string $source, string $dest): array
     {
         return [
-            'docker',
+            'kubectl',
             'cp',
-            $this->hostConfig['docker']['name'] . ':' . $source,
-            $dest,
+            $this->hostConfig['kube']['podForCli'] . ':' . trim($source),
+            trim($dest),
+            '--namespace',
+            $this->hostConfig['kube']['namespace'],
+
         ];
     }
 }
