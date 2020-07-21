@@ -65,7 +65,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         $default['shellProvider'] = 'kubectl';
 
         $default['kube'] = Utilities::mergeData($global_settings, [
-            'scaffoldBeforeDeploy' => true,
+            'scaffoldBeforeApply' => true,
             'applyBeforeDeploy' => true,
             'waitAfterApply' => true,
             'projectFolder' => 'kube',
@@ -246,7 +246,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
     public function apply(HostConfig $host_config, TaskContextInterface $context)
     {
         $kube_config = $host_config['kube'];
-        if ($kube_config['scaffoldBeforeDeploy']) {
+        if ($kube_config['scaffoldBeforeApply']) {
             $this->scaffold($host_config, $context);
         }
         $this->kubectl($host_config, $context, $kube_config['applyCommand']);
