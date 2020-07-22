@@ -2,6 +2,10 @@
 
 Phabalicious can help you integrating your app with a kubernetes stack and running your common tasks against an installation hosted on a kubernetes cluster. You can leverage phabalicious scaffolder to create yml definitions for your app and apply them to your cluster automatically. Phab can also help you getting a shell to one of your pods.
 
+**Note:**
+The current version of phabalicious does not support any kind of authorization or authentication. It expects that the local environment is set up correctly for executing `kubectl`!
+
+
 ## Host-Configuration
 
 All necessary configuration is located under the `kube`-property. Here's an example:
