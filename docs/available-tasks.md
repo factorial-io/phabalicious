@@ -112,6 +112,59 @@ hosts:
     otherSettings...
 ```
 
+## --variants
+
+When using `blueprint`, you can run one command on multiple variants Just pass the `--variants`-flag with the wanted variants.
+
+```
+phab --config=my-blueprinted-config --variants=all  about
+phab --config=my-blueprinted-config --variants=de,it,fr  about
+
+```
+
+This will prompt you with a list of commands which phab will run and ask for confirmation.
+
+## -s / --set
+
+You can override existing configuration using the dot notation and pass arbitrary values to phabalicious. Currently this is supported for host configs and dockerhost configs.
+
+```yaml
+hosts:
+  example:
+    host: example.test
+    port: 2222
+    ...
+```
+
+To set a value from command line just pass it via the `--set`-option:
+
+```bash
+phab -cexample about --set host.host=overriden.test --set host.port=22
+```
+
+## -a / --arguments
+
+Pass arbitrary arguments to scripts or other parts. Passed arguments can be consumed by scripts using `%arguments.<name>%` syntax. An example:
+
+```
+scripts:
+  test-arguments:
+    - echo %arguments.message%
+```
+
+```bash
+phab -c<yourconfig> script test-arguments --arguments message="hello world"
+```
+
+## --offline
+
+Prevent loading of additional data from remote. Helpful when you do not have an internet connection.
+
+## --skip-cache
+
+Phab caches remote files in `~/.phabalicious` and will use the cached version if it not older than an hour. If you think you get outdated information, pass this flag. It makes sure, that all remote data is read from remote.
+
+
 ## list
 
 ``` bash
@@ -637,7 +690,7 @@ phab npm yarn lint --config hostB
 
 This will run a yarn command on the given configuration. Make sure, that your host config has `yarn` as a need a `yarnRootFolder` points to the folder containing package.json.
 
-###variable:pull
+##variable:pull
 
 ```bash
 phab -chost variable:pull path/to/yaml.file
@@ -645,10 +698,14 @@ phab -chost variable:pull path/to/yaml.file
 
 This will pull all variables listed in `path/to/yaml.file` and put the values into the yaml file and store it again. (Works currently only for D7). `variable:pull` and `variable:push` are usefull to retrieve a list of variables and restore them at some point in the future.
 
-###variable:push
+##variable:push
 
 ```bash
 phab -chost variable:push path/to/yaml.file
 ```
 
 This will push all variables listed in `path/to/yaml.file` and set them on the remote instance. (Works currently only for D7)
+
+## k8s
+
+Runs a command against a kubernetes cluster. More info [here](/kubernetes.html)
