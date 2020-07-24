@@ -350,8 +350,12 @@ abstract class BaseCommand extends BaseOptionsCommand
     {
         $options = is_array($option_value) ? $option_value : explode(" ", $option_value);
         foreach ($options as $option) {
-            [$key, $value] = explode("=", $option, 2);
-            [$what, $key] = explode(".", $key, 2);
+            [$key_combined, $value] = explode("=", $option, 2);
+            [$what, $key] = array_pad(explode(".", $key_combined, 2), 2, false);
+            if (!in_array($what, ['host', 'dockerHost'])) {
+                $what = 'host';
+                $key = $key_combined;
+            }
             if ($what == 'host') {
                 $this->hostConfig->setProperty($key, $value);
             } elseif ($what == 'docker') {
