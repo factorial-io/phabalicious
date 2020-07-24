@@ -167,7 +167,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
 
         // Send to shell.
-        $input = $command . '; echo "' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL;
+        $input = $command . '; echo \n"' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL;
         $this->input->write($input);
 
         // Get result.
@@ -199,7 +199,10 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             $exit_code = array_pop($lines);
         } while (empty($exit_code));
 
-        $exit_code = intval(str_replace(self::RESULT_IDENTIFIER, '', $exit_code), 10);
+        $matches = [];
+        if (preg_match('/##RESULT:(\d*)$/', $exit_code, $matches)) {
+            $exit_code = intval($matches[1]);
+        }
 
         $cr = new CommandResult($exit_code, $lines);
         if ($cr->failed() && !$capture_output && $throw_exception_on_error) {
@@ -300,7 +303,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         );
         return $command;
     }
-    
+
     protected function overrideProcessInputAndOutput(Process $process, InputStream $input, OutputInterface $output)
     {
         $this->process = $process;
