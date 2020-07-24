@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.9 / 2020-07-24
+
+### Fixed:
+
+  * Harden the extraction of return codes for executed commands
+
 ## 3.4.8 / 2020-07-16
 
 ### Fixed:
