@@ -26,6 +26,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         'scaffold',
         'kubectl',
         'rollout',
+        'logs',
         'get-available-subcommands'
     ];
 
@@ -273,6 +274,12 @@ class K8sMethod extends BaseMethod implements MethodInterface
         foreach ($deployments as $deployment) {
             $this->kubectl($host_config, $context, "rollout $command deployments/$deployment");
         }
+    }
+
+    public function logs(HostConfig $host_config, TaskContextInterface $context, $additional_cmd)
+    {
+        $kube_config = $host_config['kube'];
+        $this->kubectl($host_config, $context, sprintf("logs -f %s %s", $kube_config["podForCli"], $additional_cmd));
     }
 
     /**

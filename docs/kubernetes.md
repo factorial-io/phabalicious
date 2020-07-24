@@ -162,6 +162,41 @@ spec:
       - name: registry-secrets
 ```
 
+## Getting a shell to one of the pods
+
+Phab contains a shell-provider for kubernetes, but it needs some guidance so it knows which pod to connect to. Phab is using a set of selectors to acquire the name of the actual running pod. As every project is different it makes sense to store this information in the `kube`-section of your host configuration:
+
+```yaml
+hosts:
+  k8s-example:
+    kube:
+      podSelector:
+        -service_type=%host.kube.serviceName%
+      serviceName: builder
+      ...
+```
+
+The `podSelector` contains one or more selectors which get appended to the kubctl call to get the name of the pod. In the above example the podSelector is using a `%property%` to use another property of the kube config. This makes it easy to change the pod-selector via the `--set`-option.
+
+To actually start a shell:
+
+```shell
+phab -c<config> shell
+```
+
+This should open an interactive shell on your selected pod.
+
+To override the pod-selector in the above example:
+
+```shell
+phab -c<config> shell --set host.kube.serviceName=nginx
+```
+
+this will open a shell to the pod which is the result of the selector `service_type=nginx`. The actual command will look like this: `kubectl get pods --namespace <the-namespace> -l <the-pod-selector> -o json`
+
+The shell is also used to run parts of the other commands like `reset`, `deploy`, etc.
+
+
 ## k8s subcommands
 
 the `k8s` provides a list of sub-commands, which maps to corresponding `kubectl` commands for the most popular use cases. Phab will provide the namespace option when needed and change the current directory to the kube project folder.
@@ -240,44 +275,17 @@ An example:
 phab -c<config> k8s rollout history deployments/nginx
 ```
 
+### the `logs` subcommand
+
+This subcommand will print out the logs of a particular pod:
+
+```
+phab -c<config> k8s logs
+```
+
+It uses the same podSelector mechanism as described under "Getting a shell"
+
 ## Integration into the deployment process of phabalicious
 
 It depends on your project setup if it makes sense to scaffold and apply the definition files when runnning a regular deployment. If you want to opt in you need to set `applyBeforeDeploy` to true. If set to true phabalicious will apply your definition files and depending on `waitAfterApply` and `scaffoldBeforeDeploy` even scaffold the definition files and/ or wait for the successful rollout. All this is run on the `deployPrepare`-stage
-
-## Getting a shell to one of the pods
-
-Phab contains a shell-provider for kubernetes, but it needs some guidance so it knows which pod to connect to. Phab is using a set of selectors to acquire the name of the actual running pod. As every project is different it makes sense to store this information in the `kube`-section of your host configuration:
-
-```yaml
-hosts:
-  k8s-example:
-    kube:
-      podSelector:
-        -service_type=%host.kube.serviceName%
-      serviceName: builder
-      ...
-```
-
-The `podSelector` contains one or more selectors which get appended to the kubctl call to get the name of the pod. In the above example the podSelector is using a `%property%` to use another property of the kube config. This makes it easy to change the pod-selector via the `--set`-option.
-
-To actually start a shell:
-
-```shell
-phab -c<config> shell
-```
-
-This should open an interactive shell on your selected pod.
-
-To override the pod-selector in the above example:
-
-```shell
-phab -c<config> shell --set host.kube.serviceName=nginx
-```
-
-this will open a shell to the pod which is the result of the selector `service_type=nginx`. The actual command will look like this: `kubectl get pods --namespace <the-namespace> -l <the-pod-selector> -o json`
-
-The shell is also used to run parts of the other commands like `reset`, `deploy`, etc.
-
-
-
 
