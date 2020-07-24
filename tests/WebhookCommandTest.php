@@ -116,6 +116,6 @@ class WebhookCommandTest extends PhabTestCase
         $this->assertContains('[test2Get]', $output);
         $this->assertContains('[testArguments]', $output);
         $this->assertContains('"args":{"q":"foo"}', $output);
-        $this->assertContains('config.factorial.io', $output);
+        $this->assertContains('factorial-screensaver', $output);
     }
 }
