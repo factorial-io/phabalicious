@@ -275,6 +275,16 @@ An example:
 phab -c<config> k8s rollout history deployments/nginx
 ```
 
+### the `describe` subcommand
+
+This subcommand will describe the pod desribed by the podSelector:
+
+```
+phab -c<config> k8s decribe
+```
+
+It uses the same podSelector mechanism as described under "Getting a shell"
+
 ### the `logs` subcommand
 
 This subcommand will print out the logs of a particular pod:

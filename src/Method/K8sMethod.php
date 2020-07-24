@@ -27,6 +27,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         'kubectl',
         'rollout',
         'logs',
+        'describe',
         'get-available-subcommands'
     ];
 
@@ -280,6 +281,16 @@ class K8sMethod extends BaseMethod implements MethodInterface
     {
         $kube_config = $host_config['kube'];
         $this->kubectl($host_config, $context, sprintf("logs -f %s %s", $kube_config["podForCli"], $additional_cmd));
+    }
+
+    public function describe(HostConfig $host_config, TaskContextInterface $context, $additional_cmd)
+    {
+        $kube_config = $host_config['kube'];
+        $this->kubectl(
+            $host_config,
+            $context,
+            sprintf("describe pod %s %s", $kube_config["podForCli"], $additional_cmd)
+        );
     }
 
     /**
