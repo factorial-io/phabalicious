@@ -1,8 +1,25 @@
 # Phabalicious
 
-Phabalicious is the successor of the python tool [fabalicious](https://github.com/factorial-io/fabalicious), a deployment helper based on [fabric](http:fabfile.org). Phabalicious is a complete rewrite in PHP using the symfony framework. It uses the same fabfile.yaml as fabalicious.
-
 [![factorial-io](https://circleci.com/gh/factorial-io/phabalicious.svg?style=shield)](https://circleci.com/gh/factorial-io/phabalicious)
+
+Phabalicious is using configuration stored in a special file in the root of your project (the fabfile.yaml) to run tasks in a shell. This shell can be provided by a docker-container, a ssh-connection or a local shell. This means, you can store all your devops-scripts in the fabfile and apply it to a list of configurations. Phabalicious tries to abstract away the inner workings of a host and give the user a handful useful commands to run common tasks, like:
+
+* deploying new code to a remote installation
+* reset a remote installation to its defaults.
+* backup/ restore data
+* copy data from one installation to another
+* scaffold new projects
+* run scripts on different local or remote installations.
+* handle SSH-tunnels transparently
+* trigger webhooks
+* send notifications via mattermost
+* optionally brings its own local dev-stack called [multibasebox](https://github.com/factorial-io/multibasebox)
+
+It integrates nicely with existing solutions like for continous integration or docker-based setups or diverse hosting environments like lagoon, platform.sh or complicated custom IT infrastructures.
+
+## Documentation
+
+You can find the docs [here](https://factorial-io.github.io/phabalicious/)
 
 ## Installation
 
@@ -59,6 +76,4 @@ Please add test-cases for your bug-fixes or new features. We are using [pre-comm
 
 * Run `pre-commit install` to install the pre-commit-hooks.
 
-## Documentation
 
-You can find an extensive documentation at [https://factorial-io.github.io/phabalicious](https://factorial-io.github.io/phabalicious)
