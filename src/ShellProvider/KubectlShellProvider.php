@@ -3,21 +3,21 @@
 namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
-class DockerExecShellProvider extends LocalShellProvider implements ShellProviderInterface
+class KubectlShellProvider extends LocalShellProvider implements ShellProviderInterface
 {
-    const PROVIDER_NAME = 'docker-exec';
+    const PROVIDER_NAME = 'kubectl';
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
-        $result = parent::getDefaultConfig($configuration_service, $host_config);
-        $result['dockerExecutable'] = 'docker';
-        $result['shellExecutable'] = '/bin/bash';
+        $result =  parent::getDefaultConfig($configuration_service, $host_config);
+        $result['kubectlExecutable'] = 'kubectl';
+        $result['shellExecutable'] = '/bin/sh';
 
+        $result['kube']['namespace'] = 'default';
         return $result;
     }
 
@@ -27,33 +27,38 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
 
         $validation = new ValidationService($config, $errors, 'host-config');
         $validation->hasKeys([
-            'docker' => 'The docker-configuration to use',
+            'kube' => 'The kubernetes config to use',
         ]);
         if (!$errors->hasErrors()) {
-            $validation = new ValidationService($config['docker'], $errors, 'host:docker');
-            if (empty($config['docker']['service'])) {
-                $validation->hasKey('name', 'The name of the docker-container to use');
-            } else {
-                $validation->hasKey('service', 'The service of the docker-compose to use');
-            }
+            $validation = new ValidationService($config['kube'], $errors, 'host:kube');
+            $validation->isArray('podSelector', 'A set of selectors to get the pod you want to connect to.');
+            $validation->hasKey('namespace', 'The namespace the pod is located in.');
         }
     }
 
 
     public function getShellCommand(array $program_to_call, array $options = []): array
     {
+        if (empty($this->hostConfig['kube']['podForCli'])) {
+            throw new \RuntimeException("Could not get shell, as podForCli is empty!");
+        }
         $command = [
-            $this->hostConfig['dockerExecutable'],
+            $this->hostConfig['kubectlExecutable'],
             'exec',
             (empty($options['tty']) ? '-i' : '-it'),
-            $this->hostConfig['docker']['name'],
+            $this->hostConfig['kube']['podForCli'],
+            '--namespace',
+            $this->hostConfig['kube']['namespace'],
+            '--'
         ];
         if (!empty($options['tty']) && empty($options['shell_provided'])) {
             $command[] = $this->hostConfig['shellExecutable'];
         }
 
         if (count($program_to_call)) {
-            $command[] = implode(' ', $program_to_call);
+            foreach ($program_to_call as $p) {
+                $command[] = $p;
+            }
         }
 
         return $command;
@@ -88,12 +93,13 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
      */
     public function wrapCommandInLoginShell(array $command)
     {
-        return [
+        array_unshift(
+            $command,
             '/bin/bash',
             '--login',
-            '-c',
-            '\'' . implode(' ', $command). '\'',
-        ];
+            '-c'
+        );
+        return $command;
     }
 
     /**
@@ -104,10 +110,12 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     public function getPutFileCommand(string $source, string $dest): array
     {
         return [
-            'docker',
+            'kubectl',
             'cp',
-            $source,
-            $this->hostConfig['docker']['name'] . ':' . $dest
+            trim($source),
+            $this->hostConfig['kube']['podForCli'] . ':' . trim($dest),
+            '--namespace',
+            $this->hostConfig['kube']['namespace'],
         ];
     }
 
@@ -119,10 +127,13 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     public function getGetFileCommand(string $source, string $dest): array
     {
         return [
-            'docker',
+            'kubectl',
             'cp',
-            $this->hostConfig['docker']['name'] . ':' . $source,
-            $dest,
+            $this->hostConfig['kube']['podForCli'] . ':' . trim($source),
+            trim($dest),
+            '--namespace',
+            $this->hostConfig['kube']['namespace'],
+
         ];
     }
 }

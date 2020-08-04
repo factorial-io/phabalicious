@@ -48,6 +48,13 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
                 'Override with a custom fabfile'
             )
             ->addOption(
+                'skip-cache',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Skip local cached files.',
+                false
+            )
+            ->addOption(
                 'offline',
                 null,
                 InputOption::VALUE_OPTIONAL,
@@ -68,6 +75,9 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         if ($optionName == 'offline') {
             return ['1', '0'];
         }
+        if ($optionName == 'skip-cache') {
+            return ['1', '0'];
+        }
     }
 
     public function completeArgumentValues($argumentName, CompletionContext $context)
@@ -84,8 +94,14 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
      */
     protected function readConfiguration(InputInterface $input)
     {
+        $offline = $input->getOption('offline');
+        $skip_cache = $input->getOption('skip-cache');
         $fabfile = !empty($input->getOption('fabfile')) ? $input->getOption('fabfile') : '';
-        $this->configuration->setOffline($input->getOption('offline'));
+
+        // Options w/o value have the value null, if not set, the default value, which is false.
+        $this->configuration
+            ->setOffline(is_null($offline) || !empty($offline))
+            ->setSkipCache(is_null($skip_cache) || !empty($skip_cache));
         $this->configuration->readConfiguration(getcwd(), $fabfile);
     }
 

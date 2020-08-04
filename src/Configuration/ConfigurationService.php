@@ -23,9 +23,10 @@ use Symfony\Component\Yaml\Yaml;
 
 class ConfigurationService
 {
+    const MAX_FILECACHE_LIFETIME = 60 * 60;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -49,6 +50,7 @@ class ConfigurationService
     /** @var BlueprintConfiguration */
     private $blueprints;
     private $offlineMode = false;
+    private $skipCache = false;
     private $disallowDeepMergeForKeys = [];
 
     public function __construct(Application $application, LoggerInterface $logger)
@@ -248,7 +250,7 @@ class ConfigurationService
         if (file_exists($override_file)) {
             $data = Utilities::mergeData($data, Yaml::parseFile($override_file));
         }
-        
+
         $this->checkRequires($data, $file);
 
 
@@ -374,7 +376,21 @@ class ConfigurationService
         if (isset($this->cache[$cid])) {
             return $this->cache[$cid];
         }
+        $cache_file = getenv("HOME")
+            . '/.phabalicious/' . md5($resource)
+            . '.' . pathinfo($resource, PATHINFO_EXTENSION);
 
+        // Check for cached version, maximum age 5 minutes.
+        if (!$this->skipCache &&
+            file_exists($cache_file) &&
+            time()-filemtime($cache_file) < self::MAX_FILECACHE_LIFETIME
+        ) {
+            $this->logger->info('Using cached version for `' . $resource .'`');
+            $contents = file_get_contents($cache_file);
+            $this->cache[$cid] = $contents;
+
+            return $contents;
+        }
         if (!$this->offlineMode) {
             try {
                 $this->logger->info(sprintf('Read remote file from `%s`', $resource));
@@ -513,9 +529,7 @@ class ConfigurationService
             'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
-            'supportsInstalls' => $type != HostType::PROD
-                ? true
-                : false,
+            'supportsInstalls' => $type != HostType::PROD,
             'supportsCopyFrom' => true,
             'backupBeforeDeploy' => in_array($type, [HostType::STAGE, HostType::PROD])
                 ? true
@@ -716,9 +730,10 @@ class ConfigurationService
         return $data;
     }
 
-    public function setOffline($offline)
+    public function setOffline($offline): ConfigurationService
     {
         $this->offlineMode = $offline;
+        return $this;
     }
 
     public function isOffline()
@@ -767,5 +782,23 @@ class ConfigurationService
     public function hasHostConfig($configName)
     {
         return !empty($this->hosts[$configName]);
+    }
+
+    /**
+     * @param bool $skipCache
+     * @return ConfigurationService
+     */
+    public function setSkipCache($skipCache): ConfigurationService
+    {
+        $this->skipCache = $skipCache;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSkipCache(): bool
+    {
+        return $this->skipCache;
     }
 }

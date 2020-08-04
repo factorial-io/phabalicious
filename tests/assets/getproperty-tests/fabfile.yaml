@@ -8,6 +8,9 @@ hosts:
   testA:
     type: dev
     host: getproperty-test-host.a
+    sub1:
+      sub2:
+        sub3: sub1.sub2.sub3-value
   testB:
     type: dev
     host: getproperty-test-host.b

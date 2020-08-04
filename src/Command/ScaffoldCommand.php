@@ -9,6 +9,7 @@ use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Scaffolder\Callbacks\TransformCallback;
+use Phabalicious\Scaffolder\Options;
 use Phabalicious\Utilities\PluginDiscovery;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,23 +54,36 @@ class ScaffoldCommand extends ScaffoldBaseCommand
         $context->mergeAndSet('callbacks', [
             'transform' => [$callback, 'handle']
         ]);
+        
+        $options = new Options();
+        $options
+            ->setAllowOverride(true)
+            ->setSkipSubfolder(true)
+            ->addCallback('transform', [new TransformCallback(), 'handle'])
+            ->setPluginRegistrationCallback(
+                function ($paths) use ($callback) {
+                    $callback->setTransformers(PluginDiscovery::discover(
+                        $this->getApplication()->getVersion(),
+                        $paths,
+                        'Phabalicious\Scaffolder\Transformers\DataTransformerInterface',
+                        $this->getConfiguration()->getLogger()
+                    ));
+                }
+            );
 
         $context->mergeAndSet('dataOverrides', [
-            'variables' => [
-                'allowOverride' => true,
-                'skipSubfolder' => true,
-            ],
             'questions' => [],
             'assets' => [],
         ]);
 
-        return $this->scaffold($url, $root_folder, $context, [], function ($paths) use ($callback) {
-            $callback->setTransformers(PluginDiscovery::discover(
-                $this->getApplication()->getVersion(),
-                $paths,
-                'Phabalicious\Scaffolder\Transformers\DataTransformerInterface',
-                $this->getConfiguration()->getLogger()
-            ));
-        });
+        $result = $this->scaffold(
+            $url,
+            $root_folder,
+            $context,
+            [],
+            $options
+        );
+
+        return $result->getExitCode();
     }
 }

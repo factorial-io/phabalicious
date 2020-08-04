@@ -1,0 +1,9 @@
+requires: 3.0
+
+variables:
+  a: foo
+  b: bar
+
+scaffold:
+  - echo %a%
+  - echo %b%

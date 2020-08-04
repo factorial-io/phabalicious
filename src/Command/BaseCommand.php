@@ -12,7 +12,7 @@ use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
-use Phabalicious\Method\TaskContext;
+use Phabalicious\ShellCompletion\FishShellCompletionContext;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\ParallelExecutor;
 use Phabalicious\Utilities\Utilities;
@@ -27,6 +27,7 @@ use Symfony\Component\Process\Process;
 
 abstract class BaseCommand extends BaseOptionsCommand
 {
+    /** @var HostConfig */
     private $hostConfig;
 
     private $dockerConfig;
@@ -61,6 +62,13 @@ abstract class BaseCommand extends BaseOptionsCommand
                 null
             )
             ->addOption(
+                'set',
+                's',
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Set an existing host config value, using key=value',
+                []
+            )
+            ->addOption(
                 'force',
                 null,
                 InputOption::VALUE_OPTIONAL,
@@ -82,6 +90,18 @@ abstract class BaseCommand extends BaseOptionsCommand
                 return [];
             }
             return array_keys($config->getAllHostConfigs());
+        }
+        if ($optionName == 'set' && $context instanceof FishShellCompletionContext) {
+            $dotted = [];
+            if ($host_config = $context->getHostConfig()) {
+                Utilities::pushKeysAsDotNotation($host_config->raw(), $dotted, ['host']);
+
+                $docker_config_name = $host_config['docker']['configuration'] ?? false;
+                if ($docker_config_name && $docker_config = $context->getDockerConfig($docker_config_name)) {
+                    Utilities::pushKeysAsDotNotation($docker_config->raw(), $dotted, ['docker']);
+                }
+            }
+            return $dotted;
         }
         return parent::completeOptionValues($optionName, $context);
     }
@@ -126,6 +146,9 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $this->handleVariants($input->getOption('variants'), $input, $output);
                 return 2;
             }
+            if ($input->getOption('set')) {
+                $this->handleSetOption($input->getOption('set'));
+            }
         } catch (MissingHostConfigException $e) {
             $io->error(sprintf('Could not find host-config named `%s`', $config_name));
             return 1;
@@ -151,7 +174,7 @@ abstract class BaseCommand extends BaseOptionsCommand
         return $this->hostConfig;
     }
 
-    protected function getDockerConfig()
+    protected function getDockerConfig() : ?HostConfig
     {
         return $this->dockerConfig;
     }
@@ -320,6 +343,31 @@ abstract class BaseCommand extends BaseOptionsCommand
             }
 
             return 1;
+        }
+    }
+
+    private function handleSetOption($option_value)
+    {
+        $options = is_array($option_value) ? $option_value : explode(" ", $option_value);
+        foreach ($options as $option) {
+            [$key_combined, $value] = explode("=", $option, 2);
+            [$what, $key] = array_pad(explode(".", $key_combined, 2), 2, false);
+            if (!in_array($what, ['host', 'dockerHost'])) {
+                $what = 'host';
+                $key = $key_combined;
+            }
+            if ($what == 'host') {
+                $this->hostConfig->setProperty($key, $value);
+            } elseif ($what == 'docker') {
+                $docker_config = $this->getDockerConfig();
+                if ($docker_config) {
+                    $docker_config->setProperty($key, $value);
+                } else {
+                    throw new \InvalidArgumentException('Can\'t set value for unavailable docker-config');
+                }
+            } else {
+                throw new \InvalidArgumentException(sprintf('Unknown type for set-option: %s', $option));
+            }
         }
     }
 }

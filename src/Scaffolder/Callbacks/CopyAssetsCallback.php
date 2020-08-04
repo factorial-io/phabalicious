@@ -5,6 +5,7 @@ namespace Phabalicious\Scaffolder\Callbacks;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\Utilities;
+use Twig\Environment;
 
 class CopyAssetsCallback implements CallbackInterface
 {
@@ -12,10 +13,10 @@ class CopyAssetsCallback implements CallbackInterface
     /** @var ConfigurationService */
     protected $configuration;
 
-    /** @var \Twig_Environment  */
+    /** @var Environment  */
     protected $twig;
 
-    public function __construct(ConfigurationService $configuration, \Twig_Environment $twig)
+    public function __construct(ConfigurationService $configuration, Environment $twig)
     {
         $this->configuration = $configuration;
         $this->twig = $twig;
@@ -50,9 +51,10 @@ class CopyAssetsCallback implements CallbackInterface
      * @param string $target_folder
      * @param string $data_key
      * @param bool $limitedForTwigExtension
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     *
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function copyAssets(
         TaskContextInterface $context,
