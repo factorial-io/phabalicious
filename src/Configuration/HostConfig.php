@@ -4,6 +4,7 @@ namespace Phabalicious\Configuration;
 
 use Phabalicious\Method\BaseMethod;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\Utilities;
 use PHPUnit\Util\Configuration;
 
 class HostConfig implements \ArrayAccess
@@ -139,5 +140,10 @@ class HostConfig implements \ArrayAccess
     public function setChild(string $parent, string $child, $value)
     {
         $this->data[$parent][$child] = $value;
+    }
+
+    public function setProperty(string $key, string $value)
+    {
+        Utilities::setProperty($this->data, $key, $value);
     }
 }

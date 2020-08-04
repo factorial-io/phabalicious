@@ -38,7 +38,7 @@ class DockerExecShellProviderTest extends PhabTestCase
         $this->shellProvider = new DockerExecShellProvider($logger);
 
         $host_config = new HostConfig([
-            'shellProviderExecutable' => 'docker',
+            'dockerExecutable' => 'docker',
             'shellExecutable' => '/bin/sh',
             'rootFolder' => '/',
             'docker' => [

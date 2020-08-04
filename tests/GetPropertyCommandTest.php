@@ -51,6 +51,72 @@ class GetPropertyCommandTest extends PhabTestCase
         $output = $commandTester->getDisplay();
         $this->assertContains('getproperty-test-host.a', $output);
     }
+    public function testGetNestedProperty()
+    {
+        $command = $this->application->find('getProperty');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            'property' => 'sub1.sub2.sub3',
+            '--config' => 'testA'
+        ));
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertContains('sub1.sub2.sub3-value', $output);
+    }
+
+    public function testGetPropertyOverridden()
+    {
+        $command = $this->application->find('getProperty');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            'property' => 'host',
+            '--config' => 'testA',
+            '--set' => [
+                'host.host=overridden-host.a'
+            ],
+        ));
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertContains('overridden-host.a', $output);
+    }
+
+    public function testGetNestedPropertyOverridden()
+    {
+        $command = $this->application->find('getProperty');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            'property' => 'sub1.sub2.sub3',
+            '--config' => 'testA',
+            '--set' => [
+                'host.sub1.sub2.sub3=sub1.sub2.sub3-overridden'
+            ],
+        ));
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertContains('sub1.sub2.sub3-overridden', $output);
+    }
+
+    public function testInvalidNestedPropertyOverridden()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $command = $this->application->find('getProperty');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            'property' => 'sub1.sub2.sub3',
+            '--config' => 'testA',
+            '--set' => [
+                'host.sub1.sub2.sub4=sub1.sub2.sub3-overridden'
+            ],
+        ));
+    }
 
     public function testGetPropertyB()
     {

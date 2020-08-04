@@ -2,20 +2,17 @@
 
 namespace Phabalicious\Method;
 
-use Phabalicious\Command\BaseCommand;
 use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Utilities\Utilities;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestAttributeValueResolver;
 
 class TaskContext implements TaskContextInterface
 {
@@ -39,12 +36,14 @@ class TaskContext implements TaskContextInterface
 
     private $io;
 
-    public function __construct(BaseOptionsCommand $command, InputInterface $input, OutputInterface $output)
+    public function __construct(?BaseOptionsCommand $command, InputInterface $input, OutputInterface $output)
     {
         $this->setInput($input);
         $this->setOutput($output);
-        $this->setCommand($command);
-        $this->setConfigurationService($command->getConfiguration());
+        if ($command) {
+            $this->setCommand($command);
+            $this->setConfigurationService($command->getConfiguration());
+        }
     }
 
     public function set(string $key, $value)
@@ -189,5 +188,10 @@ class TaskContext implements TaskContextInterface
             $this->io = new SymfonyStyle($this->getInput(), $this->getOutput());
         }
         return $this->io;
+    }
+    
+    public function setIo(SymfonyStyle $io)
+    {
+        $this->io = $io;
     }
 }

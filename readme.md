@@ -28,10 +28,10 @@ You can find the docs [here](https://factorial-io.github.io/phabalicious/)
 
       cp phabalicious.phar /usr/local/bin/phab
 
-* Make it executable, e.g.  
+* Make it executable, e.g.
 
       chmod +x /usr/local/bin/phab
-    
+
 ## Build from source
 
 You'll need [box](https://github.com/humbug/box) for building the phar-file.

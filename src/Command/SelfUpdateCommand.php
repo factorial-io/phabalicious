@@ -2,8 +2,8 @@
 
 namespace Phabalicious\Command;
 
+use Composer\Semver\Comparator;
 use Humbug\SelfUpdate\Updater;
-use PHPUnit\Framework\SelfDescribing;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -113,21 +113,8 @@ class SelfUpdateCommand extends BaseOptionsCommand
 
     protected function getLatestReleaseFromGithub()
     {
-        $opts = [
-            'http' => [
-                'method' => 'GET',
-                'header' => [
-                    'User-Agent: phabalicious  (factorial-io/phabalicious)' . ' Self-Update (PHP)'
-                ]
-            ]
-        ];
-
-        $context = stream_context_create($opts);
-
-        $releases = file_get_contents(
-            'https://api.github.com/repos/factorial-io/phabalicious/releases',
-            false,
-            $context
+        $releases = $this->getConfiguration()->readHttpResource(
+            'https://api.github.com/repos/factorial-io/phabalicious/releases'
         );
         $releases = json_decode($releases);
 
@@ -137,9 +124,15 @@ class SelfUpdateCommand extends BaseOptionsCommand
 
         $version = $releases[0]->tag_name;
         $url     = $releases[0]->assets[0]->browser_download_url;
-        
 
-        return [ 'new_version' => $version, 'unstable' => false];
+        if (Comparator::greaterThan($version, $this->getApplication()->getVersion())) {
+            return [
+                'new_version' => $version,
+                'unstable' => false
+            ];
+        }
+
+        return false;
     }
 
     public static function registerListener(EventDispatcher $dispatcher)
