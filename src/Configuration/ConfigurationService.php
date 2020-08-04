@@ -403,7 +403,19 @@ class ConfigurationService
                         throw new FabfileNotReadableException($message);
                     }
                 );
-                $contents = file_get_contents($resource);
+
+                $opts = [
+                    'http' => [
+                        'method' => 'GET',
+                        'header' => [
+                            'User-Agent: phabalicious  (factorial-io/phabalicious)' . ' (PHP)'
+                        ]
+                    ]
+                ];
+
+                $context = stream_context_create($opts);
+                $contents = file_get_contents($resource, false, $context);
+
                 restore_error_handler();
             } catch (\Exception $e) {
                 $this->logger->warning('Could not load resource from `' . $resource . '`: ' . $e->getMessage());
