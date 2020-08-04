@@ -4,6 +4,9 @@
     ".env",
     "config/services.yml",
     "vendor/twig/twig/src/TwigTest.php"
+    ],
+  "directories": [
+    "vendor/twig/twig/src/Node/Expression/Test"
   ],
   "directories-bin": [
     "config/scaffold"
@@ -13,5 +16,6 @@
   ],
   "git-tag": "git_tag",
   "output": "build/phabalicious.phar",
-  "compression": "GZ"
+  "compression": "GZ",
+  "force-autodiscovery": true
 }
