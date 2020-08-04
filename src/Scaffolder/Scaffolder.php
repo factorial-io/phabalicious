@@ -233,7 +233,7 @@ class Scaffolder
         $script->runScript($host_config, $context);
 
         /** @var CommandResult $result */
-        $result = $context->getResult('commandResult');
+        $result = $context->getResult('commandResult', new CommandResult(0, []));
         if ($result && $result->failed()) {
             throw new RuntimeException(sprintf(
                 "Scaffolding failed with exit-code %d\n%s",
