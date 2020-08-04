@@ -12,6 +12,7 @@ use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
+use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
@@ -20,6 +21,8 @@ use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\AlterJsonFileCallback;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
 use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
+use Phabalicious\Scaffolder\Options;
+use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\QuestionFactory;
@@ -39,16 +42,15 @@ use Twig\Loader\FilesystemLoader;
 abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 {
 
-    protected $twig;
-
     protected $dynamicOptions = [];
     
-    protected $questionFactory;
+    protected $scaffolder;
     
     public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
     {
         parent::__construct($configuration, $method_factory, $name);
-        $this->questionFactory = new QuestionFactory();
+
+        $this->scaffolder = new Scaffolder($configuration);
     }
 
     protected function configure()
@@ -92,260 +94,35 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
      * @param TaskContextInterface $context
      * @param array $tokens
      * @param callable|null $plugin_registration_callback
-     * @return int
+     * @return CommandResult
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
      * @throws MismatchedVersionException
      * @throws MissingScriptCallbackImplementation
      * @throws ValidationFailedException
+     * @throws UnknownReplacementPatternException
      */
     protected function scaffold(
         $url,
         $root_folder,
         TaskContextInterface $context,
-        array $tokens = [],
-        callable $plugin_registration_callback = null
+        array $tokens,
+        Options $options
     ) {
-        $is_remote = false;
-        if (substr($url, 0, 4) !== 'http') {
-            $data = Yaml::parseFile($url);
-            $twig_loader_base = dirname($url);
-        } else {
-            $data = $this->configuration->readHttpResource($url);
-            $data = Yaml::parse($data);
-            $twig_loader_base = '/tmp';
-            $is_remote = true;
+        $options
+            ->setAllowOverride(
+                empty($context->getInput()->getOption('force'))
+                || empty($context->getInput()->getOption('override'))
+                || $options->getAllowOverride()
+            )
+            ->setCompabilityVersion($this->getApplication()->getVersion());
+
+        $dynamic_options = [];
+        foreach ($this->dynamicOptions as $option_name) {
+            $dynamic_options[$option_name] = $context->getInput()->getOption($option_name);
         }
-        if (!$data) {
-            throw new InvalidArgumentException('Could not read yaml from ' . $url);
-        }
+        $options->setDynamicOptions($dynamic_options);
 
-        // Allow implementation to override parts of the data.
-        $data = Utilities::mergeData($context->get('dataOverrides', []), $data);
-
-        if ($data && isset($data['requires'])) {
-            $required_version = $data['requires'];
-            $app_version = $this->getApplication()->getVersion();
-            if (Comparator::greaterThan($required_version, $app_version)) {
-                throw new MismatchedVersionException(
-                    sprintf(
-                        'Could not read from %s because of version mismatch. %s is required, current app is %s',
-                        $url,
-                        $required_version,
-                        $app_version
-                    )
-                );
-            }
-        }
-
-        $data['base_path'] = dirname($url);
-
-        if (!empty($data['inheritsFrom'])) {
-            if (!is_array($data['inheritsFrom'])) {
-                $data['inheritsFrom'] = [$data['inheritsFrom']];
-            }
-            if ($is_remote) {
-                foreach ($data['inheritsFrom'] as $item) {
-                    if (substr($item, 0, 4) !== 'http') {
-                        $data['inheritsFrom'] = $data['base_path'] . '/' . $item;
-                    }
-                }
-            }
-        }
-
-        $data = $this->configuration->resolveInheritance($data, [], dirname($url));
-        if (!empty($data['plugins']) && $plugin_registration_callback) {
-            $plugin_registration_callback($data['plugins']);
-        }
-
-        $errors = new ValidationErrorBag();
-        $validation = new ValidationService($data, $errors, 'scaffold');
-
-        $validation->hasKey('scaffold', 'The file needs a scaffold-section.');
-        $validation->hasKey('assets', 'The file needs a assets-section.');
-        $validation->hasKey('questions', 'The file needs a questions-section.');
-        if ($errors->hasErrors()) {
-            throw new ValidationFailedException($errors);
-        }
-
-        if (!empty($data['variables']['skipSubfolder']) && !empty($data['variables']['allowOverride'])) {
-            $tokens['name'] = basename($root_folder);
-            $root_folder = dirname($root_folder);
-        }
-
-        $tokens['uuid'] = Utilities::generateUUID();
-
-        if (isset($tokens['name'])) {
-            $tokens = Utilities::mergeData($this->readTokens($root_folder, $tokens['name']), $tokens);
-        }
-
-        $questions = !empty($data['questions']) ? $data['questions'] : [];
-        $tokens = $this->askQuestions($context->getInput(), $questions, $context, $tokens);
-        if (!empty($data['variables'])) {
-            $tokens = Utilities::mergeData($data['variables'], $tokens);
-        }
-        if (empty($tokens['name'])) {
-            throw new InvalidArgumentException('Missing `name` in questions, aborting!');
-        }
-
-        if (empty($tokens['projectFolder'])) {
-            $tokens['projectFolder'] = $tokens['name'];
-        }
-
-        // Do a first round of replacements.
-        $replacements = Utilities::getReplacements($tokens);
-        foreach ($tokens as $ndx => $token) {
-            if (is_array($token)) {
-                $tokens[$ndx] = array_map(function ($e) use ($replacements) {
-                    return strtr($e, $replacements);
-                }, $token);
-            } else {
-                $tokens[$ndx] = strtr($token, $replacements);
-            }
-        }
-
-        $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
-        $tokens['rootFolder'] = realpath($root_folder) . '/' . $tokens['projectFolder'];
-
-        $logger = $this->configuration->getLogger();
-        $shell = new LocalShellProvider($logger);
-        $script = new ScriptMethod($logger);
-
-        $host_config = new HostConfig([
-            'rootFolder' => realpath($context->getInput()->getOption('output')),
-            'shellExecutable' => '/bin/bash'
-        ], $shell, $this->configuration);
-
-        $context->set('scriptData', $data['scaffold']);
-        $context->set('variables', $tokens);
-
-        $context->set('scaffoldData', $data);
-        $context->set('tokens', $tokens);
-        $context->set('loaderBase', $twig_loader_base);
-
-        // Setup twig
-        $loader = new FilesystemLoader($twig_loader_base);
-        $this->twig = new Environment($loader, array(
-
-        ));
-
-        $context->mergeAndSet('callbacks', [
-            CopyAssetsCallback::getName() => [new CopyAssetsCallback($this->configuration, $this->twig), 'handle'],
-            LogMessageCallback::getName() => [new LogMessageCallback(), 'handle'],
-            AlterJsonFileCallback::getName() => [new AlterJsonFileCallback(), 'handle'],
-        ]);
-        
-
-        if (is_dir($tokens['rootFolder'])
-            && empty($context->getInput()->getOption('force'))
-            && empty($context->getInput()->getOption('override'))
-            && empty($tokens['allowOverride'])
-        ) {
-            if (!$context->io()->confirm(
-                'Destination folder exists! Continue anyways?',
-                false
-            )) {
-                return 1;
-            }
-        }
-        if ($context->getOutput()->getVerbosity() == OutputInterface::VERBOSITY_VERBOSE) {
-            $context->io()->note('Available tokens:' . PHP_EOL . print_r($tokens, true));
-        }
-
-        $context->io()->comment('Create destination folder ...');
-        $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
-
-        $context->io()->comment('Start scaffolding script ...');
-        $script->runScript($host_config, $context);
-
-        /** @var CommandResult $result */
-        $result = $context->getResult('commandResult');
-        if ($result && $result->failed()) {
-            throw new RuntimeException(sprintf(
-                "Scaffolding failed with exit-code %d\n%s",
-                $result->getExitCode(),
-                implode("\n", $result->getOutput())
-            ));
-        }
-
-        if (!empty($data['successMessage'])) {
-            $context->io()->block($data['successMessage'], 'Notes', 'fg=white;bg=blue', ' ', true);
-        }
-        $this->writeTokens($tokens['rootFolder'], $tokens);
-
-        $context->io()->success('Scaffolding finished successfully!');
-        return 0;
-    }
-
-    /**
-     * @param InputInterface $input
-     * @param array $questions
-     * @param TaskContextInterface $context
-     * @param array $tokens
-     * @return array
-     * @throws ValidationFailedException
-     */
-    protected function askQuestions(
-        InputInterface $input,
-        array $questions,
-        TaskContextInterface $context,
-        array $tokens
-    ): array {
-        foreach ($questions as $key => $question_data) {
-            $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
-            $value = null;
-            if (isset($tokens[$key])) {
-                $value = $tokens[$key];
-            } elseif (in_array($option_name, $this->dynamicOptions)) {
-                $value = $input->getOption($option_name);
-            }
-            $value = $this->questionFactory->askAndValidate(
-                $context->io(),
-                $question_data,
-                $value
-            );
-
-            $tokens[$key] = is_array($value) ? $value : trim($value);
-        }
-        return $tokens;
-    }
-
-
-    /**
-     * Get local scaffold file.
-     * @param $name
-     * @return string
-     */
-    protected function getLocalScaffoldFile($name)
-    {
-        $rootFolder = Phar::running()
-            ? Phar::running() . '/config/scaffold'
-            : realpath(__DIR__ . '/../../config/scaffold/');
-
-        return $rootFolder . '/' . $name;
-    }
-
-    /**
-     * @param $root_folder
-     * @param $tokens
-     */
-    protected function writeTokens($root_folder, $tokens)
-    {
-        file_put_contents($root_folder . '/.phab-scaffold-tokens', YAML::dump($tokens));
-    }
-
-    /**
-     * @param $root_folder
-     * @param $name
-     * @return array|mixed
-     */
-    protected function readTokens($root_folder, $name)
-    {
-        $full_path = "$root_folder/$name/.phab-scaffold-tokens";
-        if (!file_exists($full_path)) {
-            return [];
-        }
-        $tokens = yaml::parseFile($full_path);
-        return is_array($tokens) ? $tokens : [];
+        return $this->scaffolder->scaffold($url, $root_folder, $context, $tokens, $options);
     }
 }

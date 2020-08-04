@@ -513,9 +513,7 @@ class ConfigurationService
             'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
-            'supportsInstalls' => $type != HostType::PROD
-                ? true
-                : false,
+            'supportsInstalls' => $type != HostType::PROD,
             'supportsCopyFrom' => true,
             'backupBeforeDeploy' => in_array($type, [HostType::STAGE, HostType::PROD])
                 ? true

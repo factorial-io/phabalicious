@@ -6,8 +6,10 @@ use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
+use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Scaffolder\Options;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -51,11 +53,12 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
      * @param OutputInterface $output
      *
      * @return int
-     * @throws MismatchedVersionException
-     * @throws ValidationFailedException
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
+     * @throws MismatchedVersionException
      * @throws MissingScriptCallbackImplementation
+     * @throws ValidationFailedException
+     * @throws UnknownReplacementPatternException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -63,7 +66,7 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
         $context = $this->createContext($input, $output);
 
-        $this->scaffold($url, $root_folder, $context);
+        $this->scaffold($url, $root_folder, $context, [], new Options());
         return 0;
     }
 }
