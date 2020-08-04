@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.5.1 / 2020-08-04
+
+### Fixed:
+
+  * Fix a warning when running scaffold without scripts
+  * Force-include twig dependencies when building phar
+
 ## 3.5.0 / 2020-08-04
 
 ### Fixed: 
