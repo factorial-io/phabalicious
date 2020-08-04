@@ -1,5 +1,34 @@
 # Changelog
 
+## 3.5.0 / 2020-08-04
+
+### Fixed: 
+
+  * Fix error in fallback version check, fixes #93
+
+### New:
+
+  * Support for kubernetes, see documentation for more details. Some features still missing.
+  * Add describe subcommand for k8s
+  * Add logs subcommand for k8s
+  * Implement copy operation for k8s
+  * Add docs for kubernetes, fix test
+  * Allow the passing of a shellprovider to the scaffolder, reorganize code a little bit
+  * Add new k8s subcommand rollout, wait for deployments to finish before continuing
+  * Apply kubernetes config on deploy, even when scaffolder is not used, smaller code enhancements
+  * Rename deployCommand to applyCommand, add delete subcommand to k8s method
+  * Add new option `set` which allows to set a certain value in the configuration
+  * Provide host data and timestamp for scaffolder
+  * Add kubectl shellprovider, fix some bugs in K8sMethod
+  * Add k8s subcommands
+  * Implement initial deploy command for k8s
+  * Fix replacements in k8s
+  * Start working on k8s method, refactoring scaffold functionality into dedicated class with dedicated options class
+  * Bump elliptic from 6.5.2 to 6.5.3
+  * Bump lodash from 4.17.15 to 4.17.19
+  * Disable symfony recipes
+  * Show available update even on linux
+
 ## 3.4.9 / 2020-07-24
 
 ### Fixed:
