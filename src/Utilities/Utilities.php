@@ -8,7 +8,7 @@ use Phabalicious\Method\TaskContextInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.5.1';
+    const FALLBACK_VERSION = '3.5.2';
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
@@ -64,8 +64,15 @@ class Utilities
         if (empty($strings)) {
             return [];
         }
-        $pattern = implode('|', array_filter(array_keys($replacements), 'preg_quote'));
-        return self::expandStringsImpl($strings, $replacements, $pattern);
+        $chunked_patterns = array_chunk(array_keys($replacements), 25);
+        $result = $strings;
+
+        foreach ($chunked_patterns as $chunk) {
+            $pattern = implode('|', array_filter($chunk, 'preg_quote'));
+            $result = self::expandStringsImpl($result, $replacements, $pattern);
+        }
+
+        return $result;
     }
 
     private static function expandStringsImpl(array $strings, array &$replacements, string $pattern)
