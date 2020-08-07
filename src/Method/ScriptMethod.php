@@ -74,7 +74,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $callbacks
             );
         }
-        
+
         $environment = $context->get('environment', []);
         if (!$context->getShell()) {
             $context->setShell($host_config->shell());
@@ -136,7 +136,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             }, array_keys($replacements));
 
             $context->io()->table(['Key', 'Replacement'], $printed_replacements);
-            
+
             throw $e;
         }
     }
@@ -161,7 +161,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         array $environment = [],
         array $replacements = []
     ) : ?CommandResult {
-        $command_result = null;
+        $command_result = new CommandResult(0, []);
         $context->set('break_on_first_error', $this->getBreakOnFirstError());
 
         $shell = $context->getShell();

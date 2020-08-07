@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.5.2 / 2020-08-07
+
+### Fixed: 
+
+  * Chunk regex patterns to prevent warning and failing replacements
+  * Provide default command result
+
 ## 3.5.1 / 2020-08-04
 
 ### Fixed:
