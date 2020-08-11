@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.3 / 2020-08-11
+
+## Fixed:
+
+  * Fix broken workspace:create and workspace:update commands due to recent refactoring. Add test coverage for both commands
+
 ## 3.5.2 / 2020-08-07
 
 ### Fixed: 
