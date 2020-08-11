@@ -2,9 +2,13 @@
 
 namespace Phabalicious\Command;
 
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingScriptCallbackImplementation;
+use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\TaskContext;
+use Phabalicious\Scaffolder\Options;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,17 +47,18 @@ class WorkspaceCreateCommand extends ScaffoldBaseCommand
      * @return int
      * @throws MismatchedVersionException
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\FailedShellCommandException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws FabfileNotReadableException
+     * @throws FailedShellCommandException
+     * @throws MissingScriptCallbackImplementation
+     * @throws UnknownReplacementPatternException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $url  = $this->getLocalScaffoldFile('mbb/mbb.yml');
+        $url  = $this->scaffolder->getLocalScaffoldFile('mbb/mbb.yml');
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
         $context = $this->createContext($input, $output);
 
-        $this->scaffold($url, $root_folder, $context);
-        return 0;
+        $result = $this->scaffold($url, $root_folder, $context, [], new Options());
+        return $result->getExitCode();
     }
 }
