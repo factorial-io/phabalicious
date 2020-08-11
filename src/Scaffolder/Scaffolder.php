@@ -275,7 +275,8 @@ class Scaffolder
             if (isset($tokens[$key])) {
                 $value = $tokens[$key];
             }
-            if ($dynamic_option = $options->getDynamicOption($option_name)) {
+            $dynamic_option = $options->getDynamicOption($option_name);
+            if ($dynamic_option !== false && $dynamic_option !== null) {
                 $value = $dynamic_option;
             }
             $value = $this->questionFactory->askAndValidate(
@@ -295,7 +296,7 @@ class Scaffolder
      * @param $name
      * @return string
      */
-    protected function getLocalScaffoldFile($name)
+    public function getLocalScaffoldFile($name)
     {
         $rootFolder = Phar::running()
             ? Phar::running() . '/config/scaffold'

@@ -16,7 +16,7 @@ scaffold:
   - cd %rootFolder%; git clone https://github.com/factorial-io/multibasebox.git --branch %branch% .
   - copy_assets(%rootFolder%)
   - log_message(The next step might require your admin-password to setup nfs and other things ...)
-  - cd %rootFolder%; bash ./setup-docker.sh
+  - cd %rootFolder%;  if [ -n "%runSetup%" ]; then bash ./setup-docker.sh; fi
 
 successMessage:
   - |

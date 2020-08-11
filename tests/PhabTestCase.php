@@ -11,4 +11,10 @@ class PhabTestCase extends TestCase
     {
         return getcwd() . '/tests';
     }
+
+    protected function checkFileContent($filename, $needle)
+    {
+        $haystack = file_get_contents($filename);
+        $this->assertContains($needle, $haystack);
+    }
 }

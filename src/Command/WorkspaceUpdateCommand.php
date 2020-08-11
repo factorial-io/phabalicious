@@ -6,8 +6,10 @@ use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
+use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Scaffolder\Options;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -33,10 +35,11 @@ class WorkspaceUpdateCommand extends ScaffoldBaseCommand
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
      * @throws MissingScriptCallbackImplementation
+     * @throws UnknownReplacementPatternException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $url  = $this->getLocalScaffoldFile('mbb/mbb-update.yml');
+        $url  = $this->scaffolder->getLocalScaffoldFile('mbb/mbb-update.yml');
         $root_folder = $this->findRootFolder(getcwd());
         if (!$root_folder) {
             throw new \InvalidArgumentException('Could not find multibasebox root folder!');
@@ -45,10 +48,10 @@ class WorkspaceUpdateCommand extends ScaffoldBaseCommand
 
         $name = basename($root_folder);
         $root_folder = dirname($root_folder);
-        $this->scaffold($url, $root_folder, $context, ['name' => $name]);
+        $this->scaffold($url, $root_folder, $context, ['name' => $name], new Options());
         return 0;
     }
-    
+
     private function findRootFolder($start_folder, $max_level = 10)
     {
         if (file_exists($start_folder . '/setup-docker.sh')) {
