@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Command;
 
+use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
 use Phabalicious\Utilities\Utilities;
@@ -81,12 +82,14 @@ class ScriptCommand extends BaseCommand
                 return 1;
             }
             $defaults = $script_data['defaults'] ?? [];
+            $script_context = $script_data['context'] ?? ScriptMethod::HOST_SCRIPT_CONTEXT;
             if (!empty($script_data['script'])) {
                 $script_data = $script_data['script'];
             }
 
             $context = $this->createContext($input, $output, $defaults);
             $context->set('scriptData', $script_data);
+            $context->set('scriptContext', $script_context);
 
             $this->getMethods()->call('script', 'runScript', $this->getHostConfig(), $context);
         }

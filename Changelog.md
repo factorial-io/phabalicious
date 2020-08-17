@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.4 / 2020-08-17
+
+### New:
+
+  * Allow optional script context definition of a script, this will allow to execute the script in a different context, eg in the context of the kubectl shell
+
 ## 3.5.3 / 2020-08-11
 
 ## Fixed:
@@ -8,7 +14,7 @@
 
 ## 3.5.2 / 2020-08-07
 
-### Fixed: 
+### Fixed:
 
   * Chunk regex patterns to prevent warning and failing replacements
   * Provide default command result
@@ -22,7 +28,7 @@
 
 ## 3.5.0 / 2020-08-04
 
-### Fixed: 
+### Fixed:
 
   * Fix error in fallback version check, fixes #93
 
@@ -71,7 +77,7 @@
 
 ## 3.4.6 / 2020-06-29
 
-### Fixed: 
+### Fixed:
 
   * Ensure known hosts for ssh shells, some refactoring
   * Fix smaller bugs in scaffolder
