@@ -61,6 +61,46 @@ host:
 
 These scripts in the above examples gets executed only for the host `test` and task `deploy`.
 
+
+## Defaults
+
+You an provide defaults for a script, which can be verridden via the `--arguments` commandline option
+
+```yaml
+scripts:
+  test:
+    defaults:
+      foo: World
+    script:
+      - echo "Hello %arguments.foo%"
+```
+
+Running 
+```
+phab -c<config> script test
+```
+ will output `Hello World`
+ 
+```
+phab -c<config> script test --arguments foo=bar
+```
+
+will output `Hello bar`
+
+## Script contexts
+
+Sometimes it makes sense to run a script in a different context, e.g. not on the host-config, but for example in the context of the kubectl application or the docker host. You can override the context via
+
+```yaml
+scripts:
+  test:
+    context: kubectl
+    script:
+      - kubectl apply -f whatever
+```
+
+The example above will run the script not in the context of the host, but in the context of the shell which also runs the kubectl command.
+
 ## Examples
 
 A rather complex example scripting phabalicious.
