@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.5 / 2020-08-18
+
+### New:
+
+  * Add support for switching context before running kubectl
+
 ## 3.5.4 / 2020-08-17
 
 ### New:
