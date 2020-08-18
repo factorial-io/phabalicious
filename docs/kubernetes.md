@@ -16,6 +16,7 @@ hosts:
     needs:
       - k8s
     kube:
+      context: my-context
       scaffolder:
         baseUrl: ./public/scaffold/kube
       namespace: factorial-infra
@@ -41,6 +42,7 @@ hosts:
     shellExecutable: /bin/sh
     kubectlExecutable: kubectl
     kube:
+      context: false
       namespace: default
       scaffolder:
         baseUrl: https://config.factorial.io/scaffold/kube
@@ -161,6 +163,10 @@ spec:
       imagePullSecrets:
       - name: registry-secrets
 ```
+
+## Working with contexts
+
+phab can support different contexts, just add the name of the context to the `kube`-configuration. Phab will switch to that context before doing any work, and restore the context afterwards. If an error happens, the context might not get restored correctly.
 
 ## Getting a shell to one of the pods
 
