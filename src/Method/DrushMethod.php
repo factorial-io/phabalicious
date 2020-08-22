@@ -709,9 +709,13 @@ class DrushMethod extends BaseMethod implements MethodInterface
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('shell', $host_config->shell());
         if ($host_config['drupalVersion'] == 7) {
-            $output = $shell->run(sprintf('#!drush variable-get --format=json %s', $key), true);
+            $shell->pushWorkingDir($host_config['siteFolder']);
+            $output = $shell->run(sprintf('#!drush variable-get --format=json %s', $key), true, false);
+            $shell->popWorkingDir();
             if ($output->failed()) {
-                $this->logger->error(implode("\n", $output->getOutput()));
+                if (!empty($output->getOutput())) {
+                    $this->logger->error(implode("\n", $output->getOutput()));
+                }
                 return null;
             }
             $json = json_decode(implode("\n", $output->getOutput()), true);
@@ -726,11 +730,13 @@ class DrushMethod extends BaseMethod implements MethodInterface
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('shell', $host_config->shell());
         if ($host_config['drupalVersion'] == 7) {
+            $shell->pushWorkingDir($host_config['siteFolder']);
             $output = $shell->run(sprintf(
                 '#!drush variable-set --yes --format=json %s \'%s\'',
                 $key,
                 json_encode($value)
             ), true);
+            $shell->popWorkingDir();
             if ($output->failed()) {
                 throw new \RuntimeException($output->getOutput());
             }
