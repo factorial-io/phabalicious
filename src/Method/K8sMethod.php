@@ -72,6 +72,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $default['kube'] = Utilities::mergeData($global_settings, [
             'context' => false,
+            'environment' => [],
             'scaffoldBeforeApply' => true,
             'applyBeforeDeploy' => true,
             'waitAfterApply' => true,
@@ -105,6 +106,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $service->hasKey('deleteCommand', 'Provide a delte command which gets executed on deletion.');
             $service->hasKey('applyCommand', 'Provide a applyCommand which gets executed on apply.');
             $service->hasKey('scaffolder', '`scaffolder` is missing.');
+            $service->isArray('environment', 'the environment for kubectl needs to be an array');
             $service->isArray('deployments', 'phab needs a list of deployment names, so it can check their status.');
             $service->isArray('parameters', '`parameters` needs to be an array.');
             if (!empty($config['kube']['parameters'])) {
@@ -124,14 +126,19 @@ class K8sMethod extends BaseMethod implements MethodInterface
         $this->ensureShell($config, $context);
         $result = $this->kubectlShell->run('#!kubectl config current-context', true, true);
 
-        return trim($result->getOutput()[0]);
+        return !empty($result->getOutput()) ? trim($result->getOutput()[0]) : false;
     }
 
-    private function setContext(HostConfig $config, TaskContextInterface $context, string $context_name)
+    private function setContext(HostConfig $config, TaskContextInterface $context, $context_name)
     {
         $this->ensureShell($config, $context);
-        $this->logger->info(sprintf("Switch context  to `%s` for kubectl", $context_name));
-        $this->kubectl($config, $context, sprintf('config use-context %s', $context_name));
+        if ($context_name) {
+            $this->logger->info(sprintf("Switch context  to `%s` for kubectl", $context_name));
+            $this->kubectl($config, $context, sprintf('config use-context %s', $context_name));
+        } else {
+            $this->logger->info("Unset context  for kubectl");
+            $this->kubectl($config, $context, 'config unset current-context');
+        }
     }
 
     private function pushKubeCtlContext(HostConfig $config, TaskContextInterface $context, string $context_name)
@@ -390,6 +397,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
                 'executables' => $host_config['executables'] ?? [],
             ], $this->kubectlShell, $context->getConfigurationService());
             $this->kubectlShell->setHostConfig($shell_host_config);
+            $this->kubectlShell->applyEnvironment($kube_config['environment']);
 
             if (!$this->kubectlShell->exists($project_folder)) {
                 $this->logger->info('Creating project folder ' . $project_folder);

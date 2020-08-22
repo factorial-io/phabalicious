@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.5.6 / 2020-08-22
+
+### New:
+
+  * Allow to set environment variables in the kubectl context, e.g for KUBECONFIG
+
+### Fixes:
+
+  * Make sure that drush operates in the correct sitefolder when pulling or pushing variables
+  * Smaller doc fixes
+
 ## 3.5.5 / 2020-08-18
 
 ### New:

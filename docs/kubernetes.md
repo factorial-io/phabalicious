@@ -16,6 +16,8 @@ hosts:
     needs:
       - k8s
     kube:
+      environment:
+        KUBECONFIG: /path/to/kubeconfig.file
       context: my-context
       scaffolder:
         baseUrl: ./public/scaffold/kube
@@ -43,6 +45,7 @@ hosts:
     kubectlExecutable: kubectl
     kube:
       context: false
+      environment: []
       namespace: default
       scaffolder:
         baseUrl: https://config.factorial.io/scaffold/kube
@@ -56,6 +59,25 @@ hosts:
       deployments:
         - '%host.kube.parameters.name%'
 ```
+
+| Property | Description | Example |
+| -------- | ----------- | ------- |
+| `shellExecutable` | What shell to execute inside the pod.| `/bin/sh` |
+| `kubectlExecutable` | The name of the kubectl executable | `kubectl`|
+| `kube.context` | the context to switch before calling any kubectl command ||
+| `kube.environment`| An array of environment variables to set before calling any kubectl command. |`KUBECONFIG: /path/to/kubeconfig/file` 
+| `kube.namespace` | The namespace to apply to all kubectl commands | `myapp`|
+| `kube.scaffolder.baseUrl`| Base-URL for the scaffolder | |
+| `kube.scaffolder.template` | the template file name to use when scaffolding the definition files ||
+| `kube.scaffoldBeforeApply` | If set to true, the definition files will be scaffolded before they get applied |  `true` |
+| `kube.waitAfterApply` | Wait until deployment is finished after apply. Needs `deployments` with sensible data | `true` |
+| `kube.projectFolder` | Where the definition files are stored, also the target for the scaffolding step | `kube` |
+| `kube.applyCommand` | What command to run to apply the definition files to the cluster | `apply -k .` |
+| `kube.deleteCommand` | What command to run to delete the app from the cluster | `delete -k .` |
+| `kube.deployments` | An array of deployment names to check if the deployment is finished | `- %host.kube.parameters.name%` |
+
+
+
 
 ## Scaffolding yml definitions
 
@@ -167,6 +189,19 @@ spec:
 ## Working with contexts
 
 phab can support different contexts, just add the name of the context to the `kube`-configuration. Phab will switch to that context before doing any work, and restore the context afterwards. If an error happens, the context might not get restored correctly.
+
+The preferred way to use different clusters with phabalicious is to have dedicated kubeconfig files and reference them in the project via then `environment`-property, e.g.
+
+```yaml
+hosts:
+  example:
+    kube:
+      context: my-context
+      environment: 
+        KUBECONFIG: $HOME/kube/my-cluster-config
+```
+
+This will make sure, that the context is not available after phab finished its work.
 
 ## Getting a shell to one of the pods
 
