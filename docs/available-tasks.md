@@ -415,7 +415,7 @@ You can limit what to copy by adding `db` or `files`  as arguments.
 
 * `phab -cmbb copy-from remote-host` will copy db and files from `remote-host` to `mbb`
 * `phab -cmbb copy-from remote-host db` will copy only the db  from `remote-host` to `mbb`
-* `phab -cmbb copy-from remote-host` will copy only the files from `remote-host` to `mbb`
+* `phab -cmbb copy-from remote-host files` will copy only the files from `remote-host` to `mbb`
 
 
 ## drush

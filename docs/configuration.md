@@ -177,6 +177,7 @@ This will print all host configuration for the host `staging`.
 
 ### Configuration for the drush-method
 
+* `uuid` of the drupal 8 site (D8 only) Needed for proper config imports 
 * `siteFolder` is a drupal-specific folder, where the settings.php resides for the given installation. This allows to interact with multisites etc.
 * `filesFolder` the path to the files-folder, where user-assets get stored and which should be backed up by the `files`-method
 * `revertFeatures`, defaults to `True`, when set all features will be reverted when running a reset (drush only)
