@@ -55,24 +55,7 @@ class AppScaffoldCommandTest extends PhabTestCase
             'scaffold-url' => $this->getcwd() . '/assets/scaffold-tests/scaffold-drupal-commerce.yml'
         ));
 
-        // the output of the command in the console
-        $output = $commandTester->getDisplay();
-
-        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'name: Test');
-        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'key: tst');
-        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'host: test.test');
-        $this->checkFileContent(
-            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
-            'name: Test deployment module'
-        );
-        $this->checkFileContent(
-            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
-            'name: Test deployment module'
-        );
-        $this->checkFileContent(
-            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.install',
-            'function tst_deploy_install()'
-        );
+        $this->checkScaffoldResults($target_folder);
         shell_exec(sprintf('rm -rf %s', $target_folder));
     }
 
@@ -82,13 +65,7 @@ class AppScaffoldCommandTest extends PhabTestCase
     public function testScaffoldWithRelativeFolder()
     {
         $root = $this->getcwd();
-        $target_folder = $root . '/tmp';
-        if (!is_dir($target_folder)) {
-            mkdir($target_folder);
-            mkdir($target_folder . '/here');
-        }
-
-        chdir($target_folder . '/here');
+        $target_folder = $this->prepareTargetFolder($root);
 
         $command = $this->application->find('app:scaffold');
         $commandTester = new CommandTester($command);
@@ -100,37 +77,15 @@ class AppScaffoldCommandTest extends PhabTestCase
             'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-drupal-commerce.yml'
         ));
 
-        // the output of the command in the console
-        $output = $commandTester->getDisplay();
+        $this->checkScaffoldResults($target_folder);
 
-        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'name: Test');
-        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'key: tst');
-        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'host: test.test');
-        $this->checkFileContent(
-            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
-            'name: Test deployment module'
-        );
-        $this->checkFileContent(
-            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
-            'name: Test deployment module'
-        );
-        $this->checkFileContent(
-            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.install',
-            'function tst_deploy_install()'
-        );
         shell_exec(sprintf('rm -rf %s', $target_folder));
     }
 
     public function testScaffoldQuestions()
     {
         $root = $this->getcwd();
-        $target_folder = $root . '/tmp';
-        if (!is_dir($target_folder)) {
-            mkdir($target_folder);
-            mkdir($target_folder . '/here');
-        }
-
-        chdir($target_folder . '/here');
+        $this->prepareTargetFolder($root);
 
         $command = $this->application->find('app:scaffold');
         $commandTester = new CommandTester($command);
@@ -237,9 +192,41 @@ class AppScaffoldCommandTest extends PhabTestCase
         $this->assertNotContains('Shortname: tst', $output);
     }
 
-    private function checkFileContent($filename, $needle)
+    /**
+     * @param string $root
+     */
+    protected function prepareTargetFolder(string $root): string
     {
-        $haystack = file_get_contents($filename);
-        $this->assertContains($needle, $haystack);
+        $target_folder = $root . '/tmp';
+        if (!is_dir($target_folder)) {
+            mkdir($target_folder, 0777, true);
+            mkdir($target_folder . '/here');
+        }
+
+        chdir($target_folder . '/here');
+
+        return $target_folder;
+    }
+
+    /**
+     * @param string $target_folder
+     */
+    protected function checkScaffoldResults(string $target_folder): void
+    {
+        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'name: Test');
+        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'key: tst');
+        $this->checkFileContent($target_folder . '/test/.fabfile.yaml', 'host: test.test');
+        $this->checkFileContent(
+            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
+            'name: Test deployment module'
+        );
+        $this->checkFileContent(
+            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.info.yml',
+            'name: Test deployment module'
+        );
+        $this->checkFileContent(
+            $target_folder . '/test/web/modules/custom/tst_deploy/tst_deploy.install',
+            'function tst_deploy_install()'
+        );
     }
 }

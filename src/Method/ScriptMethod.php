@@ -14,6 +14,8 @@ use Phabalicious\Exception\MissingScriptCallbackImplementation;
 class ScriptMethod extends BaseMethod implements MethodInterface
 {
 
+    const HOST_SCRIPT_CONTEXT = 'host';
+
     private $breakOnFirstError = true;
     private $callbacks = [];
     private $handledTaskSpecificScripts = [];

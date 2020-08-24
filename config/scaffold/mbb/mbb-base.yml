@@ -1,12 +1,18 @@
 questions:
   platform:
     question: "What platform are you working on (mac|linux)"
+    type: choices
     default: mac
-    validation: (mac|linux)
-    error: "Only `mac` and `linux` are currently supported"
+    choices:
+      - mac
+      - linux
   branch:
     question: "What branch should I use to checkout?"
     default: master
+  runSetup:
+    question: "Run the host- and docker setup?"
+    default: true
+    type: confirm
 
 variables:
   name: MultiBaseBox

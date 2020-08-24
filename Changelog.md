@@ -1,5 +1,34 @@
 # Changelog
 
+## 3.5.6 / 2020-08-22
+
+### New:
+
+  * Allow to set environment variables in the kubectl context, e.g for KUBECONFIG
+
+### Fixes:
+
+  * Make sure that drush operates in the correct sitefolder when pulling or pushing variables
+  * Smaller doc fixes
+
+## 3.5.5 / 2020-08-18
+
+### New:
+
+  * Add support for switching context before running kubectl
+
+## 3.5.4 / 2020-08-17
+
+### New:
+
+  * Allow optional script context definition of a script, this will allow to execute the script in a different context, eg in the context of the kubectl shell
+
+## 3.5.3 / 2020-08-11
+
+## Fixed:
+
+  * Fix broken workspace:create and workspace:update commands due to recent refactoring. Add test coverage for both commands
+
 ## 3.5.2 / 2020-08-07
 
 ### Fixed: 
