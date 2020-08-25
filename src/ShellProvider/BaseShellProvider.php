@@ -35,7 +35,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     /** @var LogLevelStack */
     protected $errorLogLevel;
-    
+
     /** @var string */
     protected $hash;
     /**
@@ -169,7 +169,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
             $process->start();
             $process->wait($cb);
         } else {
-            $process->setTimeout(60*60);
+            $process->setTimeout(24*60*60);
             //$process->setTty($verbose);
             $process->run($cb);
         }
