@@ -47,8 +47,6 @@ class GetFilesDumpCommand extends BaseCommand
         $this->getMethods()->runTask('getFilesDump', $this->getHostConfig(), $context);
         $to_copy = $context->getResult('files');
 
-        print_r($to_copy);
-
         $shell = $context->get('shell', $this->getHostConfig()->shell());
         $files = [];
         foreach ($to_copy as $file) {

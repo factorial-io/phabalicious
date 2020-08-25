@@ -8,7 +8,7 @@ The current version of phabalicious does not support any kind of authorization o
 
 ## Host-Configuration
 
-All necessary configuration is located under the `kube`-property. Here's an example:
+All necessary configuration is located under the `kube`-property. You can use replacement-patterns to use placeholder to replace certain values. Here's an example:
 
 ```yaml
 hosts:
@@ -16,8 +16,9 @@ hosts:
     needs:
       - k8s
     kube:
+      kubeconfig: "%globals.userFolder%/.kube/my-config"
       environment:
-        KUBECONFIG: /path/to/kubeconfig.file
+        SOME_VAR: some_value
       context: my-context
       scaffolder:
         baseUrl: ./public/scaffold/kube
@@ -43,7 +44,9 @@ hosts:
   k8s-exampl:
     shellExecutable: /bin/sh
     kubectlExecutable: kubectl
+    kubectlOptions: []
     kube:
+      kubeconfig: false
       context: false
       environment: []
       namespace: default
@@ -64,8 +67,10 @@ hosts:
 | -------- | ----------- | ------- |
 | `shellExecutable` | What shell to execute inside the pod.| `/bin/sh` |
 | `kubectlExecutable` | The name of the kubectl executable | `kubectl`|
+| `kubectlOptions` | array with command-line options for kubectl, in the format `--option: value` | `- --insecure-skip-tls-verify: ""` |
+| `kube.kubeconfig` | the kubeconfig to use for any kubectl command | `%globals.userFolder%/.kube/my-kube-config` |
 | `kube.context` | the context to switch before calling any kubectl command ||
-| `kube.environment`| An array of environment variables to set before calling any kubectl command. |`KUBECONFIG: /path/to/kubeconfig/file` 
+| `kube.environment`| An array of environment variables to set before calling any kubectl command. | 
 | `kube.namespace` | The namespace to apply to all kubectl commands | `myapp`|
 | `kube.scaffolder.baseUrl`| Base-URL for the scaffolder | |
 | `kube.scaffolder.template` | the template file name to use when scaffolding the definition files ||
@@ -190,18 +195,17 @@ spec:
 
 phab can support different contexts, just add the name of the context to the `kube`-configuration. Phab will switch to that context before doing any work, and restore the context afterwards. If an error happens, the context might not get restored correctly.
 
-The preferred way to use different clusters with phabalicious is to have dedicated kubeconfig files and reference them in the project via then `environment`-property, e.g.
+The preferred way to use different clusters with phabalicious is to have dedicated kubeconfig files and reference them in the project via the `kubeconfig`-property, e.g.
 
 ```yaml
 hosts:
   example:
     kube:
+      kubeconfig: "%globals.userFolder%/.kube/my-config"
       context: my-context
-      environment: 
-        KUBECONFIG: $HOME/kube/my-cluster-config
 ```
 
-This will make sure, that the context is not available after phab finished its work.
+This will make sure, that the context is not available after phab finished its work. You can use replacement patterns for the value of kubeconfig.
 
 ## Getting a shell to one of the pods
 

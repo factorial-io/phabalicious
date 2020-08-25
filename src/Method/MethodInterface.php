@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\ShellProvider\TunnelHelper\TunnelHelperFactory;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 
 interface MethodInterface
@@ -19,8 +20,10 @@ interface MethodInterface
 
     public function getGlobalSettings(): array;
 
+    public function setTunnelHelperFactory(TunnelHelperFactory  $tunnel_helper_factory);
+
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array;
-    
+
     public function validateGlobalSettings(array $settings, ValidationErrorBagInterface $errors);
 
     public function validateConfig(array $config, ValidationErrorBagInterface $errors);

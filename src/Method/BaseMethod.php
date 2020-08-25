@@ -7,6 +7,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\ShellProvider\TunnelHelper\TunnelHelperFactory;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
@@ -21,9 +22,17 @@ abstract class BaseMethod implements MethodInterface
      */
     protected $logger;
 
+    /** @var TunnelHelperFactory */
+    protected $tunnelHelperFactory;
+
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
+
+    public function setTunnelHelperFactory(TunnelHelperFactory $tunnel_helper_factory)
+    {
+        $this->tunnelHelperFactory = $tunnel_helper_factory;
     }
 
     public function getOverriddenMethod()
@@ -66,6 +75,9 @@ abstract class BaseMethod implements MethodInterface
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
         // $this->logger->debug('preflightTask ' . $task . ' on ' . $this->getName(), [$config, $context]);
+        if ($this->tunnelHelperFactory) {
+            $this->tunnelHelperFactory->prepareTunnels($task, $config, $context);
+        }
     }
 
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
@@ -162,7 +174,7 @@ abstract class BaseMethod implements MethodInterface
             'file' => $file
         ];
     }
-    
+
     public function getKnownHosts(HostConfig $host_config, TaskContextInterface $context)
     {
         return $host_config->get('knownHosts', $context->getConfigurationService()->getSetting('knownHosts', []));

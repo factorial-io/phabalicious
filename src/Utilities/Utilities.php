@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Utilities;
 
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 
@@ -59,11 +60,21 @@ class Utilities
         }
     }
 
+    public static function getGlobalReplacements(ConfigurationService $config)
+    {
+        return [
+            'userFolder' => self::getUserFolder(),
+            'cwd' => getcwd(),
+            'fabfileLocation' => $config->getFabfileLocation(),
+        ];
+    }
+
     public static function expandStrings(array $strings, array $replacements): array
     {
         if (empty($strings)) {
             return [];
         }
+
         $chunked_patterns = array_chunk(array_keys($replacements), 25);
         $result = $strings;
 
@@ -320,5 +331,16 @@ class Utilities
                 $return[] =  implode('.', $new_levels);
             }
         }
+    }
+
+    /**
+     * Get the current users home directory.
+     *
+     * @return string
+     */
+    public static function getUserFolder()
+    {
+        $uid = posix_getuid();
+        return posix_getpwuid($uid)['dir'];
     }
 }
