@@ -44,7 +44,7 @@ You'll need [box](https://github.com/humbug/box) for building the phar-file.
 ## Add it via composer.json
 
 * run `composer require factorial-io/phabalicious`
-* then you can run phabalicious via `./vendor/factorial-io/fabablicious/bin/phab` (or create a symbolic link)
+* then you can run phabalicious via `./vendor/factorial-io/phabablicious/bin/phab` (or create a symbolic link)
 
 ## Running phab
 
@@ -72,8 +72,6 @@ If you want to get the latest dev-version, add `--allow-unstable=1`
 ## Enhancing phab, contributing to phab
 
 We welcome contributions! Please fork the repository, create a feature branch and submit a pull-request.
-Please add test-cases for your bug-fixes or new features. We are using [pre-commit](https://pre-commit.com/) to check code-style (PSR2) etc.
-
-* Run `pre-commit install` to install the pre-commit-hooks.
+Please add test-cases for your bug-fixes or new features. We are using GrumPHP to check code-style (PSR2), run tests etc when committing new code.
 
 

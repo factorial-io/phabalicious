@@ -25,7 +25,8 @@
         "jakeasmith/http_build_url": "^1.0",
         "padraic/phar-updater": "^1.0",
         "lesstif/php-jira-rest-client": "^1.35",
-        "graze/parallel-process": "^0.8.1"
+        "graze/parallel-process": "^0.8.1",
+      "ext-posix": "*"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^2.8|^3|^4.1",

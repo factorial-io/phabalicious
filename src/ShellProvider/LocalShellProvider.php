@@ -29,11 +29,17 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
     protected $captureOutput = false;
 
+    protected $shellEnvironmentVars = [];
+
     public function getName(): string
     {
         return 'local';
     }
 
+    protected function setShellEnvironmentVars(array $vars)
+    {
+        $this->shellEnvironmentVars = $vars;
+    }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
@@ -59,14 +65,15 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         $shell_command = $this->getShellCommand($command, $options);
         $this->logger->info('Starting shell with ' . implode(' ', $shell_command));
+        $env_vars = Utilities::mergeData([
+            'LANG' => '',
+            'LC_CTYPE' => 'POSIX',
+        ], $this->shellEnvironmentVars);
 
         $process = new Process(
             $shell_command,
             getcwd(),
-            [
-                'LANG' => '',
-                'LC_CTYPE' => 'POSIX',
-            ]
+            $env_vars
         );
 
         $process->setTimeout(0);
@@ -172,10 +179,17 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
         // Get result.
         $result = '';
+        $last_ping = time();
         while ((strpos($result, self::RESULT_IDENTIFIER) === false) && !$this->process->isTerminated()) {
             $partial = $this->process->getIncrementalOutput();
             $result .=  $partial;
             if (empty($partial) && !$this->process->isTerminated()) {
+                // Prevent timeouts.
+                if (time() - $last_ping > 0) {
+                    $last_ping = time();
+                    $this->input->write(' ');
+                }
+
                 usleep(1000 * 100);
             }
         }

@@ -6,16 +6,18 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\SshTunnelFailedException;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\ShellProvider\TunnelHelper\SshTunnelHelper;
+use Phabalicious\ShellProvider\TunnelHelper\TunnelSupportInterface;
 use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Process\Process;
 
-class SshShellProvider extends LocalShellProvider
+class SshShellProvider extends LocalShellProvider implements TunnelSupportInterface
 {
     const PROVIDER_NAME = 'ssh';
 
     protected static $cachedSshPorts = [];
-    
+
     protected static $cachedKnownHostsConfigs = [];
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
@@ -81,7 +83,7 @@ class SshShellProvider extends LocalShellProvider
             $errors->addWarning('strictHostKeyChecking', 'Please use `disableKnownHosts` instead.');
         }
     }
-    
+
     public function setup()
     {
         if (empty(self::$cachedKnownHostsConfigs[$this->hostConfig['configName']])) {
@@ -300,5 +302,10 @@ class SshShellProvider extends LocalShellProvider
             '-c',
             '\'' . implode(' ', $command). '\'',
         ];
+    }
+
+    public static function getTunnelHelperClass(): string
+    {
+        return SshTunnelHelper::class;
     }
 }

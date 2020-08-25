@@ -2,13 +2,14 @@
 
 namespace Phabalicious\Utilities;
 
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.5.6';
+    const FALLBACK_VERSION = '3.5.7';
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
@@ -59,28 +60,40 @@ class Utilities
         }
     }
 
-    public static function expandStrings(array $strings, array $replacements): array
+    public static function getGlobalReplacements(ConfigurationService $config)
+    {
+        return [
+            'userFolder' => self::getUserFolder(),
+            'cwd' => getcwd(),
+            'fabfileLocation' => $config->getFabfileLocation(),
+        ];
+    }
+
+    public static function expandStrings(array $strings, array $replacements, array $ignore_list = []): array
     {
         if (empty($strings)) {
             return [];
         }
+
         $chunked_patterns = array_chunk(array_keys($replacements), 25);
         $result = $strings;
 
         foreach ($chunked_patterns as $chunk) {
             $pattern = implode('|', array_filter($chunk, 'preg_quote'));
-            $result = self::expandStringsImpl($result, $replacements, $pattern);
+            $result = self::expandStringsImpl($result, $replacements, $pattern, $ignore_list);
         }
 
         return $result;
     }
 
-    private static function expandStringsImpl(array $strings, array &$replacements, string $pattern)
+    private static function expandStringsImpl(array $strings, array &$replacements, string $pattern, array $ignore_list)
     {
         $result = [];
         foreach ($strings as $key => $line) {
-            if (is_array($line)) {
-                $result[$key] = self::expandStringsImpl($line, $replacements, $pattern);
+            if (in_array($key, $ignore_list)) {
+                $result[$key] = $line;
+            } elseif (is_array($line)) {
+                $result[$key] = self::expandStringsImpl($line, $replacements, $pattern, $ignore_list);
             } else {
                 $result[$key] = preg_replace_callback('/' . $pattern . '/', function ($found) use ($replacements) {
                     return $replacements[$found[0]];
@@ -320,5 +333,16 @@ class Utilities
                 $return[] =  implode('.', $new_levels);
             }
         }
+    }
+
+    /**
+     * Get the current users home directory.
+     *
+     * @return string
+     */
+    public static function getUserFolder()
+    {
+        $uid = posix_getuid();
+        return posix_getpwuid($uid)['dir'];
     }
 }

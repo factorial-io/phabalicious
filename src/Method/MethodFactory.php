@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
+use Phabalicious\ShellProvider\TunnelHelper\TunnelHelperFactory;
 use Psr\Log\LoggerInterface;
 
 class MethodFactory
@@ -26,6 +27,8 @@ class MethodFactory
      */
     protected $logger;
 
+    protected $tunnelHelperFactory;
+
     protected $lookupCache = [];
 
     /**
@@ -37,6 +40,7 @@ class MethodFactory
     public function __construct(ConfigurationService $configuration, LoggerInterface $logger)
     {
         $this->configuration = $configuration;
+        $this->tunnelHelperFactory = new TunnelHelperFactory($logger);
         $configuration->setMethodFactory($this);
 
         $this->logger = $logger;
@@ -50,6 +54,9 @@ class MethodFactory
     public function addMethod(MethodInterface $method)
     {
         $this->methods[$method->getName()] = $method;
+        if ($this->tunnelHelperFactory) {
+            $method->setTunnelHelperFactory($this->tunnelHelperFactory);
+        }
     }
 
     /**
@@ -264,7 +271,7 @@ class MethodFactory
             return $this->getMethod($elem);
         }, $needs);
     }
-    
+
     public function alter(array $needs, $func_name, &$data)
     {
         $fn = 'alter' . ucwords($func_name);

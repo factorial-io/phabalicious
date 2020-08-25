@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.5.7 / 2020-08-25
+
+### New:
+
+  * Do pattern replacement dynamically for k8s
+  * Rework kubectl execution, you can now add options to the command and set a dedicated kubeconfig in the fabfile
+
+### Fixed:
+
+  * Fix broken workspace:create and workspace:update commands due to recent refactoring. Add test coverage for both commands
+  * Refactor tunnel creation into dedicated classes and helpers
+
 ## 3.5.6 / 2020-08-22
 
 ### New:
@@ -31,7 +43,7 @@
 
 ## 3.5.2 / 2020-08-07
 
-### Fixed: 
+### Fixed:
 
   * Chunk regex patterns to prevent warning and failing replacements
   * Provide default command result
@@ -45,7 +57,7 @@
 
 ## 3.5.0 / 2020-08-04
 
-### Fixed: 
+### Fixed:
 
   * Fix error in fallback version check, fixes #93
 
@@ -94,7 +106,7 @@
 
 ## 3.4.6 / 2020-06-29
 
-### Fixed: 
+### Fixed:
 
   * Ensure known hosts for ssh shells, some refactoring
   * Fix smaller bugs in scaffolder
