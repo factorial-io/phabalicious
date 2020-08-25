@@ -32,8 +32,8 @@ hosts:
           - config.factorial.io
         projectSlug: config
         dockerImage: registry.factorial.io:8443/administration/config:latest
-        containerPort: 80
         letsencrypt: 1
+        containerPort: 80
 ```
 
 ## The defaults
