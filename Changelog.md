@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.5.7 / 2020-08-25
+
+### New:
+
+  * Do pattern replacement dynamically for k8s
+  * Rework kubectl execution, you can now add options to the command and set a dedicated kubeconfig in the fabfile
+
+### Fixed:
+
+  * Fix broken workspace:create and workspace:update commands due to recent refactoring. Add test coverage for both commands
+  * Refactor tunnel creation into dedicated classes and helpers
+
 ## 3.5.6 / 2020-08-22
 
 ### New:
