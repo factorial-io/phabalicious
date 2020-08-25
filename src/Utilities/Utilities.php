@@ -69,7 +69,7 @@ class Utilities
         ];
     }
 
-    public static function expandStrings(array $strings, array $replacements): array
+    public static function expandStrings(array $strings, array $replacements, array $ignore_list = []): array
     {
         if (empty($strings)) {
             return [];
@@ -80,18 +80,20 @@ class Utilities
 
         foreach ($chunked_patterns as $chunk) {
             $pattern = implode('|', array_filter($chunk, 'preg_quote'));
-            $result = self::expandStringsImpl($result, $replacements, $pattern);
+            $result = self::expandStringsImpl($result, $replacements, $pattern, $ignore_list);
         }
 
         return $result;
     }
 
-    private static function expandStringsImpl(array $strings, array &$replacements, string $pattern)
+    private static function expandStringsImpl(array $strings, array &$replacements, string $pattern, array $ignore_list)
     {
         $result = [];
         foreach ($strings as $key => $line) {
-            if (is_array($line)) {
-                $result[$key] = self::expandStringsImpl($line, $replacements, $pattern);
+            if (in_array($key, $ignore_list)) {
+                $result[$key] = $line;
+            } elseif (is_array($line)) {
+                $result[$key] = self::expandStringsImpl($line, $replacements, $pattern, $ignore_list);
             } else {
                 $result[$key] = preg_replace_callback('/' . $pattern . '/', function ($found) use ($replacements) {
                     return $replacements[$found[0]];

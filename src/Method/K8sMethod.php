@@ -132,7 +132,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
             'host' => $data,
         ]);
 
-        $data = Utilities::expandStrings($data, $replacements);
+        $data = Utilities::expandStrings($data, $replacements, ['podSelector', 'deployments']);
     }
 
     /**
@@ -222,6 +222,8 @@ class K8sMethod extends BaseMethod implements MethodInterface
     protected function getPodNameFromSelector(HostConfig $host_config, TaskContextInterface $context)
     {
         $pod_selectors = $host_config['kube']['podSelector'];
+        $pod_selectors = $this->expandReplacements($host_config, $context, $pod_selectors);
+
         $result = $this->kubectl(
             $host_config,
             $context,
@@ -360,7 +362,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
     public function rollout(HostConfig $host_config, TaskContextInterface $context, $command)
     {
         $kube_config = $host_config['kube'];
-        $deployments = $kube_config['deployments'];
+        $deployments = $this->expandReplacements($host_config, $context, $kube_config['deployments']);
         foreach ($deployments as $deployment) {
             $this->kubectl($host_config, $context, "rollout $command deployments/$deployment");
         }
@@ -412,5 +414,29 @@ class K8sMethod extends BaseMethod implements MethodInterface
         }
 
         return $project_folder;
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @param array $data
+     * @param array $vars
+     * @return array
+     */
+    protected function expandReplacements(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        array $data,
+        array $vars = []
+    ): array {
+        $replacements = Utilities::expandVariables(
+            Utilities::mergeData([
+                'globals' => Utilities::getGlobalReplacements($context->getConfigurationService()),
+                'host' => $host_config->raw(),
+                'context' => $context->getData(),
+            ], $vars)
+        );
+        $data = Utilities::expandStrings($data, $replacements);
+        return $data;
     }
 }
