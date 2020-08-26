@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.8 / 2020-08-26
+
+## Fixed:
+
+  * Revert newly introduced idle-prevention when running scripts as it breaks execution under certain circumstances
+
 ## 3.5.7 / 2020-08-25
 
 ### New:
