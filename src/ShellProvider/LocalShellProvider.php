@@ -179,17 +179,10 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
         // Get result.
         $result = '';
-        $last_ping = time();
         while ((strpos($result, self::RESULT_IDENTIFIER) === false) && !$this->process->isTerminated()) {
             $partial = $this->process->getIncrementalOutput();
             $result .=  $partial;
             if (empty($partial) && !$this->process->isTerminated()) {
-                // Prevent timeouts.
-                if (time() - $last_ping > 0) {
-                    $last_ping = time();
-                    $this->input->write(' ');
-                }
-
                 usleep(1000 * 100);
             }
         }
