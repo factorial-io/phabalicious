@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.9 / 2020-08-31
+
+### Fixed:
+
+  * Fix wrong npmRootFolder when using artifact based deployment, modularize the logic
+
 ## 3.5.8 / 2020-08-26
 
 ## Fixed:
