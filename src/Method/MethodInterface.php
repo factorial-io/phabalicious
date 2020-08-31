@@ -37,4 +37,6 @@ interface MethodInterface
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context);
 
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context);
+
+    public function getRootFolderKey(): string;
 }

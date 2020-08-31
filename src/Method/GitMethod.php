@@ -219,4 +219,9 @@ class GitMethod extends BaseMethod implements MethodInterface
             );
         }
     }
+
+    public function getRootFolderKey(): string
+    {
+        return 'gitRootFolder';
+    }
 }
