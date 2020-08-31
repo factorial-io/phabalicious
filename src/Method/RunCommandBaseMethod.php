@@ -30,7 +30,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         return $this->getName();
     }
 
-    protected function getRootFolderKey(): string
+    public function getRootFolderKey(): string
     {
         return $this->getConfigPrefix() . 'RootFolder';
     }

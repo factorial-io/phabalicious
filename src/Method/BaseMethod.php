@@ -179,4 +179,9 @@ abstract class BaseMethod implements MethodInterface
     {
         return $host_config->get('knownHosts', $context->getConfigurationService()->getSetting('knownHosts', []));
     }
+
+    public function getRootFolderKey(): string
+    {
+        return 'rootFolder';
+    }
 }
