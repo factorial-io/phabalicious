@@ -134,7 +134,14 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         $install_dir = $context->get('installDir');
 
         $cloned_host_config = clone $host_config;
-        $keys = ['rootFolder', 'composerRootFolder', 'gitRootFolder', 'yarnRootFolder'];
+        $keys = [];
+        foreach ($context->getConfigurationService()->getMethodFactory()->all() as $method) {
+            if ($root_folder = $method->getRootFolderKey()) {
+                $keys[] = $root_folder;
+            }
+        }
+        $keys = array_unique($keys);
+
         foreach ($keys as $key) {
             if ($host_config->get($key, 'ignore')[0] == '.') {
                  $dir = $install_dir . '/' . $host_config[$key];
@@ -146,7 +153,7 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         $shell->cd($cloned_host_config['tmpFolder']);
         $context->set('outerShell', $shell);
         $context->set('installDir', $install_dir);
-        
+
         EnsureKnownHosts::ensureKnownHosts(
             $context->getConfigurationService(),
             $this->getKnownHosts($host_config, $context),
@@ -207,8 +214,8 @@ abstract class ArtifactsBaseMethod extends BaseMethod
 
         $context->setResult('skipResetStep', true);
     }
-    
-    
+
+
     public function runActions(HostConfig $host_config, TaskContextInterface $context)
     {
 
