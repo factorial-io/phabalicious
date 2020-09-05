@@ -221,15 +221,17 @@ abstract class BaseCommand extends BaseOptionsCommand
             }
         };
 
-        $options = ['tty' => true];
+        $options = ['tty' => $use_tty];
         /** @var Process $process */
         if (!empty($command)) {
             $options['shell_provided'] = true;
             $command = $shell->wrapCommandInLoginShell($command);
         }
         $process = $shell->createShellProcess($command, $options);
-        $stdin = fopen('php://stdin', 'r');
-        $process->setInput($stdin);
+        if ($use_tty) {
+            $stdin = fopen('php://stdin', 'r');
+            $process->setInput($stdin);
+        }
         $process->setTimeout(0);
         $process->setTty($use_tty);
         $process->start($fn);
