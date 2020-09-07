@@ -44,7 +44,8 @@ class DrushCommand extends BaseCommand
         }
 
         $context = $this->createContext($input, $output);
-        $context->set('command', implode(' ', $input->getArgument('drush')));
+        $arguments = $this->prepareArguments($input->getArgument('drush'));
+        $context->set('command', $arguments);
 
         // Allow methods to override the used shellProvider:
         $host_config = $this->getHostConfig();

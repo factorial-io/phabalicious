@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class SimpleExecutableInvocationCommand extends BaseCommand
 {
     protected $executableName;
-    
+
     public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $executable_name)
     {
         $this->executableName = $executable_name;
@@ -63,7 +63,9 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
         }
 
         $context = $this->createContext($input, $output);
-        $context->set('command', implode(' ', $input->getArgument('command-arguments')));
+
+        $arguments = $this->prepareArguments($input->getArgument('command-arguments'));
+        $context->set('command', $arguments);
 
         try {
             $this->getMethods()->runTask($this->executableName, $this->getHostConfig(), $context);

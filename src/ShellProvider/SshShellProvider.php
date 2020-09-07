@@ -300,7 +300,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             '/bin/bash',
             '--login',
             '-c',
-            '\'' . implode(' ', $command). '\'',
+            implode(' ', $command),
         ];
     }
 
