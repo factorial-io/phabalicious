@@ -16,6 +16,7 @@ use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\AlterJsonFileCallback;
+use Phabalicious\Scaffolder\Callbacks\AssertFileCallback;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
 use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
 use Phabalicious\ShellProvider\CommandResult;
@@ -210,6 +211,10 @@ class Scaffolder
             ->addCallback(
                 AlterJsonFileCallback::getName(),
                 [new AlterJsonFileCallback(), 'handle']
+            )
+            ->addCallback(
+                AssertFileCallback::getName(),
+                [new AssertFileCallback(), 'handle']
             );
 
         $context->set('callbacks', $options->getCallbacks());

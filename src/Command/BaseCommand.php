@@ -19,6 +19,7 @@ use Phabalicious\Utilities\Utilities;
 use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -221,15 +222,17 @@ abstract class BaseCommand extends BaseOptionsCommand
             }
         };
 
-        $options = ['tty' => true];
+        $options = ['tty' => $use_tty];
         /** @var Process $process */
         if (!empty($command)) {
             $options['shell_provided'] = true;
             $command = $shell->wrapCommandInLoginShell($command);
         }
         $process = $shell->createShellProcess($command, $options);
-        $stdin = fopen('php://stdin', 'r');
-        $process->setInput($stdin);
+        if ($use_tty) {
+            $stdin = fopen('php://stdin', 'r');
+            $process->setInput($stdin);
+        }
         $process->setTimeout(0);
         $process->setTty($use_tty);
         $process->start($fn);
@@ -369,5 +372,22 @@ abstract class BaseCommand extends BaseOptionsCommand
                 throw new \InvalidArgumentException(sprintf('Unknown type for set-option: %s', $option));
             }
         }
+    }
+
+    /**
+     * Prepare arguments, so they dan consumed as cmd arguments again.
+     *
+     * @param array|string[] $input_arguments
+     * @return string
+     */
+    protected function prepareArguments(array $input_arguments)
+    {
+        $arguments = array_map(function ($elem) {
+            if (strpos($elem, ' ') !== false) {
+                return escapeshellarg($elem);
+            }
+            return $elem;
+        }, $input_arguments);
+        return implode(' ', $arguments);
     }
 }

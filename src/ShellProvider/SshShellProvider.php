@@ -110,6 +110,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
     {
         $command = [
             $this->hostConfig['shellProviderExecutable'],
+            '-q',
             '-A',
             '-p',
             $this->hostConfig['port'],
@@ -300,7 +301,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             '/bin/bash',
             '--login',
             '-c',
-            '\'' . implode(' ', $command). '\'',
+            implode(' ', $command),
         ];
     }
 
