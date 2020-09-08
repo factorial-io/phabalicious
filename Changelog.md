@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.5.10 / 2020-09-08
+
+### New:
+
+  * Add `assert_file` internal command for scaffold-scripts to check if a specific file exists.
+
+### Fixed: 
+
+  * Silence ssh process a bit more, might fix #98
+  * Proper parsing and applying of single quotes to commands. Fixes #81
+  * If no tty is requested do not attach stdin to process, so it wont wait for input. Fixes #98
+  * Bump symfony/http-kernel from 4.4.7 to 4.4.13
+
 ## 3.5.9 / 2020-08-31
 
 ### Fixed:
