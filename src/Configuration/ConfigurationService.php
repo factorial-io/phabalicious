@@ -3,7 +3,6 @@
 namespace Phabalicious\Configuration;
 
 use Composer\Semver\Comparator;
-use http\Exception\InvalidArgumentException;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
@@ -19,6 +18,7 @@ use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Yaml\Yaml;
 
 class ConfigurationService
@@ -129,6 +129,7 @@ class ConfigurationService
             $override_data = $this->readFile($local_override_file);
             $data = $this->mergeData($data, $override_data);
         }
+
 
         $defaults = [
             'needs' => ['git', 'ssh', 'drush7', 'files'],
@@ -249,6 +250,16 @@ class ConfigurationService
 
         if (file_exists($override_file)) {
             $data = Utilities::mergeData($data, Yaml::parseFile($override_file));
+        }
+        $env_file = dirname($file) . '/.env';
+        if (file_exists($env_file)) {
+            $this->logger->info(sprintf('Reading .env from %s', $env_file));
+            $dotenv = new Dotenv();
+            $contents = file_get_contents($env_file);
+            $envvars = $dotenv->parse($contents);
+            if (is_array($envvars)) {
+                $data['environment'] = Utilities::mergeData($envvars, $data['environment'] ?? []);
+            }
         }
 
         $this->checkRequires($data, $file);
