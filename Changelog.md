@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.5.11 / 2020-09-08
+
+### New:
+
+  * Add support for .env files on the same level as the .fabfile. Will be included in global scope under the key `environment`
+
+### Fixed:
+
+  * Forget cached `podForCli` after deployment to acquire a new one, add `settings` to the replaceents
+  * Update dependencies
+
 ## 3.5.10 / 2020-09-08
 
 ### New:
