@@ -6,7 +6,7 @@
 
   * Add `assert_file` internal command for scaffold-scripts to check if a specific file exists.
 
-### Fixed: 
+### Fixed:
 
   * Silence ssh process a bit more, might fix #98
   * Proper parsing and applying of single quotes to commands. Fixes #81
