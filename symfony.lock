@@ -89,6 +89,9 @@
     "padraic/phar-updater": {
         "version": "v1.0.6"
     },
+    "paragonie/random_compat": {
+        "version": "v9.99.99"
+    },
     "phar-io/manifest": {
         "version": "1.0.3"
     },
@@ -151,9 +154,6 @@
             "version": "4.7",
             "ref": "c276fa48d4713de91eb410289b3b1834acb7e403"
         }
-    },
-    "psr/cache": {
-        "version": "1.0.1"
     },
     "psr/container": {
         "version": "1.0.0"
@@ -218,9 +218,6 @@
             "ref": "e3868d2f4a5104f19f844fe551099a00c6562527"
         }
     },
-    "symfony/contracts": {
-        "version": "v1.0.2"
-    },
     "symfony/debug": {
         "version": "v4.1.6"
     },
@@ -235,6 +232,9 @@
     },
     "symfony/event-dispatcher": {
         "version": "v4.1.6"
+    },
+    "symfony/event-dispatcher-contracts": {
+        "version": "v1.1.9"
     },
     "symfony/filesystem": {
         "version": "v4.1.6"
@@ -278,8 +278,14 @@
     "symfony/polyfill-intl-idn": {
         "version": "v1.13.1"
     },
+    "symfony/polyfill-intl-normalizer": {
+        "version": "v1.18.1"
+    },
     "symfony/polyfill-mbstring": {
         "version": "v1.9.0"
+    },
+    "symfony/polyfill-php70": {
+        "version": "v1.18.1"
     },
     "symfony/polyfill-php72": {
         "version": "v1.13.1"
@@ -287,8 +293,14 @@
     "symfony/polyfill-php73": {
         "version": "v1.14.0"
     },
+    "symfony/polyfill-php80": {
+        "version": "v1.18.1"
+    },
     "symfony/process": {
         "version": "v4.1.4"
+    },
+    "symfony/service-contracts": {
+        "version": "v1.1.9"
     },
     "symfony/var-dumper": {
         "version": "v4.4.4"
