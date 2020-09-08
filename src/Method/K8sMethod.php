@@ -129,6 +129,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $replacements = Utilities::expandVariables([
             'globals' => Utilities::getGlobalReplacements($configuration_service),
+            'settings' => $configuration_service->getAllSettings(),
             'host' => $data,
         ]);
 
@@ -200,6 +201,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         if (empty($config['kube']['podForCli'])) {
             $config->setChild('kube', 'podForCli', $this->getPodNameFromSelector($config, $context));
+            $config->setChild('kube', 'podForCliSet', true);
         }
         if ($task == 'runScript' && $context->get('scriptContext', 'host') == self::KUBECTL_SCRIPT_CONTEXT) {
             $this->ensureShell($config, $context);
@@ -210,8 +212,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
         parent::postflightTask($task, $config, $context);
-        if ($task === 'k8s' && !empty($config['kube']['podForCli'])) {
+        if (!empty($config['kube']['podForCliSet'])) {
             $config->setChild('kube', 'podForCli', null);
+            $config->setChild('kube', 'podForCliSet', null);
         }
 
         if (!empty($config['kube']['context'])) {
@@ -354,8 +357,15 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $this->kubectl($host_config, $context, $kube_config['applyCommand']);
 
+
         if (!empty($kube_config['waitAfterApply'])) {
             $this->rollout($host_config, $context, 'status');
+        }
+
+        // Reset podForCliSet as the info will be obsolete.
+        if (!empty($host_config['kube']['podForCliSet'])) {
+            $host_config->setChild('kube', 'podForCli', null);
+            $host_config->setChild('kube', 'podForCliSet', null);
         }
     }
 
