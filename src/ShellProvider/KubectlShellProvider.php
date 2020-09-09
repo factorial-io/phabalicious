@@ -55,7 +55,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
                 $cmd[] = $v;
             }
         }
-        foreach (array('kubeconfig', 'namespace') as $key) {
+        foreach (array('kubeconfig', 'namespace', 'context') as $key) {
             if (!empty($config['kube'][$key])) {
                 $cmd[] = '--' . $key;
                 $cmd[] = $config['kube'][$key];
