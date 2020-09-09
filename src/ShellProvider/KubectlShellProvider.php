@@ -160,4 +160,29 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
 
         return $command;
     }
+
+    /**
+     * @param string $ip
+     * @param int $port
+     * @param string $public_ip
+     * @param int $public_port
+     * @param HostConfig $config
+     * @param TaskContextInterface $context
+     * @return bool|void
+     */
+    public function startRemoteAccess(
+        string $ip,
+        int $port,
+        string $public_ip,
+        int $public_port,
+        HostConfig $config,
+        TaskContextInterface $context
+    ) {
+        $command = $this->getKubeCmd();
+        $command[] = 'port-forward';
+        $command[] = sprintf('pod/%s', $config['kube']['podForCli']);
+        $command[] = sprintf('%d:%d', $public_port, $port);
+
+        return $this->runProcess($command, $context, true, true);
+    }
 }

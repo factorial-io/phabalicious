@@ -39,7 +39,7 @@ class StartRemoteAccessCommand extends BaseCommand
             'ip',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Host/IP to connect to'
+            'Host/IP to connect to, might not supported by all shell-providers'
         )
         ->addOption(
             'public-ip',
@@ -83,6 +83,7 @@ class StartRemoteAccessCommand extends BaseCommand
         $ip = $input->getOption('ip') ? $input->getOption('ip') : $context->getResult('ip', '127.0.0.1');
         $port = $input->getOption('port');
         $config = $context->getResult('config', $host_config);
+        $shell = $context->getShell() ?? $host_config->shell();
 
         $context->io()->comment(sprintf('Starting remote access to %s:%s', $ip, $port));
         $context->io()->success(sprintf(
@@ -95,7 +96,7 @@ class StartRemoteAccessCommand extends BaseCommand
         $context->io()->comment('Usually this will open a new remote shell, type `exit` when you are finished.');
 
 
-        $host_config->shell()->startRemoteAccess(
+        $shell->startRemoteAccess(
             $ip,
             $port,
             $input->getOption('public-ip'),

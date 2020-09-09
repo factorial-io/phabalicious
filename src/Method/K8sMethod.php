@@ -172,7 +172,6 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $config->setChild('kube', 'podForCli', null);
             $config->setChild('kube', 'podForCliSet', null);
         }
-
     }
 
     protected function getPodNameFromSelector(HostConfig $host_config, TaskContextInterface $context)
@@ -212,7 +211,8 @@ class K8sMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    public function startRemoteAccess(HostConfig  $hostConfig, TaskContextInterface $context) {
+    public function startRemoteAccess(HostConfig  $hostConfig, TaskContextInterface $context)
+    {
         $this->ensureShell($hostConfig, $context);
         $context->setShell($this->kubectlShell);
     }
