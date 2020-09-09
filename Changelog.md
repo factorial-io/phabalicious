@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.5.12 / 2020-09-09
+
+### New:
+
+  * Implement `start-remote-access` for k8s
+
+### Fixed:
+  * Remove fragile context handling in k8s, instead use dedicated command-line argument
+
 ## 3.5.11 / 2020-09-08
 
 ### New:
