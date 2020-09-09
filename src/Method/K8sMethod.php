@@ -150,53 +150,8 @@ class K8sMethod extends BaseMethod implements MethodInterface
     }
 
 
-    private function getCurrentContext(HostConfig $config, TaskContextInterface $context)
-    {
-        $this->ensureShell($config, $context);
-        $result = $this->kubectlShell->run($this->expandCmd($config, 'config current-context'), true, true);
-
-        return !empty($result->getOutput()) ? trim($result->getOutput()[0]) : false;
-    }
-
-    private function setContext(HostConfig $config, TaskContextInterface $context, $context_name)
-    {
-        $this->ensureShell($config, $context);
-        if ($context_name) {
-            $this->logger->info(sprintf("Switch context  to `%s` for kubectl", $context_name));
-            $this->kubectl($config, $context, sprintf('config use-context %s', $context_name));
-        } else {
-            $this->logger->info("Unset context  for kubectl");
-            $this->kubectl($config, $context, 'config unset current-context');
-        }
-    }
-
-    private function pushKubeCtlContext(HostConfig $config, TaskContextInterface $context, string $context_name)
-    {
-
-        $current_context = $this->getCurrentContext($config, $context);
-        $this->contextStack[] = $current_context;
-        if ($current_context !== $context_name) {
-            $this->setContext($config, $context, $context_name);
-        }
-    }
-
-    private function popKubeCtlContext(HostConfig $config, TaskContextInterface  $context)
-    {
-
-        $last_context = array_pop($this->contextStack);
-        $current_context = $this->getCurrentContext($config, $context);
-        if ($last_context != $current_context) {
-            $this->setContext($config, $context, $last_context);
-        }
-    }
-
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
-        if (!empty($config['kube']['context'])) {
-            $kubectl_cluster = $config['kube']['context'];
-            $this->pushKubeCtlContext($config, $context, $kubectl_cluster);
-        }
-
         parent::preflightTask($task, $config, $context);
 
         if (empty($config['kube']['podForCli'])) {
@@ -204,6 +159,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $config->setChild('kube', 'podForCliSet', true);
         }
         if ($task == 'runScript' && $context->get('scriptContext', 'host') == self::KUBECTL_SCRIPT_CONTEXT) {
+            $context->set('rootFolder', $this->kubectlShell->getHostConfig()['rootFolder']);
             $this->ensureShell($config, $context);
             $context->setShell($this->kubectlShell);
         }
@@ -212,13 +168,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
         parent::postflightTask($task, $config, $context);
-        if (!empty($config['kube']['podForCliSet'])) {
+        if ($task == 'k8s' && !empty($config['kube']['podForCliSet'])) {
             $config->setChild('kube', 'podForCli', null);
             $config->setChild('kube', 'podForCliSet', null);
-        }
-
-        if (!empty($config['kube']['context'])) {
-            $this->popKubeCtlContext($config, $context);
         }
     }
 
@@ -257,6 +209,12 @@ class K8sMethod extends BaseMethod implements MethodInterface
         if (!empty($host_config['kube']['applyBeforeDeploy'])) {
             $this->apply($host_config, $context);
         }
+    }
+
+    public function startRemoteAccess(HostConfig  $hostConfig, TaskContextInterface $context)
+    {
+        $this->ensureShell($hostConfig, $context);
+        $context->setShell($this->kubectlShell);
     }
 
     /**
