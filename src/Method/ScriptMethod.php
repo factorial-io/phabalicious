@@ -4,7 +4,10 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Scaffolder\Callbacks\ConfirmCallback;
+use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -68,6 +71,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $callbacks = $context->get('callbacks', []);
         $callbacks = Utilities::mergeData($this->callbacks, $callbacks);
 
+
         // Allow other methods to add their callbacks.
         if (!empty($host_config['needs'])) {
             $context->getConfigurationService()->getMethodFactory()->alter(
@@ -91,12 +95,23 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $environment = Utilities::mergeData($environment, $host_config['environment']);
         }
         $variables = Utilities::buildVariablesFrom($host_config, $context);
+
+        if (!empty($questions = $context->get('scriptQuestions', []))) {
+            $factory = new QuestionFactory();
+            $variables['arguments'] = Utilities::mergeData(
+                $variables['arguments'],
+                $factory->askMultiple($questions, $context, [])
+            );
+        }
+
         $replacements = Utilities::expandVariables($variables);
         $commands = Utilities::expandStrings($commands, $replacements);
         $commands = Utilities::expandStrings($commands, $replacements);
         $environment = Utilities::expandStrings($environment, $replacements);
 
         $callbacks['execute'] = [$this, 'handleExecuteCallback'];
+        $callbacks[ConfirmCallback::getName()] = [new ConfirmCallback(), 'handle'];
+        $callbacks[LogMessageCallback::getName()] = [new LogMessageCallback(), 'handle'];
         $callbacks['fail_on_error'] = [$this, 'handleFailOnErrorDeprecatedCallback'];
         $callbacks['breakOnFirstError'] = [$this, 'handleFailOnErrorCallback'];
         $callbacks['fail_on_missing_directory'] = [

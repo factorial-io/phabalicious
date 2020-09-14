@@ -46,7 +46,14 @@ class ListCommand extends BaseOptionsCommand
     {
         $this->readConfiguration($input);
 
-        $hosts = array_keys($this->configuration->getAllHostConfigs());
+        $hosts = array_keys(
+            array_filter(
+                $this->configuration->getAllHostConfigs(),
+                function ($host_config) {
+                    return empty($host_config['inheritOnly']);
+                }
+            )
+        );
 
         $io = new SymfonyStyle($input, $output);
         $io->title('List of found host-configurations:');
