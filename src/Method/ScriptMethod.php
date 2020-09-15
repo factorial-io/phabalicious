@@ -22,6 +22,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     const SCRIPT_QUESTIONS = 'scriptQuestions';
     const SCRIPT_DATA = 'scriptData';
     const SCRIPT_CONTEXT = 'scriptContext';
+    const SCRIPT_COMPUTED_VALUES = 'scriptComputedValues';
 
     private $breakOnFirstError = true;
     private $callbacks = [];
@@ -99,9 +100,11 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $environment = Utilities::mergeData($environment, $host_config['environment']);
         }
         $variables = Utilities::buildVariablesFrom($host_config, $context);
+        $variables['computed'] = $this->resolveComputedValues($context);
 
         if (!empty($questions = $context->get(self::SCRIPT_QUESTIONS, []))) {
             $factory = new QuestionFactory();
+            $questions = $factory->applyVariables($questions, $variables);
             $command_line_defaults = $context->get(self::SCRIPT_COMMAND_LINE_DEFAULTS, []);
             $variables['arguments'] = Utilities::mergeData(
                 $variables['arguments'],
@@ -438,5 +441,20 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         foreach ([$task . 'Prepare', $task, $task . 'Finished'] as $t) {
             unset($this->handledTaskSpecificScripts[$t]);
         }
+    }
+
+    private function resolveComputedValues(TaskContextInterface $context)
+    {
+        $shell = $context->getShell();
+        $result = [];
+        $computed_values = $context->get(self::SCRIPT_COMPUTED_VALUES, []);
+        foreach ($computed_values as $key => $cmd) {
+            $cmd_result = $shell->run($cmd, true);
+            if ($cmd_result->succeeded()) {
+                $result[$key] = trim(implode("\n", $cmd_result->getOutput()));
+            }
+        }
+
+        return $result;
     }
 }

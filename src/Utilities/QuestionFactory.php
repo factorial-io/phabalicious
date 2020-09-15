@@ -42,6 +42,9 @@ class QuestionFactory
         }
 
         if (is_null($value)) {
+            if (!empty($question_data['help'])) {
+                $io->comment($question_data['help']);
+            }
             $value = $question_wrapper->ask($io);
         }
 
@@ -59,6 +62,21 @@ class QuestionFactory
         }
 
         return $value;
+    }
+
+    public function applyVariables(array $questions, array $variables)
+    {
+        $result = [];
+        $replacements = Utilities::expandVariables($variables);
+        foreach ($questions as $key => $question) {
+            foreach (['help', 'question'] as $sub_key) {
+                if (!empty($question[$sub_key])) {
+                    $question[$sub_key] = Utilities::expandString($question[$sub_key], $replacements);
+                }
+            }
+            $result[$key] = $question;
+        }
+        return $result;
     }
 
     public function askMultiple(array $questions, $context, $tokens, $alter_value_cb = false)

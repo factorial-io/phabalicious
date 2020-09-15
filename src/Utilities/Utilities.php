@@ -69,6 +69,11 @@ class Utilities
         ];
     }
 
+    public static function expandString($string, array $replacements, array $ignore_list = []): string
+    {
+        return self::expandStrings([$string], $replacements)[0];
+    }
+
     public static function expandStrings(array $strings, array $replacements, array $ignore_list = []): array
     {
         if (empty($strings)) {
@@ -132,10 +137,19 @@ class Utilities
         }
 
         $callback_name = substr($line, 0, $p1);
-        $args = substr($line, $p1+1, $p2 - $p1 - 1);
-        $args = array_map('trim', explode(',', $args));
-        return [ $callback_name, $args];
+        $args = trim(substr($line, $p1 + 1, $p2 - $p1 - 1));
+        if ($args[0] != '"') {
+            // Support old way of dealing with multiple args.
+            $arg_array = explode(",", $args);
+            $arg_array = array_map("trim", $arg_array);
+            $args = implode('", "', $arg_array);
+            $args = '"' . $args . '"';
+        }
+        $args = '[' . $args . ']';
+        $args = json_decode($args, true);
+        return [$callback_name, $args];
     }
+
 
     public static function getProperty($data, string $key, $default_value = null)
     {
