@@ -4,6 +4,7 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\Utilities;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
@@ -174,6 +175,10 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         $arguments = $this->parseScriptArguments($default_arguments, $input->getOption('arguments'));
         $context->set('variables', $arguments);
         $context->set('deployArguments', $arguments);
+        $context->set(
+            ScriptMethod::SCRIPT_COMMAND_LINE_DEFAULTS,
+            $this->parseScriptArguments([], $input->getOption('arguments'))['arguments'] ?? []
+        );
 
         return $context;
     }

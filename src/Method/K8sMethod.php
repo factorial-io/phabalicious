@@ -158,7 +158,8 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $config->setChild('kube', 'podForCli', $this->getPodNameFromSelector($config, $context));
             $config->setChild('kube', 'podForCliSet', true);
         }
-        if ($task == 'runScript' && $context->get('scriptContext', 'host') == self::KUBECTL_SCRIPT_CONTEXT) {
+        $script_context = $context->get(ScriptMethod::SCRIPT_CONTEXT, 'host');
+        if ($task == 'runScript' && $script_context == self::KUBECTL_SCRIPT_CONTEXT) {
             $context->set('rootFolder', $this->kubectlShell->getHostConfig()['rootFolder']);
             $this->ensureShell($config, $context);
             $context->setShell($this->kubectlShell);

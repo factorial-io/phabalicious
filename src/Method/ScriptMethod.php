@@ -18,6 +18,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 {
 
     const HOST_SCRIPT_CONTEXT = 'host';
+    const SCRIPT_COMMAND_LINE_DEFAULTS = 'scriptCommandLineDefaults';
+    const SCRIPT_QUESTIONS = 'scriptQuestions';
+    const SCRIPT_DATA = 'scriptData';
+    const SCRIPT_CONTEXT = 'scriptContext';
 
     private $breakOnFirstError = true;
     private $callbacks = [];
@@ -67,7 +71,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      */
     public function runScript(HostConfig $host_config, TaskContextInterface $context)
     {
-        $commands = $context->get('scriptData', []);
+        $commands = $context->get(self::SCRIPT_DATA, []);
         $callbacks = $context->get('callbacks', []);
         $callbacks = Utilities::mergeData($this->callbacks, $callbacks);
 
@@ -96,11 +100,16 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         }
         $variables = Utilities::buildVariablesFrom($host_config, $context);
 
-        if (!empty($questions = $context->get('scriptQuestions', []))) {
+        if (!empty($questions = $context->get(self::SCRIPT_QUESTIONS, []))) {
             $factory = new QuestionFactory();
+            $command_line_defaults = $context->get(self::SCRIPT_COMMAND_LINE_DEFAULTS, []);
             $variables['arguments'] = Utilities::mergeData(
                 $variables['arguments'],
-                $factory->askMultiple($questions, $context, [])
+                $factory->askMultiple($questions, $context, [], function ($key, &$value) use ($command_line_defaults) {
+                    if (isset($command_line_defaults[$key])) {
+                        $value = $command_line_defaults[$key];
+                    }
+                })
             );
         }
 
@@ -353,7 +362,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $task,
                 $type
             ));
-            $context->set('scriptData', $script);
+            $context->set(self::SCRIPT_DATA, $script);
             $this->runScript($config, $context);
         }
 
@@ -364,7 +373,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $task,
                 $config['configName']
             ));
-            $context->set('scriptData', $script);
+            $context->set(self::SCRIPT_DATA, $script);
             $this->runScript($config, $context);
         }
     }

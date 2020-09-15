@@ -34,7 +34,7 @@ class ConfirmCallback implements CallbackInterface
 
     public function confirm(TaskContextInterface $context, $message)
     {
-        if (!$context->io()->confirm($message)) {
+        if (!$context->io()->confirm($message, false)) {
             throw new \RuntimeException('Script cancelled by user');
         }
     }

@@ -159,7 +159,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         /** @var ScriptMethod $method */
         $method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
-        $context->set('scriptData', $script);
+        $context->set(ScriptMethod::SCRIPT_DATA, $script);
         $context->mergeAndSet('variables', [
             'dockerHost' => $docker_config->raw(),
         ]);
@@ -602,11 +602,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
             }
         }
     }
-    
+
     public function postflightTask(string $task, HostConfig $host_config, TaskContextInterface $context)
     {
         parent::postflightTask($task, $host_config, $context);
-        
+
         // Reset any cached docker container name.
         if (!empty($host_config['docker']['service']) && !empty($host_config['docker']['name'])) {
             $host_config->setChild('docker', 'name', null);

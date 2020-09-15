@@ -3,9 +3,7 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Method\ScriptMethod;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
-use Phabalicious\Utilities\Utilities;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -89,9 +87,9 @@ class ScriptCommand extends BaseCommand
             }
 
             $context = $this->createContext($input, $output, $defaults);
-            $context->set('scriptData', $script_data);
-            $context->set('scriptContext', $script_context);
-            $context->set('scriptQuestions', $script_questions);
+            $context->set(ScriptMethod::SCRIPT_DATA, $script_data);
+            $context->set(ScriptMethod::SCRIPT_CONTEXT, $script_context);
+            $context->set(ScriptMethod::SCRIPT_QUESTIONS, $script_questions);
 
             $this->getMethods()->call('script', 'runScript', $this->getHostConfig(), $context);
         }

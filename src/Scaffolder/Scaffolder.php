@@ -187,7 +187,7 @@ class Scaffolder
             ], $shell, $this->configuration);
         }
 
-        $context->set('scriptData', $data['scaffold']);
+        $context->set(ScriptMethod::SCRIPT_DATA, $data['scaffold']);
         $context->set('variables', $tokens);
 
         $context->set('scaffoldData', $data);
