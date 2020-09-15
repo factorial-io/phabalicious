@@ -39,6 +39,8 @@ There are currently 3 internal commands. These commands control the flow inside 
 * `fail_on_error(1|0)` If fail_on_error is set to one, phabalicious will exit if one of the script commands returns a non-zero return-code. When using `fail_on_error(0)` only a warning is displayed, the script will continue.
 * `execute(task, subtask, arguments)` execute a phabalicious task. For example you can run a deployment from a script via `execute(deploy)` or stop a docker-container from a script via `execute(docker, stop)`
 * `fail_on_missing_directory(directory, message)` will print message `message` if the directory `directory` does not exist.
+* `log_message(message, severity)` Prints a message to the output, for more info have a look at the scaffolder-documentation.
+* `confirm(message)` Will prompt for a confimation from the user.
 
 ## Task-related scripts
 
@@ -101,6 +103,32 @@ scripts:
 
 The example above will run the script not in the context of the host, but in the context of the shell which also runs the kubectl command.
 
+## Questions
+
+A script can have a collection of questions to get data from the user in an interactive way. Here's an example:
+
+```
+scripts:
+  createRelease:
+    questions:
+      version:
+        question: What version should we use to tag the current commit?
+        validation: "/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$/"
+        error: "The version needs to adhere to the following schema: x.x.x"
+    script:
+      - log_message(Tagging current commit with %arguments.version% ...)
+      - git tag %arguments.version% -m "tagging %arguments.version%"
+      - confirm(Is everything looking good? Can I continue with pushing to origin?)
+      - git push; git push --tags
+      - log_message(Tagged and pushed version %arguments.version%!, success)
+```
+See the `questions`-section in the scaffolder docs for more infos.
+
+If the user provides command line arguments with the same name as the question key, the question wont be shown, eg.
+
+```
+phab -cconfig script createRelease --arguments version=1.0.0
+```
 ## Examples
 
 A rather complex example scripting phabalicious.

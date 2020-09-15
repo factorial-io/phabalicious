@@ -7,6 +7,13 @@
   * Allow script question values to be overridden via `--arguments`
   * Add tests for scaffold command
   * Allow questions for scripts
+  * `log_message` supported for scripts
+  * `confirm(message)` supported for scaffolder and scripts.
+
+### Changed
+
+  * HostConfigs with `inheritOnly` wont be listed when running `list:hosts`
+  * The scaffolder will use/ create a token-cache file only when requested with `--use-cached-tokens`
 
 ## 3.5.12 / 2020-09-09
 
