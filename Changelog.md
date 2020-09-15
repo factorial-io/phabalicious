@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.5.13 / 2020-09-15
+
+### New:
+
+  * Allow script question values to be overridden via `--arguments`
+  * Add tests for scaffold command
+  * Allow questions for scripts
+
 ## 3.5.12 / 2020-09-09
 
 ### New:
