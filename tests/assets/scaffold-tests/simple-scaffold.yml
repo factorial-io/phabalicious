@@ -1,0 +1,12 @@
+questions:
+  age:
+    question: How old are you?
+    default: 18
+  location:
+    question: Where do you live?
+    default: Hamburg
+
+
+scaffold:
+  - "echo Age: %age%"
+  - "echo Location: %location%"

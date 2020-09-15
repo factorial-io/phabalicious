@@ -31,6 +31,14 @@ class ScaffoldCommand extends ScaffoldBaseCommand
             InputArgument::REQUIRED,
             'the path to load the scaffold-yaml from'
         );
+
+        $this->addOption(
+            'use-cached-tokens',
+            null,
+            InputArgument::OPTIONAL,
+            'if set, then the tokens will be written into .phab-scaffold-tokens',
+            false
+        );
     }
 
     /**
@@ -54,11 +62,12 @@ class ScaffoldCommand extends ScaffoldBaseCommand
         $context->mergeAndSet('callbacks', [
             'transform' => [$callback, 'handle']
         ]);
-        
+
         $options = new Options();
         $options
             ->setAllowOverride(true)
             ->setSkipSubfolder(true)
+            ->setUseCacheTokens($input->getOption('use-cached-tokens'))
             ->addCallback('transform', [new TransformCallback(), 'handle'])
             ->setPluginRegistrationCallback(
                 function ($paths) use ($callback) {
