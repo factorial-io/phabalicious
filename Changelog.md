@@ -7,8 +7,10 @@
   * Allow script question values to be overridden via `--arguments`
   * Add tests for scaffold command
   * Allow questions for scripts
+  * Allow computedValues for scripts, this will allow the user to eecute external commands and reuse their results.
   * `log_message` supported for scripts
   * `confirm(message)` supported for scaffolder and scripts.
+  * Enhance parsing of arguments for internal commands when used in the scaffolder or script. This is now possible: `log_message("hello, dear user! Welcome!", "success")`
 
 ### Changed
 

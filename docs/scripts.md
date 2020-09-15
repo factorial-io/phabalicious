@@ -77,12 +77,12 @@ scripts:
       - echo "Hello %arguments.foo%"
 ```
 
-Running 
+Running
 ```
 phab -c<config> script test
 ```
  will output `Hello World`
- 
+
 ```
 phab -c<config> script test --arguments foo=bar
 ```
@@ -107,7 +107,7 @@ The example above will run the script not in the context of the host, but in the
 
 A script can have a collection of questions to get data from the user in an interactive way. Here's an example:
 
-```
+```yaml
 scripts:
   createRelease:
     questions:
@@ -129,6 +129,21 @@ If the user provides command line arguments with the same name as the question k
 ```
 phab -cconfig script createRelease --arguments version=1.0.0
 ```
+
+## Computed values
+
+Computed values allows to call external commands and store their return value as a replacement pattern, which can be used in the script-part later. The results of the commands are stored under the corresponding key in the `%computed%` dictionary. In the below example the result of `git describe ...` gets stored as `%computed.currentVersion%` and can be used in the scripts-part.
+
+```yaml
+scripts:
+  showVersion:
+    computedValues:
+      currentVersion: git describe --abbrev=0 --tag
+    script:
+      - log_message(Current version is %computed.currentVersion%, success)
+```
+
+
 ## Examples
 
 A rather complex example scripting phabalicious.
