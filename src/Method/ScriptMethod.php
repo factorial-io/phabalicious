@@ -4,7 +4,10 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Scaffolder\Callbacks\ConfirmCallback;
+use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -15,6 +18,11 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 {
 
     const HOST_SCRIPT_CONTEXT = 'host';
+    const SCRIPT_COMMAND_LINE_DEFAULTS = 'scriptCommandLineDefaults';
+    const SCRIPT_QUESTIONS = 'scriptQuestions';
+    const SCRIPT_DATA = 'scriptData';
+    const SCRIPT_CONTEXT = 'scriptContext';
+    const SCRIPT_COMPUTED_VALUES = 'scriptComputedValues';
 
     private $breakOnFirstError = true;
     private $callbacks = [];
@@ -64,9 +72,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      */
     public function runScript(HostConfig $host_config, TaskContextInterface $context)
     {
-        $commands = $context->get('scriptData', []);
+        $commands = $context->get(self::SCRIPT_DATA, []);
         $callbacks = $context->get('callbacks', []);
         $callbacks = Utilities::mergeData($this->callbacks, $callbacks);
+
 
         // Allow other methods to add their callbacks.
         if (!empty($host_config['needs'])) {
@@ -91,12 +100,30 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $environment = Utilities::mergeData($environment, $host_config['environment']);
         }
         $variables = Utilities::buildVariablesFrom($host_config, $context);
+        $variables['computed'] = $this->resolveComputedValues($context);
+
+        if (!empty($questions = $context->get(self::SCRIPT_QUESTIONS, []))) {
+            $factory = new QuestionFactory();
+            $questions = $factory->applyVariables($questions, $variables);
+            $command_line_defaults = $context->get(self::SCRIPT_COMMAND_LINE_DEFAULTS, []);
+            $variables['arguments'] = Utilities::mergeData(
+                $variables['arguments'],
+                $factory->askMultiple($questions, $context, [], function ($key, &$value) use ($command_line_defaults) {
+                    if (isset($command_line_defaults[$key])) {
+                        $value = $command_line_defaults[$key];
+                    }
+                })
+            );
+        }
+
         $replacements = Utilities::expandVariables($variables);
         $commands = Utilities::expandStrings($commands, $replacements);
         $commands = Utilities::expandStrings($commands, $replacements);
         $environment = Utilities::expandStrings($environment, $replacements);
 
         $callbacks['execute'] = [$this, 'handleExecuteCallback'];
+        $callbacks[ConfirmCallback::getName()] = [new ConfirmCallback(), 'handle'];
+        $callbacks[LogMessageCallback::getName()] = [new LogMessageCallback(), 'handle'];
         $callbacks['fail_on_error'] = [$this, 'handleFailOnErrorDeprecatedCallback'];
         $callbacks['breakOnFirstError'] = [$this, 'handleFailOnErrorCallback'];
         $callbacks['fail_on_missing_directory'] = [
@@ -338,7 +365,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $task,
                 $type
             ));
-            $context->set('scriptData', $script);
+            $context->set(self::SCRIPT_DATA, $script);
             $this->runScript($config, $context);
         }
 
@@ -349,7 +376,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $task,
                 $config['configName']
             ));
-            $context->set('scriptData', $script);
+            $context->set(self::SCRIPT_DATA, $script);
             $this->runScript($config, $context);
         }
     }
@@ -414,5 +441,20 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         foreach ([$task . 'Prepare', $task, $task . 'Finished'] as $t) {
             unset($this->handledTaskSpecificScripts[$t]);
         }
+    }
+
+    private function resolveComputedValues(TaskContextInterface $context)
+    {
+        $shell = $context->getShell();
+        $result = [];
+        $computed_values = $context->get(self::SCRIPT_COMPUTED_VALUES, []);
+        foreach ($computed_values as $key => $cmd) {
+            $cmd_result = $shell->run($cmd, true);
+            if ($cmd_result->succeeded()) {
+                $result[$key] = trim(implode("\n", $cmd_result->getOutput()));
+            }
+        }
+
+        return $result;
     }
 }

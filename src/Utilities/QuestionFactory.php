@@ -19,7 +19,7 @@ class QuestionFactory
         $this->register(Questions\Confirm::class);
         $this->register(Questions\Choices::class);
     }
-    
+
     public function register($class)
     {
         $this->factory[$class::getName()] = $class;
@@ -42,6 +42,9 @@ class QuestionFactory
         }
 
         if (is_null($value)) {
+            if (!empty($question_data['help'])) {
+                $io->comment($question_data['help']);
+            }
             $value = $question_wrapper->ask($io);
         }
 
@@ -57,7 +60,44 @@ class QuestionFactory
                 $value = call_user_func($mapping[$transform], $value);
             }
         }
-        
+
         return $value;
+    }
+
+    public function applyVariables(array $questions, array $variables)
+    {
+        $result = [];
+        $replacements = Utilities::expandVariables($variables);
+        foreach ($questions as $key => $question) {
+            foreach (['help', 'question'] as $sub_key) {
+                if (!empty($question[$sub_key])) {
+                    $question[$sub_key] = Utilities::expandString($question[$sub_key], $replacements);
+                }
+            }
+            $result[$key] = $question;
+        }
+        return $result;
+    }
+
+    public function askMultiple(array $questions, $context, $tokens, $alter_value_cb = false)
+    {
+        foreach ($questions as $key => $question_data) {
+            $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
+            $value = null;
+            if (isset($tokens[$key])) {
+                $value = $tokens[$key];
+            }
+            if ($alter_value_cb) {
+                $alter_value_cb($key, $value);
+            }
+            $value = $this->askAndValidate(
+                $context->io(),
+                $question_data,
+                $value
+            );
+
+            $tokens[$key] = is_array($value) ? $value : trim($value);
+        }
+        return $tokens;
     }
 }

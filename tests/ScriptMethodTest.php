@@ -35,6 +35,8 @@ class ScriptMethodTest extends PhabTestCase
     /** @var TaskContext */
     private $context;
 
+    private $savedArguments;
+
     /**
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
@@ -236,6 +238,32 @@ class ScriptMethodTest extends PhabTestCase
         $this->method->runScript($host_config, $this->context);
     }
 
+    public function testParsingCallbackParameters()
+    {
+        $this->context->set('callbacks', [
+            'debug' => [$this, 'saveArgumentsCallback'],
+        ]);
+
+        $this->context->set('scriptData', [
+            'debug(hello world)',
+            'debug("hello world")',
+            'debug("hello", "world")',
+            'debug("hello, world", "Foo, bar")',
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+        $this->method->runScript($host_config, $this->context);
+
+        $this->assertEquals(["hello world"], $this->savedArguments[0]);
+        $this->assertEquals(["hello world"], $this->savedArguments[1]);
+        $this->assertEquals(["hello", "world"], $this->savedArguments[2]);
+        $this->assertEquals(["hello, world", "Foo, bar"], $this->savedArguments[3]);
+    }
+
+    public function saveArgumentsCallback($context, ...$args)
+    {
+        $this->savedArguments[] = $args;
+    }
 
     public function testTaskSpecificScripts()
     {

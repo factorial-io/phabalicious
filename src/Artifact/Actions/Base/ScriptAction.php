@@ -39,7 +39,7 @@ class ScriptAction extends ActionBase
 
         $cloned_context = clone $context;
         $cloned_context->set('rootFolder', $dir);
-        $cloned_context->set('scriptData', $this->getArguments());
+        $cloned_context->set(ScriptMethod::SCRIPT_DATA, $this->getArguments());
         $cloned_context->set('variables', $context->get('deployArguments'));
 
         $saved = $script->getBreakOnFirstError();

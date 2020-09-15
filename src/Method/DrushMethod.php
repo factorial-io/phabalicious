@@ -220,7 +220,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             if (!empty($host_config['configurationManagement'])) {
                 $script_context = clone $context;
                 foreach ($host_config['configurationManagement'] as $key => $cmds) {
-                    $script_context->set('scriptData', $cmds);
+                    $script_context->set(ScriptMethod::SCRIPT_DATA, $cmds);
                     $script_context->set('rootFolder', $host_config['siteFolder']);
                     $script_method->runScript($host_config, $script_context);
                 }
