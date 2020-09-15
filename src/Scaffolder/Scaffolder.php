@@ -17,6 +17,7 @@ use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\AlterJsonFileCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertFileCallback;
+use Phabalicious\Scaffolder\Callbacks\ConfirmCallback;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
 use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
 use Phabalicious\ShellProvider\CommandResult;
@@ -205,6 +206,10 @@ class Scaffolder
                 [new CopyAssetsCallback($this->configuration, $this->twig), 'handle']
             )
             ->addCallback(
+                ConfirmCallback::getName(),
+                [new ConfirmCallback(), 'handle']
+            )
+            ->addCallback(
                 LogMessageCallback::getName(),
                 [new LogMessageCallback(), 'handle']
             )
@@ -274,25 +279,18 @@ class Scaffolder
         array $tokens,
         Options $options
     ): array {
-        foreach ($questions as $key => $question_data) {
-            $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
-            $value = null;
-            if (isset($tokens[$key])) {
-                $value = $tokens[$key];
+        return $this->questionFactory->askMultiple(
+            $questions,
+            $context,
+            $tokens,
+            function ($key, &$value) use ($options) {
+                $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
+                $dynamic_option = $options->getDynamicOption($option_name);
+                if ($dynamic_option !== false && $dynamic_option !== null) {
+                    $value = $dynamic_option;
+                }
             }
-            $dynamic_option = $options->getDynamicOption($option_name);
-            if ($dynamic_option !== false && $dynamic_option !== null) {
-                $value = $dynamic_option;
-            }
-            $value = $this->questionFactory->askAndValidate(
-                $context->io(),
-                $question_data,
-                $value
-            );
-
-            $tokens[$key] = is_array($value) ? $value : trim($value);
-        }
-        return $tokens;
+        );
     }
 
 

@@ -83,6 +83,7 @@ class ScriptCommand extends BaseCommand
             }
             $defaults = $script_data['defaults'] ?? [];
             $script_context = $script_data['context'] ?? ScriptMethod::HOST_SCRIPT_CONTEXT;
+            $script_questions = $script_data['questions'] ?? [];
             if (!empty($script_data['script'])) {
                 $script_data = $script_data['script'];
             }
@@ -90,6 +91,7 @@ class ScriptCommand extends BaseCommand
             $context = $this->createContext($input, $output, $defaults);
             $context->set('scriptData', $script_data);
             $context->set('scriptContext', $script_context);
+            $context->set('scriptQuestions', $script_questions);
 
             $this->getMethods()->call('script', 'runScript', $this->getHostConfig(), $context);
         }

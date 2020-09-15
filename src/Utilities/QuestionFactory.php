@@ -19,7 +19,7 @@ class QuestionFactory
         $this->register(Questions\Confirm::class);
         $this->register(Questions\Choices::class);
     }
-    
+
     public function register($class)
     {
         $this->factory[$class::getName()] = $class;
@@ -57,7 +57,29 @@ class QuestionFactory
                 $value = call_user_func($mapping[$transform], $value);
             }
         }
-        
+
         return $value;
+    }
+
+    public function askMultiple(array $questions, $context, $tokens, $alter_value_cb = false)
+    {
+        foreach ($questions as $key => $question_data) {
+            $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
+            $value = null;
+            if (isset($tokens[$key])) {
+                $value = $tokens[$key];
+            }
+            if ($alter_value_cb) {
+                $alter_value_cb($key, $value);
+            }
+            $value = $this->askAndValidate(
+                $context->io(),
+                $question_data,
+                $value
+            );
+
+            $tokens[$key] = is_array($value) ? $value : trim($value);
+        }
+        return $tokens;
     }
 }
