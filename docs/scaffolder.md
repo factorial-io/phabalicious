@@ -97,6 +97,14 @@ scaffold:
   - assert_file(<file_path>, <error_message>)
 ```
 
+## `confirm(message)`
+
+This internal command will ask the user for confirmation before continuing showing `message`.
+
+```yaml
+scaffold:
+  - confirm(<message>)
+```
 
 ## `transform`
 
