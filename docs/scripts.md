@@ -39,7 +39,7 @@ There are currently 3 internal commands. These commands control the flow inside 
 * `fail_on_error(1|0)` If fail_on_error is set to one, phabalicious will exit if one of the script commands returns a non-zero return-code. When using `fail_on_error(0)` only a warning is displayed, the script will continue.
 * `execute(task, subtask, arguments)` execute a phabalicious task. For example you can run a deployment from a script via `execute(deploy)` or stop a docker-container from a script via `execute(docker, stop)`
 * `fail_on_missing_directory(directory, message)` will print message `message` if the directory `directory` does not exist.
-* `log_message(message, severity)` Prints a message to the output, for more info have a look at the scaffolder-documentation.
+* `log_message(severity, message)` Prints a message to the output, for more info have a look at the [scaffolder-documentation](/scaffolder).
 * `confirm(message)` Will prompt for a confimation from the user.
 
 ## Task-related scripts
@@ -120,7 +120,7 @@ scripts:
       - git tag %arguments.version% -m "tagging %arguments.version%"
       - confirm(Is everything looking good? Can I continue with pushing to origin?)
       - git push; git push --tags
-      - log_message(Tagged and pushed version %arguments.version%!, success)
+      - log_message(success, Tagged and pushed version %arguments.version%!)
 ```
 See the `questions`-section in the scaffolder docs for more infos.
 
@@ -140,7 +140,7 @@ scripts:
     computedValues:
       currentVersion: git describe --abbrev=0 --tag
     script:
-      - log_message(Current version is %computed.currentVersion%, success)
+      - log_message(success, Current version is %computed.currentVersion%)
 ```
 
 
