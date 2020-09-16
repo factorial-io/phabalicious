@@ -113,7 +113,7 @@ abstract class BaseMethod implements MethodInterface
         }
         $args['--config'] = $context->get('host_config')['configName'];
         $input = new ArrayInput($args);
-        $command->run($input, $context->getOutput());
+        return $command->run($input, $context->getOutput());
     }
 
     /**

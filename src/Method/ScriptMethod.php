@@ -288,7 +288,12 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $context = array_shift($args);
         $task_name = array_shift($args);
 
-        $this->executeCommand($context, $task_name, $args);
+        $return_code = $this->executeCommand($context, $task_name, $args);
+
+        if ($return_code !== 0 && $this->getBreakOnFirstError()) {
+            // The command returned a non zero value, lets stop here.
+            throw new \RuntimeException(sprintf('Execute callback returned a non-zero return-code: %d', $return_code));
+        }
     }
 
     /**
