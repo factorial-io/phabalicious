@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.5.14 / 2020-09-16
+
+### Fixed:
+
+  * `execute()` will now properly respect breakOnFirstError which got ignored in the past
+  * Fix docs regarding `log_message` (Fixes #100)
+
 ## 3.5.13 / 2020-09-15
 
 ### New:
