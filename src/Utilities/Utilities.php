@@ -9,7 +9,7 @@ use Phabalicious\Method\TaskContextInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.5.13';
+    const FALLBACK_VERSION = '3.5.14';
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
