@@ -466,7 +466,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $result[$key] = $output == "" ? $cmd_result->getExitCode() : $output;
         }
 
-        print_r($result);
         return $result;
     }
 }
