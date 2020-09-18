@@ -5,7 +5,7 @@ namespace Phabalicious\Scaffolder;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 
-class Options
+class Options extends CallbackOptions
 {
 
     protected $allowOverride = false;
@@ -15,8 +15,6 @@ class Options
     protected $compabilityVersion = Utilities::FALLBACK_VERSION;
 
     protected $dynamic_options = [];
-
-    protected $callbacks = [];
 
     protected $skipSubfolder;
 
@@ -112,16 +110,6 @@ class Options
         return $this;
     }
 
-    public function addCallback($name, $callable): Options
-    {
-        $this->callbacks[$name] = $callable;
-        return $this;
-    }
-
-    public function getCallbacks(): array
-    {
-        return $this->callbacks;
-    }
 
     /**
      * @param bool $useCacheTokens

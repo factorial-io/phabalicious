@@ -205,22 +205,7 @@ class Scaffolder
                 CopyAssetsCallback::getName(),
                 [new CopyAssetsCallback($this->configuration, $this->twig), 'handle']
             )
-            ->addCallback(
-                ConfirmCallback::getName(),
-                [new ConfirmCallback(), 'handle']
-            )
-            ->addCallback(
-                LogMessageCallback::getName(),
-                [new LogMessageCallback(), 'handle']
-            )
-            ->addCallback(
-                AlterJsonFileCallback::getName(),
-                [new AlterJsonFileCallback(), 'handle']
-            )
-            ->addCallback(
-                AssertFileCallback::getName(),
-                [new AssertFileCallback(), 'handle']
-            );
+            ->addDefaultCallbacks();
 
         $context->set('callbacks', $options->getCallbacks());
 
