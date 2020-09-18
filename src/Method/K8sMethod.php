@@ -134,6 +134,11 @@ class K8sMethod extends BaseMethod implements MethodInterface
         ]);
 
         $data = Utilities::expandStrings($data, $replacements, ['podSelector', 'deployments']);
+
+        $data['kubectlOptionsCombined'] = trim(implode(
+            ' ',
+            KubectlShellProvider::getKubectlCmd($data, '')
+        ));
     }
 
     /**
@@ -145,7 +150,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
      */
     protected function expandCmd(HostConfig $config, $arg = '')
     {
-        $cmd = implode(' ', KubectlShellProvider::getKubectlCmd($config, '#!kubectl'));
+        $cmd = implode(' ', KubectlShellProvider::getKubectlCmd($config->raw(), '#!kubectl'));
         return $cmd . ' ' . $arg;
     }
 
