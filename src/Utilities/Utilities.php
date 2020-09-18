@@ -4,6 +4,7 @@ namespace Phabalicious\Utilities;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\ArgumentParsingException;
 use Phabalicious\Method\TaskContextInterface;
 
 class Utilities
@@ -130,26 +131,80 @@ class Utilities
     public static function extractCallback($line)
     {
         $p1 = strpos($line, '(');
-        $p2 = strpos($line, ')');
+        $p2 = strrpos($line, ')');
 
         if (($p1 === false) && ($p2 === false)) {
             return false;
         }
 
         $callback_name = substr($line, 0, $p1);
-        $args = trim(substr($line, $p1 + 1, $p2 - $p1 - 1));
-        if ($args[0] != '"') {
-            // Support old way of dealing with multiple args.
-            $arg_array = explode(",", $args);
-            $arg_array = array_map("trim", $arg_array);
-            $args = implode('", "', $arg_array);
-            $args = '"' . $args . '"';
-        }
-        $args = '[' . $args . ']';
-        $args = json_decode($args, true);
+        $arg_string = trim(substr($line, $p1 + 1, $p2 - $p1 - 1));
+        $args = self::extractArguments($arg_string);
         return [$callback_name, $args];
     }
 
+    /**
+     * Extract callback arguments from a string, support quoted string as arguments.
+     *
+     * @param $str
+     *   The string to parse.
+     * @return array
+     *   The array of arguments.
+     *
+     * @throws ArgumentParsingException
+     */
+    public static function extractArguments($str)
+    {
+        // If only one argument return early.
+        if (strpos($str, ',') === false) {
+            return [ str_replace('"', '', $str) ];
+        }
+        $result = [];
+        $pos = 0;
+        $done = false;
+        do {
+            // Find first non-space.
+            while ($pos < strlen($str) && ctype_space($str[$pos])) {
+                $pos++;
+            }
+            if ($pos == strlen($str)) {
+                $done = true;
+            } elseif ($str[$pos] == '"') {
+                // Quoted string ahead, extract.
+                $end_p = strpos($str, '"', $pos+1);
+                if ($end_p === false) {
+                    throw new ArgumentParsingException(sprintf('Missing closing quote in %s', $str));
+                }
+                $found = substr($str, $pos+1, $end_p - $pos - 1);
+                $result[] = $found;
+                // Advance to next comma or finish.
+                $comma_p = strpos($str, ',', $end_p+1);
+                if ($comma_p === false) {
+                    // Seems we are finished.
+                    $done = true;
+                } else {
+                    $pos = $comma_p;
+                }
+            } elseif ($str[$pos] == ',') {
+                // Comma, move one char forward.
+                $pos++;
+                continue;
+            } else {
+                // Handle argument without quotes.
+                $end_p = strpos($str, ',', $pos);
+                if ($end_p === false) {
+                    // Seems like this is the last one
+                    $end_p = strlen($str);
+                }
+
+                $found = substr($str, $pos, $end_p - $pos);
+                $result[] = $found;
+                $pos = $end_p;
+            }
+        } while (!$done);
+
+        return $result;
+    }
 
     public static function getProperty($data, string $key, $default_value = null)
     {
