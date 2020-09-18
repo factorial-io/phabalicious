@@ -106,7 +106,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         }
     }
 
-    public function getShellCommand(array $program_to_call, array $options = []): array
+    public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
         $command = [
             $this->hostConfig['shellProviderExecutable'],
@@ -115,8 +115,11 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             $this->hostConfig['port'],
             ];
         $this->addCommandOptions($command);
-        if (!empty($options['tty'])) {
+        if ($options->useTty()) {
             $command[] = '-t';
+        }
+        if ($options->isQuiet()) {
+            $command[] = '-q';
         }
         $command[] = $this->hostConfig['user'] . '@' . $this->hostConfig['host'];
         if (count($program_to_call)) {

@@ -53,7 +53,8 @@ class ShellCommandCommand extends BaseCommand
 
         /** @var ShellProviderInterface $shell */
         $shell = $context->getResult('shell', $host_config->shell());
-        $ssh_command = $context->getResult('ssh_command', $shell->getShellCommand([], ['tty' => true]));
+        $options = $this->getSuitableShellOptions($output);
+        $ssh_command = $context->getResult('ssh_command', $shell->getShellCommand([], $options));
 
         $context->io()->text('$ ' . implode(' ', $ssh_command));
 

@@ -61,8 +61,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         );
     }
 
-    public function createShellProcess(array $command = [], array $options = []): Process
+    public function createShellProcess(array $command = [], ShellOptions $options = null): Process
     {
+        if (!$options) {
+            $options = new ShellOptions();
+        }
         $shell_command = $this->getShellCommand($command, $options);
         $this->logger->info('Starting shell with ' . implode(' ', $shell_command));
         $env_vars = Utilities::mergeData([
@@ -240,7 +243,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
     }
 
-    public function getShellCommand(array $command, array $options = []):array
+    public function getShellCommand(array $command, ShellOptions $options):array
     {
         return $command;
     }

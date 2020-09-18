@@ -3,6 +3,7 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Method\TaskContext;
+use Phabalicious\ShellProvider\ShellOptions;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -59,7 +60,8 @@ class DrushCommand extends BaseCommand
 
         $output->writeln('<info>Starting drush on `' . $host_config['configName'] . '`');
 
-        $process = $this->startInteractiveShell($context->io(), $shell, $command, $output->isDecorated());
+        $options = $this->getSuitableShellOptions($output);
+        $process = $this->startInteractiveShell($context->io(), $shell, $command, $options);
         return $process->getExitCode();
     }
 }
