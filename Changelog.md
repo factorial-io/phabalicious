@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.5.15 / 2020-09-18
+
+### Fixes:
+  * Remove `-q` option from ssh command as this prevents sshs error reporting
+
+### New:
+  * Provide computed property `kubectlOptionsCombined` for use in scripts to use the same cli-options as phab does
+
 ## 3.5.14 / 2020-09-16
 
 ### Fixed:
