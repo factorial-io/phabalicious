@@ -343,6 +343,8 @@ class ConfigurationService
             } elseif (strpos($resource, 'http') !== false) {
                 $add_data = Yaml::parse($this->readHttpResource($resource));
                 $this->checkRequires($add_data, $resource);
+            } elseif (file_exists($resource)) {
+                $add_data = $this->readFile($resource);
             } elseif (file_exists($root_folder . '/' . $resource)) {
                 $add_data = $this->readFile($root_folder . '/' . $resource);
             } else {
