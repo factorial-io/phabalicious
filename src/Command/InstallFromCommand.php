@@ -65,9 +65,7 @@ class InstallFromCommand extends BaseCommand
 
         if ($result = $this->runCommand(
             'install',
-            [
-                '--skip-reset' => '1',
-            ],
+            [],
             $input,
             $output
         )) {

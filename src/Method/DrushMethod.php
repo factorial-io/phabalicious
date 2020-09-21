@@ -372,6 +372,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $cmd_options .= ' ' . $host_config['installOptions']['options'];
         $this->runDrush($shell, 'site-install %s %s', $host_config['installOptions']['distribution'], $cmd_options);
         $this->setupConfigurationManagement($host_config, $context);
+        // Run --existing-config install if config sync dir contains config.
+        if ($shell->exists($this->getConfigSyncDirectory($host_config) . '/core.extension.yml')) {
+            $this->runDrush($shell, 'site-install -y --existing-config');
+        }
     }
 
     protected function backupSQL(
@@ -658,6 +662,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $result->throwException('Could not connect to database!');
         }
         return false;
+    }
+
+    private function getConfigSyncDirectory(HostConfig $host_config)
+    {
+        return $host_config['rootFolder'] . '/../config/' . array_key_last($host_config['configurationManagement']);
     }
 
     private function setupConfigurationManagement(HostConfig $host_config, TaskContextInterface $context)
