@@ -355,25 +355,33 @@ class DrushMethod extends BaseMethod implements MethodInterface
             }
         }
 
-        // Install drupal.
-        $cmd_options = '';
-        $cmd_options .= ' -y';
-        $cmd_options .= ' --sites-subdir=' . basename($host_config['siteFolder']);
-        $cmd_options .= ' --account-name=' . $host_config['adminUser'];
-        $cmd_options .= sprintf(' --account-pass="%s"', $host_config['adminPass']);
-        $cmd_options .= ' --locale=' . $host_config['installOptions']['locale'];
+        $settingsFileExists = $shell->exists($host_config['siteFolder'] . '/settings.php');
+        $configurationExists = $shell->exists($this->getConfigSyncDirectory($host_config) . '/core.extension.yml');
+        // Install drupal, this can be skipped if install from configuration is
+        // possible.
+        if (!$settingsFileExists || !$configurationExists) {
+            $cmd_options = '';
+            $cmd_options .= ' -y';
+            $cmd_options .= ' --sites-subdir=' . basename($host_config['siteFolder']);
+            $cmd_options .= ' --account-name=' . $host_config['adminUser'];
+            $cmd_options .= sprintf(' --account-pass="%s"', $host_config['adminPass']);
+            $cmd_options .= ' --locale=' . $host_config['installOptions']['locale'];
 
-        if ($o) {
-            if ($host_config['database']['prefix']) {
-                $cmd_options .= ' --db-prefix=' . $host_config['database']['prefix'];
+            if ($o) {
+                if ($host_config['database']['prefix']) {
+                    $cmd_options .= ' --db-prefix=' . $host_config['database']['prefix'];
+                }
+                $cmd_options .= ' --db-url=mysql://' . $o['user'] . ':' . $o['pass'] . '@' .
+                    $o['host'] . '/' . $o['name'];
             }
-            $cmd_options .= ' --db-url=mysql://' . $o['user'] . ':' . $o['pass'] . '@' . $o['host'] . '/' . $o['name'];
+            $cmd_options .= ' ' . $host_config['installOptions']['options'];
+            $this->runDrush($shell, 'site-install %s %s', $host_config['installOptions']['distribution'], $cmd_options);
+            if (!$settingsFileExists) {
+                $this->setupConfigurationManagement($host_config, $context);
+            }
         }
-        $cmd_options .= ' ' . $host_config['installOptions']['options'];
-        $this->runDrush($shell, 'site-install %s %s', $host_config['installOptions']['distribution'], $cmd_options);
-        $this->setupConfigurationManagement($host_config, $context);
         // Run --existing-config install if config sync dir contains config.
-        if ($shell->exists($this->getConfigSyncDirectory($host_config) . '/core.extension.yml')) {
+        if ($configurationExists) {
             $this->runDrush($shell, 'site-install -y --existing-config');
         }
     }
