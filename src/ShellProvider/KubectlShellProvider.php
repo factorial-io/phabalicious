@@ -142,7 +142,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         $command = $this->getKubeCmd();
         $command[] = 'cp';
         $command[] = trim($source);
-        $command[] = $this->hostConfig['kube']['podForCli'] . ':' . trim($dest);
+        $command[] = $this->hostConfig['kube']['podForCli'] . ':' . trim($dest) . '/' . basename($source);
 
         return $command;
     }
