@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.5.16 / 2020-09-27
+
+### Fixes:
+  * Fix kubernetes get-file and put-file task.
+  * Update readme and document how to create a release and publish the docs
+  * Update vuepress
+
 ## 3.5.15 / 2020-09-18
 
 ### Fixes:
