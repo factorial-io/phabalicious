@@ -177,7 +177,7 @@ This will print all host configuration for the host `staging`.
 
 ### Configuration for the drush-method
 
-* `uuid` of the drupal 8 site (D8 only) Needed for proper config imports 
+* `uuid` of the drupal 8 site (D8 only) Needed for proper config imports
 * `siteFolder` is a drupal-specific folder, where the settings.php resides for the given installation. This allows to interact with multisites etc.
 * `filesFolder` the path to the files-folder, where user-assets get stored and which should be backed up by the `files`-method
 * `revertFeatures`, defaults to `True`, when set all features will be reverted when running a reset (drush only)
@@ -190,6 +190,7 @@ This will print all host configuration for the host `staging`.
     * `prefix` the optional table-prefix to use
     * `skipCreateDatabase` do not create a database when running the install task.
 * `adminUser`, default is `admin`, the name of the admin-user to set when running the reset-task on `dev`-instances
+* `adminPass`, default is empty, will be computed on request. You can get it via `phab -c<config> get:property adminPass` -- this can be overridden per host or globally.
 * `replaceSettingsFile`, default is true. If set to false, the settings.php file will not be replaced when running an install.
 * `installOptions` default is `distribution: minimal, locale: en, options: ''`. You can change the distribution to install and/ or the locale.
 * `drupalVersion` set the drupal-version to use. If not set phabalicious is trying to guess it from the `needs`-configuration.
