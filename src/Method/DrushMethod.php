@@ -81,6 +81,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
         foreach ($keys as $key) {
             $config[$key] = $configuration_service->getSetting($key);
         }
+
+        $config['adminPass'] = $configuration_service->getSetting(
+            'adminPass',
+            base64_encode('!admin%' . ($host_config['config_name'] ?? 'whatever') . '4')
+        );
         if (isset($host_config['database'])) {
             $config['database']['host'] = 'localhost';
             $config['database']['skipCreateDatabase'] = false;
@@ -184,12 +189,13 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         if ($host_config->isType(HostType::DEV)) {
             $admin_user = $host_config['adminUser'];
+            $admin_pass = $host_config['adminPass'];
 
             if ($context->get('withPasswordReset', true)) {
                 if ($host_config['drushVersion'] >= 9) {
-                    $command = sprintf('user:password %s "admin"', $admin_user);
+                    $command = sprintf('user:password %s "%s"', $admin_user, $admin_pass);
                 } else {
-                    $command = sprintf('user-password %s --password="admin"', $admin_user);
+                    $command = sprintf('user-password %s --password="%s"', $admin_user, $admin_pass);
                 }
                 $this->runDrush($shell, $command);
             }
@@ -354,7 +360,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $cmd_options .= ' -y';
         $cmd_options .= ' --sites-subdir=' . basename($host_config['siteFolder']);
         $cmd_options .= ' --account-name=' . $host_config['adminUser'];
-        $cmd_options .= ' --account-pass=admin';
+        $cmd_options .= sprintf(' --account-pass="%s"', $host_config['adminPass']);
         $cmd_options .= ' --locale=' . $host_config['installOptions']['locale'];
 
         if ($o) {
