@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.5.17 / 2020-10-01
+
+### Breaking change:
+
+  * Provide a more secure password for dev-instances. This will change the admin
+    password of your dev-instances as the default passwords got replaced with a more secure variant.
+
+    You can get the admin-password for a given instance via `phab -c<config> get:property adminPass`.
+
+    Or you can override the `adminPass` in the fabfile globally or on a per host-basis. Another option
+    for local development is creating a `fabfile.local.override.yaml` in your multibasebox folder and
+    change its content to sth like this
+
+    ```
+    hosts:
+      mbb:
+        adminPass: admin
+    ```
+
 ## 3.5.16 / 2020-09-27
 
 ### Fixes:
