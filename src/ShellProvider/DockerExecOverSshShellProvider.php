@@ -19,7 +19,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
      * @var DockerExecShellProvider
      */
     protected $dockerExec;
-    
+
     /**
      * Shell to run docker commands on host.
      *
@@ -88,11 +88,12 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         if (count($program_to_call)) {
             $command[] = implode(' ', $program_to_call);
         }
-        $ssh_command[] = implode(' ', $command);
+        $ssh_command = array_merge($ssh_command, $command);
+        // $ssh_command[] = implode(' ', $command);
 
         return $ssh_command;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -101,7 +102,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $dir), false, false);
         return $result->succeeded();
     }
-    
+
     private function ensureSshShell()
     {
         if ($this->sshShell) {
@@ -124,11 +125,11 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $tmp_dest = tempnam($this->hostConfig['tmpFolder'], $dest);
-        
+
         if (!parent::putFile($source, $tmp_dest, $context, $verbose)) {
             return false;
         }
-        
+
         $this->ensureSshShell();
         $cmd = $this->dockerExec->getPutFileCommand($tmp_dest, $dest);
         $result = $this->sshShell->run(implode(' ', $cmd));
@@ -144,14 +145,14 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $tmp_source = tempnam($this->hostConfig['tmpFolder'], $dest);
-        
+
         $this->ensureSshShell();
         $cmd = $this->dockerExec->getGetFileCommand($source, $tmp_source);
         $result = $this->sshShell->run(implode(' ', $cmd));
         if ($result->failed()) {
             return false;
         }
-        
+
         $result = parent::putFile($tmp_source, $dest, $context, $verbose);
         $this->sshShell->run(sprintf('rm %s', escapeshellarg($tmp_source)));
 
@@ -166,7 +167,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
     {
         return [
             '/bin/sh',
-            '--login',
+            '-l',
             '-c',
             '\'' . implode(" ", $command) . '\'',
         ];
