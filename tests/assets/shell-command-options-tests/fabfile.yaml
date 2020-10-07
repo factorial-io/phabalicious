@@ -1,0 +1,53 @@
+name: shell-command-options-tests
+
+uuid: 1234-1234
+
+needs:
+  - drush
+
+dockerHosts:
+  docker-exec-shell:
+    rootFolder: .
+    runLocally: true
+hosts:
+  base:
+    rootFolder: .
+    backupFolder: .
+  local-shell:
+    # Workaround for missing drush on locals
+    executables:
+      drush: echo drush
+    inheritsFrom: base
+    shellProvider: local
+    siteFolder: ./
+  ssh-shell:
+    shellProviderOptions:
+      - -i
+      - /home/stephan/multibasebox/projects/phabalicious/tests/assets/shell-command-options-tests/testruns
+    inheritsFrom: base
+    shellProvider: ssh
+    host: localhost
+    port: 12311
+    user: root
+    pass: root
+  docker-exec-shell:
+    inheritsFrom: base
+    shellProvider: docker-exec
+    docker:
+      configuration: docker-exec-shell
+      name: test-shell-command-options
+
+  docker-exec-over-ssh-shell:
+    inheritsFrom: docker-exec-shell
+    shellProvider: docker-exec-over-ssh
+    user: stephan
+    port: 22
+    host: localhost
+    siteFolder: /var/www
+    executables:
+      drush: /root/.composer/vendor/bin/drush
+  kubectl:
+    inheritsFrom: base
+    shellProvider: kubectl
+
+

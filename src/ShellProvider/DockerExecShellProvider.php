@@ -53,7 +53,9 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
         }
 
         if (count($program_to_call)) {
-            $command[] = implode(' ', $program_to_call);
+            foreach ($program_to_call as $e) {
+                $command[] = $e;
+            }
         }
 
         return $command;
@@ -88,12 +90,11 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
      */
     public function wrapCommandInLoginShell(array $command)
     {
-        return [
+        return array_merge([
             '/bin/bash',
             '--login',
             '-c',
-            '\'' . implode(' ', $command). '\'',
-        ];
+        ], $command);
     }
 
     /**

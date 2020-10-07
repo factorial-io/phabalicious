@@ -24,6 +24,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
     {
         $result =  parent::getDefaultConfig($configuration_service, $host_config);
         $result['shellProviderExecutable'] = '/usr/bin/ssh';
+        $result['shellProviderOptions'] = [];
         $result['disableKnownHosts'] = $configuration_service->getSetting('disableKnownHosts', false);
         $result['port'] = 22;
 
@@ -114,6 +115,9 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             '-p',
             $this->hostConfig['port'],
             ];
+        if (!empty($this->hostConfig['shellProviderOptions'])) {
+            $command = array_merge($command, $this->hostConfig['shellProviderOptions']);
+        }
         $this->addCommandOptions($command);
         if ($options->useTty()) {
             $command[] = '-t';
@@ -302,8 +306,9 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         return [
             '/bin/bash',
             '--login',
+            '-i',
             '-c',
-            implode(' ', $command),
+            '\'' . implode(' ', $command) . '\''
         ];
     }
 

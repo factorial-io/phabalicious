@@ -21,6 +21,9 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         $result['shellExecutable'] = '/bin/sh';
 
         $result['kube']['namespace'] = 'default';
+        $result['kube']['podSelector'] = [
+            'service_name=%host.kube.serviceName%',
+        ];
         return $result;
     }
 
@@ -49,10 +52,12 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
     public static function getKubectlCmd(array $config, $kubectl_cmd = '#!kubectl')
     {
         $cmd = [ $kubectl_cmd ];
-        foreach ($config['kubectlOptions'] as $k => $v) {
-            $cmd[] = $k;
-            if ($v !== "") {
-                $cmd[] = $v;
+        if (!empty($config['kubectlOptions'])) {
+            foreach ($config['kubectlOptions'] as $k => $v) {
+                $cmd[] = $k;
+                if ($v !== "") {
+                    $cmd[] = $v;
+                }
             }
         }
 

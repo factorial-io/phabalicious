@@ -609,7 +609,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         // Reset any cached docker container name.
         if (!empty($host_config['docker']['service']) && !empty($host_config['docker']['name'])) {
-            $host_config->setChild('docker', 'name', null);
+            //$host_config->setChild('docker', 'name', null);
         }
     }
 }

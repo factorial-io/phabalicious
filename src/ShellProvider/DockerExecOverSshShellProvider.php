@@ -88,7 +88,8 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         if (count($program_to_call)) {
             $command[] = implode(' ', $program_to_call);
         }
-        $ssh_command[] = implode(' ', $command);
+        $ssh_command = array_merge($ssh_command, $command);
+        // $ssh_command[] = implode(' ', $command);
 
         return $ssh_command;
     }
@@ -166,7 +167,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
     {
         return [
             '/bin/sh',
-            '--login',
+            '-l',
             '-c',
             '\'' . implode(" ", $command) . '\'',
         ];
