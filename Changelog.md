@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.18 / 2020-10-07
+
+### Fixes:
+  * Provide sensible defaults for `podSelector`, fix a warning
+  * Add test-coverage for most shell-providers, fixes #104
+
 ## 3.5.17 / 2020-10-01
 
 ### Breaking change:
