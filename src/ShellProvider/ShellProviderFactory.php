@@ -11,6 +11,7 @@ class ShellProviderFactory
             case LocalShellProvider::PROVIDER_NAME:
                 $shell_provider = new LocalShellProvider($logger);
                 break;
+
             case SshShellProvider::PROVIDER_NAME:
                 $shell_provider = new SshShellProvider($logger);
                 break;
@@ -18,6 +19,7 @@ class ShellProviderFactory
             case DockerExecShellProvider::PROVIDER_NAME:
                 $shell_provider = new DockerExecShellProvider($logger);
                 break;
+
             case DockerExecOverSshShellProvider::PROVIDER_NAME:
                 $shell_provider = new DockerExecOverSshShellProvider($logger);
                 break;
