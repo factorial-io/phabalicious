@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.19 / 2020-10-09
+
+### Fixed:
+  * Reset auto-discovered docker name after docker-tasks to prevent outdated information
+  * Show proper error-message if a remote asset cant be loaded
+
 ## 3.5.18 / 2020-10-07
 
 ### Fixes:

@@ -590,6 +590,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $this->logger->info('Try to get docker container name ...');
             try {
                 $config = $host_config['docker'];
+                $host_config->setChild('docker', 'nameAutoDiscovered', true);
                 $host_config->setChild(
                     'docker',
                     'name',
@@ -607,9 +608,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
     {
         parent::postflightTask($task, $host_config, $context);
 
-        // Reset any cached docker container name.
-        if (!empty($host_config['docker']['service']) && !empty($host_config['docker']['name'])) {
-            //$host_config->setChild('docker', 'name', null);
+        // Reset any cached docker container name after a docker task.
+        if ($task == 'docker' && !empty($host_config['docker']['nameAutoDiscovered'])) {
+            $host_config->setChild('docker', 'name', null);
+            $host_config->setChild('docker', 'nameAutoDiscovered', null);
         }
     }
 }
