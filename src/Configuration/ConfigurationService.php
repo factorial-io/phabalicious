@@ -342,9 +342,14 @@ class ConfigurationService
                 $add_data = $lookup[$resource];
             } elseif (strpos($resource, 'http') !== false) {
                 $add_data = Yaml::parse($this->readHttpResource($resource));
-                $this->checkRequires($add_data, $resource);
+                if ($add_data) {
+                    $this->checkRequires($add_data, $resource);
+                }
             } elseif (file_exists($resource)) {
                 $add_data = $this->readFile($resource);
+                if ($add_data) {
+                    $this->checkRequires($add_data, $resource);
+                }
             } elseif (file_exists($root_folder . '/' . $resource)) {
                 $add_data = $this->readFile($root_folder . '/' . $resource);
             } else {
@@ -450,9 +455,9 @@ class ConfigurationService
         } elseif ($contents !== false) {
             file_put_contents($cache_file, $contents);
         }
-        if ($this->offlineMode && !$contents) {
+        if (!$contents) {
             $this->logger->error(
-                'Could not get needed data from offline-cache for `' .
+                'Could not get needed data from `' .
                 $resource . '`, proceed with caution!'
             );
         }
