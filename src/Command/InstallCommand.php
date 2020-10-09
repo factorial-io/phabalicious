@@ -18,6 +18,13 @@ class InstallCommand extends BaseCommand
             ->setName('install')
             ->setDescription('Install an instance')
             ->setHelp('Runs all tasks necessary to install an instance on a existing code-base');
+        $this->addOption(
+            'skip-reset',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Skip the reset-task if set to true',
+            false
+        );
     }
 
     /**
@@ -56,10 +63,13 @@ class InstallCommand extends BaseCommand
             }
         }
 
+
+        $next_tasks = $input->getOption('skip-reset') ? [] : ['reset'];
+
         $context->io()->comment('Installing new app for `' . $this->getHostConfig()['configName']. '`');
 
         try {
-            $this->getMethods()->runTask('install', $this->getHostConfig(), $context, []);
+            $this->getMethods()->runTask('install', $this->getHostConfig(), $context, $next_tasks);
         } catch (EarlyTaskExitException $e) {
             return 1;
         }
