@@ -55,6 +55,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             ],
             'revertFeatures' => true,
             'replaceSettingsFile' => true,
+            'alterSettingsFile' => true,
             'configurationManagement' => [
                 'staging' => [
                     '#!drush config-import -y staging'
@@ -336,7 +337,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $shell->run('#!mysql' .
                 ' -h ' . $o['host'] .
                 ' -u ' . $o['user'] .
-                ' --password=' . $o['pass'] .
+                ' --password="' . $o['pass'] . '"' .
                 ' -e "' . $cmd . '"');
         }
 
@@ -367,7 +368,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
             if ($host_config['database']['prefix']) {
                 $cmd_options .= ' --db-prefix=' . $host_config['database']['prefix'];
             }
-            $cmd_options .= ' --db-url=mysql://' . $o['user'] . ':' . $o['pass'] . '@' . $o['host'] . '/' . $o['name'];
+            $cmd_options .= ' --db-url="mysql://' . $o['user'] . ':' . $o['pass'] .
+                '@' . $o['host'] . '/' . $o['name'] . '"';
         }
         $cmd_options .= ' ' . $host_config['installOptions']['options'];
         $this->runDrush($shell, 'site-install %s %s', $host_config['installOptions']['distribution'], $cmd_options);
@@ -662,7 +664,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
     private function setupConfigurationManagement(HostConfig $host_config, TaskContextInterface $context)
     {
-        if ($host_config['drupalVersion'] < 8) {
+        if ($host_config['drupalVersion'] < 8 || empty($host_config['alterSettingsFile'])) {
             return;
         }
 
