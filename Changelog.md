@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.5.20 / 2020-10-11
+
+### New:
+  * Add new option `alterSettingsFile` which defaults to true
+
+### Changed:
+  * Allow inheritance to merge arrays if one of them is associative
+
 ## 3.5.19 / 2020-10-09
 
 ### Fixed:
