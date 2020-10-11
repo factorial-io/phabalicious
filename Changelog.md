@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.21 / 2020-10-11
+
+### Fixed:
+  * Fix regression with `get:file`, `put:file` and `copy-from`
+
 ## 3.5.20 / 2020-10-11
 
 ### New:
