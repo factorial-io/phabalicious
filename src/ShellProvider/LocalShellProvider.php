@@ -193,13 +193,15 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             $partial = $this->process->getIncrementalOutput();
             $result .=  $partial;
             if (empty($partial) && !$this->process->isTerminated()) {
-                usleep(1000 * 100);
+                usleep(1000 * 50);
                 $delta = time() - $last_timestamp;
                 if ($this->preventTimeout && $delta > 10) {
-                    $this->logger->debug('Sending a space to prevent timeout ...');
+                    $this->logger->info('Sending a space to prevent timeout ...');
                     $this->input->write(' ');
                     $last_timestamp = time();
                 }
+            } else {
+                $last_timestamp = time();
             }
         }
         if ($this->process->isTerminated()) {
