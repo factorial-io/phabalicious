@@ -7,11 +7,18 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
 class KubectlShellProvider extends LocalShellProvider implements ShellProviderInterface
 {
     const PROVIDER_NAME = 'kubectl';
+
+    public function __construct(LoggerInterface $logger)
+    {
+        parent::__construct($logger);
+        $this->setPreventTimeout(true);
+    }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
