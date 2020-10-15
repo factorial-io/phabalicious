@@ -223,7 +223,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $uuid = $context->getConfigurationService()->getSetting('uuid');
             $this->runDrush($shell, 'cset system.site uuid %s -y', $uuid);
 
-            if (!empty($host_config['configurationManagement'])) {
+            if (!empty($host_config['configurationManagement']) && $context->getResult('configurationExists', true)) {
                 $script_context = clone $context;
                 foreach ($host_config['configurationManagement'] as $key => $cmds) {
                     $script_context->set(ScriptMethod::SCRIPT_DATA, $cmds);
@@ -321,6 +321,16 @@ class DrushMethod extends BaseMethod implements MethodInterface
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($host_config, $context);
 
+        // Determine what kind of install operation this will be.
+        $context->setResult(
+            'settingsFileExists',
+            $shell->exists($host_config['siteFolder'] . '/settings.php')
+        );
+        $context->setResult(
+            'configurationExists',
+            $shell->exists($this->getConfigSyncDirectory($host_config) . '/core.extension.yml')
+        );
+
         $shell->cd($host_config['rootFolder']);
         $shell->run(sprintf('mkdir -p %s', $host_config['siteFolder']));
 
@@ -343,7 +353,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         // Prepare settings.php
         $shell->run(sprintf('#!chmod u+w %s', $host_config['siteFolder']));
 
-        if ($shell->exists($host_config['siteFolder'] . '/settings.php')) {
+        if ($context->getResult('settingsFileExists')) {
             $shell->run(sprintf('#!chmod u+w %s/settings.php', $host_config['siteFolder']));
             if ($host_config['replaceSettingsFile']) {
                 $shell->run(sprintf('rm -f %s/settings.php.old', $host_config['siteFolder']));
@@ -355,11 +365,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
             }
         }
 
-        $settingsFileExists = $shell->exists($host_config['siteFolder'] . '/settings.php');
-        $configurationExists = $shell->exists($this->getConfigSyncDirectory($host_config) . '/core.extension.yml');
         // Install drupal, this can be skipped if install from configuration is
         // possible.
-        if (!$settingsFileExists || !$configurationExists) {
+        if (!$context->getResult('settingsFileExists') || !$context->getResult('configurationExists')) {
             $cmd_options = '';
             $cmd_options .= ' -y';
             $cmd_options .= ' --sites-subdir=' . basename($host_config['siteFolder']);
@@ -376,12 +384,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
             }
             $cmd_options .= ' ' . $host_config['installOptions']['options'];
             $this->runDrush($shell, 'site-install %s %s', $host_config['installOptions']['distribution'], $cmd_options);
-            if (!$settingsFileExists) {
-                $this->setupConfigurationManagement($host_config, $context);
-            }
+            $this->setupConfigurationManagement($host_config, $context);
         }
         // Run --existing-config install if config sync dir contains config.
-        if ($configurationExists) {
+        if ($context->getResult('configurationExists')) {
             $this->runDrush($shell, 'site-install -y --existing-config');
         }
     }
@@ -679,7 +685,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
     private function setupConfigurationManagement(HostConfig $host_config, TaskContextInterface $context)
     {
-        if ($host_config['drupalVersion'] < 8) {
+        if ($host_config['drupalVersion'] < 8 || $context->getResult('configurationExists')) {
             return;
         }
 
