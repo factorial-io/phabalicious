@@ -16,7 +16,9 @@ class Options extends CallbackOptions
 
     protected $dynamic_options = [];
 
-    protected $skipSubfolder;
+    protected $skipSubfolder = false;
+
+    protected $callbacks = [];
 
     protected $useCacheTokens = true;
 

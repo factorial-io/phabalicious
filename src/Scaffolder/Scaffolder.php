@@ -137,7 +137,7 @@ class Scaffolder
             throw new ValidationFailedException($errors);
         }
 
-        if ($options->getSkipSubfolder() && $options->getAllowOverride()) {
+        if (empty($data['questions']['name']) && $options->getSkipSubfolder() && $options->getAllowOverride()) {
             $tokens['name'] = $tokens['name'] ?? basename($root_folder);
             $root_folder = dirname($root_folder);
         }
