@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.5.22 / 2020-10-18
+===================
+
+### Fixed:
+  * Fix error in scaffolder which prevented to ask for the project name
+  * Try to prevent timeouts when using k8s
+  * Set tty flag for new shells
+
+### Changed:
+  * Refactor how scripts and scaffolders handle callbacks
+  * Enhance argument parsing, updated test-coverage
+  * Allow `inheritsFrom` with absolute file names
+  * Update vuepress
+  * Refactor how options are passed to the shell-provider.
+
 ## 3.5.21 / 2020-10-11
 
 ### Fixed:
