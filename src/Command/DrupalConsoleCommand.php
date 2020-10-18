@@ -60,7 +60,8 @@ class DrupalConsoleCommand extends BaseCommand
 
         $output->writeln('<info>Starting drupal-console on `' . $host_config['configName'] . '`');
 
-        $process = $this->startInteractiveShell($context->io(), $shell, $command, $output->isDecorated());
+        $options = $this->getSuitableShellOptions($output);
+        $process = $this->startInteractiveShell($context->io(), $shell, $command, $options);
 
         return $process->getExitCode();
     }

@@ -40,15 +40,15 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     }
 
 
-    public function getShellCommand(array $program_to_call, array $options = []): array
+    public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
         $command = [
             $this->hostConfig['dockerExecutable'],
             'exec',
-            (empty($options['tty']) ? '-i' : '-it'),
+            ($options->useTty() ? '-it' : '-i'),
             $this->hostConfig['docker']['name'],
         ];
-        if (!empty($options['tty']) && empty($options['shell_provided'])) {
+        if ($options->useTty() && !$options->isShellExecutableProvided()) {
             $command[] = $this->hostConfig['shellExecutable'];
         }
 

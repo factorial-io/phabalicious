@@ -8,8 +8,10 @@
 
 namespace Phabalicious\Tests;
 
+use Phabalicious\Exception\ArgumentParsingException;
 use Phabalicious\Utilities\Utilities;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 
 class UtilitiesTest extends PhabTestCase
 {
@@ -79,6 +81,30 @@ class UtilitiesTest extends PhabTestCase
 
         $result = Utilities::extractCallback('something is going on');
         $this->assertFalse($result);
+    }
+
+    public function testExtractArguments()
+    {
+        $this->assertEquals(["hello world"], Utilities::extractArguments('hello world'));
+        $this->assertEquals(["hello world"], Utilities::extractArguments('"hello world"'));
+        $this->assertEquals(["hello world", "10"], Utilities::extractArguments('"hello world", 10'));
+        $this->assertEquals(["10", "hello world", "20"], Utilities::extractArguments('10, "hello world", 20'));
+        $this->assertEquals(["10", "hello, world", "20"], Utilities::extractArguments('10, "hello, world", 20'));
+        $this->assertEquals(
+            [1, "  hello, world  ", "foo bar"],
+            Utilities::extractArguments('1, "  hello, world  ", foo bar')
+        );
+    }
+    public function testExtractInvalidArguments()
+    {
+        $this->expectException(ArgumentParsingException::class);
+        $this->assertEquals(["hello world", "10"], Utilities::extractArguments('"hello world, 10'));
+    }
+
+    public function testExtractInvalidArguments2()
+    {
+        $this->expectException(ArgumentParsingException::class);
+        $this->assertEquals(["hello world", "10"], Utilities::extractArguments('"hello world", "10'));
     }
 
     public function testSlugify()

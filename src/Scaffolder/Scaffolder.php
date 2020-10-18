@@ -137,7 +137,7 @@ class Scaffolder
             throw new ValidationFailedException($errors);
         }
 
-        if ($options->getSkipSubfolder() && $options->getAllowOverride()) {
+        if (empty($data['questions']['name']) && $options->getSkipSubfolder() && $options->getAllowOverride()) {
             $tokens['name'] = $tokens['name'] ?? basename($root_folder);
             $root_folder = dirname($root_folder);
         }
@@ -205,22 +205,7 @@ class Scaffolder
                 CopyAssetsCallback::getName(),
                 [new CopyAssetsCallback($this->configuration, $this->twig), 'handle']
             )
-            ->addCallback(
-                ConfirmCallback::getName(),
-                [new ConfirmCallback(), 'handle']
-            )
-            ->addCallback(
-                LogMessageCallback::getName(),
-                [new LogMessageCallback(), 'handle']
-            )
-            ->addCallback(
-                AlterJsonFileCallback::getName(),
-                [new AlterJsonFileCallback(), 'handle']
-            )
-            ->addCallback(
-                AssertFileCallback::getName(),
-                [new AssertFileCallback(), 'handle']
-            );
+            ->addDefaultCallbacks();
 
         $context->set('callbacks', $options->getCallbacks());
 

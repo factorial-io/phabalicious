@@ -4,8 +4,12 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Scaffolder\CallbackOptions;
+use Phabalicious\Scaffolder\Callbacks\AssertNonZeroCallback;
+use Phabalicious\Scaffolder\Callbacks\AssertZeroCallback;
 use Phabalicious\Scaffolder\Callbacks\ConfirmCallback;
 use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
+use Phabalicious\Scaffolder\Options;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
@@ -76,15 +80,24 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $callbacks = $context->get('callbacks', []);
         $callbacks = Utilities::mergeData($this->callbacks, $callbacks);
 
+        $options = new CallbackOptions();
+        $options->addDefaultCallbacks();
+        $options
+            ->addCallback('execute', [$this, 'handleExecuteCallback'])
+            ->addCallback('fail_on_error', [$this, 'handleFailOnErrorDeprecatedCallback'])
+            ->addCallback('breakOnFirstError', [$this, 'handleFailOnErrorCallback'])
+            ->addCallback('fail_on_missing_directory', [$this, 'handleFailOnMissingDirectoryCallback']);
 
         // Allow other methods to add their callbacks.
         if (!empty($host_config['needs'])) {
             $context->getConfigurationService()->getMethodFactory()->alter(
                 $host_config['needs'],
                 'scriptCallbacks',
-                $callbacks
+                $options
             );
         }
+
+        $callbacks = Utilities::mergeData($options->getCallbacks(), $callbacks);
 
         $environment = $context->get('environment', []);
         if (!$context->getShell()) {
@@ -121,15 +134,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $commands = Utilities::expandStrings($commands, $replacements);
         $environment = Utilities::expandStrings($environment, $replacements);
 
-        $callbacks['execute'] = [$this, 'handleExecuteCallback'];
-        $callbacks[ConfirmCallback::getName()] = [new ConfirmCallback(), 'handle'];
-        $callbacks[LogMessageCallback::getName()] = [new LogMessageCallback(), 'handle'];
-        $callbacks['fail_on_error'] = [$this, 'handleFailOnErrorDeprecatedCallback'];
-        $callbacks['breakOnFirstError'] = [$this, 'handleFailOnErrorCallback'];
-        $callbacks['fail_on_missing_directory'] = [
-            $this,
-            'handleFailOnMissingDirectoryCallback'
-        ];
 
         $context->set('host_config', $host_config);
 
@@ -455,9 +459,11 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $computed_values = $context->get(self::SCRIPT_COMPUTED_VALUES, []);
         foreach ($computed_values as $key => $cmd) {
             $cmd_result = $shell->run($cmd, true);
+            $output = '';
             if ($cmd_result->succeeded()) {
-                $result[$key] = trim(implode("\n", $cmd_result->getOutput()));
+                $output = trim(implode("\n", $cmd_result->getOutput()));
             }
+            $result[$key] = $output == "" ? $cmd_result->getExitCode() : $output;
         }
 
         return $result;

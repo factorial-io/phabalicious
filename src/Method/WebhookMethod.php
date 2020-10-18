@@ -8,6 +8,7 @@ use GuzzleHttp\RequestOptions;
 use Monolog\Handler\Curl\Util;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -144,7 +145,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             unset($this->handletaskSpecificWebhooks[$t]);
         }
     }
-    
+
     public function webhook(HostConfig $host_config, TaskContextInterface $context)
     {
         $webhook_name = $context->get('webhook_name');
@@ -165,9 +166,9 @@ class WebhookMethod extends BaseMethod implements MethodInterface
 
         $defaults = $context->getConfigurationService()->getSetting('webhooks.defaults', []);
         $webhook = Utilities::mergeData($defaults, $webhook);
-        
 
-        
+
+
         if (!empty($webhook['payload'])) {
             $payload = $webhook['payload'];
             $variables = Utilities::buildVariablesFrom($config, $context);
@@ -180,7 +181,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
                 $webhook['options'][$format] = $payload;
             }
         }
-        
+
         $this->logger->info(sprintf(
             'Invoking webhook at `%s`, method `%s` and format `%s`',
             $webhook['url'],
@@ -188,14 +189,14 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             $webhook['format']
         ));
         $this->logger->debug('guzzle options: ' . print_r($webhook['options'], true));
-        
+
         $client = new Client();
         $response = $client->request(
             $webhook['method'],
             $webhook['url'],
             $webhook['options']
         );
-        
+
         $this->logger->debug(sprintf(
             'Response status code: %d, body: `%s`',
             $response->getStatusCode(),
@@ -208,12 +209,14 @@ class WebhookMethod extends BaseMethod implements MethodInterface
 
     /**
      * Implements alter hook script callbacks
+     *
+     * @param CallbackOptions $options
      */
-    public function alterScriptCallbacks(&$callbacks)
+    public function alterScriptCallbacks(CallbackOptions &$options)
     {
-        $callbacks['webhook'] = [$this, 'webhookScriptCallback'];
+        $options->addCallback('webhook', [$this, 'webhookScriptCallback']);
     }
-    
+
     public function webhookScriptCallback(TaskContextInterface $context, $webhook_name, ...$args)
     {
         $cloned_context = clone $context;

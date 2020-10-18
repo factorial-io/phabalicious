@@ -79,7 +79,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         $this->dockerExec->validateConfig($config, $errors);
     }
 
-    public function getShellCommand(array $program_to_call, array $options = []): array
+    public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
         $command = $this->dockerExec->getShellCommand([], $options);
 

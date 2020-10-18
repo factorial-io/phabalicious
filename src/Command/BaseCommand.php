@@ -13,6 +13,7 @@ use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
+use Phabalicious\ShellProvider\ShellOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\ParallelExecutor;
 use Phabalicious\Utilities\Utilities;
@@ -202,17 +203,30 @@ abstract class BaseCommand extends BaseOptionsCommand
     }
 
     /**
+     * @param OutputInterface $output
+     * @return ShellOptions
+     */
+    protected function getSuitableShellOptions(OutputInterface $output): ShellOptions
+    {
+        $options = new ShellOptions();
+        $options
+            ->setUseTty($output->isDecorated())
+            ->setQuiet($output->isQuiet());
+        return $options;
+    }
+
+    /**
      * @param SymfonyStyle $io
      * @param ShellProviderInterface $shell
      * @param array $command
-     * @param bool $use_tty
+     * @param ShellOptions|null $options
      * @return Process
      */
     protected function startInteractiveShell(
         SymfonyStyle $io,
         ShellProviderInterface $shell,
         array $command = [],
-        $use_tty = true
+        ShellOptions $options = null
     ) {
         $fn = function ($type, $buffer) use ($io) {
             if ($type == Process::ERR) {
@@ -221,20 +235,22 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $io->write($buffer);
             }
         };
+        if (!$options) {
+            $options = new ShellOptions();
+        }
 
-        $options = ['tty' => $use_tty];
         /** @var Process $process */
         if (!empty($command)) {
-            $options['shell_provided'] = true;
+            $options->setShellExecutableProvided(true);
             $command = $shell->wrapCommandInLoginShell($command);
         }
         $process = $shell->createShellProcess($command, $options);
-        if ($use_tty) {
+        if ($options->useTty()) {
             $stdin = fopen('php://stdin', 'r');
             $process->setInput($stdin);
         }
         $process->setTimeout(0);
-        $process->setTty($use_tty);
+        $process->setTty($options->useTty());
         $process->start($fn);
         $process->wait($fn);
         if ($process->isTerminated() && !$process->isSuccessful()) {

@@ -272,7 +272,7 @@ class MethodFactory
         }, $needs);
     }
 
-    public function alter(array $needs, $func_name, &$data)
+    public function alter(array $needs, $func_name, AlterableDataInterface $data)
     {
         $fn = 'alter' . ucwords($func_name);
         foreach ($this->getSubset($needs) as $method) {
