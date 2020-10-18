@@ -10,7 +10,6 @@ use Phabalicious\Utilities\SetAndRestoreObjProperty;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
-use PHPStan\Type\Symfony\InputInterfaceGetArgumentDynamicReturnTypeExtension;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
@@ -31,9 +30,19 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
     protected $shellEnvironmentVars = [];
 
+    protected $preventTimeout = false;
+
     public function getName(): string
     {
         return 'local';
+    }
+
+    /**
+     * @param bool $preventTimeout
+     */
+    public function setPreventTimeout(bool $preventTimeout): void
+    {
+        $this->preventTimeout = $preventTimeout;
     }
 
     protected function setShellEnvironmentVars(array $vars)
@@ -182,11 +191,20 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
         // Get result.
         $result = '';
+        $last_timestamp = time();
         while ((strpos($result, self::RESULT_IDENTIFIER) === false) && !$this->process->isTerminated()) {
             $partial = $this->process->getIncrementalOutput();
             $result .=  $partial;
             if (empty($partial) && !$this->process->isTerminated()) {
-                usleep(1000 * 100);
+                usleep(1000 * 50);
+                $delta = time() - $last_timestamp;
+                if ($this->preventTimeout && $delta > 10) {
+                    $this->logger->info('Sending a space to prevent timeout ...');
+                    $this->input->write(' ');
+                    $last_timestamp = time();
+                }
+            } else {
+                $last_timestamp = time();
             }
         }
         if ($this->process->isTerminated()) {
