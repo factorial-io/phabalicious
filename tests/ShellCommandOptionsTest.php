@@ -84,7 +84,7 @@ class ShellCommandOptionsTest extends PhabTestCase
     }
 
     /**
-     * This test needs a propert ssh key forwarding configured. when executed from withon phpstorm make sure that
+     * This test needs a proper ssh key forwarding configured. when executed from within phpstorm make sure that
      * the environment variable SSH_AUTH_SOCK is set. If you are not stephan, change the username in the fabfile.
      * The test assumes that ssh to localhost, port 22 works w/o password-prompt.
      *
