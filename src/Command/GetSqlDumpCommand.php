@@ -4,6 +4,7 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -47,13 +48,13 @@ class GetSqlDumpCommand extends BaseCommand
         $this->getMethods()->runTask('getSQLDump', $this->getHostConfig(), $context);
         $to_copy = $context->getResult('files');
 
-
+        /** @var ShellProviderInterface $shell */
         $shell = $context->get('shell', $this->getHostConfig()->shell());
         $files = [];
         foreach ($to_copy as $file) {
             if ($shell->getFile(
                 $file,
-                getcwd(),
+                getcwd() . '/' . basename($file),
                 $context
             )) {
                 $files[] = basename($file);

@@ -80,7 +80,7 @@ class GetBackupCommand extends BaseCommand
             }
             if ($shell->getFile(
                 $this->getHostConfig()['backupFolder'] . '/' . $elem['file'],
-                getcwd(),
+                getcwd() . '/' . $elem['file'],
                 $context
             )) {
                 $files[] = [
