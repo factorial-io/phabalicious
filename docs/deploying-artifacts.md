@@ -92,13 +92,15 @@ If you run phabalicious as part of a CI-setup, it might make sense to set `useLo
 ```yaml
 hosts:
   git-artifact:
+    branch: develop
     needs:
       - git
       - composer
       - artifacts--git
       - script
     artifact:
-      branch: master
+      branch: develop
+      baseBranch: master
       repository: ssh://somewhere/repository.git
       useLocalRepository: false
       actions:
@@ -120,6 +122,13 @@ hosts:
 ```
 
 the default actions for the git-artifact-method will copy all files to the target repo and remove the fabfile.
+
+| property              | default value | description                               |
+|-----------------------|---------------|-------------------------------------------|
+| `artifact.branch`     | `false`       | if set to false, the name of the source-branch is used, otherwise the value |
+| `artifact.baseBranch` | `master`      | If phabalicious needs to create a new branch, because it is missing from the target-repository, then start the branch from `masterBranch` |
+| `artifact.repository` |               | The url to the target-repository          |
+| `artifact.actions`    |               | Actions to perform                        |
 
 ### artifacts--custom
 
