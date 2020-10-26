@@ -7,6 +7,8 @@ use Phabalicious\Artifact\Actions\Base\ConfirmAction;
 use Phabalicious\Artifact\Actions\Base\CopyAction;
 use Phabalicious\Artifact\Actions\Base\DeleteAction;
 use Phabalicious\Artifact\Actions\Base\InstallScriptAction;
+use Phabalicious\Artifact\Actions\Base\LogAction;
+use Phabalicious\Artifact\Actions\Base\MessageAction;
 use Phabalicious\Artifact\Actions\Base\ScriptAction;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
@@ -14,7 +16,6 @@ use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\AppDefaultStages;
 use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -34,6 +35,8 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         ActionFactory::register('base', 'delete', DeleteAction::class);
         ActionFactory::register('base', 'confirm', ConfirmAction::class);
         ActionFactory::register('base', 'script', ScriptAction::class);
+        ActionFactory::register('base', 'message', MessageAction::class);
+        ActionFactory::register('base', 'log', LogAction::class);
         ActionFactory::register('base', 'installScript', InstallScriptAction::class);
     }
 
@@ -60,12 +63,14 @@ abstract class ArtifactsBaseMethod extends BaseMethod
             $service->hasKeys([
                 'actions' => 'An artifact needs a list of actions',
             ]);
-            foreach ($config[self::PREFS_KEY]['actions'] as $action_config) {
-                if (!isset($action_config['action'])) {
-                    $errors->addError('unknown', 'action needs a name');
-                } else {
-                    $action = ActionFactory::get($this->getName(), $action_config['action']);
-                    $action->validateConfig($config, $action_config, $errors);
+            if (isset($config[self::PREFS_KEY]['actions'])) {
+                foreach ($config[self::PREFS_KEY]['actions'] as $action_config) {
+                    if (!isset($action_config['action'])) {
+                        $errors->addError('unknown', 'action needs a name');
+                    } else {
+                        $action = ActionFactory::get($this->getName(), $action_config['action']);
+                        $action->validateConfig($config, $action_config, $errors);
+                    }
                 }
             }
         }

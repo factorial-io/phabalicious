@@ -202,4 +202,25 @@ The `script`-action will run the script from the arguments section line by line.
 | `%context.data.installDir%` | The installation dir, where the app got installed into |
 | `%context.data.targetDir%` | The targetdir, where the app got copied to, which gets committed or synced |
 
+### message
+
+```yaml
+- action: message
+  arguments:
+    message: Hello world!
+    type: (comment|note|warning|error|success)
+```
+
+Prints out a message regardless of the log-level using symfony styles.
+
+### log
+
+```yaml
+- action: log
+  arguments:
+    message: Hello world!
+    severity: (debug|info|notice|warning|error)
+```
+
+Logs a message, will be visible according to the verbosity-level and the used severity.
 
