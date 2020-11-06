@@ -43,9 +43,9 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 {
 
     protected $dynamicOptions = [];
-    
+
     protected $scaffolder;
-    
+
     public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
     {
         parent::__construct($configuration, $method_factory, $name);
@@ -93,14 +93,14 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
      * @param $root_folder
      * @param TaskContextInterface $context
      * @param array $tokens
-     * @param callable|null $plugin_registration_callback
+     * @param Options $options
      * @return CommandResult
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
      * @throws MismatchedVersionException
      * @throws MissingScriptCallbackImplementation
-     * @throws ValidationFailedException
      * @throws UnknownReplacementPatternException
+     * @throws ValidationFailedException
      */
     protected function scaffold(
         $url,

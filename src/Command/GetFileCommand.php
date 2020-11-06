@@ -51,12 +51,20 @@ class GetFileCommand extends BaseCommand
 
         $context = $this->createContext($input, $output);
         $context->set('sourceFile', $file);
-        $context->set('destFile', getcwd());
+        $context->set('destFile', getcwd() . '/' . basename($file));
 
         $context->io()->comment('Get file `' . $file . '` from `' . $this->getHostConfig()['configName']. '`');
 
         $this->getMethods()->runTask('getFile', $this->getHostConfig(), $context);
 
-        return $context->getResult('exitCode', 0);
+        $return_code = $context->getResult('exitCode', 0);
+        if (!$return_code) {
+            $context->io()->success(sprintf(
+                '`%s` copied to `%s`',
+                $file,
+                $context->getResult('targetFile', 'unknown')
+            ));
+        }
+        return $return_code;
     }
 }

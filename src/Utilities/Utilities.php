@@ -10,7 +10,7 @@ use Phabalicious\Method\TaskContextInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.5.19';
+    const FALLBACK_VERSION = '3.5.23';
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
@@ -20,7 +20,7 @@ class Utilities
         foreach ($override_data as $key => $value) {
             if (isset($data[$key])) {
                 // Do a merge
-                if (self::isAssocArray($data[$key]) && self::isAssocArray($value)) {
+                if (self::isAssocArray($data[$key]) || self::isAssocArray($value)) {
                     $result[$key] = self::mergeData($data[$key], $value);
                 } else {
                     $result[$key] = $value;

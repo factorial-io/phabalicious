@@ -67,5 +67,6 @@ class PutFileCommand extends BaseCommand
                 $context->getResult('targetFile', 'unknown')
             ));
         }
+        return $return_code;
     }
 }

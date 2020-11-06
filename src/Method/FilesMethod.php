@@ -47,7 +47,9 @@ class FilesMethod extends BaseMethod implements MethodInterface
         }
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($config, $context);
-        $shell->putFile($source, $config['rootFolder'], $context, true);
+        $target_file_path = $config['rootFolder'] . '/' . basename($source);
+        $shell->putFile($source, $target_file_path, $context, true);
+        $context->setResult('targetFile', $target_file_path);
     }
 
     public function getFile(HostConfig $config, TaskContextInterface $context)
@@ -61,6 +63,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($config, $context);
         $shell->getFile($source, $dest, $context, true);
+        $context->setResult('targetFile', $dest);
     }
 
     public function backup(HostConfig $host_config, TaskContextInterface $context)

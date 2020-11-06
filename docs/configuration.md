@@ -192,6 +192,7 @@ This will print all host configuration for the host `staging`.
 * `adminUser`, default is `admin`, the name of the admin-user to set when running the reset-task on `dev`-instances
 * `adminPass`, default is empty, will be computed on request. You can get it via `phab -c<config> get:property adminPass` -- this can be overridden per host or globally.
 * `replaceSettingsFile`, default is true. If set to false, the settings.php file will not be replaced when running an install.
+* `alterSettingsFile`, default is true. If set to false, the settings.php file wont be touched by phabalicious.
 * `installOptions` default is `distribution: minimal, locale: en, options: ''`. You can change the distribution to install and/ or the locale.
 * `drupalVersion` set the drupal-version to use. If not set phabalicious is trying to guess it from the `needs`-configuration.
 * `drushVersion` set the used crush-version, default is `8`. Drush is not 100% backwards-compatible, for phabalicious needs to know its version.

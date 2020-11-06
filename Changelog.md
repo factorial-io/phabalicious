@@ -1,5 +1,43 @@
 # Changelog
 
+## 3.5.23 / 2020-11-06
+
+### Fixed:
+  * Fix file copying for kubectl shells
+  * Enhance docs for git based artifact deployment
+  * Apply shellProviderOptions also to other ssh commands
+  * Fix shell creation for ssh when executed as a sub process, typos
+
+### New:
+  * Add new artifact actions `log` and `message` (Fixes #109)
+
+## 3.5.22 / 2020-10-18
+
+### Fixed:
+  * Fix error in scaffolder which prevented to ask for the project name
+  * Try to prevent timeouts when using k8s
+  * Set tty flag for new shells
+
+### Changed:
+  * Refactor how scripts and scaffolders handle callbacks
+  * Enhance argument parsing, updated test-coverage
+  * Allow `inheritsFrom` with absolute file names
+  * Update vuepress
+  * Refactor how options are passed to the shell-provider.
+
+## 3.5.21 / 2020-10-11
+
+### Fixed:
+  * Fix regression with `get:file`, `put:file` and `copy-from`
+
+## 3.5.20 / 2020-10-11
+
+### New:
+  * Add new option `alterSettingsFile` which defaults to true
+
+### Changed:
+  * Allow inheritance to merge arrays if one of them is associative
+
 ## 3.5.19 / 2020-10-09
 
 ### Fixed:

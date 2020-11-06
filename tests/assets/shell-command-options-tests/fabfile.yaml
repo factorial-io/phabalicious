@@ -13,6 +13,7 @@ hosts:
   base:
     rootFolder: .
     backupFolder: .
+    siteFolder: ./
   local-shell:
     # Workaround for missing drush on locals
     executables:
