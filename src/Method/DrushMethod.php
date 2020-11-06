@@ -825,7 +825,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         if ($settings_file_exists) {
             $result = $shell->run(
-                '#!grep -q "^\$settings\[\'config_sync_directory\'] = \'../config/\'" settings.php',
+                '#!grep -q "^\$settings\[\'config_sync_directory\'] = \'../config/" settings.php',
                 true,
                 false
             );
