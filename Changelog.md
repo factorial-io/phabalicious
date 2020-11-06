@@ -1,7 +1,17 @@
 # Changelog
 
+## 3.5.23 / 2020-11-06
+
+### Fixed:
+  * Fix file copying for kubectl shells
+  * Enhance docs for git based artifact deployment
+  * Apply shellProviderOptions also to other ssh commands
+  * Fix shell creation for ssh when executed as a sub process, typos
+
+### New:
+  * Add new artifact actions `log` and `message` (Fixes #109)
+
 ## 3.5.22 / 2020-10-18
-===================
 
 ### Fixed:
   * Fix error in scaffolder which prevented to ask for the project name
