@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.24 / 2020-11-06
+
+### Fixed:
+  * Provide default value for `alterSettingsFile` property
+
 ## 3.5.23 / 2020-11-06
 
 ### Fixed:

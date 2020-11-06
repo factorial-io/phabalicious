@@ -78,7 +78,12 @@ class DrushMethod extends BaseMethod implements MethodInterface
     {
         $config = parent::getDefaultConfig($configuration_service, $host_config);
 
-        $keys = ['adminUser', 'revertFeatures', 'replaceSettingsFile', 'configurationManagement', 'installOptions'];
+        $keys = ['adminUser',
+            'revertFeatures',
+            'alterSettingsFile',
+            'replaceSettingsFile',
+            'configurationManagement',
+            'installOptions'];
         foreach ($keys as $key) {
             $config[$key] = $configuration_service->getSetting($key);
         }
