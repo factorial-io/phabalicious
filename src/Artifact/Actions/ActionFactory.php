@@ -2,10 +2,6 @@
 
 namespace Phabalicious\Artifact\Actions;
 
-use Phabalicious\Method\ArtifactsBaseMethod;
-use Phabalicious\Validation\ValidationErrorBagInterface;
-use Phabalicious\Validation\ValidationService;
-
 class ActionFactory
 {
 

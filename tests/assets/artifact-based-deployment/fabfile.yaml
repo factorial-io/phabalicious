@@ -1,0 +1,85 @@
+name: artifact-based-deployment
+
+
+hosts:
+  broken:
+    needs:
+      - artifacts--custom
+    artifacts:
+      stages:
+        - runActions
+      actions:
+        - action: log
+          arguments:
+            message: "Hello world notice!"
+        - action: log
+          arguments:
+            message: "Hello world debug"
+            severity: debug
+        - action: log
+          arguments:
+            message: "Hello world info"
+            severity: info
+        - action: log
+          arguments:
+            message: "Hello world warning"
+            severity: warning
+        - action: log
+          arguments:
+            message: "Hello world error"
+            severity: error
+
+  messages:
+    needs:
+      - artifacts--custom
+    artifact:
+      stages:
+        - runActions
+      actions:
+        - action: message
+          arguments:
+            message: "Hello world note!"
+        - action: message
+          arguments:
+            message: "Hello world comment"
+            type: comment
+        - action: message
+          arguments:
+            message: "Hello world warning"
+            type: warning
+        - action: message
+          arguments:
+            message: "Hello world error"
+            type: error
+        - action: message
+          arguments:
+            message: "Hello world success"
+            type: success
+
+  logs:
+    needs:
+      - artifacts--custom
+    artifact:
+      stages:
+        - runActions
+      actions:
+        - action: log
+          arguments:
+            message: "Hello world note!"
+        - action: log
+          arguments:
+            message: "Hello world comment"
+            severity: info
+        - action: log
+          arguments:
+            message: "Hello world warning"
+            severity: warning
+        - action: log
+          arguments:
+            message: "Hello world error"
+            severity: error
+        - action: log
+          arguments:
+            message: "Hello world debug"
+            severity: debug
+
