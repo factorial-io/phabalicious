@@ -5,7 +5,12 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\HostType;
+use Phabalicious\Exception\FailedShellCommandException;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\MissingScriptCallbackImplementation;
+use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -15,6 +20,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DrushMethod extends BaseMethod implements MethodInterface
 {
+
+    const CONFIGURATION_EXISTS = 'configurationExists';
+    const CONFIGURATION_USED = 'configurationUsed';
+    const SKIP_NEXT_CONFIGURATION_IMPORT = 'skipNextConfigurationImport';
+    const SETTINGS_FILE_EXISTS = 'settingsFileExists';
 
     public function getName(): string
     {
@@ -172,8 +182,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws MethodNotFoundException
+     * @throws MissingScriptCallbackImplementation
+     * @throws UnknownReplacementPatternException
      */
     public function reset(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -223,8 +234,12 @@ class DrushMethod extends BaseMethod implements MethodInterface
         if ($host_config['drupalVersion'] >= 8) {
             $uuid = $context->getConfigurationService()->getSetting('uuid');
             $this->runDrush($shell, 'cset system.site uuid %s -y', $uuid);
+            $this->checkExistingInstall($shell, $host_config, $context);
 
-            if (!empty($host_config['configurationManagement']) && $context->getResult('configurationExists', true)) {
+            if (!empty($host_config['configurationManagement'])
+                && $context->getResult(self::CONFIGURATION_EXISTS)
+                && !$context->getResult(self::SKIP_NEXT_CONFIGURATION_IMPORT, false)
+            ) {
                 $script_context = clone $context;
                 foreach ($host_config['configurationManagement'] as $key => $cmds) {
                     $script_context->set(ScriptMethod::SCRIPT_DATA, $cmds);
@@ -323,14 +338,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShell($host_config, $context);
 
         // Determine what kind of install operation this will be.
-        $context->setResult(
-            'settingsFileExists',
-            $shell->exists($host_config['siteFolder'] . '/settings.php')
-        );
-        $context->setResult(
-            'configurationExists',
-            $shell->exists($this->getConfigSyncDirectory($host_config) . '/core.extension.yml')
-        );
+        $this->checkExistingInstall($shell, $host_config, $context);
 
         $shell->cd($host_config['rootFolder']);
         $shell->run(sprintf('mkdir -p %s', $host_config['siteFolder']));
@@ -339,24 +347,35 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $shell->cd($host_config['siteFolder']);
         $o = $host_config['database'] ?? false;
         if ($o && !$host_config['database']['skipCreateDatabase']) {
-            $cmd = 'CREATE DATABASE IF NOT EXISTS ' . $o['name'] . '; ' .
-                'GRANT ALL PRIVILEGES ON ' . $o['name'] . '.* ' .
-                'TO \'' . $o['user'] . '\'@\'%\' ' .
-                'IDENTIFIED BY \'' . $o['pass'] . '\';' .
-                'FLUSH PRIVILEGES;';
-            $shell->run('#!mysql' .
-                ' -h ' . $o['host'] .
-                ' -u ' . $o['user'] .
-                ' --password="' . $o['pass'] . '"' .
-                ' -e "' . $cmd . '"');
+            $this->logger->info('Creating database ...');
+
+            $cmd = sprintf(
+                "CREATE DATABASE IF NOT EXISTS %s; GRANT ALL PRIVILEGES ON %s.* TO '%s'@'%%'; FLUSH PRIVILEGES;",
+                $o['name'],
+                $o['name'],
+                $o['user']
+            );
+            try {
+                $shell->run(sprintf(
+                    '#!mysql -h %s -u %s --password="%s" -e "%s"',
+                    $o['host'],
+                    $o['user'],
+                    $o['pass'],
+                    $cmd
+                ), false, true);
+            } catch (\Exception $e) {
+                $context->io()->error("Could not create database, or grant privileges!");
+                $context->io()->comment("Create the db by yourself and set host.database.skipCreateDatabase to true");
+                throw ($e);
+            }
         }
 
         // Prepare settings.php
         $shell->run(sprintf('#!chmod u+w %s', $host_config['siteFolder']));
 
-        if ($context->getResult('settingsFileExists')) {
+        if ($context->getResult(self::SETTINGS_FILE_EXISTS)) {
             $shell->run(sprintf('#!chmod u+w %s/settings.php', $host_config['siteFolder']));
-            if ($host_config['replaceSettingsFile']) {
+            if ($host_config['replaceSettingsFile'] && !$context->getResult(self::CONFIGURATION_USED)) {
                 $shell->run(sprintf('rm -f %s/settings.php.old', $host_config['siteFolder']));
                 $shell->run(sprintf(
                     'mv %s/settings.php %s/settings.php.old 2>/dev/null',
@@ -366,31 +385,47 @@ class DrushMethod extends BaseMethod implements MethodInterface
             }
         }
 
+        $install_options = [
+            '-y',
+            '--sites-subdir=' . basename($host_config['siteFolder']),
+            '--account-name=' . $host_config['adminUser'],
+            sprintf('--account-pass="%s"', $host_config['adminPass']),
+            $host_config['installOptions']['options'],
+        ];
+
+        if ($o) {
+            if ($host_config['database']['prefix']) {
+                $install_options[] = ' --db-prefix=' . $host_config['database']['prefix'];
+            }
+            $install_options[] = sprintf(
+                '--db-url=mysql://%s:%s@%s/%s',
+                $o['user'],
+                $o['pass'],
+                $o['host'],
+                $o['name']
+            );
+        }
+
         // Install drupal, this can be skipped if install from configuration is
         // possible.
-        if (!$context->getResult('settingsFileExists') || !$context->getResult('configurationExists')) {
-            $cmd_options = '';
-            $cmd_options .= ' -y';
-            $cmd_options .= ' --sites-subdir=' . basename($host_config['siteFolder']);
-            $cmd_options .= ' --account-name=' . $host_config['adminUser'];
-            $cmd_options .= sprintf(' --account-pass="%s"', $host_config['adminPass']);
-            $cmd_options .= ' --locale=' . $host_config['installOptions']['locale'];
+        if ($context->getResult(self::CONFIGURATION_USED)) {
+            $this->logger->info('Found existing and used config, installing from it ...');
 
-            if ($o) {
-                if ($host_config['database']['prefix']) {
-                    $cmd_options .= ' --db-prefix=' . $host_config['database']['prefix'];
-                }
-                $cmd_options .= ' --db-url=mysql://' . $o['user'] . ':' . $o['pass'] . '@' .
-                    $o['host'] . '/' . $o['name'];
-            }
-            $cmd_options .= ' ' . $host_config['installOptions']['options'];
-            $this->runDrush($shell, 'site-install %s %s', $host_config['installOptions']['distribution'], $cmd_options);
-            $this->setupConfigurationManagement($host_config, $context);
+            $install_options[] = '--existing-config';
+            $context->setResult(self::SKIP_NEXT_CONFIGURATION_IMPORT, true);
+        } else {
+            $this->logger->info('Installing distribution '. $host_config['installOptions']['distribution']);
+
+            $install_options[] = '--locale=' . $host_config['installOptions']['locale'];
+            $install_options[] = $host_config['installOptions']['distribution'];
         }
-        // Run --existing-config install if config sync dir contains config.
-        if ($context->getResult('configurationExists')) {
-            $this->runDrush($shell, 'site-install -y --existing-config');
+
+        $result = $this->runDrush($shell, 'site-install %s', implode(' ', $install_options));
+        if ($result->failed()) {
+            $result->throwException("Drupal installation failed!");
         }
+
+        $this->setupConfigurationManagement($host_config, $context);
     }
 
     protected function backupSQL(
@@ -473,7 +508,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws FailedShellCommandException
      */
     public function restore(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -507,7 +542,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
      * @param ShellProviderInterface $shell
      * @param string $file
      * @param bool $drop_db
-     * @return \Phabalicious\ShellProvider\CommandResult
+     * @return CommandResult
      */
     private function importSqlFromFile(ShellProviderInterface $shell, string $file, $drop_db = false)
     {
@@ -541,7 +576,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws FailedShellCommandException
      */
     public function copyFrom(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -631,7 +666,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws FailedShellCommandException
      */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -648,7 +683,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      * @return bool
-     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws FailedShellCommandException
      */
     private function waitForDatabase(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -686,7 +721,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
     private function setupConfigurationManagement(HostConfig $host_config, TaskContextInterface $context)
     {
-        if ($host_config['drupalVersion'] < 8 || empty($host_config['alterSettingsFile']) || $context->getResult('configurationExists')) {
+        if ($host_config['drupalVersion'] < 8
+            || !empty($host_config['alterSettingsFile'])
+            || $context->getResult(self::CONFIGURATION_USED, false)
+        ) {
             return;
         }
 
@@ -701,11 +739,6 @@ class DrushMethod extends BaseMethod implements MethodInterface
         foreach ($host_config['configurationManagement'] as $key => $data) {
             $shell->run(sprintf(
                 'echo "\$settings[\'config_sync_directory\'] = \'%s\';" >> settings.php',
-                '../config/' . $key
-            ));
-            $shell->run(sprintf(
-                'echo "\$config_directories[\'%s\'] = \'%s\';" >> settings.php',
-                $key,
                 '../config/' . $key
             ));
         }
@@ -773,5 +806,30 @@ class DrushMethod extends BaseMethod implements MethodInterface
             return;
         }
         throw new \InvalidArgumentException('putVariable is not implemented for that particular drupal version.');
+    }
+
+    private function checkExistingInstall(
+        ShellProviderInterface $shell,
+        HostConfig $host_config,
+        TaskContextInterface $context
+    ) {
+        $shell->pushWorkingDir($host_config['siteFolder']);
+        $settings_file_exists = $shell->exists($host_config['siteFolder'] . '/settings.php');
+        $config_dir_exists = $shell->exists($this->getConfigSyncDirectory($host_config) . '/core.extension.yml');
+        $config_used = false;
+
+        if ($settings_file_exists) {
+            $result = $shell->run(
+                '#!grep -q "^\$settings\[\'config_sync_directory\'] = \'../config/\'" settings.php',
+                true,
+                false
+            );
+            $config_used = $result->succeeded() && $config_dir_exists;
+        }
+        $shell->popWorkingDir();
+
+        $context->setResult(self::SETTINGS_FILE_EXISTS, $settings_file_exists);
+        $context->setResult(self::CONFIGURATION_EXISTS, $config_dir_exists);
+        $context->setResult(self::CONFIGURATION_USED, $config_dir_exists && $config_used);
     }
 }
