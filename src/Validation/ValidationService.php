@@ -58,7 +58,7 @@ class ValidationService
     public function arrayContainsKey(string $key, array $haystack, string $message)
     {
         if (!isset($haystack[$key])) {
-            $this->errors->addError($key, 'key '. $key . ' not not found. ' . $this->prefixMessage . ': ' . $message);
+            $this->errors->addError($key, 'key '. $key . ' not found. ' . $this->prefixMessage . ': ' . $message);
         }
     }
     public function isArray(string $key, string $message)
@@ -92,5 +92,10 @@ class ValidationService
             );
             return false;
         }
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 }

@@ -105,6 +105,9 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             $command[] = '-o';
             $command[] = 'UserKnownHostsFile=/dev/null';
         }
+        if (!empty($this->hostConfig['shellProviderOptions'])) {
+            $command = array_merge($command, $this->hostConfig['shellProviderOptions']);
+        }
     }
 
     public function getShellCommand(array $program_to_call, ShellOptions $options): array
@@ -115,9 +118,6 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             '-p',
             $this->hostConfig['port'],
             ];
-        if (!empty($this->hostConfig['shellProviderOptions'])) {
-            $command = array_merge($command, $this->hostConfig['shellProviderOptions']);
-        }
         $this->addCommandOptions($command);
         if ($options->useTty()) {
             $command[] = '-t';
@@ -306,7 +306,6 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         return [
             '/bin/bash',
             '--login',
-            '-i',
             '-c',
             '\'' . implode(' ', $command) . '\''
         ];

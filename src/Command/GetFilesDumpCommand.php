@@ -52,7 +52,7 @@ class GetFilesDumpCommand extends BaseCommand
         foreach ($to_copy as $file) {
             if ($shell->getFile(
                 $file,
-                getcwd(),
+                getcwd() . '/' . basename($file),
                 $context
             )) {
                 $files[] = basename($file);
