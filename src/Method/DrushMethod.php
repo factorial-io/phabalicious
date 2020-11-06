@@ -88,7 +88,12 @@ class DrushMethod extends BaseMethod implements MethodInterface
     {
         $config = parent::getDefaultConfig($configuration_service, $host_config);
 
-        $keys = ['adminUser', 'revertFeatures', 'replaceSettingsFile', 'configurationManagement', 'installOptions'];
+        $keys = ['adminUser',
+            'revertFeatures',
+            'alterSettingsFile',
+            'replaceSettingsFile',
+            'configurationManagement',
+            'installOptions'];
         foreach ($keys as $key) {
             $config[$key] = $configuration_service->getSetting($key);
         }
@@ -722,7 +727,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
     private function setupConfigurationManagement(HostConfig $host_config, TaskContextInterface $context)
     {
         if ($host_config['drupalVersion'] < 8
-            || !empty($host_config['alterSettingsFile'])
+            || empty($host_config['alterSettingsFile'])
             || $context->getResult(self::CONFIGURATION_USED, false)
         ) {
             return;
