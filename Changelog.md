@@ -1,6 +1,12 @@
 # Changelog
 
-##3.5.25 / 2020-11-12
+## 3.5.26 / 2020-11-12
+
+### Fixed:
+
+  * Revert change to mergeData, add test coverage for it
+
+## 3.5.25 / 2020-11-12
 
 ### Changed:
 
