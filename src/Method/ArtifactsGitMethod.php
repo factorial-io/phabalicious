@@ -87,23 +87,6 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $return[self::PREFS_KEY] = [
             'branch' => false,
             'useLocalRepository' => false,
-            'actions' => [
-                [
-                    'action' => 'copy',
-                    'arguments' => [
-                        'to' => '.',
-                        'from' => '*',
-                    ],
-                ],
-                [
-                    'action' => 'delete',
-                    'arguments' => [
-                        '.fabfile.yaml',
-                        'fabfile.yaml',
-                        '.projectsCreated'
-                        ],
-                ],
-            ],
         ];
 
         $return['deployMethod'] = 'git-sync';
