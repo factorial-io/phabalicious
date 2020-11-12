@@ -225,6 +225,8 @@ abstract class ArtifactsBaseMethod extends BaseMethod
     {
 
         $actions = $host_config[self::PREFS_KEY]['actions'];
+        ksort($actions);
+
         foreach ($actions as $action_config) {
             $action = ActionFactory::get($this->getname(), $action_config['action']);
             $action->setArguments($action_config['arguments']);
