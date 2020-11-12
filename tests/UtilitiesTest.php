@@ -22,15 +22,15 @@ class UtilitiesTest extends PhabTestCase
         $a = [
             'a' => 1,
             'b' => 2,
-            'y' => [ 'a' => '1', 'b' => '2' ],
-            'z' => [ 1, 2, 3 ]
+            'y' => ['a' => '1', 'b' => '2'],
+            'z' => [1, 2, 3]
         ];
 
         $b = [
             'b' => 3,
             'c' => 4,
             'y' => false,
-            'z' => [ 4, 5, 6 ]
+            'z' => [4, 5, 6]
         ];
 
         $this->assertEquals([
@@ -38,16 +38,50 @@ class UtilitiesTest extends PhabTestCase
             'b' => 3,
             'c' => 4,
             'y' => false,
-            'z' => [ 4, 5, 6]
+            'z' => [4, 5, 6]
         ], Utilities::mergeData($a, $b));
 
         $this->assertEquals([
             'a' => 1,
             'b' => 2,
             'c' => 4,
-            'y' => [ 'a' => '1', 'b' => '2' ],
-            'z' => [ 1, 2, 3]
+            'y' => ['a' => '1', 'b' => '2'],
+            'z' => [1, 2, 3]
         ], Utilities::mergeData($b, $a));
+
+        $this->assertEquals(
+            [
+                'a' => [
+                    0 => 1,
+                    1 => 2,
+                    'db' => 1
+                ],
+            ],
+            Utilities::mergeData(
+                ['a' => [1, 2]],
+                ['a' => ['db' => 1]]
+            )
+        );
+
+        $this->assertEquals(
+            [
+                'a' => false
+            ],
+            Utilities::mergeData(
+                ['a' => ['a' => 1, 'b' => 2]],
+                ['a' => false]
+            )
+        );
+
+        $this->assertEquals(
+            [
+                'a' => ['a' => 1, 'b' => 2],
+            ],
+            Utilities::mergeData(
+                ['a' => false],
+                ['a' => ['a' => 1, 'b' => 2]]
+            )
+        );
     }
 
     public function testExpandCommands()
@@ -129,6 +163,7 @@ class UtilitiesTest extends PhabTestCase
             Utilities::extractArguments('1, "  hello, world  ", foo bar')
         );
     }
+
     public function testExtractInvalidArguments()
     {
         $this->expectException(ArgumentParsingException::class);
