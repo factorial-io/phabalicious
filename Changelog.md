@@ -1,5 +1,12 @@
 # Changelog
 
+##3.5.25 / 2020-11-12
+
+### Changed:
+
+  * Sort actions by key before processing them
+  * Remove default actions
+
 ## 3.5.24 / 2020-11-06
 
 ### Fixed:
