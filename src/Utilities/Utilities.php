@@ -20,7 +20,7 @@ class Utilities
         foreach ($override_data as $key => $value) {
             if (isset($data[$key])) {
                 // Do a merge
-                if (self::isAssocArray($data[$key]) || self::isAssocArray($value)) {
+                if (self::isAssocArray($data[$key]) && self::isAssocArray($value)) {
                     $result[$key] = self::mergeData($data[$key], $value);
                 } else {
                     $result[$key] = $value;

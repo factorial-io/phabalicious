@@ -16,6 +16,40 @@ use Prophecy\Argument;
 class UtilitiesTest extends PhabTestCase
 {
 
+    public function testMergeData()
+    {
+
+        $a = [
+            'a' => 1,
+            'b' => 2,
+            'y' => [ 'a' => '1', 'b' => '2' ],
+            'z' => [ 1, 2, 3 ]
+        ];
+
+        $b = [
+            'b' => 3,
+            'c' => 4,
+            'y' => false,
+            'z' => [ 4, 5, 6 ]
+        ];
+
+        $this->assertEquals([
+            'a' => 1,
+            'b' => 3,
+            'c' => 4,
+            'y' => false,
+            'z' => [ 4, 5, 6]
+        ], Utilities::mergeData($a, $b));
+
+        $this->assertEquals([
+            'a' => 1,
+            'b' => 2,
+            'c' => 4,
+            'y' => [ 'a' => '1', 'b' => '2' ],
+            'z' => [ 1, 2, 3]
+        ], Utilities::mergeData($b, $a));
+    }
+
     public function testExpandCommands()
     {
         $replacements = [
