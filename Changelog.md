@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.27 / 2020-11-12
+
+### Fixed:
+
+  * Allow merge of numerical and associative arrays
+
 ## 3.5.26 / 2020-11-12
 
 ### Fixed:
