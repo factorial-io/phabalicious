@@ -1,5 +1,5 @@
 module.exports = {
-  base: "/phabalicious/",
+  base: "/",
   title: "Phabalicious",
   description: "A deployment system and general purpose helper",
   theme: require.resolve("@factorial/vuepress-theme"),
