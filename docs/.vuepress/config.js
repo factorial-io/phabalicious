@@ -5,8 +5,8 @@ module.exports = {
   theme: require.resolve("@factorial/vuepress-theme"),
   themeConfig: {
     algolia: {
-      apiKey: '4ff3aea582ff36d3983174829ce22d37',
-      indexName: 'phabalicious',
+      apiKey: '69abc87124806b56252e00022c94f392',
+      indexName: 'phab',
     },
     repo: "factorial-io/phabalicious",
     editLinks: true,
