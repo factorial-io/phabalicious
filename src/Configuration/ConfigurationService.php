@@ -246,7 +246,7 @@ class ConfigurationService
         $data = Yaml::parseFile($file);
         $ext = '.' . pathinfo($file, PATHINFO_EXTENSION);
         $override_file = str_replace($ext, '.override' . $ext, $file);
-        $this->logger->info(sprintf('Trying to read data from override `%s`', $override_file));
+        $this->logger->debug(sprintf('Trying to read data from override `%s`', $override_file));
 
         if (file_exists($override_file)) {
             $data = Utilities::mergeData($data, Yaml::parseFile($override_file));

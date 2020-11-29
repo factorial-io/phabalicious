@@ -2,12 +2,18 @@
 
 namespace Phabalicious\Command;
 
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\ShellProviderNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class InstallCommand extends BaseCommand
 {
@@ -32,14 +38,14 @@ class InstallCommand extends BaseCommand
      * @param OutputInterface $output
      *
      * @return int|null
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -54,7 +60,7 @@ class InstallCommand extends BaseCommand
             throw new \InvalidArgumentException('This configuration disallows installs!');
         }
 
-        if (!$input->getOption('force') !== false) {
+        if (!$this->hasForceOption($input)) {
             if (!$context->io()->confirm(sprintf(
                 'Install new database for configuration `%s`?',
                 $this->getHostConfig()['configName']

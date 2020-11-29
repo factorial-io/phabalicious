@@ -406,4 +406,10 @@ abstract class BaseCommand extends BaseOptionsCommand
         }, $input_arguments);
         return implode(' ', $arguments);
     }
+
+    protected function hasForceOption(InputInterface $input): bool
+    {
+        $option = $input->getOption('force');
+         return is_null($option) || !empty($option);
+    }
 }
