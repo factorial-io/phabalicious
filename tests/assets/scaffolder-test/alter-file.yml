@@ -1,0 +1,17 @@
+requires: 3.0
+
+questions: []
+
+scaffold:
+  - copy_assets(%rootFolder%)
+  - alter_json_file(output.json, overrides)
+  - alter_yaml_file(output.yaml, overrides)
+
+overrides:
+  b: b-overridden
+  c:
+    d: d-overridden
+
+assets:
+  - output.yaml
+  - output.json

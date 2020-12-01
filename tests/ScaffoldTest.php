@@ -28,6 +28,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Yaml\Yaml;
 
 class ScaffoldTest extends PhabTestCase
 {
@@ -102,5 +103,37 @@ class ScaffoldTest extends PhabTestCase
         );
         
         $this->assertEquals(0, $result->getExitCode());
+    }
+
+    public function testAlterFile()
+    {
+
+        $scaffolder = new Scaffolder($this->configuration);
+        $context = $this->createContext();
+        $options = new Options();
+        $options->setAllowOverride(true)
+            ->setUseCacheTokens(false);
+
+        $result = $scaffolder->scaffold(
+            $this->getCwd() . '/assets/scaffolder-test/alter-file.yml',
+            $this->getcwd(),
+            $context,
+            [
+                'name' => 'test-alter',
+            ],
+            $options
+        );
+
+        $this->assertEquals(0, $result->getExitCode());
+
+        $json = json_decode(file_get_contents($this->getCwd() . '/test-alter/output.json'));
+
+        $this->assertEquals("b-overridden", $json->b);
+        $this->assertEquals("d-overridden", $json->c->d);
+        
+        $yaml = Yaml::parseFile($this->getCwd() . '/test-alter/output.yaml');
+        
+        $this->assertEquals("b-overridden", $yaml['b']);
+        $this->assertEquals("d-overridden", $yaml['c']['d']);
     }
 }

@@ -40,6 +40,7 @@ class BlueprintTemplate
         $replacements['%project-slug%'] = Utilities::slugify($project_name);
         $replacements['%project-slug.with-hypens%'] = Utilities::slugify($project_name, '-');
         $replacements['%project-key%'] = Utilities::slugify($project_key, '');
+        $replacements['%fabfilePath%'] = $this->configuration->getFabfilePath();
 
         return Utilities::expandStrings($this->template, $replacements);
     }
