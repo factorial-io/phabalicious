@@ -5,12 +5,14 @@ namespace Phabalicious\Scaffolder;
 
 use Phabalicious\Method\AlterableDataInterface;
 use Phabalicious\Scaffolder\Callbacks\AlterJsonFileCallback;
+use Phabalicious\Scaffolder\Callbacks\AlterYamlFileCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertContainsCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertFileCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertNonZeroCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertZeroCallback;
 use Phabalicious\Scaffolder\Callbacks\ConfirmCallback;
 use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
+use Phabalicious\Scaffolder\Callbacks\SetDirectoryCallback;
 
 class CallbackOptions implements AlterableDataInterface
 {
@@ -25,6 +27,8 @@ class CallbackOptions implements AlterableDataInterface
             ->addCallback(AssertZeroCallback::getName(), [new AssertZeroCallback(), 'handle'])
             ->addCallback(AssertFileCallback::getName(), [new AssertFileCallback(), 'handle'])
             ->addCallback(AssertContainsCallback::getName(), [new AssertContainsCallback(), 'handle'])
+            ->addCallback(SetDirectoryCallBack::getName(), [new SetDirectoryCallBack(), 'handle'])
+            ->addCallback(AlterYamlFileCallback::getName(), [new AlterYamlFileCallback(), 'handle'])
             ->addCallback(AlterJsonFileCallback::getName(), [new AlterJsonFileCallback(), 'handle']);
 
         return $this;

@@ -2,18 +2,19 @@
 
 namespace Phabalicious\Scaffolder\Callbacks;
 
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Yaml\Yaml;
 
-class AlterJsonFileCallback extends BaseCallback implements CallbackInterface
+class AlterYamlFileCallback extends BaseCallback implements CallbackInterface
 {
     /**
      * @inheritDoc
      */
     public static function getName()
     {
-        return 'alter_json_file';
+        return 'alter_yaml_file';
     }
 
     /**
@@ -29,24 +30,23 @@ class AlterJsonFileCallback extends BaseCallback implements CallbackInterface
      */
     public function handle(TaskContextInterface $context, ...$arguments)
     {
-        $this->alterJsonFile($context, $arguments[0], $arguments[1]);
+        $this->alterYamlFile($context, $arguments[0], $arguments[1]);
     }
 
-    public function alterJsonFile(
+    public function alterYamlFile(
         TaskContextInterface $context,
-        $json_file_name,
+        $yaml_file_name,
         $data_key
     ) {
-
         $this->alterFile(
             $context,
-            $json_file_name,
+            $yaml_file_name,
             $data_key,
             function ($file_name) {
-                return json_decode(file_get_contents($file_name), true);
+                return Yaml::parseFile($file_name);
             },
             function ($file_name, $data) {
-                file_put_contents($file_name, json_encode($data, JSON_PRETTY_PRINT));
+                file_put_contents($file_name, Yaml::dump($data, 10, 2));
             }
         );
     }

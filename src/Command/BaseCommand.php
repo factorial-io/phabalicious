@@ -57,6 +57,13 @@ abstract class BaseCommand extends BaseOptionsCommand
                 null
             )
             ->addOption(
+                'num-threads',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Run variants in num threads',
+                4
+            )
+            ->addOption(
                 'variants',
                 null,
                 InputOption::VALUE_OPTIONAL,
@@ -323,7 +330,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                     }
                 }
                 foreach ($input->getOptions() as $name => $value) {
-                    if ($value && !in_array($name, ['verbose', 'variants', 'blueprint', 'fabfile'])) {
+                    if ($value && !in_array($name, ['verbose', 'variants', 'blueprint', 'fabfile', 'num-threads'])) {
                         if (!is_array($value)) {
                             $value = [$value];
                         }
@@ -357,7 +364,7 @@ abstract class BaseCommand extends BaseOptionsCommand
 
             if ($input->getOption('force') !== false || $io->confirm('Do you want to run these commands? ', false)) {
                 $io->comment('Running ...');
-                $executor = new ParallelExecutor($cmd_lines, $output);
+                $executor = new ParallelExecutor($cmd_lines, $output, $input->getOption('num-threads'));
                 return $executor->execute($input, $output);
             }
 
