@@ -1,0 +1,16 @@
+name: remote-yaml-tests
+
+uuid: 1-2-3-4
+
+
+needs:
+  - ssh
+
+hosts:
+  test:
+    needs:
+      - local
+    inheritsFrom:
+      - https://config.factorial.io/does-not-exist.yaml
+
+

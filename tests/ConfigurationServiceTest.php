@@ -4,6 +4,7 @@ namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\DrushMethod;
+use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\SshMethod;
@@ -190,5 +191,31 @@ class ConfigurationServiceTest extends PhabTestCase
         $this->assertEquals('1234', $ssh_tunnel['destPort']);
         $this->assertEquals('2.3.4.5', $ssh_tunnel['bridgeHost']);
         $this->assertEquals('5432', $ssh_tunnel['bridgePort']);
+    }
+
+    public function testMissingRemoteYamlOfflineMode()
+    {
+
+        $this->expectException("Phabalicious\Exception\FabfileNotReadableException");
+
+        $this->config->getMethodFactory()->addMethod(new LocalMethod($this->logger));
+        $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
+        $this->config->readConfiguration($this->getcwd() . '/assets/remote-yaml-tests');
+        $this->config->setStrictRemoteHandling(true);
+        $this->config->setOffline(true);
+
+        $config = $this->config->getHostConfig("test");
+    }
+  
+    public function testMissingRemoteYaml()
+    {
+        $this->expectException("Phabalicious\Exception\FabfileNotReadableException");
+
+        $this->config->getMethodFactory()->addMethod(new LocalMethod($this->logger));
+        $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
+        $this->config->readConfiguration($this->getcwd() . '/assets/remote-yaml-tests');
+        $this->config->setStrictRemoteHandling(true);
+    
+        $config = $this->config->getHostConfig("test");
     }
 }

@@ -53,6 +53,11 @@ class ConfigurationService
     private $skipCache = false;
     private $disallowDeepMergeForKeys = [];
 
+  /**
+   * @var bool
+   */
+    protected $strictRemoteHandling = false;
+
     public function __construct(Application $application, LoggerInterface $logger)
     {
         $this->application = $application;
@@ -398,16 +403,18 @@ class ConfigurationService
             . '/.phabalicious/' . md5($resource)
             . '.' . pathinfo($resource, PATHINFO_EXTENSION);
 
-        // Check for cached version, maximum age 5 minutes.
+        // Check for cached version, maximum age 60 minutes.
         if (!$this->skipCache &&
             file_exists($cache_file) &&
             time()-filemtime($cache_file) < self::MAX_FILECACHE_LIFETIME
         ) {
             $this->logger->info('Using cached version for `' . $resource .'`');
             $contents = file_get_contents($cache_file);
-            $this->cache[$cid] = $contents;
+            if (!empty($contents)) {
+                $this->cache[$cid] = $contents;
 
-            return $contents;
+                return $contents;
+            }
         }
         if (!$this->offlineMode) {
             try {
@@ -433,33 +440,31 @@ class ConfigurationService
 
                 $context = stream_context_create($opts);
                 $contents = file_get_contents($resource, false, $context);
-
-                restore_error_handler();
             } catch (\Exception $e) {
                 $this->logger->warning('Could not load resource from `' . $resource . '`: ' . $e->getMessage());
                 $contents = false;
+            } finally {
+                restore_error_handler();
             }
         }
-
-        $cache_file = getenv("HOME")
-            . '/.phabalicious/' . md5($resource)
-            . '.' . pathinfo($resource, PATHINFO_EXTENSION);
 
         if (!is_dir(dirname($cache_file))) {
             mkdir(dirname($cache_file), 0777, true);
         }
 
-        if ($contents === false && file_exists($cache_file)) {
+        if (empty($contents) && file_exists($cache_file)) {
             $this->logger->info('Using cached version for `' . $resource .'`');
             $contents = file_get_contents($cache_file);
-        } elseif ($contents !== false) {
+        } elseif (!empty($content)) {
             file_put_contents($cache_file, $contents);
         }
         if (!$contents) {
-            $this->logger->error(
-                'Could not get needed data from `' .
-                $resource . '`, proceed with caution!'
-            );
+            $message = sprintf('Could not get needed data from `%s`!', $resource);
+            if ($this->isStrictRemoteHandling()) {
+                throw new FabfileNotReadableException($message);
+            } else {
+                $this->logger->error($message);
+            }
         }
         $this->cache[$cid] = $contents;
 
@@ -830,5 +835,18 @@ class ConfigurationService
     public function isSkipCache(): bool
     {
         return $this->skipCache;
+    }
+
+    public function setStrictRemoteHandling(bool $flag)
+    {
+        $this->strictRemoteHandling = $flag;
+    }
+
+  /**
+   * @return bool
+   */
+    public function isStrictRemoteHandling(): bool
+    {
+        return $this->strictRemoteHandling;
     }
 }
