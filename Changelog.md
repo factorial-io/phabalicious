@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.5.28 / 2021-01-15
+
+### New:
+
+  * New callbacks for scripts and scaffolders, `set_directory` and `alter_yaml_file`
+
+### Changed:
+
+  * Switch to github branching strategy
+  * `install` will try to use existing configuration when available
+  * Bump ini from 1.3.5 to 1.3.8
+  * Make getting data over http more robust, add tests for it
+  * Scaffolder: Allow merge of numerical and associative arrays
+  * Scaffolder: Sort actions by key before processing them
+  * Scaffolder: Remove default actions
+  * Install: Fix bug in detection of correctly setup configuration management
+  * Install: Fix install without config by setting context result.
+  * Install: Add --existing-config command option to drush site-install if config sync dir contains existing configuration.
+
 ## 3.5.27 / 2020-11-12
 
 ### Fixed:
