@@ -1,7 +1,7 @@
 GH_USER=factorial-io
 GH_PATH=`cat ~/.ghtoken`
 GH_REPO=phabalicious
-GH_TARGET=master
+GH_TARGET=main
 ASSETS_PATH=./
 VERSION=`git describe --tags | sed 's/-[0-9]-g[a-z0-9]\{7\}//'`
 echo "Releasing ${VERSION} ..."
