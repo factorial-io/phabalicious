@@ -76,7 +76,7 @@ If you want to get the latest dev-version, add `--allow-unstable=1`
 ## Enhancing phab, contributing to phab
 
 We welcome contributions! Please fork the repository, create a feature branch and submit a pull-request.
-Please add test-cases for your bug-fixes or new features. We are using GrumPHP to check code-style (PSR2), run tests etc when committing new code.
+Please add test-cases for your bug-fixes or new features. We are using GrumPHP to check code-style (PSR2), run tests etc when committing new code. This repository uses github-flow as branching strategy.
 
 
 ## Create a release
