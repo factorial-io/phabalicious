@@ -614,4 +614,19 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $host_config->setChild('docker', 'nameAutoDiscovered', null);
         }
     }
+
+    public function dockerCompose(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $docker_config = self::getDockerConfig($host_config, $context->getConfigurationService());
+        $arguments = $context->get('command', false);
+        if (!$arguments) {
+            throw new \InvalidArgumentException('Missing command arguments for dockerCompose');
+        }
+
+        $shell = $docker_config->shell();
+        $shell->pushWorkingDir(self::getProjectFolder($docker_config, $host_config));
+        $result = $shell->run(sprintf('#!docker-compose %s', $arguments), true);
+        $context->io()->write($result->getOutput(), true);
+        $shell->popWorkingDir();
+    }
 }

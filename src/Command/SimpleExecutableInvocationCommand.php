@@ -68,11 +68,19 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
         $context->set('command', $arguments);
 
         try {
-            $this->getMethods()->runTask($this->executableName, $this->getHostConfig(), $context);
+            $this->getMethods()->runTask($this->getTaskName(), $this->getHostConfig(), $context);
         } catch (EarlyTaskExitException $e) {
             return 1;
         }
 
         return $context->getResult('exitCode', 0);
+    }
+
+    /**
+     * Convert executable name to a taskname.
+     */
+    protected function getTaskName()
+    {
+        return str_replace(' ', '', ucwords(str_replace('-', ' ', $this->executableName)));
     }
 }
