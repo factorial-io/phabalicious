@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.29 / 2021-01-21
+
+### Fixed:
+
+  * Throw an exception when drush cim fails
+
 ## 3.5.28 / 2021-01-15
 
 ### New:

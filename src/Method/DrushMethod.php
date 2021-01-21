@@ -250,6 +250,12 @@ class DrushMethod extends BaseMethod implements MethodInterface
                     $script_context->set(ScriptMethod::SCRIPT_DATA, $cmds);
                     $script_context->set('rootFolder', $host_config['siteFolder']);
                     $script_method->runScript($host_config, $script_context);
+
+                    /** @var CommandResult $result */
+                    $result = $script_context->getResult('commandResult', false);
+                    if ($result && $result->failed()) {
+                        $result->throwException("Could not import configuration");
+                    }
                 }
             }
         } else {
