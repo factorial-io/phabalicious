@@ -2,66 +2,13 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Method\TaskContext;
-use Phabalicious\ShellProvider\ShellOptions;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\MethodFactory;
 
-class DrushCommand extends BaseCommand
+class DrushCommand extends SimpleExecutableInvocationCommand
 {
-    protected function configure()
+    public function __construct(ConfigurationService $configuration, MethodFactory $method_factory)
     {
-        parent::configure();
-        $this
-            ->setName('drush')
-            ->setDescription('Runs drush')
-            ->setHelp('Runs a drush command against the given host-config');
-        $this->addArgument(
-            'drush',
-            InputArgument::REQUIRED | InputArgument::IS_ARRAY,
-            'The drush-command to run'
-        );
-    }
-
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int|null
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        if ($result = parent::execute($input, $output)) {
-            return $result;
-        }
-
-        $context = $this->createContext($input, $output);
-        $arguments = $this->prepareArguments($input->getArgument('drush'));
-        $context->set('command', $arguments);
-
-        // Allow methods to override the used shellProvider:
-        $host_config = $this->getHostConfig();
-        $this->getMethods()->runTask('drush', $host_config, $context);
-        $shell = $context->getResult('shell', $host_config->shell());
-        $command = $context->getResult('command');
-
-        if (!$command) {
-            throw new \RuntimeException('No command-arguments returned for drush-command!');
-        }
-
-        $output->writeln('<info>Starting drush on `' . $host_config['configName'] . '`');
-
-        $options = $this->getSuitableShellOptions($output);
-        $process = $this->startInteractiveShell($context->io(), $shell, $command, $options);
-        return $process->getExitCode();
+        parent::__construct($configuration, $method_factory, 'drush', true);
     }
 }
