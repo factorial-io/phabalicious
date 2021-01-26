@@ -455,7 +455,7 @@ class ConfigurationService
         if (empty($contents) && file_exists($cache_file)) {
             $this->logger->info('Using cached version for `' . $resource .'`');
             $contents = file_get_contents($cache_file);
-        } elseif (!empty($content)) {
+        } elseif (!empty($contents)) {
             file_put_contents($cache_file, $contents);
         }
         if (!$contents) {
