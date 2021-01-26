@@ -9,6 +9,6 @@ class DockerComposeCommand extends SimpleExecutableInvocationCommand
 {
     public function __construct(ConfigurationService $configuration, MethodFactory $method_factory)
     {
-        parent::__construct($configuration, $method_factory, 'docker-compose');
+        parent::__construct($configuration, $method_factory, 'docker-compose', true);
     }
 }

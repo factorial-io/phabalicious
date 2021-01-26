@@ -22,9 +22,16 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
 {
     protected $executableName;
 
-    public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $executable_name)
-    {
+    protected $runInteractively = false;
+
+    public function __construct(
+        ConfigurationService $configuration,
+        MethodFactory $method_factory,
+        $executable_name,
+        $run_interactively = false
+    ) {
         $this->executableName = $executable_name;
+        $this->runInteractively = $run_interactively;
         parent::__construct($configuration, $method_factory);
     }
 
@@ -73,7 +80,29 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
             return 1;
         }
 
-        return $context->getResult('exitCode', 0);
+        if ($this->runInteractively) {
+            $shell = $context->getResult('shell', $this->getHostConfig()->shell());
+            $command = $context->getResult('command');
+
+            if (!$command) {
+                throw new \RuntimeException(sprintf(
+                    'No command-arguments returned for %s-command!',
+                    $this->executableName
+                ));
+            }
+
+            $context->io()->comment(sprintf(
+                'Starting %s on `%s`',
+                $this->executableName,
+                $this->getHostConfig()['config_name']
+            ));
+
+            $options = $this->getSuitableShellOptions($output);
+            $process = $this->startInteractiveShell($context->io(), $shell, $command, $options);
+            return $process->getExitCode();
+        } else {
+            return $context->getResult('exitCode', 0);
+        }
     }
 
     /**
@@ -81,6 +110,6 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
      */
     protected function getTaskName()
     {
-        return str_replace(' ', '', ucwords(str_replace('-', ' ', $this->executableName)));
+        return str_replace(' ', '', lcfirst(ucwords(str_replace('-', ' ', $this->executableName))));
     }
 }
