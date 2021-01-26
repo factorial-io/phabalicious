@@ -633,16 +633,15 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         $context->setResult('shell', $shell);
 
-        $imploded_env_vars = [];
+        $command_parts = [
+            sprintf('cd %s', self::getProjectFolder($docker_config, $host_config)),
+        ];
         foreach ($environment as $k => $v) {
-            $imploded_env_vars[] = sprintf(" export %s=%s", $k, escapeshellarg($v));
+            $command_parts[] = sprintf(" export %s=%s", $k, escapeshellarg($v));
         }
-        $command = sprintf(
-            'cd %s && %s && #!docker-compose %s',
-            self::getProjectFolder($docker_config, $host_config),
-            implode(' && ', $imploded_env_vars),
-            $arguments
-        );
+        $command_parts[] = sprintf('#!docker-compose %s', $arguments);
+
+        $command = implode('&&', $command_parts);
         $command = $shell->expandCommand($command);
         $context->setResult('command', [
             $command
