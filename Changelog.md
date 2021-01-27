@@ -1,8 +1,8 @@
 # Changelog
 
 ## 3.5.30 / 2021-01-27
-===================
 
+### Added:
   * Add gitOptions to git-artifact deployment to change the actual git clone command
 
 ## 3.5.29 / 2021-01-21
