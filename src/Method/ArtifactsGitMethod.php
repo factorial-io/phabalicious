@@ -87,6 +87,11 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $return[self::PREFS_KEY] = [
             'branch' => false,
             'useLocalRepository' => false,
+            'gitOptions' => [
+                'clone' => [
+                    '--depth 30'
+                ]
+            ]
         ];
 
         $return['deployMethod'] = 'git-sync';
@@ -204,7 +209,14 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             true
         )->succeeded();
         $branch_to_clone = $branch_exists ? $target_branch : $host_config[self::PREFS_KEY]['baseBranch'] ?? 'master';
-        $shell->run(sprintf('#!git clone --depth 30 -b %s %s %s', $branch_to_clone, $target_repository, $target_dir));
+        $clone_options = $host_config[self::PREFS_KEY]['gitOptions']['clone'] ?? [];
+        $shell->run(sprintf(
+            '#!git clone %s -b %s %s %s',
+            implode(' ', $clone_options),
+            $branch_to_clone,
+            $target_repository,
+            $target_dir
+        ));
         $shell->pushWorkingDir($target_dir);
 
         if (!$branch_exists) {
