@@ -99,6 +99,9 @@ hosts:
       - artifacts--git
       - script
     artifact:
+      gitOptions:
+        clone:
+          - --depth 10
       branch: develop
       baseBranch: master
       repository: ssh://somewhere/repository.git
