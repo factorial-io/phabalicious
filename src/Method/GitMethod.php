@@ -65,6 +65,11 @@ class GitMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        return in_array($task, ['version', 'deploy']);
+    }
+
     public function getTag(HostConfig $host_config, TaskContextInterface $context)
     {
         $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);

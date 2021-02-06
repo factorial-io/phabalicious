@@ -42,6 +42,11 @@ class PlatformMethod extends BaseMethod
         return $result;
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        return in_array($task, ['deploy', 'reset', 'drush']);
+    }
+
     protected function runCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
     {
         /** @var ShellProviderInterface $shell */

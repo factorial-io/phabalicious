@@ -40,6 +40,11 @@ class SshMethod extends BaseMethod implements MethodInterface
         // Implementation found in SShSellProvider.
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        return in_array($task, ['shell']);
+    }
+
     public function createShellProvider(array $host_config)
     {
         return ShellProviderFactory::create(SshShellProvider::PROVIDER_NAME, $this->logger);
