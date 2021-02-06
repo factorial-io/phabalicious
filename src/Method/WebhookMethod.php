@@ -5,8 +5,6 @@ namespace Phabalicious\Method;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
-use Monolog\Handler\Curl\Util;
-use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Utilities\Utilities;

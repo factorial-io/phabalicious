@@ -2,17 +2,13 @@
 
 namespace Phabalicious\Tests;
 
-use Phabalicious\Command\AppCreateCommand;
 use Phabalicious\Command\DeployCommand;
-use Phabalicious\Command\ResetCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\ArtifactsCustomMethod;
-use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Utilities\TestableLogger;
 use Phabalicious\Utilities\Utilities;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 

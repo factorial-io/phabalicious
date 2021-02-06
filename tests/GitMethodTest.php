@@ -1,12 +1,5 @@
 <?php /** @noinspection PhpParamsInspection */
 
-/**
- * Created by PhpStorm.
- * User: stephan
- * Date: 23.09.18
- * Time: 13:17
- */
-
 namespace Phabalicious\Tests;
 
 use Phabalicious\Command\BaseCommand;
@@ -17,7 +10,6 @@ use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

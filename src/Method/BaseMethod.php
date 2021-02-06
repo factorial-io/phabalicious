@@ -4,8 +4,6 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Exception\FailedShellCommandException;
-use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\TunnelHelper\TunnelHelperFactory;
 use Phabalicious\Utilities\Utilities;

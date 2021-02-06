@@ -2,26 +2,14 @@
 
 namespace Phabalicious\Tests;
 
-use Phabalicious\Command\AboutCommand;
-use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Command\ScaffoldCommand;
-use Phabalicious\Command\ScriptCommand;
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\FilesMethod;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
-use Phabalicious\Method\TaskContext;
-use Phabalicious\Scaffolder\Options;
-use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\Utilities\Utilities;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ScaffoldCommandTest extends PhabTestCase

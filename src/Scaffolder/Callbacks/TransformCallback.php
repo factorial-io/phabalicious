@@ -72,7 +72,7 @@ class TransformCallback implements CallbackInterface
         $target_path = $tokens['rootFolder'] . '/' . $target_folder;
 
         $context->io()->comment(sprintf('Transforming %s ...', $files_key));
-        
+
         try {
             $result = $transformer->transform($context, [$files_key], $target_path);
         } catch (\Exception $e) {

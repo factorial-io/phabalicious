@@ -2,19 +2,13 @@
 
 namespace Phabalicious\Tests;
 
-use Phabalicious\Command\DeployCommand;
-use Phabalicious\Command\WebhookCommand;
 use Phabalicious\Command\WorkspaceCreateCommand;
 use Phabalicious\Command\WorkspaceUpdateCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
-use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Method\WebhookMethod;
-use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\Utilities;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;

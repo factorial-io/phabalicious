@@ -8,14 +8,11 @@
 
 namespace Phabalicious\Tests;
 
-use Phabalicious\Command\AboutCommand;
 use Phabalicious\Command\ScriptCommand;
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\FilesMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -41,12 +38,10 @@ class VariantBaseCommandTest extends PhabTestCase
         $this->application->add(new ScriptCommand($configuration, $method_factory));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Could not find variants for `testMissingVariants` in `blueprints`
-     */
     public function testNoVariants()
     {
+        $this->expectExceptionMessage("Could not find variants for `testMissingVariants` in `blueprints`");
+        $this->expectException(\InvalidArgumentException::class);
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
@@ -56,12 +51,10 @@ class VariantBaseCommandTest extends PhabTestCase
         ));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Could not find variants `x`, `y`, `z` in `blueprints`
-     */
     public function testUnavailableVariants()
     {
+        $this->expectExceptionMessage("Could not find variants `x`, `y`, `z` in `blueprints`");
+        $this->expectException(\InvalidArgumentException::class);
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(

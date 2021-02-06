@@ -8,12 +8,7 @@
 
 namespace Phabalicious\Tests;
 
-use Phabalicious\Command\AboutCommand;
-use Phabalicious\Command\BaseOptionsCommand;
-use Phabalicious\Command\ScriptCommand;
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\FilesMethod;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
@@ -21,20 +16,18 @@ use Phabalicious\Method\TaskContext;
 use Phabalicious\Scaffolder\Options;
 use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\Utilities\Utilities;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Yaml\Yaml;
 
 class ScaffoldTest extends PhabTestCase
 {
     /** @var Application */
     protected $application;
-    
+
     /** @var ConfigurationService  */
     protected $configuration;
 
@@ -49,7 +42,7 @@ class ScaffoldTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
     }
-    
+
     private function createContext()
     {
         $context = new TaskContext(
@@ -79,7 +72,7 @@ class ScaffoldTest extends PhabTestCase
             $options
         );
     }
-    
+
     public function testDataOverride()
     {
         $scaffolder = new Scaffolder($this->configuration);
@@ -91,7 +84,7 @@ class ScaffoldTest extends PhabTestCase
         $options = new Options();
         $options->setAllowOverride(true)
             ->setUseCacheTokens(false);
-        
+
         $result = $scaffolder->scaffold(
             $this->getCwd() . '/assets/scaffolder-test/override.yml',
             $this->getcwd(),
@@ -101,7 +94,7 @@ class ScaffoldTest extends PhabTestCase
             ],
             $options
         );
-        
+
         $this->assertEquals(0, $result->getExitCode());
     }
 
@@ -130,9 +123,9 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals("b-overridden", $json->b);
         $this->assertEquals("d-overridden", $json->c->d);
-        
+
         $yaml = Yaml::parseFile($this->getCwd() . '/test-alter/output.yaml');
-        
+
         $this->assertEquals("b-overridden", $yaml['b']);
         $this->assertEquals("d-overridden", $yaml['c']['d']);
     }

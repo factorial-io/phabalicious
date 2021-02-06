@@ -1,8 +1,11 @@
 <?php /** @noinspection PhpParamsInspection */
 
-namespace Phabalicious\Method;
+namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\DrushMethod;
+use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Tests\PhabTestCase;
 use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
@@ -10,7 +13,7 @@ use Psr\Log\AbstractLogger;
 
 class DrushMethodTest extends PhabTestCase
 {
-    /** @var DrushMethod */
+    /** @var \Phabalicious\Method\DrushMethod */
     private $method;
 
     /** @var ConfigurationService */

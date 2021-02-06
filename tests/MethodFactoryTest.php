@@ -5,8 +5,6 @@ namespace Phabalicious\Tests;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\BaseMethod;
 use Phabalicious\Method\MethodFactory;
-use Phabalicious\Method\MethodInterface;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Application;
 

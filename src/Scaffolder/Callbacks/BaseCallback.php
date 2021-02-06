@@ -8,7 +8,7 @@ use Symfony\Component\Yaml\Yaml;
 
 abstract class BaseCallback implements CallbackInterface
 {
-   
+
     protected function getData(TaskContextInterface $context)
     {
         $data = $context->get('scaffoldData');
@@ -17,7 +17,7 @@ abstract class BaseCallback implements CallbackInterface
         }
         return $context->getConfigurationService()->getAllSettings();
     }
-    
+
     protected function getAbsoluteFilePath(TaskContextInterface $context, $file_name)
     {
 
@@ -34,7 +34,7 @@ abstract class BaseCallback implements CallbackInterface
             }
         }
     }
-    
+
     protected function alterFile(
         TaskContextInterface $context,
         $file_name,
@@ -47,7 +47,7 @@ abstract class BaseCallback implements CallbackInterface
             $context->io()->warning('Could not find file ' . $file_path);
             return;
         }
-        
+
         $input = $read_fn($file_path);
 
         $data = $this->getData($context);

@@ -7,7 +7,6 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
-use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

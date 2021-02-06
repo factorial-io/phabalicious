@@ -27,7 +27,7 @@ class Options extends CallbackOptions
     /** @var ShellProviderInterface */
     protected $shell = null;
 
-    public function getAllowOverride()
+    public function getAllowOverride(): bool
     {
         return $this->allowOverride;
     }
@@ -37,7 +37,7 @@ class Options extends CallbackOptions
      * @param callable $pluginRegistrationCallback
      * @return Options
      */
-    public function setPluginRegistrationCallback(callable $pluginRegistrationCallback)
+    public function setPluginRegistrationCallback(callable $pluginRegistrationCallback): Options
     {
         $this->pluginRegistrationCallback = $pluginRegistrationCallback;
         return $this;
@@ -56,7 +56,7 @@ class Options extends CallbackOptions
     /**
      * @return callable|null
      */
-    public function getPluginRegistrationCallback()
+    public function getPluginRegistrationCallback() : ?callable
     {
         return $this->pluginRegistrationCallback;
     }
@@ -97,7 +97,7 @@ class Options extends CallbackOptions
     /**
      * @return mixed
      */
-    public function getSkipSubfolder()
+    public function getSkipSubfolder() : bool
     {
         return $this->skipSubfolder;
     }

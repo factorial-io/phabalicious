@@ -9,7 +9,6 @@ use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\SshMethod;
 use Phabalicious\Utilities\TestableLogger;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Application;
@@ -58,11 +57,9 @@ class ConfigurationServiceTest extends PhabTestCase
         $this->assertEquals($this->config->getFabfilePath(), $this->getcwd() . '/assets/custom-fabfile-tests');
     }
 
-    /**
-     * @expectedException     \Phabalicious\Exception\FabfileNotFoundException
-     */
     public function testNonExistingCustomFabfile()
     {
+        $this->expectException(\Phabalicious\Exception\FabfileNotFoundException::class);
         $result = $this->config->readConfiguration(
             $this->getcwd(),
             $this->getcwd() . '/assets/custom__not_existing.yaml'
@@ -101,21 +98,17 @@ class ConfigurationServiceTest extends PhabTestCase
         $this->assertEquals($this->config->getFabfilePath(), $this->getcwd() . '/assets/fabfile-hierarchy-tests');
     }
 
-    /**
-     * @expectedException     \Phabalicious\Exception\FabfileNotFoundException
-     */
     public function testNonExistingFabfile()
     {
+        $this->expectException(\Phabalicious\Exception\FabfileNotFoundException::class);
         $result = $this->config->readConfiguration(
             $this->getcwd() . '/assets/non-existing-fabfile-tests/one/two/three'
         );
     }
 
-    /**
-     * @expectedException     \Phabalicious\Exception\MismatchedVersionException
-     */
     public function testNonMatchingVersion()
     {
+        $this->expectException(\Phabalicious\Exception\MismatchedVersionException::class);
         $application = $this->getMockBuilder(Application::class)
             ->setMethods(['getVersion'])
             ->getMock();
@@ -206,7 +199,7 @@ class ConfigurationServiceTest extends PhabTestCase
 
         $config = $this->config->getHostConfig("test");
     }
-  
+
     public function testMissingRemoteYaml()
     {
         $this->expectException("Phabalicious\Exception\FabfileNotReadableException");
@@ -215,7 +208,7 @@ class ConfigurationServiceTest extends PhabTestCase
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
         $this->config->readConfiguration($this->getcwd() . '/assets/remote-yaml-tests');
         $this->config->setStrictRemoteHandling(true);
-    
+
         $config = $this->config->getHostConfig("test");
     }
 }

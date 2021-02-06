@@ -5,7 +5,6 @@ namespace Phabalicious\Tests;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\SshMethod;
 use Phabalicious\Validation\ValidationErrorBag;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
 class SshMethodTest extends PhabTestCase

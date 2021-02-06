@@ -2,13 +2,11 @@
 
 namespace Phabalicious\Tests;
 
-use Phabalicious\Command\GetPropertyCommand;
 use Phabalicious\Command\InstallCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\FilesMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;

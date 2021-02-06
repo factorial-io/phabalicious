@@ -8,15 +8,11 @@
 
 namespace Phabalicious\Tests;
 
-use Phabalicious\Command\AboutCommand;
 use Phabalicious\Command\ScriptCommand;
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\FilesMethod;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;

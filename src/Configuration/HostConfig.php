@@ -5,7 +5,6 @@ namespace Phabalicious\Configuration;
 use Phabalicious\Method\BaseMethod;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
-use PHPUnit\Util\Configuration;
 
 class HostConfig implements \ArrayAccess
 {
