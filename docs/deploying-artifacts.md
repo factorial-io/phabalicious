@@ -133,6 +133,16 @@ the default actions for the git-artifact-method will copy all files to the targe
 | `artifact.repository` |               | The url to the target-repository          |
 | `artifact.actions`    |               | Actions to perform                        |
 
+
+Phab will use a shallow clone for the target repository to keep resources low. If you need to use a deep copy for the target repository, you can adapt the gitOptions like:
+```
+hosts:
+  git-artifacts:
+    artifact:
+      gitOptions:
+        clone: []
+```
+
 ### artifacts--custom
 
 @TODO
