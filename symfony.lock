@@ -89,9 +89,6 @@
     "padraic/phar-updater": {
         "version": "v1.0.6"
     },
-    "paragonie/random_compat": {
-        "version": "v9.99.99"
-    },
     "phar-io/manifest": {
         "version": "1.0.3"
     },
@@ -251,6 +248,9 @@
             "ref": "e921bdbfe20cdefa3b82f379d1cd36df1bc8d115"
         }
     },
+    "symfony/http-client-contracts": {
+        "version": "v1.1.10"
+    },
     "symfony/http-foundation": {
         "version": "v4.1.6"
     },
@@ -283,9 +283,6 @@
     },
     "symfony/polyfill-mbstring": {
         "version": "v1.9.0"
-    },
-    "symfony/polyfill-php70": {
-        "version": "v1.18.1"
     },
     "symfony/polyfill-php72": {
         "version": "v1.13.1"
