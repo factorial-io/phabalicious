@@ -256,8 +256,12 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                 $this->run(sprintf('. %s', $file), false, false);
             }
         }
+        $cmds = [];
         foreach ($environment as $key => $value) {
-            $this->run("export \"$key\"=\"$value\"");
+            $cmds[] = "export \"$key\"=\"$value\"";
+        }
+        if (!empty($cmds)) {
+            $this->run(implode(" && ", $cmds));
         }
     }
 
