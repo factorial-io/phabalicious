@@ -452,4 +452,9 @@ class Utilities
         // `is_null` (has no option value, e.g. `--force`) or `!empty()`, e.g. `--force=1`
         return is_null($option) || !empty($option);
     }
+
+    public static function camel2dashed($string)
+    {
+        return strtolower(preg_replace('/([A-Z])/', '-$1', $string));
+    }
 }

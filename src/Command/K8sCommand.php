@@ -36,7 +36,7 @@ class K8sCommand extends BaseCommand
             ->setDescription('Run a k8s command')
             ->setHelp('Runs a k8s command against the given host-config');
         $this->addArgument(
-            'subcommand',
+            'k8s',
             InputArgument::REQUIRED | InputArgument::IS_ARRAY,
             'The k8s-command to run'
         );
@@ -63,7 +63,11 @@ class K8sCommand extends BaseCommand
         }
 
         $context = $this->createContext($input, $output);
-        $context->set('command', implode(' ', $input->getArgument('subcommand')));
+        $subcommands = $input->getArgument('k8s');
+        if (!is_array($subcommands)) {
+            $subcommands = [ $subcommands ];
+        }
+        $context->set('command', implode(' ', $subcommands));
 
         // Allow methods to override the used shellProvider:
         $host_config = $this->getHostConfig();
