@@ -110,7 +110,7 @@ class ShellCommandOptionsTest extends PhabTestCase
         $command_tester->execute([
             '-c' => $config,
             'command' => 'drush',
-            'drush' => ['version'],
+            'command-arguments' => ['version'],
         ]);
 
         $output = $command_tester->getDisplay();
