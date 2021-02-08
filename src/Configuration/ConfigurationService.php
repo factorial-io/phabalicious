@@ -863,4 +863,12 @@ class ConfigurationService
 
         return false;
     }
+
+    public function findScript(HostConfig $host_config, $script_name)
+    {
+        if (!empty($host_config['scripts'][$script_name])) {
+            return $host_config['scripts'][$script_name];
+        }
+        return $this->getSetting('scripts.' . $script_name, false);
+    }
 }

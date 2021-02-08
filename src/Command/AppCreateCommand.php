@@ -68,24 +68,33 @@ class AppCreateCommand extends AppBaseCommand
         $host_config = $this->getHostConfig();
 
         $this->configuration->getMethodFactory()->runTask('appCheckExisting', $host_config, $context);
+        $outer_shell = false;
 
-        /** @var ShellProviderInterface $outer_shell */
-        $outer_shell = $context->getResult('outerShell', $host_config->shell());
+        $install_dir = $context->getResult('installDir', false);
+        if ($install_dir) {
 
-        $install_dir = $context->getResult('installDir', $host_config['rootFolder']);
-        if ($outer_shell->exists($install_dir) && $input->getOption('force') === false) {
-            $continue = $context->io()->confirm('Target directory exists', false);
-            if (!$continue) {
-                $context->io()->warning(sprintf(
-                    'Stopping, as target-folder `%s` already exists on `%s`.',
-                    $install_dir,
-                    $host_config['configName']
-                ));
-                return 1;
+            /** @var ShellProviderInterface $outer_shell */
+            $outer_shell = $context->getResult('outerShell', $host_config->shell());
+            if ($outer_shell->exists($install_dir) && $input->getOption('force') === false) {
+                $continue = $context->io()
+                    ->confirm('Target directory exists', false);
+                if (!$continue) {
+                    $context->io()->warning(sprintf(
+                        'Stopping, as target-folder `%s` already exists on `%s`.',
+                        $install_dir,
+                        $host_config['configName']
+                    ));
+                    return 1;
+                }
+            }
+            $lock_file = $install_dir . '/.projectCreated';
+            $app_exists = $outer_shell->exists($lock_file);
+        } else {
+            $app_exists = $context->getResult('appExists', null);
+            if (is_null($app_exists)) {
+                throw new \InvalidArgumentException("No result for `appExists`, stopping execution!");
             }
         }
-        $lock_file =  $install_dir . '/.projectCreated';
-        $app_exists = $outer_shell->exists($lock_file);
 
         $context->set('outerShell', $outer_shell);
         $context->set('installDir', $context->getResult('installDir'));

@@ -48,11 +48,16 @@ class AppDestroyCommand extends AppBaseCommand
 
         $this->configuration->getMethodFactory()->runTask('appCheckExisting', $host_config, $context);
 
-        /** @var ShellProviderInterface $outer_shell */
-        $outer_shell = $context->getResult('outerShell', $host_config->shell());
-        $install_dir = $context->getResult('installDir', $host_config['rootFolder']);
-        $lock_file = $install_dir . '/.projectCreated';
-        $app_exists = $outer_shell->exists($lock_file);
+        $install_dir = $context->getResult('installDir', false);
+        $outer_shell = null;
+        if ($install_dir) {
+            /** @var ShellProviderInterface $outer_shell */
+            $outer_shell = $context->getResult('outerShell', $host_config->shell());
+            $lock_file = $install_dir . '/.projectCreated';
+            $app_exists = $outer_shell->exists($lock_file);
+        } else {
+            $app_exists = $context->getResult('appExists', false);
+        }
 
         $context->set('outerShell', $outer_shell);
         $context->set('installDir', $context->getResult('installDir'));
@@ -64,7 +69,9 @@ class AppDestroyCommand extends AppBaseCommand
                 AppDefaultStages::DESTROY
             );
             $this->executeStages($stages, 'appDestroy', $context, 'Destroying app');
-            $outer_shell->run(sprintf('sudo rm -rf %s', $install_dir));
+            if ($install_dir) {
+                $outer_shell->run(sprintf('sudo rm -rf %s', $install_dir));
+            }
         } else {
             $this->configuration->getLogger()->warning(sprintf('Could not find app at `%s`!', $install_dir));
         }

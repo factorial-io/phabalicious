@@ -79,19 +79,10 @@ class ScriptCommand extends BaseCommand
                 $this->listAllScripts($output);
                 return 1;
             }
-            $defaults = $script_data['defaults'] ?? [];
-            $script_context = $script_data['context'] ?? ScriptMethod::HOST_SCRIPT_CONTEXT;
-            $script_questions = $script_data['questions'] ?? [];
-            $computed_values = $script_data['computedValues'] ?? [];
-            if (!empty($script_data['script'])) {
-                $script_data = $script_data['script'];
-            }
 
+            $defaults = $script_data['defaults'] ?? [];
             $context = $this->createContext($input, $output, $defaults);
-            $context->set(ScriptMethod::SCRIPT_DATA, $script_data);
-            $context->set(ScriptMethod::SCRIPT_CONTEXT, $script_context);
-            $context->set(ScriptMethod::SCRIPT_QUESTIONS, $script_questions);
-            $context->set(ScriptMethod::SCRIPT_COMPUTED_VALUES, $computed_values);
+            ScriptMethod::prepareContextFromScript($context, $script_data);
 
             $this->getMethods()->call('script', 'runScript', $this->getHostConfig(), $context);
         }
@@ -115,10 +106,6 @@ class ScriptCommand extends BaseCommand
 
     private function findScript($script_name)
     {
-        $config = $this->getHostConfig();
-        if (!empty($config['scripts'][$script_name])) {
-            return $config['scripts'][$script_name];
-        }
-        return $this->getConfiguration()->getSetting('scripts.' . $script_name, false);
+        return $this->getConfiguration()->findScript($this->getHostConfig(), $script_name);
     }
 }
