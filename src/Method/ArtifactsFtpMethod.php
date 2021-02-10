@@ -137,7 +137,8 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 
         if (empty($host_config[self::PREFS_KEY]['password'])) {
             $ftp = $host_config[self::PREFS_KEY];
-            $ftp['password'] = $context->getPasswordManager()->getPasswordFor($ftp['host'], $ftp['port'], $ftp['user']);
+            $pw = $context->getPasswordManager();
+            $ftp['password'] = $pw->getPasswordFor($pw->getKeyFromLogin($ftp['host'], $ftp['port'], $ftp['user']));
             $host_config[self::PREFS_KEY] = $ftp;
         }
 

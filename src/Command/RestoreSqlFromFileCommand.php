@@ -44,7 +44,7 @@ class RestoreSqlFromFileCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $file = $input->getArgument('file');
         if (!file_exists($file)) {
             throw new \InvalidArgumentException('Could not find file at `' . $file . '`');

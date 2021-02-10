@@ -14,6 +14,8 @@ use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\ShellProviderFactory;
+use Phabalicious\Utilities\PasswordManager;
+use Phabalicious\Utilities\PasswordManagerInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
@@ -53,6 +55,9 @@ class ConfigurationService
     private $offlineMode = false;
     private $skipCache = false;
     private $disallowDeepMergeForKeys = [];
+
+    /** @var \Phabalicious\Utilities\PasswordManagerInterface */
+    private $passwordManager = null;
 
   /**
    * @var bool
@@ -521,6 +526,7 @@ class ConfigurationService
     {
         $cid = 'blueprint:' . $blueprint . ':' . $identifier;
 
+
         if (!empty($this->cache[$cid])) {
             return $this->cache[$cid];
         }
@@ -538,6 +544,8 @@ class ConfigurationService
 
         $this->cache['host:' . $data['configName']] = $data;
         $this->cache[$cid] = $data;
+
+
         return $data;
     }
 
@@ -567,9 +575,7 @@ class ConfigurationService
             'executables' => $this->getSetting('executables', []),
             'supportsInstalls' => $type != HostType::PROD,
             'supportsCopyFrom' => true,
-            'backupBeforeDeploy' => in_array($type, [HostType::STAGE, HostType::PROD])
-                ? true
-                : false,
+            'backupBeforeDeploy' => in_array($type, [HostType::STAGE, HostType::PROD]),
             'tmpFolder' => '/tmp',
             'rootFolder' => $this->getFabfilePath(),
         ];
@@ -650,7 +656,13 @@ class ConfigurationService
         }
 
         // Create host-config and return.
-        return new HostConfig($data, $shell_provider, $this);
+        $host_config = new HostConfig($data, $shell_provider, $this);
+
+        if (!$this->getPasswordManager()) {
+            throw new \RuntimeException('No password manager found!');
+        }
+        $this->getPasswordManager()->resolveSecrets($host_config);
+        return $host_config;
     }
 
     /**
@@ -870,5 +882,27 @@ class ConfigurationService
             return $host_config['scripts'][$script_name];
         }
         return $this->getSetting('scripts.' . $script_name, false);
+    }
+
+    /**
+     * @return \Phabalicious\Utilities\PasswordManagerInterface
+     */
+    public function getPasswordManager(): PasswordManagerInterface
+    {
+        if (!$this->passwordManager) {
+            $this->passwordManager = new PasswordManager();
+        }
+        return $this->passwordManager;
+    }
+
+    /**
+     * @param \Phabalicious\Utilities\PasswordManagerInterface $passwordManager
+     *
+     * @return ConfigurationService
+     */
+    public function setPasswordManager(PasswordManagerInterface $passwordManager): ConfigurationService
+    {
+        $this->passwordManager = $passwordManager;
+        return $this;
     }
 }

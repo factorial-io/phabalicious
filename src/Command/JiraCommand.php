@@ -42,7 +42,7 @@ class JiraCommand extends BaseOptionsCommand
     {
         $this->checkAllRequiredOptionsAreNotEmpty($input);
         $this->readConfiguration($input);
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
 
         $jira_config = $this->configuration->getSetting('jira', []);
         $errors = new ValidationErrorBag();

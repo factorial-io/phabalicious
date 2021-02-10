@@ -52,7 +52,7 @@ class ShellCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $host_config = $this->getHostConfig();
 
         // Allow methods to override the used shellProvider:

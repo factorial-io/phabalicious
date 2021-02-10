@@ -10,6 +10,7 @@ use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -70,6 +71,7 @@ class OutputCommand extends BaseCommand
         $this->readConfiguration($input);
         $data = [];
         $title = '';
+        $context = new TaskContext($this, $input, $output);
 
         if ($what == 'blueprint') {
             if (empty($blueprint)) {
@@ -82,9 +84,13 @@ class OutputCommand extends BaseCommand
             ];
             $title = 'Output of applied blueprint `' . $config . '`';
         } elseif ($what == 'host') {
-            $data = $this->getConfiguration()->getHostConfig($config)->raw();
+            if (!empty($blueprint)) {
+                $data = $this->getConfiguration()->getHostConfigFromBlueprint($config, $blueprint);
+            } else {
+                $data = $this->getConfiguration()->getHostConfig($config);
+            }
             $data = [
-                $data['configName'] => $data
+                $data['configName'] => $data->raw(),
             ];
             $title = 'Output of host-configuration `' . $config . '`';
         } elseif ($what == 'docker') {

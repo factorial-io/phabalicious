@@ -57,7 +57,7 @@ class TaskContext implements TaskContextInterface
         $stored_value = Utilities::mergeData($stored_value, $value);
         $this->set($key, $stored_value);
     }
-    
+
     public function get(string $key, $default = null)
     {
          return isset($this->data[$key]) ? $this->data[$key] : $default;
@@ -81,6 +81,10 @@ class TaskContext implements TaskContextInterface
     public function setConfigurationService(?ConfigurationService $service)
     {
         $this->configurationService = $service;
+        if ($this->configurationService) {
+            $this->configurationService->getPasswordManager()
+                ->setContext($this);
+        }
     }
 
     public function getConfigurationService(): ConfigurationService
@@ -172,11 +176,7 @@ class TaskContext implements TaskContextInterface
 
     public function getPasswordManager()
     {
-        if (!$this->passwordManager) {
-            $this->passwordManager = new PasswordManager($this);
-        }
-
-        return $this->passwordManager;
+        return $this->getConfigurationService()->getPasswordManager();
     }
 
     /**
@@ -189,7 +189,7 @@ class TaskContext implements TaskContextInterface
         }
         return $this->io;
     }
-    
+
     public function setIo(SymfonyStyle $io)
     {
         $this->io = $io;

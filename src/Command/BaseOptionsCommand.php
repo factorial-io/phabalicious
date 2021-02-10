@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\Utilities;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
@@ -25,6 +26,9 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
      * @var MethodFactory
      */
     protected $methods;
+
+    /** @var \Phabalicious\Method\TaskContextInterface */
+    private $context = null;
 
 
     public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
@@ -67,6 +71,13 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
                 'a',
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'Pass optional arguments',
+                []
+            )
+            ->addOption(
+                'secret',
+                null,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Pass optional secrets',
                 []
             );
     }
@@ -171,7 +182,7 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
      */
     protected function createContext(InputInterface $input, OutputInterface $output, $default_arguments = [])
     {
-        $context = new TaskContext($this, $input, $output);
+        $context =  $this->context ? $this->context : new TaskContext($this, $input, $output);
         $arguments = $this->parseScriptArguments($default_arguments, $input->getOption('arguments'));
         $context->set('variables', $arguments);
         $context->set('deployArguments', $arguments);
@@ -180,6 +191,13 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
             $this->parseScriptArguments([], $input->getOption('arguments'))['arguments'] ?? []
         );
 
-        return $context;
+        $this->context = $context;
+        return $this->context;
+    }
+
+    protected function getContext(): TaskContextInterface
+    {
+        assert($this->context);
+        return $this->context;
     }
 }

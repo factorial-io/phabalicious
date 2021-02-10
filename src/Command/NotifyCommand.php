@@ -60,7 +60,7 @@ class NotifyCommand extends BaseCommand
         if ($result = parent::execute($input, $output)) {
             return $result;
         }
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $context->set('message', $input->getArgument('message'));
         $context->set('channel', $input->getOption('channel'));
 

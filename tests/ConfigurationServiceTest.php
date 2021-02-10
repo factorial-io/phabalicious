@@ -8,6 +8,7 @@ use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\SshMethod;
+use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Utilities\TestableLogger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -45,6 +46,7 @@ class ConfigurationServiceTest extends PhabTestCase
             ->will($this->returnValue([]));
 
         $this->config->setMethodFactory($method_factory);
+        $this->config->setPasswordManager($this->getMockBuilder(PasswordManager::class)->getMock());
     }
 
     public function testCustomFabfile()

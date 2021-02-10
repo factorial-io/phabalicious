@@ -40,7 +40,7 @@ class VersionCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
 
         $this->getMethods()->runTask('version', $this->getHostConfig(), $context);
 

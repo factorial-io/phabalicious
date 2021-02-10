@@ -51,7 +51,7 @@ class RestoreCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $context->set('what', array_map(function ($elem) {
             return trim(strtolower($elem));
         }, $input->getArgument('what')));
