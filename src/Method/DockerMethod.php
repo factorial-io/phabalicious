@@ -14,7 +14,9 @@ use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ScopedLogLevel\ScopedErrorLogLevel;
 use Phabalicious\ScopedLogLevel\ScopedLogLevel;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\ShellOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LogLevel;
@@ -629,5 +631,36 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $host_config->setChild('docker', 'name', null);
             $host_config->setChild('docker', 'nameAutoDiscovered', null);
         }
+    }
+
+    public function dockerCompose(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $docker_config = self::getDockerConfig($host_config, $context->getConfigurationService());
+        $shell = $docker_config->shell();
+
+        $arguments = $context->get('command', false);
+        if (!$arguments) {
+            throw new \InvalidArgumentException('Missing command arguments for dockerCompose');
+        }
+
+        $variables = Utilities::buildVariablesFrom($host_config, $context);
+        $replacements = Utilities::expandVariables($variables);
+        $environment = Utilities::expandStrings($docker_config->get('environment', []), $replacements);
+
+        $context->setResult('shell', $shell);
+
+        $command_parts = [
+            sprintf('cd %s', self::getProjectFolder($docker_config, $host_config)),
+        ];
+        foreach ($environment as $k => $v) {
+            $command_parts[] = sprintf(" export %s=%s", $k, escapeshellarg($v));
+        }
+        $command_parts[] = sprintf('#!docker-compose %s', $arguments);
+
+        $command = implode('&&', $command_parts);
+        $command = $shell->expandCommand($command);
+        $context->setResult('command', [
+            $command
+        ]);
     }
 }

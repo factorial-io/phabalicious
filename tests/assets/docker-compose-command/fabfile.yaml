@@ -1,0 +1,33 @@
+name: getproperty-tests
+
+needs:
+  - docker
+  - local
+
+dockerHosts:
+  test:
+    rootFolder: .
+    runLocally: true
+  testEnvVar:
+    inheritsFrom:
+      - test
+    environment:
+      VHOST: OUR_VHOST_VAR
+
+
+
+hosts:
+  test:
+    rootFolder: .
+    docker:
+      configuration: test
+      service: app
+      projectFolder: .
+  testEnvVar:
+    inheritsFrom:
+      - test
+    docker:
+      configuration: testEnvVar
+
+
+
