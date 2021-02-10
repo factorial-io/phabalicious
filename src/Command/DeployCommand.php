@@ -62,7 +62,7 @@ class DeployCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
 
         // Override branch in config.
         $branch = $input->getArgument('branch');

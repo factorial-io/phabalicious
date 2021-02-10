@@ -68,7 +68,7 @@ class DockerCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $docker_config = $this->getDockerConfig();
         $context->set('docker_config', $docker_config);
 

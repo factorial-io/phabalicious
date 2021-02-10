@@ -46,7 +46,7 @@ class PlatformCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $context->set('command', implode(' ', $input->getArgument('platform')));
 
         try {

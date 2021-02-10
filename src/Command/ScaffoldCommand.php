@@ -7,7 +7,6 @@ use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\Scaffolder\Callbacks\TransformCallback;
 use Phabalicious\Scaffolder\Options;
 use Phabalicious\Utilities\PluginDiscovery;
@@ -61,6 +60,7 @@ class ScaffoldCommand extends ScaffoldBaseCommand
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
      * @throws MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

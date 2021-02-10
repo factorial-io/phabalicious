@@ -62,9 +62,10 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $context = $this->createContext($input, $output);
+
         $url = $input->getArgument('scaffold-url');
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
-        $context = $this->createContext($input, $output);
 
         $this->scaffold($url, $root_folder, $context, [], new Options());
         return 0;

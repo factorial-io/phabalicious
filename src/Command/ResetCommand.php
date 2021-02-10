@@ -41,7 +41,7 @@ class ResetCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
 
         try {
             $this->getMethods()->runTask('reset', $this->getHostConfig(), $context);

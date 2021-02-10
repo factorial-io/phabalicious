@@ -68,7 +68,7 @@ class CopyFromCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $from = $this->configuration->getHostConfig($input->getArgument('from'));
         if (empty($from['supportsCopyFrom'])) {
             throw new \InvalidArgumentException('Source config does not support copy-from!');

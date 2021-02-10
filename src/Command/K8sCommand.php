@@ -62,7 +62,7 @@ class K8sCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $subcommands = $input->getArgument('k8s');
         if (!is_array($subcommands)) {
             $subcommands = [ $subcommands ];

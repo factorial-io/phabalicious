@@ -53,7 +53,7 @@ class VariablePull extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
 
         $context->set('action', 'pull');
         $filename = $input->getArgument('file');

@@ -69,7 +69,7 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
 
         $arguments = $this->prepareArguments($input->getArgument('command-arguments'));
         $context->set('command', $arguments);

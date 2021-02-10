@@ -42,7 +42,7 @@ class GetFilesDumpCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
 
         $this->getMethods()->runTask('getFilesDump', $this->getHostConfig(), $context);
         $to_copy = $context->getResult('files');

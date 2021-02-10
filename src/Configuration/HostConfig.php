@@ -145,4 +145,9 @@ class HostConfig implements \ArrayAccess
     {
         Utilities::setProperty($this->data, $key, $value);
     }
+
+    public function setData($data)
+    {
+        $this->data = $data;
+    }
 }

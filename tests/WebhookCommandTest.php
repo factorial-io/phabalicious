@@ -77,10 +77,10 @@ class WebhookCommandTest extends PhabTestCase
 
         $output = $commandTester->getDisplay();
 
-        $this->assertContains('testGet', $output);
-        $this->assertContains('testDelete', $output);
-        $this->assertContains('testPost', $output);
-        $this->assertNotContains('defaults', $output);
+        $this->assertStringContainsString('testGet', $output);
+        $this->assertStringContainsString('testDelete', $output);
+        $this->assertStringContainsString('testPost', $output);
+        $this->assertStringNotContainsString('defaults', $output);
     }
 
     public function testWebhookWithArgumentsCommand()
@@ -97,7 +97,7 @@ class WebhookCommandTest extends PhabTestCase
 
         $output = $commandTester->getDisplay();
 
-        $this->assertContains('"args":{"q":"hello-from-commandline"}', $output);
+        $this->assertStringContainsString('"args":{"q":"hello-from-commandline"}', $output);
     }
 
     public function testTaskSpecificWebhooks()
@@ -111,9 +111,9 @@ class WebhookCommandTest extends PhabTestCase
 
         $output = $commandTester->getDisplay();
 
-        $this->assertContains('[test2Get]', $output);
-        $this->assertContains('[testArguments]', $output);
-        $this->assertContains('"args":{"q":"foo"}', $output);
-        $this->assertContains('factorial-screensaver', $output);
+        $this->assertStringContainsString('[test2Get]', $output);
+        $this->assertStringContainsString('[testArguments]', $output);
+        $this->assertStringContainsString('"args":{"q":"foo"}', $output);
+        $this->assertStringContainsString('factorial-screensaver', $output);
     }
 }
