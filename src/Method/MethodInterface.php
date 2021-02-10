@@ -39,4 +39,6 @@ interface MethodInterface
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context);
 
     public function getRootFolderKey(): string;
+
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task);
 }

@@ -58,7 +58,7 @@ class ShellCommandOptionsTest extends PhabTestCase
      */
     public function testLocalShell()
     {
-        $this->runDrush('local-shell');
+        $this->runDrush('local-shell', false);
     }
 
     /**
@@ -68,7 +68,7 @@ class ShellCommandOptionsTest extends PhabTestCase
     public function testSshShell()
     {
         $this->startDocker();
-        $this->runDrush('ssh-shell');
+        $this->runDrush('ssh-shell', true);
         $this->stopRunningDocker();
     }
 
@@ -79,7 +79,7 @@ class ShellCommandOptionsTest extends PhabTestCase
     public function testDockerExecShell()
     {
         $this->startDocker();
-        $this->runDrush('docker-exec-shell');
+        $this->runDrush('docker-exec-shell', false);
         $this->stopRunningDocker();
     }
 
@@ -94,24 +94,32 @@ class ShellCommandOptionsTest extends PhabTestCase
     public function testDockerExecOverSshShell()
     {
         $this->startDocker();
-        $this->runDrush('docker-exec-over-ssh-shell');
+        $this->runDrush('docker-exec-over-ssh-shell', true);
         $this->stopRunningDocker();
     }
 
     /**
      * @group shell-provider
      * @group docker
+     *
+     * @param $config
      */
-    protected function runDrush($config): void
+    protected function runDrush($config, $override_shell_provider_options): void
     {
         $command = $this->application->find('drush');
         $command_tester = new CommandTester($command);
 
-        $command_tester->execute([
+        $args = [
             '-c' => $config,
             'command' => 'drush',
-            'command-arguments' => ['version'],
-        ]);
+            'drush' => ['version'],
+        ];
+        if ($override_shell_provider_options) {
+            $filepath =$this->getcwd() . '/assets/shell-command-options-tests/testruns';
+            $args['--set'] = sprintf('host.shellProviderOptions.1=%s', $filepath);
+        }
+
+        $command_tester->execute($args);
 
         $output = $command_tester->getDisplay();
         $this->assertStringContainsStringIgnoringCase("Drush version", $output);
@@ -130,6 +138,7 @@ class ShellCommandOptionsTest extends PhabTestCase
         $this->shell->run(
             'docker exec test-shell-command-options /bin/bash -c "mkdir /root/.ssh && chmod 700 /root/.ssh"'
         );
+        $this->shell->run('chmod 600 tests/assets/shell-command-options-tests/testruns');
         $this->shell->run(
             'docker cp tests/assets/shell-command-options-tests/testruns.pub ' .
             'test-shell-command-options:/root/.ssh/authorized_keys'

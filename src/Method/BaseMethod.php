@@ -88,6 +88,12 @@ abstract class BaseMethod implements MethodInterface
         // $this->logger->debug('fallback ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task)
+    {
+        $this->logger->info("Missing implementation for taskNeedsRunningApp: " . $task);
+        return false;
+    }
+
     /**
      * @param TaskContext $context
      * @param string $command_name
@@ -155,7 +161,7 @@ abstract class BaseMethod implements MethodInterface
         }
 
         if ($tokens[0] != $host_config['configName']) {
-            list($tokens[1], $tokens[0]) = $tokens;
+            [$tokens[1], $tokens[0]] = $tokens;
         }
 
         if ($tokens[0] != $host_config['configName']) {

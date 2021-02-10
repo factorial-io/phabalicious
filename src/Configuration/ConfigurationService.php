@@ -12,6 +12,7 @@ use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -848,5 +849,18 @@ class ConfigurationService
     public function isStrictRemoteHandling(): bool
     {
         return $this->strictRemoteHandling;
+    }
+
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+
+        $needs = $host_config['needs'];
+        foreach ($this->getMethodFactory()->getSubset($needs) as $method) {
+            if ($method->isRunningAppRequired($host_config, $context, $task)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

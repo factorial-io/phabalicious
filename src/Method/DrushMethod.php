@@ -177,6 +177,23 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        return in_array($task, [
+            'drush',
+            'backup',
+            'restore',
+            'install',
+            'listBackups',
+            'restoreSqlFromFile',
+            'copyFrom',
+            'deploy',
+            'reset',
+            'appUpdate',
+            'variables',
+        ]);
+    }
+
     private function runDrush(ShellProviderInterface $shell, $cmd, ...$args)
     {
         array_unshift($args, '#!drush ' . $cmd);

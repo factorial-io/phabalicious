@@ -32,6 +32,11 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
         ];
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        return $task === 'drupalConsole';
+    }
+
     private function getDrupalExec(string $root_folder, ShellProviderInterface $shell)
     {
         if ($shell->exists($root_folder . '/vendor/bin/drupal')) {

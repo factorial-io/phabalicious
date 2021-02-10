@@ -50,6 +50,14 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         ];
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        if ($task !== $this->getName()) {
+            return false;
+        }
+        return $host_config[$this->getRunContextKey()] === self::HOST_CONTEXT;
+    }
+
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         return [

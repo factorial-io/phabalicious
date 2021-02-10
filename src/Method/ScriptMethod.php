@@ -56,6 +56,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $service->checkForValidFolderName('rootFolder');
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        return in_array($task, ['runScript']);
+    }
 
     /**
      * Set default callbacks, these are globally available.

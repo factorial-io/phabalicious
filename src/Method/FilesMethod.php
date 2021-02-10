@@ -38,6 +38,11 @@ class FilesMethod extends BaseMethod implements MethodInterface
         return $return;
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        return in_array($task, ['putFile', 'getFile', 'backup', 'listBackups', 'restore', 'getFilesDump', 'copyFrom']);
+    }
+
     public function putFile(HostConfig $config, TaskContextInterface $context)
     {
         $source = $context->get('sourceFile', false);

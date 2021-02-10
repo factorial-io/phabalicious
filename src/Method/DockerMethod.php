@@ -87,6 +87,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        return in_array($task, ['startRemoteAccess']);
+    }
+
     /**
      * @param HostConfig $host_config
      * @param ConfigurationService $config
@@ -144,7 +149,6 @@ class DockerMethod extends BaseMethod implements MethodInterface
             return;
         }
 
-        /** @var DockerConfig $docker_config */
         $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
         $tasks = $docker_config['tasks'];
 
@@ -180,7 +184,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    public function getInternalTasks()
+    public function getInternalTasks(): array
     {
         return [
             'waitForServices',
@@ -255,9 +259,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $hostconfig
      * @param TaskContextInterface $context
+     *
      * @throws ValidationFailedException
      * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
+     * @throws MissingDockerHostConfigException|\Phabalicious\Exception\FabfileNotReadableException
      */
     private function copySSHKeys(HostConfig $hostconfig, TaskContextInterface $context)
     {
@@ -308,7 +313,6 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $docker_config = $this->getDockerConfig($hostconfig, $context->getConfigurationService());
         $root_folder = $this->getProjectFolder($docker_config, $hostconfig);
 
-        /** @var ShellProviderInterface $shell */
         $shell = $docker_config->shell();
 
         // If no authorized_keys file is set, then add all public keys from the agent into the container.
@@ -386,7 +390,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    public function isContainerRunning(HostConfig $docker_config, $container_name)
+    public function isContainerRunning(HostConfig $docker_config, $container_name): bool
     {
         $shell = $docker_config->shell();
         $scoped_loglevel = new ScopedLogLevel($shell, LogLevel::DEBUG);
@@ -588,8 +592,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
     {
         parent::preflightTask($task, $host_config, $context);
 
-        if (!in_array($task, ['docker', 'dockerCompose']) && empty($host_config['docker']['name'])) {
-            $this->logger->info('Try to get docker container name ...'. $task);
+        $needs_running_container = $context->getConfigurationService()->isRunningAppRequired(
+            $host_config,
+            $context,
+            $task
+        );
+
+        if ($needs_running_container && empty($host_config['docker']['name'])) {
+            $this->logger->info('Try to get docker container name ...');
             try {
                 $config = $host_config['docker'];
                 $host_config->setChild('docker', 'nameAutoDiscovered', true);
@@ -602,6 +612,12 @@ class DockerMethod extends BaseMethod implements MethodInterface
                     )
                 );
             } catch (\Exception $e) {
+            }
+        }
+        if ($needs_running_container) {
+            $ip = $this->getIpAddress($host_config, $context);
+            if (!$ip) {
+                throw new \RuntimeException('Container is not available, please check your app-runtime!');
             }
         }
     }
