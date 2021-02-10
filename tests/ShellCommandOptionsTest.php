@@ -112,7 +112,7 @@ class ShellCommandOptionsTest extends PhabTestCase
         $args = [
             '-c' => $config,
             'command' => 'drush',
-            'drush' => ['version'],
+            'command-arguments' => ['version'],
         ];
         if ($override_shell_provider_options) {
             $filepath =$this->getcwd() . '/assets/shell-command-options-tests/testruns';
