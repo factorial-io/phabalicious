@@ -325,25 +325,32 @@ class ConfigurationService
      *
      * @param bool $root_folder
      * @param array $stack
+     * @param string $inherit_key
+     *
      * @return array
      *
-     * @throws FabfileNotReadableException
-     * @throws MismatchedVersionException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
      */
-    public function resolveInheritance(array $data, $lookup, $root_folder = false, $stack = []): array
-    {
-        if (!isset($data['inheritsFrom'])) {
+    public function resolveInheritance(
+        array $data,
+        $lookup,
+        $root_folder = false,
+        $stack = [],
+        $inherit_key = "inheritsFrom"
+    ): array {
+        if (!isset($data[$inherit_key])) {
             return $data;
         }
         if (!$root_folder) {
             $root_folder = $this->getFabfilePath();
         }
 
-        $inheritsFrom = $data['inheritsFrom'];
+        $inheritsFrom = $data[$inherit_key];
         if (!is_array($inheritsFrom)) {
             $inheritsFrom = [ $inheritsFrom ];
         }
-        unset($data['inheritsFrom']);
+        unset($data[$inherit_key]);
 
         foreach (array_reverse($inheritsFrom) as $resource) {
             if (in_array($resource, $stack)) {
@@ -383,7 +390,7 @@ class ConfigurationService
                 unset($add_data['deprecated']);
             }
             if ($add_data) {
-                if (isset($add_data['inheritsFrom'])) {
+                if (isset($add_data[$inherit_key])) {
                     $stack[] = $resource;
                     $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder, $stack);
                 }
