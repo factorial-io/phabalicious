@@ -11,6 +11,7 @@ use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\Exception\YamlParseException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\ShellProviderFactory;
@@ -254,7 +255,11 @@ class ConfigurationService
         }
 
         $this->logger->info(sprintf('Read data from `%s`', $file));
-        $data = Yaml::parseFile($file);
+        try {
+            $data = Yaml::parseFile($file);
+        } catch (\Exception $e) {
+            throw new YamlParseException("Could not parse file `$file`", 0, $e);
+        }
         $ext = '.' . pathinfo($file, PATHINFO_EXTENSION);
         $override_file = str_replace($ext, '.override' . $ext, $file);
         $this->logger->debug(sprintf('Trying to read data from override `%s`', $override_file));
