@@ -14,6 +14,7 @@ use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Scaffolder\Options;
 use Phabalicious\Scaffolder\Scaffolder;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\KubectlShellProvider;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\ShellProvider\ShellProviderInterface;
@@ -157,9 +158,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
      * @param string $arg
      * @return string
      */
-    protected function expandCmd(HostConfig $config, $arg = '')
+    protected function expandCmd(HostConfig $config, $arg = '', $exclude = [])
     {
-        $cmd = implode(' ', KubectlShellProvider::getKubectlCmd($config->raw(), '#!kubectl'));
+        $cmd = implode(' ', KubectlShellProvider::getKubectlCmd($config->raw(), '#!kubectl', $exclude));
         return $cmd . ' ' . $arg;
     }
 
@@ -290,18 +291,23 @@ class K8sMethod extends BaseMethod implements MethodInterface
         );
     }
 
-    public function kubectl(HostConfig $host_config, TaskContextInterface $context, $command, $capture_output = false)
-    {
+    public function kubectl(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        $command,
+        $capture_output = false
+    ): CommandResult {
         $kube_config = $host_config['kube'];
         $project_folder = $this->ensureShell($host_config, $context);
 
         $this->kubectlShell->pushWorkingDir($project_folder);
-        $result = $this->kubectlShell->run(sprintf(
+        $cmd = sprintf(
             '%s %s --namespace %s',
             $this->expandCmd($host_config),
             $command,
             $kube_config['namespace']
-        ), $capture_output);
+        );
+        $result = $this->kubectlShell->run($cmd, $capture_output);
         $this->kubectlShell->popWorkingDir();
         return $result;
     }
@@ -442,13 +448,22 @@ class K8sMethod extends BaseMethod implements MethodInterface
      */
     public function appCheckExisting(HostConfig $host_config, TaskContextInterface $context)
     {
-        $this->ensureShell($host_config, $context);
-        $output = $this->kubectlShell->run(sprintf(
-            "kubectl get namespace %s",
-            $host_config['kube']['namespace']
-        ), true);
+        $projectFolder = $this->ensureShell($host_config, $context);
+        $this->kubectlShell->pushWorkingDir($projectFolder);
+        $cmd = $this->expandCmd(
+            $host_config,
+            sprintf("get namespace %s", $host_config['kube']['namespace']),
+            ["namespace"]
+        );
 
-        $context->setResult('appExists', $output->succeeded());
+        $result = $this->kubectlShell->run($cmd, true);
+
+        if ($result->failed()) {
+            $this->logger->info(implode(PHP_EOL, $result->getOutput()));
+        }
+
+        $this->kubectlShell->popWorkingDir();
+        $context->setResult('appExists', $result->succeeded());
     }
 
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
