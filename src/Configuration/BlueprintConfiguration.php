@@ -40,6 +40,13 @@ class BlueprintConfiguration
                     new BlueprintTemplate($this->configuration, $data['blueprint'], $data);
             }
         }
+        $inheritance_data = [];
+        foreach ($this->templates as $ndx => $template) {
+            $inheritance_data[$ndx] = $template->getTemplate();
+        }
+        foreach ($this->templates as $ndx => $template) {
+            $this->templates[$ndx]->resolveInheritance($inheritance_data);
+        }
     }
 
 
