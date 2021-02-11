@@ -861,6 +861,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         $context->setResult(self::SETTINGS_FILE_EXISTS, $settings_file_exists);
         $context->setResult(self::CONFIGURATION_EXISTS, $config_dir_exists);
-        $context->setResult(self::CONFIGURATION_USED, $config_dir_exists && $config_used);
+        $context->setResult(
+            self::CONFIGURATION_USED,
+            $config_dir_exists && $config_used && ($host_config['drushVersion'] >= 9)
+        );
     }
 }
