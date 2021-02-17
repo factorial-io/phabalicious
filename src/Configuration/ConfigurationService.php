@@ -673,7 +673,9 @@ class ConfigurationService
         if (!$this->getPasswordManager()) {
             throw new \RuntimeException('No password manager found!');
         }
-        $this->getPasswordManager()->resolveSecrets($host_config);
+        if ($this->getPasswordManager()) {
+            $host_config->setData($this->getPasswordManager()->resolveSecrets($host_config->raw()));
+        }
         return $host_config;
     }
 
