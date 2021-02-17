@@ -82,12 +82,12 @@ class PasswordManager implements PasswordManagerInterface
         return $this;
     }
 
-    public function resolveSecrets(HostConfig $host_config)
+    public function resolveSecrets(array $data)
     {
         $replacements = [];
-        $this->resolveSecretsImpl($host_config->raw(), $replacements);
-        $data = Utilities::expandStrings($host_config->raw(), $replacements);
-        $host_config->setData($data);
+        $this->resolveSecretsImpl($data, $replacements);
+        $data = Utilities::expandStrings($data, $replacements);
+        return $data;
     }
 
     private function resolveSecretsImpl(array $data, array &$replacements)
@@ -145,9 +145,44 @@ class PasswordManager implements PasswordManagerInterface
             throw new \RuntimeException("Cant resolve secrets as no valid context is available!");
         }
 
+        if (isset($secret_data['onePasswordId'])) {
+            $pw = $this->getSecretFrom1Password($secret_data['onePasswordId']);
+            if ($pw) {
+                return $pw;
+            }
+        }
+
         $pw = $this->getQuestionFactory()->askAndValidate($this->getContext()->io(), $secret_data, null);
 
         $this->passwords[$secret] = $pw;
         return $pw;
+    }
+
+    private function getSecretFrom1Password($item_id)
+    {
+        $op_file_path = getenv('PHAB_OP_FILE_PATH') ?: '/usr/local/bin/op';
+        if (!$op_file_path || !file_exists($op_file_path)) {
+            return false;
+        }
+
+        $output = [];
+        $result_code = 0;
+        $result = exec(sprintf("%s get item %s", $op_file_path, $item_id), $output, $result_code);
+        if ($result_code == 0) {
+            $json = json_decode(implode("\n", $output));
+
+            if (!empty($json->details->fields)) {
+                $fields = $json->details->fields;
+                foreach ($fields as $field) {
+                    if ($field->designation == 'password') {
+                        return $field->value;
+                    }
+                }
+            }
+        } else {
+            throw new \RuntimeException("1Password returned an error!");
+        }
+
+        return false;
     }
 }
