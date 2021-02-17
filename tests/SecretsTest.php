@@ -105,6 +105,27 @@ class SecretsTest extends PhabTestCase
         $this->assertStringContainsString('top_Secret', $output);
         $this->assertStringContainsString('123--top_Secret--321', $output);
         $this->assertStringNotContainsString('%secret.smtp-password', $output);
+        putenv("SMTP_PASSWORD");
+    }
+
+    /**
+     * @group docker
+     */
+    public function testSecretsFrom1Password()
+    {
+
+        $command = $this->application->find('output');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command' => $command->getName(),
+            '--what' => 'host',
+            '--config' => 'test1Password',
+        ));
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('iamsosecret', $output);
+        $this->assertStringContainsString('123--iamsosecret--321', $output);
+        $this->assertStringNotContainsString('%secret.op-password', $output);
     }
 
     public function testUnknownSecret()
