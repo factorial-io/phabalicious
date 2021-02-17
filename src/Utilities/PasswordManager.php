@@ -95,7 +95,7 @@ class PasswordManager implements PasswordManagerInterface
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $this->resolveSecretsImpl($value, $replacements);
-            } elseif ($secret_key = $this->containsSecret($value)) {
+            } elseif (is_string($value) && ($secret_key = $this->containsSecret($value))) {
                 $replacements['%secret.' . $secret_key . '%'] = $this->getSecret($secret_key);
             }
         }
