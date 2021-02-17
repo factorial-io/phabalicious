@@ -46,7 +46,6 @@ class ConfigurationServiceTest extends PhabTestCase
             ->will($this->returnValue([]));
 
         $this->config->setMethodFactory($method_factory);
-        $this->config->setPasswordManager($this->getMockBuilder(PasswordManager::class)->getMock());
     }
 
     public function testCustomFabfile()
