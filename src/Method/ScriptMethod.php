@@ -139,6 +139,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $commands = Utilities::validateScriptCommands($commands, $replacements);
 
 
+        $commands = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($commands);
 
         $context->set('host_config', $host_config);
 
