@@ -64,3 +64,27 @@ host:
       varian: the-variant
 ```
 
+## Inherit a blueprint from an existing blueprint
+
+`inheritsFrom` is not supported for blueprints, they will be resolved after the config got created. But you can use `blueprintInheritsFrom` instead. An example:
+
+```
+dockerHosts:
+  hostA:
+    blueprint:
+      key: hello-world
+
+hosts:
+  hostA:
+    blueprint:
+      blueprintInheritsFrom:
+        - docker:hostA
+
+  hostB:
+    blueprint:
+      blueprintInheritsFrom:
+        - host:hostA
+```
+
+As blueprints can be part of the general section, a dockerHost-confg or a host config, they need a namespace, so phab knows exactly which blueprint config you want to inherit from.
+
