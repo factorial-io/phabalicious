@@ -246,8 +246,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         // Database updates
         if ($host_config['drupalVersion'] >= 8) {
+            $this->runDrush($shell, 'updb -y --no-cache-clear');
             $this->runDrush($shell, 'cr -y');
-            $this->runDrush($shell, 'updb -y');
         } else {
             $this->runDrush($shell, 'updb -y ');
         }
@@ -290,6 +290,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $this->runDrush($shell, sprintf('state-set installation_type %s', $host_config['type']));
         } else {
             $this->runDrush($shell, 'cc all -y');
+        }
+        if ($host_config['drushVersion'] >= 10) {
+            $this->runDrush($shell, 'deploy:hook');
         }
     }
 
