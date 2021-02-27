@@ -11,6 +11,7 @@ use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
@@ -227,11 +228,42 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
 
         $log = $shell->run('#!git log --format="%H|%s"', true);
         $found = false;
+        $last_successful_deployment_hash = false;
+        $new_commits_since_last_deployment = [];
         foreach ($log->getOutput() as $line) {
-            list(, $subject) = explode('|', $line);
+            [$commit_hash, $subject] = explode('|', $line);
             if (preg_match('/\[[0-9a-f]{5,40}\]/', $subject, $result)) {
                 $found = substr($result[0], 1, strlen($result[0]) - 2);
+                $last_successful_deployment_hash = $commit_hash;
                 break;
+            } else {
+                $new_commits_since_last_deployment[] = [
+                    "hash" => $commit_hash,
+                    "message" => $subject,
+                ];
+            }
+        }
+        if (!empty($new_commits_since_last_deployment)) {
+            $context->io()->warning("Found new commits on target repository since last artifact deployment");
+            $context->io()->table([ "hash" => "Hash", "message" => "Message"], $new_commits_since_last_deployment);
+
+            if ($last_successful_deployment_hash) {
+                $affected_files = $shell->run(sprintf(
+                    "#!git diff %s..%s --name-only",
+                    $last_successful_deployment_hash,
+                    $new_commits_since_last_deployment[0]['hash']
+                ), true);
+                $context->io()->note("Changed files:");
+                $context->io()->listing($affected_files->getOutput());
+            }
+
+            $forced = (getenv("PHABALICIOUS_FORCE_GIT_ARTIFACT_DEPLOYMENT") ?: false) == "1";
+            $forced = $forced || Utilities::hasForceOption($context->getInput());
+
+            if (!$forced &&
+                !$context->io()->confirm("Are you sure, you want to continue?", false)
+            ) {
+                throw new \RuntimeException("Deployment aborted because of user-action!");
             }
         }
         $context->setResult('lastArtifactCommitHash', $found);
