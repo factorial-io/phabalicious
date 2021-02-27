@@ -143,9 +143,9 @@ hosts:
         clone: []
 ```
 
-If the target repository contains commmit not added by the artifact deployment, a warning will be shown to the user, with a list of commits and changed files. The user can confirm, that he wants to continue, or stop the execution.
+If the target repository contains commits not added by the artifact deployment, a warning will be shown to the user, with a list of commits and changed files. The user can confirm that he wants to continue, or stop the execution.
 
-You can force the aritifact based deployment by adding the `--force`-option, or by setting the `PHABALICIOUS_FORCE_GIT_ARTIFACT_DEPLOYMENT` environment variable to 1.
+You can force the artifact based deployment by adding the `--force`-option, or by setting the `PHABALICIOUS_FORCE_GIT_ARTIFACT_DEPLOYMENT` environment variable to 1.
 
 ### artifacts--custom
 
