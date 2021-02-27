@@ -42,6 +42,11 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
 
     public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
+        if (empty($this->hostConfig['docker']['name'])) {
+            throw new \RuntimeException(
+                "Could not retrieve name of docker container, your configuration might be wrong!"
+            );
+        }
         $command = [
             $this->hostConfig['dockerExecutable'],
             'exec',
