@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\ArgumentParsingException;
 use Phabalicious\Method\TaskContextInterface;
+use Symfony\Component\Console\Input\InputInterface;
 
 class Utilities
 {
@@ -424,5 +425,18 @@ class Utilities
     {
         $uid = posix_getuid();
         return posix_getpwuid($uid)['dir'];
+    }
+
+    /**
+     * Check if the force-option is set.
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     *
+     * @return bool
+     */
+    public static function hasForceOption(InputInterface $input): bool
+    {
+        $option = $input->getOption('force');
+        return is_null($option) || !empty($option);
     }
 }
