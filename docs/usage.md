@@ -47,3 +47,9 @@ You can get a list of available commands with
 ``` bash
 phab list
 ```
+
+## Used environment variables:
+
+* `PHABALICIOUS_EXECUTABLE` allows to override the phab executable when using variants
+* `PHABALICIOUS_DEFAULT_CONFIG` sets the default config name to use, when no config name was given via the `--config` flag
+* `PHABALICIOUS_FORCE_GIT_ARTIFACT_DEPLOYMENT` forces the git artifact deployment.
