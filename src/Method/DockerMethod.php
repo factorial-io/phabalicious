@@ -89,7 +89,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-        return in_array($task, ['startRemoteAccess']);
+        return in_array($task, $this->getInternalTasks());
     }
 
     /**
@@ -574,9 +574,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 $docker_name = $result->getOutput()[0] ?? false;
             }
             if ($docker_name) {
-                $cfg = $host_config['docker'];
-                $cfg['name'] = $docker_name;
-                $host_config['docker'] = $cfg;
+                $host_config->setChild('docker', 'nameAutoDiscovered', true);
+                $host_config->setChild('docker', 'name', $docker_name);
 
                 return $docker_name;
             }
@@ -627,7 +626,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         parent::postflightTask($task, $host_config, $context);
 
         // Reset any cached docker container name after a docker task.
-        if ($task == 'docker' && !empty($host_config['docker']['nameAutoDiscovered'])) {
+        if (!empty($host_config['docker']['nameAutoDiscovered'])) {
             $host_config->setChild('docker', 'name', null);
             $host_config->setChild('docker', 'nameAutoDiscovered', null);
         }
