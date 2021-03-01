@@ -583,6 +583,23 @@ This task will run a command to forward a local port to a remote port. It starts
 * `phab --config=mbb start-remote-access` will forward `localhost:8888` to port `80` of the docker-container
 * `phab --config=mbb start-remote-access --port=3306 --publicPort=33060` will forward `localhost:33060`to port `3306`
 
+
+## docker-compose
+
+``` bash
+phab --config=<config> docker-compose <docker-compose-arguments>
+```
+
+The docker-compose-command will run `docker-compose` in the mentioned environment, passing all given arguments to it. Phab will also set all environment variables beforehand.
+
+Some examples:
+
+```bash
+phab -cmbb docker-compose ps
+phab -cmbb docker-compose -- exec web ls -la
+phab -clive docker-compose run e2e
+```
+
 ## notify
 
 ``` bash
