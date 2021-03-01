@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.5.30';
+    const FALLBACK_VERSION = '3.5.31';
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
@@ -437,7 +437,7 @@ class Utilities
     public static function hasForceOption(InputInterface $input): bool
     {
         $option = $input->getOption('force');
-        
+
         // Testing for valueless options is tricky in symfony. That is why we test for
         // `is_null` (has no option value, e.g. `--force`) or `!empty()`, e.g. `--force=1`
         return is_null($option) || !empty($option);

@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.5.31 / 2021-03-01
+===================
+
+### New
+
+  * Initial implementation of new command `docker-compose`
+  * Rework docker-compose command so it can be run interactively
+  * Introduce isRunningAppRequired, to exit early if not the case
+  * Add support for `deploy`-command from drush 10.3 (fixes #106)
+  * Check target repository for new commits and show a warning (fixes  #124)
+
+### Changed
+
+  * Use same deploy strategy as drush
+  * Add drush cr after updb to mimic drush deploy
+
+### Fixed
+
+  * Fix broken caching of remote resources
+  * Show error message for `phab shell`, fixes #122
+
 ## 3.5.30 / 2021-01-27
 
 ### Added:
