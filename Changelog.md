@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.32 / 2021-03-01
+
+### Fixed:
+
+  * Fix regression when restarting containers with cached container name
+
 ## 3.5.31 / 2021-03-01
 
 ### New
