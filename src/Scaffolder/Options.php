@@ -18,8 +18,6 @@ class Options extends CallbackOptions
 
     protected $skipSubfolder = false;
 
-    protected $callbacks = [];
-
     protected $useCacheTokens = true;
 
     protected $variables = [];

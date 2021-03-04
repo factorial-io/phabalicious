@@ -129,4 +129,31 @@ class ScaffoldTest extends PhabTestCase
         $this->assertEquals("b-overridden", $yaml['b']);
         $this->assertEquals("d-overridden", $yaml['c']['d']);
     }
+
+    public function testScaffoldCallback()
+    {
+
+        $scaffolder = new Scaffolder($this->configuration);
+        $context = $this->createContext();
+        $options = new Options();
+        $options->setAllowOverride(true)
+            ->setUseCacheTokens(false);
+
+        $result = $scaffolder->scaffold(
+            $this->getCwd() . '/assets/scaffolder-test/scaffold-callback.yml',
+            $this->getcwd(),
+            $context,
+            [
+                'name' => 'test-scaffold-callback',
+            ],
+            $options
+        );
+
+        $this->assertEquals(0, $result->getExitCode());
+
+        $json = json_decode(file_get_contents($this->getCwd() . '/test-scaffold-callback/composer.json'), true);
+
+        $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
+        $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
+    }
 }

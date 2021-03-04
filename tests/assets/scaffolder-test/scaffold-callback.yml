@@ -1,0 +1,11 @@
+requires: 3.0
+
+questions: []
+assets: []
+
+scaffold:
+  - echo %rootFolder%
+  - cd %rootFolder%; composer init --name phabalicious/helloword -n
+  - scaffold("https://config.factorial.io/scaffold/precommit-hooks/drupal/1.0/index.yml", "a=1", "b=2")
+
+
