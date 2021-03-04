@@ -1,5 +1,12 @@
 # Changelog
 
+3.5.33 / 2021-03-04
+===================
+
+## Fixed:
+
+  * Run install from-config only for drush >=9  (fixes #121)
+
 ## 3.5.32 / 2021-03-01
 
 ### Fixed:
