@@ -187,8 +187,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param array $replacements
      *
      * @return CommandResult|null
-     * @throws MissingScriptCallbackImplementation
-     * @throws UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     private function runScriptImpl(
         string $root_folder,
@@ -224,7 +224,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $result = Utilities::extractCallback($line);
             $callback_handled = false;
             if ($result) {
-                list($callback_name, $args) = $result;
+                [$callback_name, $args] = $result;
                 $callback_handled = $this->executeCallback($context, $callbacks, $callback_name, $args);
             }
             if (!$callback_handled) {
