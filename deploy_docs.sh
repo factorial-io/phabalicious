@@ -13,6 +13,8 @@ cd docs/.vuepress/dist
 # echo 'www.example.com' > CNAME
 
 git init
+# set custom domain
+echo "docs.phab.io > CNAME"
 git add -A
 git commit -m 'deploy'
 
