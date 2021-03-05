@@ -45,7 +45,12 @@ scaffold:
 * `log_message` to print a message with a severity
 * `copy_assets` to copy assets and apply replacement patterns
 * `alter_json_file` which will alter an existing json file and change some data
+* `alter_yaml_file` which will alter an existing yaml file and change some data
 * `assert_file` throws an exception if the file does not exist
+* `assert_zero` will stop the execution if the argument is not zero
+* `assert_non_zero` will stop the execution if the argument is zero
+* `assert_contains` will stop the execution if the argument does nt contain given string
+* `set_directory` sets the working directory  to the argument
 
 ### List of commands which needs one or more plugin implementations
 
@@ -88,6 +93,53 @@ scaffold:
   alter_json_file(package.json, dataToInject)
 ```
 
+## `alter_yaml_file(file_path, data_ref)`
+
+This internal command can alter a yaml-file. It will merge the data from a yaml section into the yaml file. Note that the order in the resulting yaml file might be different, also comments might get removed. Here's an example:
+
+```yaml
+
+dataToInject:
+  one: foo
+  two: bar
+  dict:
+    one: boo
+    two: far
+
+scaffold:
+  alter_json_file(config.yaml, dataToInject)
+```
+## `assert_zero(variable, error_message)`
+
+This internal command will throw an exception if the specified argument is not zero.
+
+```yaml
+variables:
+    foo: 1
+scaffold:
+  - assert_zero(%foo%, foo is not zero)
+```
+
+## `assert_non_zero(variable, error_message)`
+
+This internal command will throw an exception if the specified argument is zero.
+
+```yaml
+variables:
+    foo: 0
+scaffold:
+  - assert_non_zero(%foo%, foo is zero)
+```
+
+## `assert_contains(needle, haystack)`
+
+This internal command will throw an exception if `needle` is not found in `haystack`
+
+```yaml
+scaffold:
+  - assert_contains(foo, bar, Could not find foo)
+-
+```
 ## `assert_file(file_path, error_message)`
 
 This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.
@@ -95,6 +147,33 @@ This internal command will throw an exception if the specified file does not exi
 ```yaml
 scaffold:
   - assert_file(<file_path>, <error_message>)
+```
+## `assert_file(file_path, error_message)`
+
+This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.
+
+```yaml
+scaffold:
+  - assert_file(<file_path>, <error_message>)
+```
+
+## `assert_file(file_path, error_message)`
+
+This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.
+
+```yaml
+scaffold:
+  - assert_file(<file_path>, <error_message>)
+```
+
+## `set_directory(directory)`
+
+This internal command will change the current directory for the following commands to `directory`.
+
+```yaml
+scaffold:
+  - set_directory(<directory>)
+  - echo $PWD # will output <directory>
 ```
 
 ## `confirm(message)`

@@ -80,7 +80,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         $this->workingDir = $config['rootFolder'];
     }
 
-    public function getHostConfig(): HostConfig
+    public function getHostConfig(): ?HostConfig
     {
         return $this->hostConfig;
     }
@@ -207,5 +207,31 @@ abstract class BaseShellProvider implements ShellProviderInterface
         }
 
         return $this->putFile($immediate_file_name, $target_file_name, $context, $verbose);
+    }
+
+    /**
+     * Setup environment variables..
+     *
+     * @param array $environment
+     * @throws \Exception
+     */
+    public function applyEnvironment(array $environment)
+    {
+        $files = [
+            '/etc/profile',
+            '~/.bashrc'
+        ];
+        foreach ($files as $file) {
+            if ($this->exists($file)) {
+                $this->run(sprintf('. %s', $file), false, false);
+            }
+        }
+        $cmds = [];
+        foreach ($environment as $key => $value) {
+            $cmds[] = "export \"$key\"=\"$value\"";
+        }
+        if (!empty($cmds)) {
+            $this->run(implode(" && ", $cmds));
+        }
     }
 }

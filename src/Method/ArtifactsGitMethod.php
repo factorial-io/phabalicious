@@ -258,7 +258,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             }
 
             $forced = (getenv("PHABALICIOUS_FORCE_GIT_ARTIFACT_DEPLOYMENT") ?: false) == "1";
-            $forced = $forced || Utilities::hasForceOption($context->getInput());
+            $forced = $forced || Utilities::hasBoolOptionSet($context->getInput(), 'force');
 
             if (!$forced &&
                 !$context->io()->confirm("Are you sure, you want to continue?", false)

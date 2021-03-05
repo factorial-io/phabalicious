@@ -130,6 +130,9 @@ class ScaffoldTest extends PhabTestCase
         $this->assertEquals("d-overridden", $yaml['c']['d']);
     }
 
+    /**
+     * @group docker
+     */
     public function testScaffoldCallback()
     {
 
@@ -152,6 +155,12 @@ class ScaffoldTest extends PhabTestCase
         $this->assertEquals(0, $result->getExitCode());
 
         $json = json_decode(file_get_contents($this->getCwd() . '/test-scaffold-callback/composer.json'), true);
+
+        $this->assertEquals('phabalicious/helloworld', $json['name']);
+        $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
+        $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
+
+        $json = json_decode(file_get_contents($this->getCwd() . '/test-scaffold-callback/second/composer.json'), true);
 
         $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
         $this->assertArrayHasKey('drupal/coder', $json['require-dev']);

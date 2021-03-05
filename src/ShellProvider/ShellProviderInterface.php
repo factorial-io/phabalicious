@@ -20,7 +20,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function setHostConfig(HostConfig $config);
 
-    public function getHostConfig(): HostConfig;
+    public function getHostConfig(): ?HostConfig;
 
     public function getWorkingDir(): string;
 

@@ -239,35 +239,10 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         return $cr;
     }
 
-    /**
-     * Setup environment variables..
-     *
-     * @param array $environment
-     * @throws \Exception
-     */
-    public function applyEnvironment(array $environment)
-    {
-        $files = [
-            '/etc/profile',
-            '~/.bashrc'
-        ];
-        foreach ($files as $file) {
-            if ($this->exists($file)) {
-                $this->run(sprintf('. %s', $file), false, false);
-            }
-        }
-        $cmds = [];
-        foreach ($environment as $key => $value) {
-            $cmds[] = "export \"$key\"=\"$value\"";
-        }
-        if (!empty($cmds)) {
-            $this->run(implode(" && ", $cmds));
-        }
-    }
 
-    public function getShellCommand(array $command, ShellOptions $options):array
+    public function getShellCommand(array $program_to_call, ShellOptions $options):array
     {
-        return $command;
+        return $program_to_call;
     }
 
     public function exists($file): bool
