@@ -185,6 +185,22 @@ scaffold:
   - confirm(<message>)
 ```
 
+## `scaffold(url, rootFolder)`
+
+This internal command will run another scaffolder from the given `url` or filepath into the given `rootFolder`.
+
+```yaml
+questions: []
+assets: []
+variables:
+themeFolder: "%rootFolder%/web/themes/custom/some_frontend"
+
+scaffold:
+    - scaffold("http://foo.bar/d8.yml", "%rootFolder%")
+    - scaffold("http://foo.bar/d8-theme.yml", "%themeFolder%")
+    - scaffold("http://foo.bar/d8-module.yml", "%rootFolder%/web/modules/custom/d8-module")
+```
+
 ## `transform`
 
 This internal command will transform a list of yml files to sth different with the help of plugins. THe plugins need to be declared in the `plugins`-section.
