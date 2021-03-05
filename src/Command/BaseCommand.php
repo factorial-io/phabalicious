@@ -416,6 +416,6 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     protected function hasForceOption(InputInterface $input): bool
     {
-         return Utilities::hasForceOption($input);
+         return Utilities::hasBoolOptionSet($input, 'force');
     }
 }

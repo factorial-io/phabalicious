@@ -434,9 +434,9 @@ class Utilities
      *
      * @return bool
      */
-    public static function hasForceOption(InputInterface $input): bool
+    public static function hasBoolOptionSet(InputInterface $input, string $name): bool
     {
-        $option = $input->getOption('force');
+        $option = $input->getOption($name);
 
         // Testing for valueless options is tricky in symfony. That is why we test for
         // `is_null` (has no option value, e.g. `--force`) or `!empty()`, e.g. `--force=1`
