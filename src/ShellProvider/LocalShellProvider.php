@@ -110,7 +110,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
 
         $shell_executable = $this->hostConfig['shellExecutable'];
-        $this->process = $this->createShellProcess([$shell_executable]);
+        $options = new ShellOptions();
+        $options->setQuiet(false);
+        $this->process = $this->createShellProcess([$shell_executable], $options);
 
         $this->input = new InputStream();
         $this->process->setInput($this->input);
@@ -210,6 +212,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         if ($this->process->isTerminated()) {
             $this->logger->log($this->loglevel->get(), 'Local shell terminated unexpected, will start a new one!');
             $error_output = trim($this->process->getErrorOutput());
+            $output = trim($this->process->getOutput());
+
+            if (!empty($output)) {
+                $this->logger->log($this->errorLogLevel->get(), $output);
+            }
             if (!empty($error_output)) {
                 $this->logger->log($this->errorLogLevel->get(), $error_output);
             }

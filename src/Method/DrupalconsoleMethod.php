@@ -34,7 +34,8 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-        return $task === 'drupalConsole';
+
+        return parent::isRunningAppRequired($host_config, $context, $task) || $task === 'drupalConsole';
     }
 
     private function getDrupalExec(string $root_folder, ShellProviderInterface $shell)
