@@ -187,7 +187,7 @@ scaffold:
 
 ## `scaffold(url, rootFolder)`
 
-This internal command will run another scaffolder from the given `url` or filepath into the given `rootFolder`.
+This internal command will run another scaffolder from the given `url` or filepath into the given `rootFolder`. Additional arguments in the form of `key=value` will be passed to the scaffolder.
 
 ```yaml
 questions: []
@@ -198,7 +198,7 @@ themeFolder: "%rootFolder%/web/themes/custom/some_frontend"
 scaffold:
     - scaffold("http://foo.bar/d8.yml", "%rootFolder%")
     - scaffold("http://foo.bar/d8-theme.yml", "%themeFolder%")
-    - scaffold("http://foo.bar/d8-module.yml", "%rootFolder%/web/modules/custom/d8-module")
+    - scaffold("http://foo.bar/d8-module.yml", "%rootFolder%/web/modules/custom/d8-module", "key1=value1", "key2=value2")
 ```
 
 ## `transform`
