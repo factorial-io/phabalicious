@@ -1,7 +1,7 @@
 name: app-create-tests
 
 appStages:
-    # We use cusomt stages to remove checkConnectivity, as this tries to connect to the inner app.
+    # We use custom stages to remove checkConnectivity, as this tries to connect to the inner app.
     create:
         -  'prepareDestination'
         - 'installCode'

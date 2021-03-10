@@ -14,6 +14,9 @@ Phabalicious supports not only scaffolding new applications, but arbitrary files
 phab scaffold path/to/scaffold-file.yaml
 ```
 
+If you want to preview the command, add the `--dry-run`-option, this will output all commands to the console instead of executing them.
+
+
 ## the scaffold-file
 
 The scaffold-file has the same structure as used for scaffolding applications. Here's an example:
@@ -107,7 +110,7 @@ dataToInject:
     two: far
 
 scaffold:
-  alter_json_file(config.yaml, dataToInject)
+  alter_yaml_file(config.yaml, dataToInject)
 ```
 ## `assert_zero(variable, error_message)`
 
