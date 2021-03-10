@@ -18,9 +18,11 @@ class Options extends CallbackOptions
 
     protected $skipSubfolder = false;
 
-    protected $callbacks = [];
-
     protected $useCacheTokens = true;
+
+    protected $dryRun = false;
+
+    protected $quiet = false;
 
     protected $variables = [];
 
@@ -168,5 +170,43 @@ class Options extends CallbackOptions
     public function getShell(): ?ShellProviderInterface
     {
         return $this->shell;
+    }
+
+    /**
+     * Set dry-run flag.
+     *
+     * @param bool $flag
+     *
+     * @return $this
+     */
+    public function setDryRun(bool $flag): Options
+    {
+        $this->dryRun = $flag;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDryRun(): bool
+    {
+        return $this->dryRun;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isQuiet(): bool
+    {
+        return $this->quiet;
+    }
+
+    /**
+     * @param bool $quiet
+     */
+    public function setQuiet(bool $quiet): Options
+    {
+        $this->quiet = $quiet;
+        return $this;
     }
 }

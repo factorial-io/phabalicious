@@ -90,7 +90,13 @@ abstract class BaseMethod implements MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task)
     {
-        $this->logger->info("Missing implementation for taskNeedsRunningApp: " . $task);
+        if ($task == 'appCreate') {
+            $stage = $context->get('currentStage');
+            if ($stage == 'checkConnectivity') {
+                return true;
+            }
+        }
+
         return false;
     }
 

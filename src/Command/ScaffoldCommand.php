@@ -11,8 +11,10 @@ use Phabalicious\Method\TaskContext;
 use Phabalicious\Scaffolder\Callbacks\TransformCallback;
 use Phabalicious\Scaffolder\Options;
 use Phabalicious\Utilities\PluginDiscovery;
+use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ScaffoldCommand extends ScaffoldBaseCommand
@@ -33,9 +35,17 @@ class ScaffoldCommand extends ScaffoldBaseCommand
         );
 
         $this->addOption(
+            'dry-run',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'if set, then the commands will be printed out, instead of executed.',
+            false
+        );
+
+        $this->addOption(
             'use-cached-tokens',
             null,
-            InputArgument::OPTIONAL,
+            InputOption::VALUE_OPTIONAL,
             'if set, then the tokens will be written into .phab-scaffold-tokens',
             false
         );
@@ -67,7 +77,8 @@ class ScaffoldCommand extends ScaffoldBaseCommand
         $options
             ->setAllowOverride(true)
             ->setSkipSubfolder(true)
-            ->setUseCacheTokens($input->getOption('use-cached-tokens'))
+            ->setUseCacheTokens(Utilities::hasBoolOptionSet($input, 'use-cached-tokens'))
+            ->setDryRun(Utilities::hasBoolOptionSet($input, 'dry-run'))
             ->addCallback('transform', [new TransformCallback(), 'handle'])
             ->setPluginRegistrationCallback(
                 function ($paths) use ($callback) {

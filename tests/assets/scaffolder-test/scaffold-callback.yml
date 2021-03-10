@@ -1,0 +1,18 @@
+requires: 3.0
+
+questions: []
+assets: []
+
+variables:
+    secondFolder: "%rootFolder%/second"
+
+scaffold:
+  - mkdir -p %rootFolder%
+  - set_directory(%rootFolder%)
+  - git init
+  - composer init --name phabalicious/helloworld -n
+  - scaffold("https://config.factorial.io/scaffold/precommit-hooks/drupal/1.0/index.yml", %rootFolder%)
+  - mkdir %secondFolder%
+  - scaffold("https://config.factorial.io/scaffold/precommit-hooks/drupal/1.0/index.yml", %secondFolder%)
+
+

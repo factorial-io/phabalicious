@@ -27,7 +27,7 @@ class TunnelHelperFactory
         }
         $this->creatingTunnel = true;
 
-        if (!in_array($task, ['about', 'doctor', 'sshCommand'])) {
+        if ($context->getConfigurationService()->isRunningAppRequired($config, $context, $task)) {
             $this->createLocalToHostTunnel($config, $context);
         }
         if (in_array($task, ['copyFrom'])) {

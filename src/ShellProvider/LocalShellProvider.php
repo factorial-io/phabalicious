@@ -110,7 +110,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
 
         $shell_executable = $this->hostConfig['shellExecutable'];
-        $this->process = $this->createShellProcess([$shell_executable]);
+        $options = new ShellOptions();
+        $options->setQuiet(false);
+        $this->process = $this->createShellProcess([$shell_executable], $options);
 
         $this->input = new InputStream();
         $this->process->setInput($this->input);
@@ -210,6 +212,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         if ($this->process->isTerminated()) {
             $this->logger->log($this->loglevel->get(), 'Local shell terminated unexpected, will start a new one!');
             $error_output = trim($this->process->getErrorOutput());
+            $output = trim($this->process->getOutput());
+
+            if (!empty($output)) {
+                $this->logger->log($this->errorLogLevel->get(), $output);
+            }
             if (!empty($error_output)) {
                 $this->logger->log($this->errorLogLevel->get(), $error_output);
             }
@@ -239,35 +246,10 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         return $cr;
     }
 
-    /**
-     * Setup environment variables..
-     *
-     * @param array $environment
-     * @throws \Exception
-     */
-    public function applyEnvironment(array $environment)
-    {
-        $files = [
-            '/etc/profile',
-            '~/.bashrc'
-        ];
-        foreach ($files as $file) {
-            if ($this->exists($file)) {
-                $this->run(sprintf('. %s', $file), false, false);
-            }
-        }
-        $cmds = [];
-        foreach ($environment as $key => $value) {
-            $cmds[] = "export \"$key\"=\"$value\"";
-        }
-        if (!empty($cmds)) {
-            $this->run(implode(" && ", $cmds));
-        }
-    }
 
-    public function getShellCommand(array $command, ShellOptions $options):array
+    public function getShellCommand(array $program_to_call, ShellOptions $options):array
     {
-        return $command;
+        return $program_to_call;
     }
 
     public function exists($file): bool

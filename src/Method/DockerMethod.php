@@ -89,7 +89,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-        return in_array($task, $this->getInternalTasks());
+        return parent::isRunningAppRequired($host_config, $context, $task)
+            || in_array($task, $this->getInternalTasks());
     }
 
     /**

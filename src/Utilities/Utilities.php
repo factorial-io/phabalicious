@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.5.33';
+    const FALLBACK_VERSION = '3.6.0';
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
@@ -257,7 +257,14 @@ class Utilities
         return preg_replace('/\s|\.|\,|_|\-|:|\//', $replacement, strtolower($str));
     }
 
-    public static function isAssocArray($arr)
+    /**
+     * Check if $arr is an associative array.
+     *
+     * @param mixed $arr
+     *
+     * @return bool
+     */
+    public static function isAssocArray($arr): bool
     {
         if (!is_array($arr) || array() === $arr) {
             return false;
@@ -265,7 +272,7 @@ class Utilities
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
-    public static function prependRootFolder($rootFolder, $subfolder)
+    public static function prependRootFolder($rootFolder, $subfolder): string
     {
         if (strpos($subfolder, $rootFolder) === false) {
             return $rootFolder . $subfolder;
@@ -274,7 +281,7 @@ class Utilities
         return $subfolder;
     }
 
-    public static function cleanupString($identifier)
+    public static function cleanupString($identifier): string
     {
         $identifier = trim($identifier);
 
@@ -296,7 +303,7 @@ class Utilities
         return strtolower($identifier);
     }
 
-    public static function getRelativePath($from, $to)
+    public static function getRelativePath($from, $to): string
     {
         // some compatibility fixes for Windows paths
         $from = is_dir($from) ? rtrim($from, '\/') . '/' : $from;
@@ -381,7 +388,7 @@ class Utilities
     }
 
 
-    public static function generateUUID()
+    public static function generateUUID(): string
     {
         return bin2hex(openssl_random_pseudo_bytes(4)) . '-' .
             bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
@@ -394,7 +401,7 @@ class Utilities
      * @param array $tokens
      * @return array
      */
-    public static function getReplacements($tokens): array
+    public static function getReplacements(array $tokens): array
     {
         $replacements = [];
         foreach ($tokens as $key => $value) {
@@ -421,22 +428,25 @@ class Utilities
      *
      * @return string
      */
-    public static function getUserFolder()
+    public static function getUserFolder(): string
     {
         $uid = posix_getuid();
         return posix_getpwuid($uid)['dir'];
     }
 
     /**
-     * Check if the force-option is set.
+     * Check if the given named option is set.
      *
      * @param \Symfony\Component\Console\Input\InputInterface $input
+     *   The input.
+     * @param string $name
+     *   The name of the option.
      *
      * @return bool
      */
-    public static function hasForceOption(InputInterface $input): bool
+    public static function hasBoolOptionSet(InputInterface $input, string $name): bool
     {
-        $option = $input->getOption('force');
+        $option = $input->getOption($name);
 
         // Testing for valueless options is tricky in symfony. That is why we test for
         // `is_null` (has no option value, e.g. `--force`) or `!empty()`, e.g. `--force=1`

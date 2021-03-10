@@ -3,7 +3,6 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MethodNotFoundException;
@@ -13,10 +12,8 @@ use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\AppDefaultStages;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;

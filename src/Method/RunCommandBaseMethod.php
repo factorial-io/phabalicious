@@ -52,6 +52,9 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
+        if (parent::isRunningAppRequired($host_config, $context, $task)) {
+            return true;
+        }
         if ($task !== $this->getName()) {
             return false;
         }

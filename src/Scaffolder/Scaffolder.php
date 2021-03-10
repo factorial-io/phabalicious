@@ -17,6 +17,7 @@ use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\DryRunShellProvider;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
@@ -70,6 +71,10 @@ class Scaffolder
     ) {
         if (!$options) {
             $options = new Options();
+        }
+        $saved_verbosity_level = $context->io()->getVerbosity();
+        if ($options->isQuiet()) {
+            $context->io()->setVerbosity(OutputInterface::VERBOSITY_QUIET);
         }
 
         $is_remote = false;
@@ -172,11 +177,20 @@ class Scaffolder
         $logger = $this->configuration->getLogger();
         $script = new ScriptMethod($logger);
 
-        if ($shell = $options->getShell()) {
+        $shell = null;
+        if ($options->isDryRun()) {
+            $shell = new DryRunShellProvider($logger);
+            $shell->setOutput($context->getOutput());
+        }
+        if (!$shell) {
+            $shell = $options->getShell();
+        }
+        if (!$shell) {
+            $shell = new LocalShellProvider($logger);
+        }
+        if ($shell->getHostConfig()) {
             $host_config = $shell->getHostConfig();
         } else {
-            $shell = new LocalShellProvider($logger);
-
             $host_config = new HostConfig([
                 'rootFolder' => realpath($root_folder),
                 'shellExecutable' => '/bin/bash'
@@ -185,6 +199,7 @@ class Scaffolder
 
         $context->set(ScriptMethod::SCRIPT_DATA, $data['scaffold']);
         $context->set('variables', $tokens);
+        $context->set('options', $options);
 
         $context->set('scaffoldData', $data);
         $context->set('tokens', $tokens);
@@ -217,7 +232,7 @@ class Scaffolder
             $context->io()->note('Available tokens:' . PHP_EOL . print_r($tokens, true));
         }
 
-        $context->io()->comment('Create destination folder ...');
+        $context->io()->comment(sprintf('Create destination folder `%s`...', $tokens['rootFolder']));
         $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
         $context->io()->comment('Start scaffolding script ...');
@@ -241,6 +256,12 @@ class Scaffolder
         }
 
         $context->io()->success('Scaffolding finished successfully!');
+        if ($options->isDryRun()) {
+            $result = new CommandResult(0, $shell->getCapturedCommands());
+        }
+
+        $context->io()->setVerbosity($saved_verbosity_level);
+
         return $result;
     }
 
@@ -251,7 +272,6 @@ class Scaffolder
      * @param array $tokens
      * @param Options $options
      * @return array
-     * @throws ValidationFailedException
      */
     protected function askQuestions(
         InputInterface $input,

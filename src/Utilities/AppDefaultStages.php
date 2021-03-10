@@ -11,6 +11,7 @@ class AppDefaultStages
         'prepareDestination',
         'installCode',
         'spinUp',
+        'checkConnectivity',
         'installDependencies',
         'install',
     ];
