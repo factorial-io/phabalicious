@@ -1,7 +1,13 @@
 # Changelog
 
-3.5.33 / 2021-03-04
-===================
+## 3.5.34 / 2021-03-11
+
+## Changed:
+
+  * Percentages for replacement patterns can be escaped via `\` in scripts
+  * webhook-urls can contain replacement-patterns
+
+## 3.5.33 / 2021-03-04
 
 ## Fixed:
 
