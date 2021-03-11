@@ -153,7 +153,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
             $context->setResult('commandResult', $result);
         } catch (UnknownReplacementPatternException $e) {
-            $context->io()->error('Unknown replacement in line `' . $e->geOffendingLine() .'`');
+            $context->io()->error('Unknown replacement in line `' . $e->getOffendingLine() .'`');
 
             $matches = [];
             if (preg_match_all('/%arguments\.(.*?)%/', $e->getOffendingLine(), $matches)) {
