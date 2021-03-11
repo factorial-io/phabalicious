@@ -181,7 +181,14 @@ class K8sMethod extends BaseMethod implements MethodInterface
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
         parent::postflightTask($task, $config, $context);
-        if ($task == 'k8s' && !empty($config['kube']['podForCliSet'])) {
+
+        $needs_running_container = $context->getConfigurationService()->isRunningAppRequired(
+            $config,
+            $context,
+            $task
+        );
+
+        if (!$needs_running_container && !empty($config['kube']['podForCliSet'])) {
             $config->setChild('kube', 'podForCli', null);
             $config->setChild('kube', 'podForCliSet', null);
         }

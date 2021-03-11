@@ -626,8 +626,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
     {
         parent::postflightTask($task, $host_config, $context);
 
+        $needs_running_container = $context->getConfigurationService()->isRunningAppRequired(
+            $host_config,
+            $context,
+            $task
+        );
         // Reset any cached docker container name after a docker task.
-        if (!empty($host_config['docker']['nameAutoDiscovered'])) {
+        if (!$needs_running_container && !empty($host_config['docker']['nameAutoDiscovered'])) {
             $host_config->setChild('docker', 'name', null);
             $host_config->setChild('docker', 'nameAutoDiscovered', null);
         }
