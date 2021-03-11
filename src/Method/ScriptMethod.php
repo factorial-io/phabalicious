@@ -5,11 +5,6 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Scaffolder\CallbackOptions;
-use Phabalicious\Scaffolder\Callbacks\AssertNonZeroCallback;
-use Phabalicious\Scaffolder\Callbacks\AssertZeroCallback;
-use Phabalicious\Scaffolder\Callbacks\ConfirmCallback;
-use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
-use Phabalicious\Scaffolder\Options;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
@@ -75,8 +70,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws MissingScriptCallbackImplementation
-     * @throws UnknownReplacementPatternException
+     *
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     public function runScript(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -134,9 +130,13 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         }
 
         $replacements = Utilities::expandVariables($variables);
-        $commands = Utilities::expandStrings($commands, $replacements);
-        $commands = Utilities::expandStrings($commands, $replacements);
         $environment = Utilities::expandStrings($environment, $replacements);
+        $environment = Utilities::validateScriptCommands($environment, $replacements);
+
+        $commands = Utilities::expandStrings($commands, $replacements, []);
+        $commands = Utilities::expandStrings($commands, $replacements);
+        $commands = Utilities::validateScriptCommands($commands, $replacements);
+
 
 
         $context->set('host_config', $host_config);
@@ -147,14 +147,13 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $commands,
                 $context,
                 $callbacks,
-                $environment,
-                $replacements
+                $environment
             );
 
             $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
             $context->setResult('commandResult', $result);
         } catch (UnknownReplacementPatternException $e) {
-            $context->io()->error('Unknown replacement in line `' . $e->getOffendingLine() .'`');
+            $context->io()->error('Unknown replacement in line `' . $e->geOffendingLine() .'`');
 
             $matches = [];
             if (preg_match_all('/%arguments\.(.*?)%/', $e->getOffendingLine(), $matches)) {
@@ -184,19 +183,17 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @param array $callbacks
      * @param array $environment
-     * @param array $replacements
      *
      * @return CommandResult|null
      * @throws MissingScriptCallbackImplementation
-     * @throws UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     private function runScriptImpl(
         string $root_folder,
         array $commands,
         TaskContextInterface $context,
         array $callbacks = [],
-        array $environment = [],
-        array $replacements = []
+        array $environment = []
     ) : ?CommandResult {
         $command_result = new CommandResult(0, []);
         $context->set('break_on_first_error', $this->getBreakOnFirstError());
@@ -204,15 +201,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $shell = $context->getShell();
         $shell->setOutput($context->getOutput());
         $shell->applyEnvironment($environment);
-
-        $result = $this->validateReplacements($commands);
-        if ($result !== true) {
-            throw new UnknownReplacementPatternException($result, $replacements);
-        }
-        $result = $this->validateReplacements($environment);
-        if ($result !== true) {
-            throw new UnknownReplacementPatternException($result, $replacements);
-        }
 
         $shell->pushWorkingDir($root_folder);
 
@@ -224,7 +212,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $result = Utilities::extractCallback($line);
             $callback_handled = false;
             if ($result) {
-                list($callback_name, $args) = $result;
+                [$callback_name, $args] = $result;
                 $callback_handled = $this->executeCallback($context, $callbacks, $callback_name, $args);
             }
             if (!$callback_handled) {
@@ -242,19 +230,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         return $command_result;
     }
 
-    /**
-     * @param string[] $strings
-     * @return true|string
-     */
-    private function validateReplacements($strings)
-    {
-        foreach ($strings as $line) {
-            if (preg_match('/\%(\S*)\%/', $line)) {
-                return $line;
-            }
-        }
-        return true;
-    }
 
 
     /**

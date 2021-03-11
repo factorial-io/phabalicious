@@ -5,6 +5,7 @@ namespace Phabalicious\Utilities;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\ArgumentParsingException;
+use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Method\TaskContextInterface;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -76,9 +77,26 @@ class Utilities
 
     public static function expandString($string, array $replacements, array $ignore_list = []): string
     {
-        return self::expandStrings([$string], $replacements)[0];
+        return self::expandStrings([$string], $replacements, $ignore_list)[0];
     }
 
+    public static function expandAndValidateString($string, array $replacements, array $ignore_list = []): string
+    {
+        $strings = self::expandStrings([$string], $replacements, $ignore_list);
+        $strings = self::validateScriptCommands($strings, $replacements);
+
+        return empty($strings) ? "" : $strings[0];
+    }
+
+    /**
+     * Expands an array of string and replace patterns.
+     *
+     * @param array $strings
+     * @param array $replacements
+     * @param array $ignore_list
+     *
+     * @return array
+     */
     public static function expandStrings(array $strings, array $replacements, array $ignore_list = []): array
     {
         if (empty($strings)) {
@@ -114,6 +132,47 @@ class Utilities
         return $result;
     }
 
+    /**
+     * Validate an array of script commands and unescape any escaped percentages.
+     *
+     * @param array $commands
+     * @param array $replacements
+     *
+     * @return array
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     */
+    public static function validateScriptCommands(array $commands, array $replacements): array
+    {
+        $validated = Utilities::validateReplacements($commands);
+        if ($validated !== true) {
+            throw new UnknownReplacementPatternException($validated, $replacements);
+        }
+
+        $commands = array_map(function ($r) {
+            return str_replace('\%', '%', $r);
+        }, $commands);
+
+        return $commands;
+    }
+
+    /**
+     * Validate for any remaining replacement strings.
+     *
+     * @param string[] $strings
+     * @return true|string
+     */
+    public static function validateReplacements(array $strings)
+    {
+        foreach ($strings as $line) {
+            if (preg_match('/[^\\\]%[A-Za-z0-9\.-_]*%/', $line)) {
+                return $line;
+            }
+            if (preg_match('/^%[A-Za-z0-9\.-_]*%/', $line)) {
+                return $line;
+            }
+        }
+        return true;
+    }
 
     public static function buildVariablesFrom(HostConfig $host_config, TaskContextInterface $context)
     {

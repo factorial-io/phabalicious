@@ -165,12 +165,13 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         $defaults = $context->getConfigurationService()->getSetting('webhooks.defaults', []);
         $webhook = Utilities::mergeData($defaults, $webhook);
 
+        $variables = Utilities::buildVariablesFrom($config, $context);
+        $replacements = Utilities::expandVariables($variables);
 
+        $webhook['url'] = Utilities::expandAndValidateString($webhook['url'], $replacements);
 
         if (!empty($webhook['payload'])) {
             $payload = $webhook['payload'];
-            $variables = Utilities::buildVariablesFrom($config, $context);
-            $replacements = Utilities::expandVariables($variables);
             $payload = Utilities::expandStrings($payload, $replacements);
             if ($webhook['method'] == 'get') {
                 $webhook['url'] .= '?' . http_build_query($payload);
