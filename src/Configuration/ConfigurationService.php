@@ -377,8 +377,9 @@ class ConfigurationService
                 $add_data = $this->readFile($root_folder . '/' . $resource);
             } else {
                 throw new FabfileNotReadableException(sprintf(
-                    'Could not resolve inheritance from `inheritsFrom: %s`',
-                    $resource
+                    "Could not resolve inheritance from `inheritsFrom: %s`! \n\nPossible values: %s",
+                    $resource,
+                    '`' . implode('`, `', array_keys($lookup)) . '`'
                 ));
             }
             if (!empty($add_data['deprecated'])) {
