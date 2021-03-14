@@ -32,6 +32,11 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         $this->dockerExec = new DockerExecShellProvider($logger);
     }
 
+    public function getName(): string
+    {
+        return self::PROVIDER_NAME;
+    }
+
     public function setHostConfig(HostConfig $config)
     {
         parent::setHostConfig($config);

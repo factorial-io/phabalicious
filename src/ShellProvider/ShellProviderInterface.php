@@ -76,4 +76,21 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
      * @return array
      */
     public function wrapCommandInLoginShell(array $command);
+
+    /**
+     * Get the rsync options from the shell providers.
+     *
+     * @param \Phabalicious\Configuration\HostConfig $to_host_config
+     * @param \Phabalicious\Configuration\HostConfig $from_host_config
+     * @param string $to_path
+     * @param string $from_path
+     *
+     * @return false|array
+     */
+    public function getRsyncOptions(
+        HostConfig $to_host_config,
+        HostConfig $from_host_config,
+        string $to_path,
+        string $from_path
+    );
 }
