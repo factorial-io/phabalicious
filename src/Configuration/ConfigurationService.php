@@ -353,6 +353,17 @@ class ConfigurationService
         unset($data[$inherit_key]);
 
         foreach (array_reverse($inheritsFrom) as $resource) {
+            if ($resource[0] == "@") {
+                $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getSetting("inheritanceBaseUrl", false);
+                if (!$baseUrl) {
+                    throw new FabfileNotReadableException(
+                        "Fabfile does not contain `inheritanceBaseUrl` which is needed to resolve inheritance!"
+                    );
+                }
+
+                $resource = $baseUrl . substr($resource, 1);
+            }
+
             if (in_array($resource, $stack)) {
                 throw new \InvalidArgumentException(sprintf(
                     "Possible recursion in inheritsFrom detected! `%s `in [%s]",
