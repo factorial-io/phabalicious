@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.5.35 / 2021-03-14
+
+### Fixed:
+
+  * Fix `getSQLDump` and `restoreSqlFromFile` tasks
+
+## 3.5.34 / 2021-03-11
+
+## New
+
+  * new `scaffold` internal command to run scaffolders from within a scaffolder
+
+## Changed:
+
+  * Percentages for replacement patterns can be escaped via `\` in scripts
+  * webhook-urls can contain replacement-patterns
+
 ## 3.5.33 / 2021-03-04
 
 ## Fixed:

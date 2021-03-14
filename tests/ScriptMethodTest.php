@@ -18,6 +18,7 @@ use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Utilities\Utilities;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -294,5 +295,41 @@ class ScriptMethodTest extends PhabTestCase
         }
         $debug[] = $message;
         $context->set('debug', $debug);
+    }
+
+    public function testValidateReplacements()
+    {
+
+        $this->assertEquals(true, Utilities::validateReplacements([
+            "kjhdakadjh\%blaa\%bla"
+        ]));
+        $this->assertEquals(true, Utilities::validateReplacements([
+            "\%blaa\%bla"
+        ]));
+        $this->assertEquals(true, Utilities::validateReplacements([
+            "bla\%blaa\%"
+        ]));
+
+        $this->assertEquals("%here%", Utilities::validateReplacements([
+            "lhkjdhkadhj",
+            "%here%",
+            "khjkhjkjhkjh",
+        ]));
+
+        $this->assertEquals("huhu %here%", Utilities::validateReplacements([
+            "lhkjdhkadhj",
+            "huhu %here%",
+            "khjkhjkjhkjh",
+        ]));
+        $this->assertEquals("%here%haha", Utilities::validateReplacements([
+            "lhkjdhkadhj",
+            "%here%haha",
+            "khjkhjkjhkjh",
+        ]));
+        $this->assertEquals("%here%%huhu%", Utilities::validateReplacements([
+            "lhkjdhkadhj",
+            "%here%%huhu%",
+            "khjkhjkjhkjh",
+        ]));
     }
 }
