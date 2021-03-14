@@ -893,13 +893,16 @@ class ConfigurationService
     {
 
         $needs = $host_config['needs'];
+        $result = false;
         foreach ($this->getMethodFactory()->getSubset($needs) as $method) {
             if ($method->isRunningAppRequired($host_config, $context, $task)) {
-                return true;
+                $result = true;
+                break;
             }
         }
 
-        return false;
+        $this->logger->debug("$task requires running app? " . ($result ? "YES" : "NO"));
+        return $result;
     }
 
     public function findScript(HostConfig $host_config, $script_name)
