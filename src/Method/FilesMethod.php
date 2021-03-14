@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\EarlyTaskExitException;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 
 class FilesMethod extends BaseMethod implements MethodInterface
@@ -270,34 +271,40 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $from_path = $from_config[$key];
         $to_path = $to_config[$key];
 
+        $rsync_add_args = $from_config->shell()->getRsyncOptions($to_config, $from_config, $to_path, $from_path);
+        if (!$rsync_add_args) {
+            $this->logger->error(sprintf(
+                "Shell of type %s does not support rsync in this combination! (`%s` <- `%s`)",
+                $from_config->shell()->getName(),
+                $to_config->shell()->getName(),
+                $from_config->shell()->getName()
+            ));
+            return new CommandResult(1, []);
+        }
+
         $this->logger->notice(sprintf(
             'Syncing files from `%s` to `%s`',
             $from_config['configName'],
             $to_config['configName']
         ));
+
+        $rsync_args = [];
         $exclude_settings = $context->getConfigurationService()->getSetting('excludeFiles.copyFrom', false);
-        $rsync_args = '';
         if ($exclude_settings) {
-            $rsync_args .= ' --exclude "' . implode('" --exclude "', $exclude_settings) . '"';
+            foreach ($exclude_settings as $e) {
+                $rsync_args[] = '--exclude ' . $e;
+            }
         }
-        $rsync_args .= ' -rav --no-o --no-g -e "' . sprintf(
-            'ssh -T -o Compression=no ' .
-            '-o PasswordAuthentication=no ' .
-            '-o StrictHostKeyChecking=no ' .
-            '-o UserKnownHostsFile=/dev/null ' .
-            '-p %s',
-            $from_config['port']
-        ) . '"';
-        $rsync_args .= sprintf(
-            ' %s@%s:%s/. %s',
-            $from_config['user'],
-            $from_config['host'],
-            $from_path,
-            $to_path
-        );
+
+        $rsync_args[] = '-rav';
+        $rsync_args[] = '--no-o';
+        $rsync_args[] = '--no-g';
+
+        $rsync_args = array_merge($rsync_args, $rsync_add_args);
+
 
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($to_config, $context);
-        return $shell->run('#!rsync ' . $rsync_args);
+        return $shell->run('#!rsync ' . implode(' ', $rsync_args));
     }
 }

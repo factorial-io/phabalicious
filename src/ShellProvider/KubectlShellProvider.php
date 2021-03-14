@@ -20,6 +20,11 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         $this->setPreventTimeout(true);
     }
 
+    public function getName(): string
+    {
+        return self::PROVIDER_NAME;
+    }
+
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $result =  parent::getDefaultConfig($configuration_service, $host_config);
