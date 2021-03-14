@@ -1,6 +1,16 @@
 # Changelog
 
+## 3.5.35 / 2021-03-14
+
+### Fixed:
+
+  * Fix `getSQLDump` and `restoreSqlFromFile` tasks
+
 ## 3.5.34 / 2021-03-11
+
+## New
+
+  * new `scaffold` internal command to run scaffolders from within a scaffolder
 
 ## Changed:
 
