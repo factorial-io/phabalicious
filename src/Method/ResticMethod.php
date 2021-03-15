@@ -12,6 +12,7 @@ use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -137,6 +138,12 @@ class ResticMethod extends BaseMethod implements MethodInterface
     {
         $shell = $this->getShell($host_config, $context);
         $shell->applyEnvironment($host_config['restic']['environment']);
+
+        EnsureKnownHosts::ensureKnownHosts(
+            $context->getConfigurationService(),
+            $this->getKnownHosts($host_config, $context),
+            $shell
+        );
 
         $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
 
