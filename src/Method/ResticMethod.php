@@ -85,7 +85,6 @@ class ResticMethod extends BaseMethod implements MethodInterface
                 'repository' => 'The repository to backup to',
                 'environment' => 'The environment variables to apply before calling restic'
             ]);
-
         }
     }
 

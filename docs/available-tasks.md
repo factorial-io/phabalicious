@@ -343,6 +343,7 @@ If `<what>` is omitted, files and db gets backupped, you can limit this by provi
 * `git` will prepend the file-names with a hash of the current revision.
 * `files` will tar all files in the `filesFolder` and save it into the `backupFolder`
 * `drush` will dump the databases and save it to the `backupFolder`
+* `restic` will backup the files into a restic repository instead. See [offsite backups](offsite-backups.md) for more infos.
 
 **Configuration:**
 
@@ -363,6 +364,9 @@ phab --config=<your-config> list:backups
 
 This command will print all available backups to the console.
 
+**Available methods**
+
+* `restic` Not implemented yet.
 
 ## restore
 
@@ -377,7 +381,7 @@ This will restore a backup-set. A backup-set consists typically of a database-du
 * `git` git will checkout the given hash encoded in the filename.
 * `files` all files will be restored. An existing files-folder will be renamed for safety reasons.
 * `drush` will import the database-dump.
-
+* `restic` Not implemented yet.
 
 ## get:backup
 
