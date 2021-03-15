@@ -75,6 +75,10 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
     public function backup(HostConfig $host_config, TaskContextInterface $context)
     {
+        if ($host_config->get('fileBackupStrategy', 'files') !== 'files') {
+            return;
+        }
+
         $shell = $this->getShell($host_config, $context);
         $what = $context->get('what', []);
         if (!in_array('files', $what)) {
