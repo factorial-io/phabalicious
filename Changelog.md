@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.36 / 2021-03-15
+
+### Fixed:
+
+  * Fix shell command for docker-exec and k8s. Fixes #130
+
 ## 3.5.35 / 2021-03-14
 
 ### Fixed:
