@@ -49,6 +49,7 @@
             "email": "stephan@factorial.io"
         }
     ],
+    "license": "MIT",
     "bin": [
         "bin/phab"
     ],
