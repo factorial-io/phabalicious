@@ -14,10 +14,13 @@ secrets:
   restic:
     question: What is the password for restic
 
+knownHosts:
+    - myhost:myport
+
 restic:
   environment:
     RESTIC_PASSWORD: %secrets.restic%
-  repository: sftp://myuser@myhost/offsite-backups
+  repository: sftp://myuser@myhost:myport/offsite-backups
   options:
     - --verbose
   downloadUrl: 'https://github.com/restic/restic/releases/download/v0.12.0/restic_0.12.0_linux_amd64.bz2'
@@ -32,6 +35,8 @@ restic:
 
 
 When running `phab -cconfig backup` this will backup the database dump and the file directories to the `offsite-backups` repository.
+
+Make sure to add an entry to `knownHosts` when you are using a sftp repository, otherwise the backups might fail because the host is unknown to the local ssh.
 
 
 Support for `list-backups` and `restore` is missing and might be implemented later.
