@@ -20,6 +20,11 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
 
     protected static $cachedKnownHostsConfigs = [];
 
+    public function getName(): string
+    {
+        return self::PROVIDER_NAME;
+    }
+
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $result =  parent::getDefaultConfig($configuration_service, $host_config);
@@ -314,5 +319,36 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
     public static function getTunnelHelperClass(): string
     {
         return SshTunnelHelper::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRsyncOptions(
+        HostConfig $to_host_config,
+        HostConfig $from_host_config,
+        string $to_path,
+        string $from_path
+    ) {
+        if ((!in_array($to_host_config->shell()->getName(), ['local', 'ssh'])) ||
+            ($from_host_config->shell()->getName() !== 'ssh')) {
+            return false;
+        }
+
+        // from ssh to local/ssh is supported.
+
+        $ssh_options =  sprintf(
+            'ssh -T -o Compression=no ' .
+            '-o PasswordAuthentication=no ' .
+            '-o StrictHostKeyChecking=no ' .
+            '-o UserKnownHostsFile=/dev/null ' .
+            '-p %s',
+            $from_host_config['port']
+        );
+
+        return [
+            sprintf('-e "%s"', $ssh_options),
+            sprintf(' %s@%s:%s/. %s', $from_host_config['user'], $from_host_config['host'], $from_path, $to_path)
+        ];
     }
 }

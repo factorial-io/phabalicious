@@ -77,7 +77,7 @@ class WebhookCommand extends BaseCommand
                 $script_data = $script_data['script'];
             }
 
-            $context = $this->createContext($input, $output);
+            $context = $this->getContext();
             $context->set('variables', $arguments);
             $context->set('webhook_name', $webhook_name);
 

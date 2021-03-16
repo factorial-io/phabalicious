@@ -41,6 +41,9 @@ hosts:
   docker-exec-over-ssh-shell:
     inheritsFrom: docker-exec-shell
     shellProvider: docker-exec-over-ssh
+    shellProviderOptions:
+      - -i
+      - /home/stephan/multibasebox/projects/phabalicious/tests/assets/shell-command-options-tests/testruns
     user: stephan
     port: 22
     host: localhost

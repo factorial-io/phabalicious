@@ -23,6 +23,7 @@ class AppDefaultStages
     const DESTROY = [
         'spinDown',
         'deleteContainer',
+        'deleteCode'
     ];
 
 

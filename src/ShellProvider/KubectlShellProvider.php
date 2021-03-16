@@ -20,6 +20,11 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         $this->setPreventTimeout(true);
     }
 
+    public function getName(): string
+    {
+        return self::PROVIDER_NAME;
+    }
+
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $result =  parent::getDefaultConfig($configuration_service, $host_config);
@@ -56,7 +61,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         return parent::createShellProcess($command, $options);
     }
 
-    public static function getKubectlCmd(array $config, $kubectl_cmd = '#!kubectl')
+    public static function getKubectlCmd(array $config, $kubectl_cmd = '#!kubectl', $exclude = [])
     {
         $cmd = [ $kubectl_cmd ];
         if (!empty($config['kubectlOptions'])) {
@@ -69,7 +74,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         }
 
         foreach (array('kubeconfig', 'namespace', 'context') as $key) {
-            if (!empty($config['kube'][$key])) {
+            if (!empty($config['kube'][$key]) && !in_array($key, $exclude)) {
                 $cmd[] = '--' . $key;
                 $cmd[] = $config['kube'][$key];
             }

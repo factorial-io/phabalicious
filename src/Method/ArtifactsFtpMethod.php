@@ -118,6 +118,13 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
                 'port' => 'the port to connect to',
                 'rootFolder' => 'the rootfolder of your app on the remote file-system',
             ]);
+            if (empty($config[self::PREFS_KEY]['password'])) {
+                $errors->addWarning(
+                    'password',
+                    'Support for plain passwords is deprecated and will ' .
+                    'be removed in a future version of phab. Please use the secret-system instead!'
+                );
+            }
             $service->checkForValidFolderName('rootFolder');
         }
     }
@@ -125,9 +132,11 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
+     *
      * @throws MethodNotFoundException
      * @throws MissingScriptCallbackImplementation
      * @throws TaskNotFoundInMethodException
+     * @throws \Phabalicious\Exception\FailedShellCommandException
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -137,7 +146,8 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 
         if (empty($host_config[self::PREFS_KEY]['password'])) {
             $ftp = $host_config[self::PREFS_KEY];
-            $ftp['password'] = $context->getPasswordManager()->getPasswordFor($ftp['host'], $ftp['port'], $ftp['user']);
+            $pw = $context->getPasswordManager();
+            $ftp['password'] = $pw->getPasswordFor($pw->getKeyFromLogin($ftp['host'], $ftp['port'], $ftp['user']));
             $host_config[self::PREFS_KEY] = $ftp;
         }
 

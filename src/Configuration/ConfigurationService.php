@@ -11,9 +11,12 @@ use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\Exception\YamlParseException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\ShellProviderFactory;
+use Phabalicious\Utilities\PasswordManager;
+use Phabalicious\Utilities\PasswordManagerInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
@@ -53,6 +56,9 @@ class ConfigurationService
     private $offlineMode = false;
     private $skipCache = false;
     private $disallowDeepMergeForKeys = [];
+
+    /** @var \Phabalicious\Utilities\PasswordManagerInterface */
+    private $passwordManager = null;
 
   /**
    * @var bool
@@ -249,7 +255,11 @@ class ConfigurationService
         }
 
         $this->logger->info(sprintf('Read data from `%s`', $file));
-        $data = Yaml::parseFile($file);
+        try {
+            $data = Yaml::parseFile($file);
+        } catch (\Exception $e) {
+            throw new YamlParseException("Could not parse file `$file`", 0, $e);
+        }
         $ext = '.' . pathinfo($file, PATHINFO_EXTENSION);
         $override_file = str_replace($ext, '.override' . $ext, $file);
         $this->logger->debug(sprintf('Trying to read data from override `%s`', $override_file));
@@ -315,27 +325,45 @@ class ConfigurationService
      *
      * @param bool $root_folder
      * @param array $stack
+     * @param string $inherit_key
+     *
      * @return array
      *
-     * @throws FabfileNotReadableException
-     * @throws MismatchedVersionException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
      */
-    public function resolveInheritance(array $data, $lookup, $root_folder = false, $stack = []): array
-    {
-        if (!isset($data['inheritsFrom'])) {
+    public function resolveInheritance(
+        array $data,
+        $lookup,
+        $root_folder = false,
+        $stack = [],
+        $inherit_key = "inheritsFrom"
+    ): array {
+        if (!isset($data[$inherit_key])) {
             return $data;
         }
         if (!$root_folder) {
             $root_folder = $this->getFabfilePath();
         }
 
-        $inheritsFrom = $data['inheritsFrom'];
+        $inheritsFrom = $data[$inherit_key];
         if (!is_array($inheritsFrom)) {
             $inheritsFrom = [ $inheritsFrom ];
         }
-        unset($data['inheritsFrom']);
+        unset($data[$inherit_key]);
 
         foreach (array_reverse($inheritsFrom) as $resource) {
+            if ($resource[0] == "@") {
+                $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getSetting("inheritanceBaseUrl", false);
+                if (!$baseUrl) {
+                    throw new FabfileNotReadableException(
+                        "Fabfile does not contain `inheritanceBaseUrl` which is needed to resolve inheritance!"
+                    );
+                }
+
+                $resource = $baseUrl . substr($resource, 1);
+            }
+
             if (in_array($resource, $stack)) {
                 throw new \InvalidArgumentException(sprintf(
                     "Possible recursion in inheritsFrom detected! `%s `in [%s]",
@@ -360,8 +388,9 @@ class ConfigurationService
                 $add_data = $this->readFile($root_folder . '/' . $resource);
             } else {
                 throw new FabfileNotReadableException(sprintf(
-                    'Could not resolve inheritance from `inheritsFrom: %s`',
-                    $resource
+                    "Could not resolve inheritance from `inheritsFrom: %s`! \n\nPossible values: %s",
+                    $resource,
+                    '`' . implode('`, `', array_keys($lookup)) . '`'
                 ));
             }
             if (!empty($add_data['deprecated'])) {
@@ -373,7 +402,7 @@ class ConfigurationService
                 unset($add_data['deprecated']);
             }
             if ($add_data) {
-                if (isset($add_data['inheritsFrom'])) {
+                if (isset($add_data[$inherit_key])) {
                     $stack[] = $resource;
                     $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder, $stack);
                 }
@@ -521,6 +550,7 @@ class ConfigurationService
     {
         $cid = 'blueprint:' . $blueprint . ':' . $identifier;
 
+
         if (!empty($this->cache[$cid])) {
             return $this->cache[$cid];
         }
@@ -538,6 +568,8 @@ class ConfigurationService
 
         $this->cache['host:' . $data['configName']] = $data;
         $this->cache[$cid] = $data;
+
+
         return $data;
     }
 
@@ -567,9 +599,7 @@ class ConfigurationService
             'executables' => $this->getSetting('executables', []),
             'supportsInstalls' => $type != HostType::PROD,
             'supportsCopyFrom' => true,
-            'backupBeforeDeploy' => in_array($type, [HostType::STAGE, HostType::PROD])
-                ? true
-                : false,
+            'backupBeforeDeploy' => in_array($type, [HostType::STAGE, HostType::PROD]),
             'tmpFolder' => '/tmp',
             'rootFolder' => $this->getFabfilePath(),
         ];
@@ -650,7 +680,15 @@ class ConfigurationService
         }
 
         // Create host-config and return.
-        return new HostConfig($data, $shell_provider, $this);
+        $host_config = new HostConfig($data, $shell_provider, $this);
+
+        if (!$this->getPasswordManager()) {
+            throw new \RuntimeException('No password manager found!');
+        }
+        if ($this->getPasswordManager()) {
+            $host_config->setData($this->getPasswordManager()->resolveSecrets($host_config->raw()));
+        }
+        return $host_config;
     }
 
     /**
@@ -855,12 +893,45 @@ class ConfigurationService
     {
 
         $needs = $host_config['needs'];
+        $result = false;
         foreach ($this->getMethodFactory()->getSubset($needs) as $method) {
             if ($method->isRunningAppRequired($host_config, $context, $task)) {
-                return true;
+                $result = true;
+                break;
             }
         }
 
-        return false;
+        $this->logger->debug("$task requires running app? " . ($result ? "YES" : "NO"));
+        return $result;
+    }
+
+    public function findScript(HostConfig $host_config, $script_name)
+    {
+        if (!empty($host_config['scripts'][$script_name])) {
+            return $host_config['scripts'][$script_name];
+        }
+        return $this->getSetting('scripts.' . $script_name, false);
+    }
+
+    /**
+     * @return \Phabalicious\Utilities\PasswordManagerInterface
+     */
+    public function getPasswordManager(): PasswordManagerInterface
+    {
+        if (!$this->passwordManager) {
+            $this->passwordManager = new PasswordManager();
+        }
+        return $this->passwordManager;
+    }
+
+    /**
+     * @param \Phabalicious\Utilities\PasswordManagerInterface $passwordManager
+     *
+     * @return ConfigurationService
+     */
+    public function setPasswordManager(PasswordManagerInterface $passwordManager): ConfigurationService
+    {
+        $this->passwordManager = $passwordManager;
+        return $this;
     }
 }

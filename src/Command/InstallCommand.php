@@ -53,7 +53,7 @@ class InstallCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $host_config = $this->getHostConfig();
 
         if ($host_config['supportsInstalls'] == false) {

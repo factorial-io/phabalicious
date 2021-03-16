@@ -12,6 +12,7 @@ use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
 use Phabalicious\ShellProvider\ShellOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
@@ -33,6 +34,7 @@ abstract class BaseCommand extends BaseOptionsCommand
     private $hostConfig;
 
     private $dockerConfig;
+
 
 
     protected function configure()
@@ -126,7 +128,8 @@ abstract class BaseCommand extends BaseOptionsCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->createContext($input, $output);
+        $io = $this->getContext()->io();
 
         $this->checkAllRequiredOptionsAreNotEmpty($input);
 

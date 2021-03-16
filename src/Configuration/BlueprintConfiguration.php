@@ -20,19 +20,32 @@ class BlueprintConfiguration
     {
         $this->configuration = $service;
         if ($data = $this->configuration->getSetting('blueprint', false)) {
-            $this->templates['default'] = new BlueprintTemplate($this->configuration, $data);
+            $this->templates['default'] = new BlueprintTemplate(
+                $this->configuration,
+                $data,
+                $this->configuration->getAllSettings()
+            );
         }
 
         foreach ($this->configuration->getAllDockerConfigs() as $key => $data) {
             $data = $this->configuration->getDockerConfig($key);
             if (!empty($data['blueprint'])) {
-                $this->templates['docker:'  . $key] = new BlueprintTemplate($this->configuration, $data['blueprint']);
+                $this->templates['docker:'  . $key] =
+                    new BlueprintTemplate($this->configuration, $data['blueprint'], $data->raw());
             }
         }
         foreach ($this->configuration->getAllHostConfigs() as $key => $data) {
             if (!empty($data['blueprint'])) {
-                $this->templates['host:'  . $key] = new BlueprintTemplate($this->configuration, $data['blueprint']);
+                $this->templates['host:'  . $key] =
+                    new BlueprintTemplate($this->configuration, $data['blueprint'], $data);
             }
+        }
+        $inheritance_data = [];
+        foreach ($this->templates as $ndx => $template) {
+            $inheritance_data[$ndx] = $template->getTemplate();
+        }
+        foreach ($this->templates as $ndx => $template) {
+            $this->templates[$ndx]->resolveInheritance($inheritance_data);
         }
     }
 

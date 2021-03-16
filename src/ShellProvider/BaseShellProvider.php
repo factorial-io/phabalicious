@@ -234,4 +234,16 @@ abstract class BaseShellProvider implements ShellProviderInterface
             $this->run(implode(" && ", $cmds));
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRsyncOptions(
+        HostConfig $to_host_config,
+        HostConfig $from_host_config,
+        string $to_path,
+        string $from_path
+    ) {
+        return false;
+    }
 }

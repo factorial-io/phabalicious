@@ -76,7 +76,7 @@ class StartRemoteAccessCommand extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
         $host_config = $this->getHostConfig();
         $this->getMethods()->runTask('startRemoteAccess', $host_config, $context);
 

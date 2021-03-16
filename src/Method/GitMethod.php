@@ -163,6 +163,9 @@ class GitMethod extends BaseMethod implements MethodInterface
 
     public function appCheckExisting(HostConfig $host_config, TaskContextInterface $context)
     {
+        if (!$context->getResult('installDir', false)) {
+            $context->setResult('installDir', $host_config['gitRootFolder']);
+        }
         if (!$context->getResult('appInstallDir', false)) {
             $context->setResult('appInstallDir', $host_config['gitRootFolder']);
         }

@@ -12,6 +12,11 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
 {
     const PROVIDER_NAME = 'docker-exec';
 
+    public function getName(): string
+    {
+        return self::PROVIDER_NAME;
+    }
+
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         $result = parent::getDefaultConfig($configuration_service, $host_config);
@@ -42,6 +47,11 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
 
     public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
+        if (empty($this->hostConfig['docker']['name'])) {
+            throw new \RuntimeException(
+                "Could not retrieve name of docker container, your configuration might be wrong!"
+            );
+        }
         $command = [
             $this->hostConfig['dockerExecutable'],
             'exec',

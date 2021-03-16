@@ -82,6 +82,10 @@ class QuestionFactory
     public function askMultiple(array $questions, $context, $tokens, $alter_value_cb = false)
     {
         foreach ($questions as $key => $question_data) {
+            if (!is_array($question_data)) {
+                throw new \InvalidArgumentException(sprintf("Missing question data for `%s`", $key));
+            }
+
             $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
             $value = null;
             if (isset($tokens[$key])) {

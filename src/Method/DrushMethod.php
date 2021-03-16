@@ -726,7 +726,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $result = false;
         while ($tries < 10) {
             $result = $shell->run(sprintf(
-                '#!mysqladmin -u%s --password=%s -h %s ping',
+                '#!mysqladmin --no-defaults -u%s --password="%s" -h %s ping',
                 $host_config['database']['user'],
                 $host_config['database']['pass'],
                 $host_config['database']['host']
@@ -741,6 +741,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             ));
 
             sleep(5);
+            $tries++;
         }
         if ($result) {
             $result->throwException('Could not connect to database!');

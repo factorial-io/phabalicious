@@ -12,10 +12,20 @@ use Symfony\Component\Console\Input\InputInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.5.36';
+    const FALLBACK_VERSION = '3.6.0';
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
+    /**
+     * Merge two arrays, elements of override_data will replace elements in data.
+     *
+     * Plain arrays, which are not associcative will get replaced, instead of merged.
+     *
+     * @param array $data
+     * @param array $override_data
+     *
+     * @return array
+     */
     public static function mergeData(array $data, array $override_data): array
     {
         $result = $data;
@@ -38,6 +48,13 @@ class Utilities
         return $result;
     }
 
+    /**
+     * Expand variables. Will create an array with replacement strings as key and their value
+     *
+     * @param array $variables
+     *
+     * @return array
+     */
     public static function expandVariables(array $variables): array
     {
         $result = [];
@@ -51,6 +68,13 @@ class Utilities
         return $result;
     }
 
+    /**
+     * Implementation details for expandVariables.
+     *
+     * @param string $prefix
+     * @param array $variables
+     * @param array $result
+     */
     private static function expandVariablesImpl(string $prefix, array $variables, array &$result)
     {
         foreach ($variables as $key => $value) {
@@ -510,5 +534,15 @@ class Utilities
         // Testing for valueless options is tricky in symfony. That is why we test for
         // `is_null` (has no option value, e.g. `--force`) or `!empty()`, e.g. `--force=1`
         return is_null($option) || !empty($option);
+    }
+
+    public static function camel2dashed($string)
+    {
+        return strtolower(preg_replace('/([A-Z])/', '-$1', $string));
+    }
+
+    public static function toUpperSnakeCase($string)
+    {
+        return strtoUpper(str_replace('-', '_', self::camel2dashed($string)));
     }
 }

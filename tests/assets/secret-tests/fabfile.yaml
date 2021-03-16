@@ -1,0 +1,52 @@
+name: secret-tests
+
+secrets:
+  mysql-password:
+    question: What password is mysql using
+    env: MARIADB_PASSWORD
+
+  smtp-password:
+    question: What password is smtp using
+  op-password:
+    question: What password is op using
+    onePasswordId: n42hkvghk2onwnyugf6k2etdra
+
+
+hosts:
+  base:
+    type: dev
+    needs:
+      - local
+
+  testHost:
+    inheritsFrom: base
+    database:
+      password: "%secret.mysql-password%"
+      password_combined: "123--%secret.mysql-password%--321"
+
+  testEnv:
+    inheritsFrom: base
+    smtp:
+      password: "%secret.smtp-password%"
+      password_combined: "123--%secret.smtp-password%--321"
+
+  test1Password:
+    inheritsFrom: base
+    smtp:
+      password: "%secret.op-password%"
+      password_combined: "123--%secret.op-password%--321"
+
+  testUnknownSecret:
+    inheritsFrom: base
+    database:
+      password: "%secret.unknown-password%"
+      password_combined: "123--%secret.mysql-password%--321"
+
+  testBlueprint:
+    inheritsFrom: base
+    blueprint:
+      inheritsFrom: testBlueprint
+      configName: "%identifier%"
+      database:
+        password: "%secret.mysql-password%"
+        password_combined: "123--%secret.mysql-password%--321"

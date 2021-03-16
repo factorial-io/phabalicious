@@ -50,7 +50,7 @@ class VariablePush extends BaseCommand
             return $result;
         }
 
-        $context = $this->createContext($input, $output);
+        $context = $this->getContext();
 
         $context->set('action', 'push');
         $filename = $input->getArgument('file');

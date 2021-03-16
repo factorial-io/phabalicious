@@ -2,16 +2,19 @@
 
 namespace Phabalicious\Method;
 
+use Monolog\Handler\Curl\Util;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Scaffolder\Options;
 use Phabalicious\Scaffolder\Scaffolder;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\KubectlShellProvider;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\ShellProvider\ShellProviderInterface;
@@ -155,9 +158,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
      * @param string $arg
      * @return string
      */
-    protected function expandCmd(HostConfig $config, $arg = '')
+    protected function expandCmd(HostConfig $config, $arg = '', $exclude = [])
     {
-        $cmd = implode(' ', KubectlShellProvider::getKubectlCmd($config->raw(), '#!kubectl'));
+        $cmd = implode(' ', KubectlShellProvider::getKubectlCmd($config->raw(), '#!kubectl', $exclude));
         return $cmd . ' ' . $arg;
     }
 
@@ -166,7 +169,13 @@ class K8sMethod extends BaseMethod implements MethodInterface
     {
         parent::preflightTask($task, $config, $context);
 
-        if (empty($config['kube']['podForCli'])) {
+        $needs_running_pod = $context->getConfigurationService()->isRunningAppRequired(
+            $config,
+            $context,
+            $task
+        );
+
+        if ($needs_running_pod && empty($config['kube']['podForCli'])) {
             $config->setChild('kube', 'podForCli', $this->getPodNameFromSelector($config, $context));
             $config->setChild('kube', 'podForCliSet', true);
         }
@@ -282,18 +291,23 @@ class K8sMethod extends BaseMethod implements MethodInterface
         );
     }
 
-    public function kubectl(HostConfig $host_config, TaskContextInterface $context, $command, $capture_output = false)
-    {
+    public function kubectl(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        $command,
+        $capture_output = false
+    ): CommandResult {
         $kube_config = $host_config['kube'];
         $project_folder = $this->ensureShell($host_config, $context);
 
         $this->kubectlShell->pushWorkingDir($project_folder);
-        $result = $this->kubectlShell->run(sprintf(
+        $cmd = sprintf(
             '%s %s --namespace %s',
             $this->expandCmd($host_config),
             $command,
             $kube_config['namespace']
-        ), $capture_output);
+        );
+        $result = $this->kubectlShell->run($cmd, $capture_output);
         $this->kubectlShell->popWorkingDir();
         return $result;
     }
@@ -426,5 +440,58 @@ class K8sMethod extends BaseMethod implements MethodInterface
         );
         $data = Utilities::expandStrings($data, $replacements);
         return $data;
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     */
+    public function appCheckExisting(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $projectFolder = $this->ensureShell($host_config, $context);
+        $this->kubectlShell->pushWorkingDir($projectFolder);
+        $cmd = $this->expandCmd(
+            $host_config,
+            sprintf("get namespace %s", $host_config['kube']['namespace']),
+            ["namespace"]
+        );
+
+        $result = $this->kubectlShell->run($cmd, true);
+
+        if ($result->failed()) {
+            $this->logger->info(implode(PHP_EOL, $result->getOutput()));
+        }
+
+        $this->kubectlShell->popWorkingDir();
+        $context->setResult('appExists', $result->succeeded());
+    }
+
+    public function appCreate(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $stage = $context->get('currentStage');
+        $script_name = "k8s:" . Utilities::camel2dashed($stage);
+        $script_data = $context->getConfigurationService()->findScript($host_config, $script_name);
+        if (!$script_data) {
+            $context
+                ->getConfigurationService()
+                ->getLogger()
+                ->debug(sprintf('Missing script `%s` for stage `%s`', $script_name, $stage));
+            return;
+        }
+
+        $project_folder = $this->ensureShell($host_config, $context);
+        $context->set('rootFolder', realpath(dirname($project_folder)));
+        ScriptMethod::prepareContextFromScript($context, $script_data);
+
+
+        /** @var \Phabalicious\Method\ScriptMethod $script_method */
+        $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod("script");
+        $context->setShell($this->kubectlShell);
+        $script_method->runScript($host_config, $context);
+    }
+
+    public function appDestroy(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $this->appCreate($host_config, $context);
     }
 }

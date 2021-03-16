@@ -39,12 +39,13 @@ class WorkspaceUpdateCommand extends ScaffoldBaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $context = $this->createContext($input, $output);
+
         $url  = $this->scaffolder->getLocalScaffoldFile('mbb/mbb-update.yml');
         $root_folder = $this->findRootFolder(getcwd());
         if (!$root_folder) {
             throw new \InvalidArgumentException('Could not find multibasebox root folder!');
         }
-        $context = $this->createContext($input, $output);
 
         $name = basename($root_folder);
         $root_folder = dirname($root_folder);
