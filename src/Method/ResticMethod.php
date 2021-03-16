@@ -139,17 +139,20 @@ class ResticMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShell($host_config, $context);
         $shell->applyEnvironment($host_config['restic']['environment']);
 
-        EnsureKnownHosts::ensureKnownHosts(
-            $context->getConfigurationService(),
-            $this->getKnownHosts($host_config, $context),
-            $shell
-        );
+        $repository = $host_config['restic']['repository'];
 
+        if (substr($repository, 0, 5) == 'sftp:') {
+            EnsureKnownHosts::ensureKnownHosts(
+                $context->getConfigurationService(),
+                $this->getKnownHosts($host_config, $context),
+                $shell
+            );
+        }
         $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
 
         $context->io()->comment(sprintf(
-            "Copying database dumps to offsite repo `%s`",
-            $host_config['restic']['repository']
+            "Running backup to offsite repo `%s`",
+            $repository
         ));
 
         $files = [];
@@ -159,11 +162,11 @@ class ResticMethod extends BaseMethod implements MethodInterface
             }
         }
 
-        $this->backupFileOrFolder($host_config, $context, $shell, $restic_path, $files);
+        $this->backupFilesOrFolders($host_config, $context, $shell, $restic_path, $files);
     }
 
 
-    private function backupFileOrFolder(
+    private function backupFilesOrFolders(
         HostConfig $host_config,
         TaskContextInterface $context,
         ShellProviderInterface $shell,
@@ -179,7 +182,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
             '-'
         ) . '--' . $host_config['configName'];
 
-        foreach ($context->getConfigurationService()->getSetting('excludeFiles.backup') as $exclude) {
+        foreach ($context->getConfigurationService()->getSetting('excludeFiles.backup', []) as $exclude) {
             $options[] = '--exclude';
             $options[] = $exclude;
         }
@@ -208,7 +211,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
             return $restic_path;
         }
 
-        $context->io()->comment("Could not find restic app, trying to install it from github");
+        $context->io()->comment("Could not find restic app, trying to install it from github ...");
 
         $shell->run(sprintf(
             '#!curl -L %s  | #!bunzip2 > %s',
