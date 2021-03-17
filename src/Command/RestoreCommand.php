@@ -27,7 +27,7 @@ class RestoreCommand extends BaseCommand
             'what',
             InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
             'What to restore, if ommitted files and db will be restored',
-            ['files', 'db']
+            []
         );
     }
 
@@ -52,9 +52,14 @@ class RestoreCommand extends BaseCommand
         }
 
         $context = $this->getContext();
-        $context->set('what', array_map(function ($elem) {
+        $what = array_map(function ($elem) {
             return trim(strtolower($elem));
-        }, $input->getArgument('what')));
+        }, $input->getArgument('what'));
+        if (empty($what)) {
+            $this->getMethods()->runTask('collectBackupMethods', $this->getHostConfig(), $context);
+            $what = $context->getResult('backupMethods', []);
+        }
+        $context->set('what', $what);
 
         $hash = $input->getArgument('hash');
 

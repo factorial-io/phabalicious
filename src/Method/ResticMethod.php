@@ -108,16 +108,14 @@ class ResticMethod extends BaseMethod implements MethodInterface
         }
 
         $what = $context->get('what', []);
-        if (!in_array('files', $what)) {
+        if (!in_array('restic', $what)) {
             return;
         }
 
         $shell = $this->getShell($host_config, $context);
         $shell->applyEnvironment($host_config['restic']['environment']);
 
-        $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
 
-        $folders = [];
         $keys = $context->get('backupFolderKeys', []);
         $keys = array_merge($keys, FilesMethod::DEFAULT_FILE_SOURCES);
 
@@ -165,6 +163,26 @@ class ResticMethod extends BaseMethod implements MethodInterface
         $this->backupFilesOrFolders($host_config, $context, $shell, $restic_path, $files);
     }
 
+    public function restorePrepare(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $what = $context->get('what', []);
+        if (!in_array('restic', $what)) {
+            return;
+        }
+        $shell = $this->getShell($host_config, $context);
+        $shell->applyEnvironment($host_config['restic']['environment']);
+
+        $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
+
+        $backup_set = $context->get('backup_set', []);
+        foreach ($backup_set as $elem) {
+            if ($elem['type'] != 'restic') {
+                continue;
+            }
+            [$name, $config, $short_id] = explode('--', $elem['hash']);
+            $this->restoreFilesAndFolders($host_config, $context, $shell, $restic_path, $short_id);
+        }
+    }
 
     private function backupFilesOrFolders(
         HostConfig $host_config,
@@ -173,14 +191,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         string $restic_path,
         array $files
     ) {
-        $options = $host_config['restic']['options'] ?? [];
-        $options[] = '-r';
-        $options[] = $host_config['restic']['repository'];
-        $options[] = '--host';
-        $options[] = Utilities::slugify(
-            $context->getConfigurationService()->getSetting('name', 'unknown'),
-            '-'
-        ) . '--' . $host_config['configName'];
+        $options = $this->getResticOptions($host_config, $context);
 
         foreach ($context->getConfigurationService()->getSetting('excludeFiles.backup', []) as $exclude) {
             $options[] = '--exclude';
@@ -192,6 +203,23 @@ class ResticMethod extends BaseMethod implements MethodInterface
             $restic_path,
             implode(' ', $options),
             implode(' ', $files),
+        ), false, true);
+    }
+
+    private function restoreFilesAndFolders(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        string $restic_path,
+        string $short_id
+    ) {
+        $options = $this->getResticOptions($host_config, $context);
+
+        $shell->run(sprintf(
+            '%s %s restore %s --target /',
+            $restic_path,
+            implode(' ', $options),
+            $short_id,
         ), false, true);
     }
 
@@ -221,5 +249,62 @@ class ResticMethod extends BaseMethod implements MethodInterface
         $shell->run(sprintf("chmod +x %s", $restic_path), false, true);
 
         return $restic_path;
+    }
+
+    public function listBackups(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $shell = $this->getShell($host_config, $context);
+        $shell->applyEnvironment($host_config['restic']['environment']);
+        $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
+
+        $options = $this->getResticOptions($host_config, $context);
+        $options[] = '--json';
+
+        $result = $shell->run(sprintf("%s %s snapshots", $restic_path, implode(' ', $options)), true, true);
+        $json = json_decode(implode(" ", $result->getOutput()));
+
+        $result = [];
+        foreach ($json as $files) {
+            [$name, $config] = explode("--", $files->hostname);
+
+            $d = \DateTime::createFromFormat('Y-m-d\TH:i:s+', $files->time);
+            $tokens = [
+                'config' => $config,
+                'date' => $d->format('Y-m-d'),
+                'time' => $d->format("h:m:s"),
+                'type' => 'restic',
+                'hash' => implode("--", [$name, $config, $files->short_id]),
+                'file' => implode("\n", $files->paths),
+            ];
+            $result[] = $tokens;
+        }
+
+        $context->addResult('files', $result);
+    }
+
+    /**
+     * @param \Phabalicious\Configuration\HostConfig $host_config
+     *
+     * @return array|mixed
+     */
+    protected function getResticOptions(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $options = $host_config['restic']['options'] ?? [];
+        $options[] = '-r';
+        $options[] = $host_config['restic']['repository'];
+
+        $options[] = '--host';
+        $options[] = Utilities::slugify(
+            $context->getConfigurationService()->getSetting('name', 'unknown'),
+            '-'
+        ) . '--' . $host_config['configName'];
+
+        return $options;
+    }
+
+
+    public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
+    {
+        $context->addResult('backupMethods', ['restic']);
     }
 }
