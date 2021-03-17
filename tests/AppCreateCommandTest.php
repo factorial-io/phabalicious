@@ -8,6 +8,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
+use Phabalicious\Utilities\AppDefaultStages;
 use Phabalicious\Utilities\Utilities;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
@@ -33,6 +34,8 @@ class AppCreateCommandTest extends PhabTestCase
 
         $this->application->add(new AppCreateCommand($configuration, $method_factory));
         $this->application->add(new ResetCommand($configuration, $method_factory));
+
+        AppDefaultStages::setStagesNeedingRunningApp([]);
     }
 
     public function testAppCreateWithoutPrepare()

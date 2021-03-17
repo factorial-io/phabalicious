@@ -190,6 +190,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             'restoreSqlFromFile',
             'getSQLDump',
             'copyFrom',
+            'copyFromPrepareSource',
             'deploy',
             'reset',
             'appUpdate',

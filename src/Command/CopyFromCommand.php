@@ -80,6 +80,7 @@ class CopyFromCommand extends BaseCommand
         }, $input->getArgument('what')));
 
         try {
+            $this->getMethods()->runTask('copyFromPrepareSource', $from, $context);
             $this->getMethods()->runTask('copyFrom', $this->getHostConfig(), $context, ['reset']);
         } catch (EarlyTaskExitException $e) {
             return 1;

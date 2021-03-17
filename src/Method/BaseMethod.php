@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\TunnelHelper\TunnelHelperFactory;
+use Phabalicious\Utilities\AppDefaultStages;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
@@ -92,9 +93,7 @@ abstract class BaseMethod implements MethodInterface
     {
         if ($task == 'appCreate') {
             $stage = $context->get('currentStage');
-            if ($stage == 'checkConnectivity') {
-                return true;
-            }
+            return AppDefaultStages::stageNeedsRunningApp($stage);
         }
 
         return false;
@@ -104,6 +103,8 @@ abstract class BaseMethod implements MethodInterface
      * @param TaskContext $context
      * @param string $command_name
      * @param array $args
+     *
+     * @return int
      * @throws \Exception
      */
     public function executeCommand(TaskContext $context, $command_name, $args)

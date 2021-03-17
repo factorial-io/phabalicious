@@ -26,7 +26,13 @@ class AppDefaultStages
         'deleteCode'
     ];
 
+    const NEEDS_RUNNING_APP = [
+        'checkConnectivity',
+        'installDependencies',
+        'install',
+    ];
 
+    private static $stagesNeedingARunningApp = self::NEEDS_RUNNING_APP;
 
     /**
      * @param MethodFactory $method_factory
@@ -51,5 +57,23 @@ class AppDefaultStages
             $context->set('currentStage', $stage);
             $method_factory->runTask($command, $host_config, $context);
         }
+    }
+
+    /**
+     * CHeck if a stage needs a running app.
+     *
+     * @param $stage
+     *   The name of the stage.
+     *
+     * @return bool
+     */
+    public static function stageNeedsRunningApp($stage)
+    {
+        return in_array($stage, self::$stagesNeedingARunningApp);
+    }
+
+    public static function setStagesNeedingRunningApp($stages)
+    {
+        self::$stagesNeedingARunningApp = $stages;
     }
 }
