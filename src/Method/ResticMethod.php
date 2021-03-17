@@ -4,20 +4,11 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Configuration\HostType;
-use Phabalicious\Exception\FailedShellCommandException;
-use Phabalicious\Exception\MethodNotFoundException;
-use Phabalicious\Exception\MissingScriptCallbackImplementation;
-use Phabalicious\Exception\UnknownReplacementPatternException;
-use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Utilities\Utilities;
-use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class ResticMethod extends BaseMethod implements MethodInterface
 {
@@ -112,9 +103,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
             return;
         }
 
-        $shell = $this->getShell($host_config, $context);
-        $shell->applyEnvironment($host_config['restic']['environment']);
-
+        $shell = $this->getShellForRestic($host_config, $context);
 
         $keys = $context->get('backupFolderKeys', []);
         $keys = array_merge($keys, FilesMethod::DEFAULT_FILE_SOURCES);
@@ -134,8 +123,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
 
     public function backupFinished(HostConfig $host_config, TaskContextInterface $context)
     {
-        $shell = $this->getShell($host_config, $context);
-        $shell->applyEnvironment($host_config['restic']['environment']);
+        $shell = $this->getShellForRestic($host_config, $context);
 
         $repository = $host_config['restic']['repository'];
 
@@ -169,8 +157,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         if (!in_array('restic', $what)) {
             return;
         }
-        $shell = $this->getShell($host_config, $context);
-        $shell->applyEnvironment($host_config['restic']['environment']);
+        $shell = $this->getShellForRestic($host_config, $context);
 
         $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
 
@@ -198,12 +185,16 @@ class ResticMethod extends BaseMethod implements MethodInterface
             $options[] = $exclude;
         }
 
-        $shell->run(sprintf(
+        $result = $shell->run(sprintf(
             '%s %s backup %s',
             $restic_path,
             implode(' ', $options),
             implode(' ', $files),
         ), false, true);
+
+        if ($result->failed()) {
+            $result->throwException("Restic reported an error while trying to run the backup.");
+        }
     }
 
     private function restoreFilesAndFolders(
@@ -215,12 +206,15 @@ class ResticMethod extends BaseMethod implements MethodInterface
     ) {
         $options = $this->getResticOptions($host_config, $context);
 
-        $shell->run(sprintf(
+        $result = $shell->run(sprintf(
             '%s %s restore %s --target /',
             $restic_path,
             implode(' ', $options),
-            $short_id,
-        ), false, true);
+            $short_id
+        ), false);
+        if ($result->failed()) {
+            $result->throwException("Restic reported an error while trying to restore files.");
+        }
     }
 
     private function ensureResticExecutable(
@@ -253,14 +247,17 @@ class ResticMethod extends BaseMethod implements MethodInterface
 
     public function listBackups(HostConfig $host_config, TaskContextInterface $context)
     {
-        $shell = $this->getShell($host_config, $context);
-        $shell->applyEnvironment($host_config['restic']['environment']);
+        $shell = $this->getShellForRestic($host_config, $context);
         $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
 
         $options = $this->getResticOptions($host_config, $context);
         $options[] = '--json';
 
-        $result = $shell->run(sprintf("%s %s snapshots", $restic_path, implode(' ', $options)), true, true);
+        $result = $shell->run(sprintf("%s %s snapshots", $restic_path, implode(' ', $options)), true);
+        if ($result->failed()) {
+            $result->throwException("Restic reported an error while trying to get the list of snapshots.");
+        }
+
         $json = json_decode(implode(" ", $result->getOutput()));
 
         $result = [];
@@ -306,5 +303,25 @@ class ResticMethod extends BaseMethod implements MethodInterface
     public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
     {
         $context->addResult('backupMethods', ['restic']);
+    }
+
+    /**
+     * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     *
+     * @return \Phabalicious\ShellProvider\ShellProviderInterface|null
+     */
+    protected function getShellForRestic(
+        HostConfig $host_config,
+        TaskContextInterface $context
+    ): ?ShellProviderInterface {
+        $shell = $this->getShell($host_config, $context);
+        $environment = $host_config['restic']['environment'];
+        if ($context->getPasswordManager()) {
+            $environment = $context->getPasswordManager()
+                ->resolveSecrets($environment);
+        }
+        $shell->applyEnvironment($environment);
+        return $shell;
     }
 }
