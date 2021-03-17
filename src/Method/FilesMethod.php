@@ -311,4 +311,9 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShell($to_config, $context);
         return $shell->run('#!rsync ' . implode(' ', $rsync_args));
     }
+
+    public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
+    {
+        $context->addResult('backupMethods', ['files']);
+    }
 }

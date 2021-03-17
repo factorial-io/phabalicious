@@ -871,4 +871,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $config_dir_exists && $config_used && ($host_config['drushVersion'] >= 9)
         );
     }
+
+    public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
+    {
+        $context->addResult('backupMethods', ['db']);
+    }
 }
