@@ -6,7 +6,7 @@ That's why phab supports offsite-backups beginning with 3.6 using [restic](https
 
 Phabalicious will try to install restic if it cant find an executable on the host.
 
-Example configuration:
+## An example configuration
 
 ```yaml
 
@@ -38,5 +38,37 @@ When running `phab -cconfig backup` this will backup the database dump and the f
 
 Make sure to add an entry to `knownHosts` when you are using a sftp repository, otherwise the backups might fail because the host is unknown to the local ssh.
 
+## How phabalicious stores metadata into the repository
 
-Support for `list-backups` and `restore` is missing and might be implemented later.
+Phabalicious encodes the project- and the config-name as the hostname when doing backups. That means you can reuse a repository for multiple configurations and even projects. This might be handy if they share files etc as restic support deduplication. When listing backups or restoring backups, phabalicious will filter the snapshots in the repository by config- and project-name. But you can interact with the repo just using restic.
+
+
+## List backups
+
+List backups will list all snapshots for that particular config and project.
+
+```bash
+❯ phab list:backups
+
+
+List of backups
+===============
+
+ ------------ ---------- -------- ---------------------------------------------- ----------------------------------------------------------------------
+  Date         Time       Type     Hash                                           File
+ ------------ ---------- -------- ---------------------------------------------- ----------------------------------------------------------------------
+  2021-03-16   05:03:55   restic   projectname--mbb--cf421674                     /var/www/backups/mbb--0.1.41-6-g8bf90d5--2021-03-16--17-45-53.sql.gz
+                                                                                  /var/www/web/sites/default/files
+  2021-03-15   21-45-40   db       mbb--0.1.41-6-g8bf90d5--2021-03-15--21-45-40   mbb--0.1.41-6-g8bf90d5--2021-03-15--21-45-40.sql.gz
+  2021-03-15   09:03:43   restic   projectname--mbb--26a61863                     /var/www/backups/mbb--0.1.41-6-g8bf90d5--2021-03-15--21-45-40.sql.gz
+                                                                                  /var/www/web/sites/default/files
+ ------------ ---------- -------- ---------------------------------------------- ----------------------------------------------------------------------
+```
+
+Note the duplication of the backupd database dumps. To restore a database dump, you need to run 2 restores: one, to restore the actual sql file then another one to restore the sql back into the database.
+
+## Restoring a backup
+
+It's the same as ususal, just run `phab -cconfig restore <backup-hash>` e.g. `phab -cmbb restore projectname--mbb--26a61863`. But use that with caution, as it might override exsiting files! If you want to restore the files to a different destination, use restic directly.
+
+

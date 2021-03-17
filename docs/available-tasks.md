@@ -366,7 +366,7 @@ This command will print all available backups to the console.
 
 **Available methods**
 
-* `restic` Not implemented yet.
+* `restic` the restic implementation will filter the list of snapshots by configuration and project name.
 
 ## restore
 
@@ -381,7 +381,7 @@ This will restore a backup-set. A backup-set consists typically of a database-du
 * `git` git will checkout the given hash encoded in the filename.
 * `files` all files will be restored. An existing files-folder will be renamed for safety reasons.
 * `drush` will import the database-dump.
-* `restic` Not implemented yet.
+* `restic` will restore the files and saved db dumps (You might need to run another restore to restore a sql-dump)
 
 ## get:backup
 
