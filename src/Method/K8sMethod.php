@@ -2,13 +2,11 @@
 
 namespace Phabalicious\Method;
 
-use Monolog\Handler\Curl\Util;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
-use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;

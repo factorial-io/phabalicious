@@ -180,7 +180,7 @@ class PasswordManager implements PasswordManagerInterface
                 }
             }
         } else {
-            throw new \RuntimeException("1Password returned an error!");
+            throw new \RuntimeException("1Password returned an error, are you logged in?");
         }
 
         return false;
