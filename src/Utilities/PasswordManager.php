@@ -82,12 +82,17 @@ class PasswordManager implements PasswordManagerInterface
         return $this;
     }
 
-    public function resolveSecrets(array $data)
+    public function resolveSecrets($data)
     {
+        $was_array = is_array($data);
+        if (!$was_array) {
+            $data = [$data];
+        }
         $replacements = [];
         $this->resolveSecretsImpl($data, $replacements);
         $data = Utilities::expandStrings($data, $replacements);
-        return $data;
+
+        return $was_array ? $data : $data[0];
     }
 
     private function resolveSecretsImpl(array $data, array &$replacements)

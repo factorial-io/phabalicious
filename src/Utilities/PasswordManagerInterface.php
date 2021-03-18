@@ -15,5 +15,5 @@ interface PasswordManagerInterface
 
     public function getPasswordFor(string $key);
 
-    public function resolveSecrets(array $data);
+    public function resolveSecrets($data);
 }

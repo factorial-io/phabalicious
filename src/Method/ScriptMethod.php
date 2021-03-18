@@ -133,6 +133,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $replacements = Utilities::expandVariables($variables);
         $environment = Utilities::expandStrings($environment, $replacements);
         $environment = Utilities::validateScriptCommands($environment, $replacements);
+        $environment = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($environment);
 
         $commands = Utilities::expandStrings($commands, $replacements, []);
         $commands = Utilities::expandStrings($commands, $replacements);

@@ -5,6 +5,7 @@ namespace Phabalicious\Tests;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
@@ -21,6 +22,8 @@ class LocalShellProviderTest extends PhabTestCase
         $this->config = $this->getMockBuilder(ConfigurationService::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->config->method("getPasswordManager")->will($this->returnValue(new PasswordManager()));
 
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 
