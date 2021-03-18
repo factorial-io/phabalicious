@@ -102,6 +102,8 @@ class OutputCommand extends BaseCommand
             $data = $this->getConfiguration()->getAllSettings();
         }
 
+        $data = $this->configuration->getPasswordManager()->resolveSecrets($data);
+
         if ($input->getOption('format') == 'json') {
             $content = json_encode($data, JSON_PRETTY_PRINT);
         } else {

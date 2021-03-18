@@ -173,6 +173,8 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         if (!empty($webhook['payload'])) {
             $payload = $webhook['payload'];
             $payload = Utilities::expandStrings($payload, $replacements);
+            $payload = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($payload);
+
             if ($webhook['method'] == 'get') {
                 $webhook['url'] .= '?' . http_build_query($payload);
             } elseif ($webhook['method'] == 'post') {
