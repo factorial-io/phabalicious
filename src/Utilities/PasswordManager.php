@@ -175,7 +175,9 @@ class PasswordManager implements PasswordManagerInterface
         $result = exec(sprintf("%s get item %s", $op_file_path, $item_id), $output, $result_code);
         if ($result_code == 0) {
             $json = json_decode(implode("\n", $output));
-
+            if (!empty($json->details->password)) {
+                return $json->details->password;
+            }
             if (!empty($json->details->fields)) {
                 $fields = $json->details->fields;
                 foreach ($fields as $field) {
@@ -183,6 +185,10 @@ class PasswordManager implements PasswordManagerInterface
                         return $field->value;
                     }
                 }
+            } else {
+                $this->getContext()->getConfigurationService()->getLogger()->warning(
+                    "Could not get password from 1password!\n" . implode("\n", $output)
+                );
             }
         } else {
             throw new \RuntimeException("1Password returned an error, are you logged in?");
