@@ -37,6 +37,9 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
             );
         }
         $scaffold_url = array_shift($arguments);
+        if ($scaffold_url[0] == "@" && $base_path = $context->getConfigurationService()->getInheritanceBaseUrl()) {
+            $scaffold_url = $base_path . substr($scaffold_url, 1);
+        }
         $scaffold_root_folder = array_shift($arguments);
         $tokens = Utilities::mergeData($context->get('tokens', []), $this->getTokens($arguments));
         $this->scaffold($context, $scaffold_url, $scaffold_root_folder, $tokens);

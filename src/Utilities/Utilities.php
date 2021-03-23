@@ -169,7 +169,7 @@ class Utilities
     {
         $validated = Utilities::validateReplacements($commands);
         if ($validated !== true) {
-            throw new UnknownReplacementPatternException($validated, $replacements);
+            throw new UnknownReplacementPatternException($validated, array_keys($replacements));
         }
 
         $commands = array_map(function ($r) {
