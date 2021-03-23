@@ -25,13 +25,13 @@
         "padraic/phar-updater": "^1.0",
         "lesstif/php-jira-rest-client": "^1.35",
         "graze/parallel-process": "^0.8.1",
-      "ext-posix": "*"
+      "ext-posix": "*",
+        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan-symfony": "^0.12"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^2.8|^3|^4.1",
         "phpunit/phpunit": "^7.3",
-        "phpstan/phpstan": "^0.11.9",
-        "phpstan/phpstan-symfony": "^0.11.6",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "squizlabs/php_codesniffer": "^3.5",
         "phpro/grumphp-shim": "^0.22.0",

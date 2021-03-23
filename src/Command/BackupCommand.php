@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class BackupCommand extends BaseCommand
+class BackupCommand extends BackupBaseCommand
 {
     protected function configure()
     {
@@ -47,15 +47,7 @@ class BackupCommand extends BaseCommand
         }
 
         $context = $this->getContext();
-
-        $what = array_map(function ($elem) {
-            return trim(strtolower($elem));
-        }, $input->getArgument('what'));
-        if (empty($what)) {
-            $this->getMethods()->runTask('collectBackupMethods', $this->getHostConfig(), $context);
-            $what = $context->getResult('backupMethods', []);
-        }
-
+        $what = $this->collectBackupMethods($input, $context);
         $context->set('what', $what);
         $context->setResult('basename', [
            $this->getHostConfig()['configName'],

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class GetBackupCommand extends BaseCommand
+class GetBackupCommand extends BackupBaseCommand
 {
 
     protected function configure()
@@ -53,24 +53,11 @@ class GetBackupCommand extends BaseCommand
             return $result;
         }
 
-        $what = array_map(function ($elem) {
-            return trim(strtolower($elem));
-        }, $input->getArgument('what'));
-
         $context = $this->getContext();
+        $what = $this->collectBackupMethods($input, $context);
         $context->set('what', $what);
-
         $hash = $input->getArgument('hash');
-
-        $this->getMethods()->runTask('listBackups', $this->getHostConfig(), $context);
-        $backup_sets = $context->getResult('files');
-
-        $to_copy = array_filter($backup_sets, function ($elem) use ($hash) {
-            return $elem['hash'] == $hash;
-        });
-        if (empty($to_copy)) {
-            throw new \InvalidArgumentException('Could not find backup-set with hash `' . $hash . '`');
-        }
+        $to_copy = $this->findBackupSet($hash, $context);
 
         $shell = $this->getHostConfig()->shell();
         $files = [];
@@ -89,7 +76,6 @@ class GetBackupCommand extends BaseCommand
                 ];
             }
         }
-
 
         if (count($files) > 0) {
             $io = $context->io();
