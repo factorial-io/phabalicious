@@ -13,7 +13,6 @@ use Phabalicious\Validation\ValidationService;
 class ResticMethod extends BaseMethod implements MethodInterface
 {
 
-
     public function getName(): string
     {
         return 'restic';
