@@ -3,13 +3,12 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class RestoreCommand extends BaseCommand
+class RestoreCommand extends BackupBaseCommand
 {
     protected function configure()
     {
@@ -52,26 +51,12 @@ class RestoreCommand extends BaseCommand
         }
 
         $context = $this->getContext();
-        $what = array_map(function ($elem) {
-            return trim(strtolower($elem));
-        }, $input->getArgument('what'));
-        if (empty($what)) {
-            $this->getMethods()->runTask('collectBackupMethods', $this->getHostConfig(), $context);
-            $what = $context->getResult('backupMethods', []);
-        }
+        $what = $this->collectBackupMethods($input, $context);
         $context->set('what', $what);
 
         $hash = $input->getArgument('hash');
 
-        $this->getMethods()->runTask('listBackups', $this->getHostConfig(), $context);
-        $backup_sets = $context->getResult('files');
-
-        $to_restore = array_filter($backup_sets, function ($elem) use ($hash) {
-            return $elem['hash'] == $hash;
-        });
-        if (empty($to_restore)) {
-            throw new \InvalidArgumentException('Could not find backup-set with hash `' . $hash . '`');
-        }
+        $to_restore = $this->findBackupSet($hash, $context);
 
         $context->set('backup_set', $to_restore);
         $context->setResult('files', null);

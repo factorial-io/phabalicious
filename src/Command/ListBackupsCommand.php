@@ -2,15 +2,12 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ListBackupsCommand extends BaseCommand
+class ListBackupsCommand extends BackupBaseCommand
 {
 
     protected function configure()
@@ -51,14 +48,7 @@ class ListBackupsCommand extends BaseCommand
         }
 
         $context = $this->getContext();
-        $what = array_map(function ($elem) {
-            return trim(strtolower($elem));
-        }, $input->getArgument('what'));
-        if (empty($what)) {
-            $this->getMethods()->runTask('collectBackupMethods', $this->getHostConfig(), $context);
-            $what = $context->getResult('backupMethods', []);
-        }
-
+        $what = $this->collectBackupMethods($input, $context);
 
         $this->getMethods()->runTask('listBackups', $this->getHostConfig(), $context);
 
