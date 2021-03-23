@@ -60,6 +60,8 @@ class ConfigurationService
     /** @var \Phabalicious\Utilities\PasswordManagerInterface */
     private $passwordManager = null;
 
+    private $inheritanceBaseUrl = false;
+
   /**
    * @var bool
    */
@@ -354,10 +356,10 @@ class ConfigurationService
 
         foreach (array_reverse($inheritsFrom) as $resource) {
             if ($resource[0] == "@") {
-                $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getSetting("inheritanceBaseUrl", false);
+                $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getInheritanceBaseUrl();
                 if (!$baseUrl) {
                     throw new FabfileNotReadableException(
-                        "Fabfile does not contain `inheritanceBaseUrl` which is needed to resolve inheritance!"
+                        "No base url provided, can't resolve relative references!"
                     );
                 }
 
@@ -930,6 +932,29 @@ class ConfigurationService
     public function setPasswordManager(PasswordManagerInterface $passwordManager): ConfigurationService
     {
         $this->passwordManager = $passwordManager;
+        return $this;
+    }
+
+    /**
+     * Get the base url for inheritance, scaffolds.
+     *
+     * @return bool|string
+     */
+    public function getInheritanceBaseUrl()
+    {
+        return !empty($this->inheritanceBaseUrl)
+            ? $this->inheritanceBaseUrl
+            : $this->getSetting("inheritanceBaseUrl", false);
+    }
+
+    /**
+     * @param string|bool $inheritanceBaseUrl
+     *
+     * @return ConfigurationService
+     */
+    public function setInheritanceBaseUrl(string $inheritanceBaseUrl): ConfigurationService
+    {
+        $this->inheritanceBaseUrl = $inheritanceBaseUrl;
         return $this;
     }
 }

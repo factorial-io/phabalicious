@@ -8,14 +8,14 @@
     "composer/xdebug-handler": {
         "version": "1.3.3"
     },
-    "doctrine/collections": {
-        "version": "v1.6.2"
+    "dealerdirect/phpcodesniffer-composer-installer": {
+        "version": "v0.7.1"
     },
     "doctrine/instantiator": {
         "version": "1.1.0"
     },
-    "gitonomy/gitlib": {
-        "version": "v1.1.0"
+    "drupal/coder": {
+        "version": "8.3.12"
     },
     "graze/data-structure": {
         "version": "2.1.0"
@@ -113,8 +113,8 @@
     "phpoption/phpoption": {
         "version": "1.7.2"
     },
-    "phpro/grumphp": {
-        "version": "v0.15.2"
+    "phpro/grumphp-shim": {
+        "version": "v0.22.0"
     },
     "phpspec/prophecy": {
         "version": "1.8.0"
@@ -197,8 +197,8 @@
     "sebastian/version": {
         "version": "2.0.1"
     },
-    "seld/jsonlint": {
-        "version": "1.7.1"
+    "sirbrillig/phpcs-variable-analysis": {
+        "version": "v2.11.0"
     },
     "stecman/symfony-console-completion": {
         "version": "0.8.0"
@@ -260,9 +260,6 @@
     "symfony/mime": {
         "version": "v4.4.1"
     },
-    "symfony/options-resolver": {
-        "version": "v4.3.4"
-    },
     "symfony/phpunit-bridge": {
         "version": "4.1",
         "recipe": {
@@ -319,8 +316,5 @@
     },
     "webmozart/assert": {
         "version": "1.3.0"
-    },
-    "wikimedia/composer-merge-plugin": {
-        "version": "v1.4.1"
     }
 }

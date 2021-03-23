@@ -1,8 +1,6 @@
-parameters:
+grumphp:
     process_timeout: 180
     stop_on_failure: true
-    git_dir: .
-    bin_dir: vendor/bin
     tasks:
       composer: ~
       phplint: ~

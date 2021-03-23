@@ -18,6 +18,7 @@ class UnknownReplacementPatternException extends \Exception
         $this->offendingLine = $offending_line;
         $this->patterns = $patterns;
         parent::__construct();
+        $this->message = $this->__toString();
     }
 
     public function getPatterns()

@@ -37,6 +37,14 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
     {
         parent::configure();
 
+        $this
+            ->addOption(
+                'base-url',
+                'b',
+                InputOption::VALUE_OPTIONAL,
+                'base url to use for relative references using "@"'
+            );
+
         $this->setDefinition(new class($this->getDefinition(), $this->dynamicOptions) extends InputDefinition
         {
             protected $dynamicOptions = [];
@@ -95,6 +103,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
                 || empty($context->getInput()->getOption('override'))
                 || $options->getAllowOverride()
             )
+            ->setBaseUrl($context->getInput()->getOption('base-url'))
             ->setCompabilityVersion($this->getApplication()->getVersion());
 
         $dynamic_options = [];

@@ -13,6 +13,7 @@ use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\Exception\YamlParseException;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
@@ -27,6 +28,7 @@ use Phar;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -54,13 +56,14 @@ class Scaffolder
      * @param TaskContextInterface $context
      * @param array $tokens
      * @param Options|null $options
+     *
      * @return CommandResult
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
      * @throws MismatchedVersionException
      * @throws MissingScriptCallbackImplementation
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException|\Phabalicious\Exception\YamlParseException
      */
     public function scaffold(
         $url,
@@ -78,14 +81,18 @@ class Scaffolder
         }
 
         $is_remote = false;
-        if (substr($url, 0, 4) !== 'http') {
-            $data = Yaml::parseFile($url);
-            $twig_loader_base = dirname($url);
-        } else {
-            $data = $this->configuration->readHttpResource($url);
-            $data = Yaml::parse($data);
-            $twig_loader_base = '/tmp';
-            $is_remote = true;
+        try {
+            if (substr($url, 0, 4) !== 'http') {
+                $data = Yaml::parseFile($url);
+                $twig_loader_base = dirname($url);
+            } else {
+                $data = $this->configuration->readHttpResource($url);
+                $data = Yaml::parse($data);
+                $twig_loader_base = '/tmp';
+                $is_remote = true;
+            }
+        } catch (ParseException $e) {
+            throw new YamlParseException(sprintf("Could not parse %s!", $url), 0, $e);
         }
         if (!$data) {
             throw new InvalidArgumentException('Could not read yaml from ' . $url);
@@ -109,6 +116,10 @@ class Scaffolder
         }
 
         $data['base_path'] = dirname($url);
+
+        if ($options->getBaseUrl()) {
+            $this->configuration->setInheritanceBaseUrl($options->getBaseUrl());
+        }
 
         if (!empty($data['inheritsFrom'])) {
             if (!is_array($data['inheritsFrom'])) {
