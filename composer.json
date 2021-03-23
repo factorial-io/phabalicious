@@ -25,9 +25,7 @@
         "padraic/phar-updater": "^1.0",
         "lesstif/php-jira-rest-client": "^1.35",
         "graze/parallel-process": "^0.8.1",
-      "ext-posix": "*",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-symfony": "^0.12"
+      "ext-posix": "*"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^2.8|^3|^4.1",
@@ -36,7 +34,9 @@
         "squizlabs/php_codesniffer": "^3.5",
         "phpro/grumphp-shim": "^0.22.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
-        "drupal/coder": "^8.3"
+        "drupal/coder": "^8.3",
+        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan-symfony": "^0.12"
     },
     "autoload": {
         "psr-4": {
