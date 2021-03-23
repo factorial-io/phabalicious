@@ -104,26 +104,33 @@ class SelfUpdateCommand extends BaseOptionsCommand
             ];
         } catch (\Exception $e) {
             // Fallback, call github directly.
-            return $this->getLatestReleaseFromGithub();
+            return $this->getLatestReleaseFromGithub($allow_unstable);
         }
 
         return false;
     }
 
 
-    protected function getLatestReleaseFromGithub()
+    protected function getLatestReleaseFromGithub($allow_unstable)
     {
-        $releases = $this->getConfiguration()->readHttpResource(
+        $payload = $this->getConfiguration()->readHttpResource(
             'https://api.github.com/repos/factorial-io/phabalicious/releases'
         );
-        $releases = json_decode($releases);
+        $releases = json_decode($payload);
+
+        // Filter prereleases.
+        if (!$allow_unstable) {
+            $releases = array_filter($releases, function ($r) {
+                return !$r->prerelease;
+            });
+            $releases = array_values($releases);
+        }
 
         if (!isset($releases[0])) {
             throw new \Exception('API error - no release found at GitHub repository');
         }
 
         $version = $releases[0]->tag_name;
-        $url     = $releases[0]->assets[0]->browser_download_url;
 
         if (Comparator::greaterThan($version, $this->getApplication()->getVersion())) {
             return [
@@ -145,7 +152,7 @@ class SelfUpdateCommand extends BaseOptionsCommand
             /** @var SelfUpdateCommand command */
             $command = $event->getCommand()->getApplication()->find('self-update');
 
-            if ($output->isDecorated()
+            if (1 || $output->isDecorated()
                 && !$output->isQuiet()
                 && !$event->getCommand()->isHidden()
                 && !$command->getConfiguration()->isOffline()
