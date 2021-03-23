@@ -157,6 +157,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             ];
             $replacements = Utilities::expandVariables($variables);
             $environment = Utilities::expandStrings($environment, $replacements);
+            $environment = $this
+                ->hostConfig
+                ->getConfigurationService()
+                ->getPasswordManager()
+                ->resolveSecrets($environment);
         }
 
         $this->applyEnvironment($environment);

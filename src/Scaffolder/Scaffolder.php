@@ -170,6 +170,7 @@ class Scaffolder
         // Do a first round of replacements.
         $replacements = Utilities::expandVariables($variables);
         $tokens = Utilities::expandStrings($tokens, $replacements);
+        $tokens = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($tokens);
 
         $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
         $tokens['rootFolder'] = realpath($root_folder) . '/' . $tokens['projectFolder'];

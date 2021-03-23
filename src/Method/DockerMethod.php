@@ -654,6 +654,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $variables = Utilities::buildVariablesFrom($host_config, $context);
         $replacements = Utilities::expandVariables($variables);
         $environment = Utilities::expandStrings($docker_config->get('environment', []), $replacements);
+        $environment = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($environment);
 
         $context->setResult('shell', $shell);
 
