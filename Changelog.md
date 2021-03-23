@@ -1,5 +1,39 @@
 # Changelog
 
+## 3.6.0 / 2021-03-23
+
+### New:
+
+  * Initial implementation of doing backups via restic
+  * Implement list:backups and restore for restic. Initial support for other backup methods implemented
+  * Introduce new secrets mechanims to retrieve secrets from the outside
+  * Refactor app:create and app:destroy, add implementation for k8s
+  * Add new way of handling secrets via new replacement pattern
+  * Support for password-only fields from 1password
+  * Resolve secrets for scripts
+  * Resolve secrets on demand, prevents prompts for secrets for unrelated commands
+  * Allow prefixing paths for inheritsFrom with `@` and introduce `inheritanceBaseUrl` to set a common base path
+  * Implement base url mechanism for scaffolds
+  * Add option to scaffold-commands to provide a base url for scaffolders
+  * Allow inheritance in blueprints using `blueprintInheritsFrom`
+
+### Changed:
+
+  * Update dependencies, support composer 2
+  * Refactor backup related code, move common code into base class
+  * Show an error message for `copy-from files` where source or destination does not support rsync (e.g. docker-exec, kubectl)
+  * Add deprecation message for ftp-passwords
+
+### Fixed:
+
+  * Add missing license to composer.json, fixes #132
+  * Fix getSQLDump and restoreSqlFromFile tasks
+  * When checking for a mysql connection do not consume default config files
+  * Enhance error message when inheritsFrom/blueprintInheritsFrom fails
+  * Throw an exception when the name of the docker container is missing
+  * Require rinnung app for shell-task
+  * Fix check for existing app in k8s, better error messages
+
 ## 3.5.36 / 2021-03-15
 
 ### Fixed:
