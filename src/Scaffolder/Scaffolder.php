@@ -56,13 +56,14 @@ class Scaffolder
      * @param TaskContextInterface $context
      * @param array $tokens
      * @param Options|null $options
+     *
      * @return CommandResult
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
      * @throws MismatchedVersionException
      * @throws MissingScriptCallbackImplementation
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException|\Phabalicious\Exception\YamlParseException
      */
     public function scaffold(
         $url,
@@ -116,8 +117,8 @@ class Scaffolder
 
         $data['base_path'] = dirname($url);
 
-        if (isset($data['inheritanceBaseUrl'])) {
-            $this->configuration->setInheritanceBaseUrl($data['inheritanceBaseUrl']);
+        if ($options->getBaseUrl()) {
+            $this->configuration->setInheritanceBaseUrl($options->getBaseUrl());
         }
 
         if (!empty($data['inheritsFrom'])) {
