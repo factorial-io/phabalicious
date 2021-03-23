@@ -26,6 +26,8 @@ class Options extends CallbackOptions
 
     protected $variables = [];
 
+    protected $baseUrl = false;
+
     /** @var ShellProviderInterface */
     protected $shell = null;
 
@@ -207,6 +209,25 @@ class Options extends CallbackOptions
     public function setQuiet(bool $quiet): Options
     {
         $this->quiet = $quiet;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+
+    /**
+     * @param mixed $baseUrl
+     *
+     * @return Options
+     */
+    public function setBaseUrl($baseUrl): Options
+    {
+        $this->baseUrl = $baseUrl;
         return $this;
     }
 }

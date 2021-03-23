@@ -359,7 +359,7 @@ class ConfigurationService
                 $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getInheritanceBaseUrl();
                 if (!$baseUrl) {
                     throw new FabfileNotReadableException(
-                        "Fabfile does not contain `inheritanceBaseUrl` which is needed to resolve inheritance!"
+                        "No base url provided, can't resolve relative references!"
                     );
                 }
 
