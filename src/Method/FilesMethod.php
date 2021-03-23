@@ -75,6 +75,10 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
     public function backup(HostConfig $host_config, TaskContextInterface $context)
     {
+        if ($host_config->get('fileBackupStrategy', 'files') !== 'files') {
+            return;
+        }
+
         $shell = $this->getShell($host_config, $context);
         $what = $context->get('what', []);
         if (!in_array('files', $what)) {
@@ -306,5 +310,10 @@ class FilesMethod extends BaseMethod implements MethodInterface
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($to_config, $context);
         return $shell->run('#!rsync ' . implode(' ', $rsync_args));
+    }
+
+    public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
+    {
+        $context->addResult('backupMethods', ['files']);
     }
 }

@@ -23,7 +23,7 @@ class ListBackupsCommand extends BaseCommand
             'what',
             InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
             'Filter list of backups by type, if none given, all types get displayed',
-            ['files', 'db']
+            []
         );
 
         $this->setAliases(['listBackups']);
@@ -54,6 +54,10 @@ class ListBackupsCommand extends BaseCommand
         $what = array_map(function ($elem) {
             return trim(strtolower($elem));
         }, $input->getArgument('what'));
+        if (empty($what)) {
+            $this->getMethods()->runTask('collectBackupMethods', $this->getHostConfig(), $context);
+            $what = $context->getResult('backupMethods', []);
+        }
 
 
         $this->getMethods()->runTask('listBackups', $this->getHostConfig(), $context);

@@ -22,7 +22,7 @@ class BackupCommand extends BaseCommand
             'what',
             InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
             'What to backup, allowed are `db` and `files`, if nothing is set, everything will be backed up',
-            ['files', 'db']
+            []
         );
     }
 
@@ -47,10 +47,16 @@ class BackupCommand extends BaseCommand
         }
 
         $context = $this->getContext();
-        $context->set('what', array_map(function ($elem) {
-            return trim(strtolower($elem));
-        }, $input->getArgument('what')));
 
+        $what = array_map(function ($elem) {
+            return trim(strtolower($elem));
+        }, $input->getArgument('what'));
+        if (empty($what)) {
+            $this->getMethods()->runTask('collectBackupMethods', $this->getHostConfig(), $context);
+            $what = $context->getResult('backupMethods', []);
+        }
+
+        $context->set('what', $what);
         $context->setResult('basename', [
            $this->getHostConfig()['configName'],
            date('Y-m-d--H-i-s')
