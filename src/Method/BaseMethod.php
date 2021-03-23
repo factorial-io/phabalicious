@@ -175,6 +175,18 @@ abstract class BaseMethod implements MethodInterface
             return false;
         }
 
+        if (count($tokens) == 3) {
+            // No commit hash.
+            return [
+                'config' => $tokens[0],
+                'date' => $tokens[1],
+                'time' => $tokens[2],
+                'type' => $type,
+                'hash' => $hash,
+                'file' => $file
+            ];
+        }
+
         return [
             'config' => $tokens[0],
             'commit' => $tokens[1],
