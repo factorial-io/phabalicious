@@ -59,21 +59,21 @@ class ResticMethod extends BaseMethod implements MethodInterface
     {
         parent::validateConfig($config, $errors);
 
-        $service = new ValidationService(
+        $validation = new ValidationService(
             $config,
             $errors,
             sprintf('host: `%s.restic`', $config['configName'])
         );
-        $service->hasKey('restic', 'COuld not find restic config');
+        $validation->hasKey('restic', 'Could not find restic config');
 
         if (isset($config['restic'])) {
-            $service = new ValidationService(
+            $validation = new ValidationService(
                 $config['restic'],
                 $errors,
                 sprintf('host: `%s.restic`', $config['configName'])
             );
 
-            $service->hasKeys([
+            $validation->hasKeys([
                 'repository' => 'The repository to backup to',
                 'environment' => 'The environment variables to apply before calling restic'
             ]);
