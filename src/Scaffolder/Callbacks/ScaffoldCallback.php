@@ -56,7 +56,6 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
 
         $options = new Options();
         $options->setAllowOverride(true)
-            ->setQuiet(true)
             ->setUseCacheTokens(false);
 
         if ($existing_options = $context->get('options', false)) {
