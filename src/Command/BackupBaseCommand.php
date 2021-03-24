@@ -5,7 +5,7 @@ namespace Phabalicious\Command;
 use Phabalicious\Method\TaskContextInterface;
 use Symfony\Component\Console\Input\InputInterface;
 
-class BackupBaseCommand extends BaseCommand
+abstract class BackupBaseCommand extends BaseCommand
 {
 
     protected function collectBackupMethods(InputInterface $input, TaskContextInterface $context)
