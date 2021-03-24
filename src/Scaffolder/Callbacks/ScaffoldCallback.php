@@ -61,10 +61,12 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
         if ($existing_options = $context->get('options', false)) {
             /** @var Options $existing_options */
             $options->setDryRun($existing_options->isDryRun());
+            $options->setDynamicOptions($existing_options->getDynamicOptions());
         }
 
         $scaffolder = new Scaffolder($context->getConfigurationService());
-        $scaffolder->scaffold($scaffold_url, dirname($scaffold_root_folder), $context, $tokens, $options);
+        $cloned_context = clone $context;
+        $scaffolder->scaffold($scaffold_url, dirname($scaffold_root_folder), $cloned_context, $tokens, $options);
     }
 
     private function getTokens(array $arguments):array
