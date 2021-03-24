@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.6.0-beta.4 / 2021-03-24
+
+### Fixes:
+
+  * Fix overridden data when executing scaffolds in scaffolds, pass options down the lane
+  * Resolve secrets before executing a command
+
 ## 3.6.0-beta.3 / 2021-03-24
 
 ### Fixed:
