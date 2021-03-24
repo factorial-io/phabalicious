@@ -162,7 +162,7 @@ class Scaffolder
         }
 
         $questions = !empty($data['questions']) ? $data['questions'] : [];
-        $tokens = $this->askQuestions($context->getInput(), $questions, $context, $tokens, $options);
+        $tokens = $this->askQuestions($questions, $context, $tokens, $options);
         if (!empty($data['variables'])) {
             $tokens = Utilities::mergeData($data['variables'], $tokens);
         }
@@ -286,7 +286,6 @@ class Scaffolder
      * @return array
      */
     protected function askQuestions(
-        InputInterface $input,
         array $questions,
         TaskContextInterface $context,
         array $tokens,

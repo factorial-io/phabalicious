@@ -14,7 +14,7 @@ class Options extends CallbackOptions
 
     protected $compabilityVersion = Utilities::FALLBACK_VERSION;
 
-    protected $dynamic_options = [];
+    protected $dynamicOptions = [];
 
     protected $skipSubfolder = false;
 
@@ -85,7 +85,7 @@ class Options extends CallbackOptions
 
     public function getDynamicOption(string $option_name)
     {
-        return $this->dynamic_options[$option_name] ?? false;
+        return $this->dynamicOptions[$option_name] ?? false;
     }
 
     /**
@@ -94,7 +94,7 @@ class Options extends CallbackOptions
      */
     public function setDynamicOptions(array $dynamic_options): Options
     {
-        $this->dynamic_options = $dynamic_options;
+        $this->dynamicOptions = $dynamic_options;
         return $this;
     }
 
@@ -229,5 +229,10 @@ class Options extends CallbackOptions
     {
         $this->baseUrl = $baseUrl;
         return $this;
+    }
+
+    public function getDynamicOptions()
+    {
+        return $this->dynamicOptions;
     }
 }
