@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.0-beta.5 / 2021-03-24
+
+### Fixed:
+
+  * Allow replacements for `alter_file_*` callbacks
+
 ## 3.6.0-beta.4 / 2021-03-24
 
 ### Fixes:
