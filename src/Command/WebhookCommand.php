@@ -73,9 +73,6 @@ class WebhookCommand extends BaseCommand
         } else {
             $webhook_name = $input->getArgument('webhook');
             $arguments = $this->parseScriptArguments([], $input->getOption('arguments'));
-            if (!empty($script_data['script'])) {
-                $script_data = $script_data['script'];
-            }
 
             $context = $this->getContext();
             $context->set('variables', $arguments);
