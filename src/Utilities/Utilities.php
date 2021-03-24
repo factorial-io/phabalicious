@@ -545,4 +545,25 @@ class Utilities
     {
         return strtoUpper(str_replace('-', '_', self::camel2dashed($string)));
     }
+
+    /**
+     * Remove any beta or alpha string from a version string.
+     */
+    public static function getNextStableVersion(string $version)
+    {
+        $exploded = explode(".", $version);
+        if (count($exploded) < 3) {
+            return $version;
+        }
+
+        if (str_contains($exploded[2], '-beta') || str_contains($exploded[2], '-alpha')) {
+            $exploded[2] = str_replace('-beta', '', $exploded[2]);
+            $exploded[2] = str_replace('-alpha', '', $exploded[2]);
+            unset($exploded[3]);
+
+            return implode(".", $exploded);
+        }
+
+        return $version;
+    }
 }

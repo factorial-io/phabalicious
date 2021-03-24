@@ -228,7 +228,8 @@ class ConfigurationService
 
         if ($data && isset($data['requires'])) {
             $required_version = $data['requires'];
-            $app_version = $this->application->getVersion();
+            // Alpha or beta versions act like released versions for requires.
+            $app_version = Utilities::getNextStableVersion($this->application->getVersion());
             $this->getLogger()->debug(sprintf("required %s in %s, app has %s", $required_version, $file, $app_version));
             if (Comparator::greaterThan($required_version, $app_version)) {
                 throw new MismatchedVersionException(
