@@ -181,4 +181,13 @@ class UtilitiesTest extends PhabTestCase
         $this->assertEquals('asentencewithoutwords', Utilities::slugify('A sentence without Words'));
         $this->assertEquals('a-sentence-without-words', Utilities::slugify('A sentence without Words', '-'));
     }
+
+    public function testGetNextStableVersion()
+    {
+        $this->assertEquals("3.6.1", Utilities::getNextStableVersion("3.6.1"));
+        $this->assertEquals("3.6", Utilities::getNextStableVersion("3.6"));
+        $this->assertEquals("3.6.0", Utilities::getNextStableVersion("3.6.0-beta.1"));
+        $this->assertEquals("3.6.10", Utilities::getNextStableVersion("3.6.10-beta.5"));
+        $this->assertEquals("3.7.10", Utilities::getNextStableVersion("3.7.10-alpha.5"));
+    }
 }
