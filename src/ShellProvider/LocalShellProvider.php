@@ -185,6 +185,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->process->clearErrorOutput();
         $this->process->clearOutput();
 
+        $password_manager = $this->getHostConfig()->getConfigurationService()->getPasswordManager();
+        if ($password_manager) {
+            $command = $password_manager->resolveSecrets($command);
+        }
+
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
         if (substr($command, -1) == ';') {
             $command = substr($command, 0, -1);
