@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.6.0-beta.2 / 2021-03-24
+
+### Fixed:
+
+  * Remove dead code
+  * Use release version when checking `requires`
+  * Fix fatal on startup, fixes #136
+  * Fix for backups w/o git hash
+
 ## 3.6.0-beta.1 / 2021-03-23
 
 ### New:
