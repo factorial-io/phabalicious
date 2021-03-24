@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.0-beta.3 / 2021-03-24
+
+### Fixed:
+
+  * Disable quiet for scaffold callback to allow questions to be shown
+
 ## 3.6.0-beta.2 / 2021-03-24
 
 ### Fixed:
