@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.6.0-beta.6 / 2021-03-25
+
+### Fixes:
+
+  * Try to replace patterns in strings only, fixes #141
+  * Remove double --namespace from k8s methods
+
 ## 3.6.0-beta.5 / 2021-03-24
 
 ### Fixed:
