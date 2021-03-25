@@ -128,6 +128,13 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals("b-overridden", $yaml['b']);
         $this->assertEquals("d-overridden", $yaml['c']['d']);
+        $this->assertEquals(true, $yaml['c']['test_bool']);
+        $this->assertIsBool($yaml['c']['test_bool']);
+        $this->assertEquals(123, $yaml['c']['test_int']);
+        $this->assertIsInt($yaml['c']['test_int']);
+
+        $this->assertEquals("a string", $yaml['c']['test_string']);
+        $this->assertIsString($yaml['c']['test_string']);
     }
 
     /**

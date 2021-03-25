@@ -11,6 +11,9 @@ overrides:
   b: b-overridden
   c:
     d: d-overridden
+    test_bool: true
+    test_int: 123
+    test_string: "a string"
 
 assets:
   - output.yaml

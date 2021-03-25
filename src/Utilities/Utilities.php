@@ -146,10 +146,12 @@ class Utilities
                 $result[$key] = $line;
             } elseif (is_array($line)) {
                 $result[$key] = self::expandStringsImpl($line, $replacements, $pattern, $ignore_list);
-            } else {
+            } elseif (is_string($line)) {
                 $result[$key] = preg_replace_callback('/' . $pattern . '/', function ($found) use ($replacements) {
                     return $replacements[$found[0]];
                 }, $line);
+            } else {
+                $result[$key] = $line;
             }
         }
 
