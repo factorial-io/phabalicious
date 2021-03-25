@@ -300,10 +300,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $this->kubectlShell->pushWorkingDir($project_folder);
         $cmd = sprintf(
-            '%s %s --namespace %s',
+            '%s %s',
             $this->expandCmd($host_config),
-            $command,
-            $kube_config['namespace']
+            $command
         );
         $result = $this->kubectlShell->run($cmd, $capture_output);
         $this->kubectlShell->popWorkingDir();
