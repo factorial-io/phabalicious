@@ -25,6 +25,13 @@ class PutFileCommand extends BaseCommand
             'The file to copy to the remote instance'
         );
 
+        $this->addOption(
+            'destination',
+            'd',
+            InputOption::VALUE_OPTIONAL,
+            'The target destination to copy the file to'
+        );
+
         $this->setAliases(['putFile']);
     }
 
@@ -54,6 +61,7 @@ class PutFileCommand extends BaseCommand
 
         $context = $this->getContext();
         $context->set('sourceFile', $file);
+        $context->set('destinationFile', $input->getOption('destination'));
 
         $context->io()->comment('Putting file `' . $file . '` to `' . $this->getHostConfig()['configName']. '`');
 

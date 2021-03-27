@@ -473,13 +473,14 @@ Copy a remote file to the current working directory of your current machine.
 
 ``` bash
 phab --config=<config> put:file <path-to-local-file>
+phab --config=<config> put:file <path-to-local-file> --destination <remote-destination>
 ```
 
-Copy a local file to the tmp-folder of a remote machine.
+Copy a local file to the configured root-folder of a remote configuration, if `remote-destination` is not given as an option.
 
 **Configuration**
 
-* this command will use the `tmpFolder`-host-setting for the destination directory.
+* this command will use the `rootFolder`-host-setting for the destination directory, if no destination is given.
 
 
 ## get:files-dump

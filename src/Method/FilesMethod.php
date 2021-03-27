@@ -54,7 +54,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
         }
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($config, $context);
-        $target_file_path = $config['rootFolder'] . '/' . basename($source);
+        $target_file_path = $context->get('destinationFile', false) ?: $config['rootFolder'] . '/' . basename($source);
         $shell->putFile($source, $target_file_path, $context, true);
         $context->setResult('targetFile', $target_file_path);
     }
