@@ -59,6 +59,23 @@ scaffold:
 
 * `transform` to transform a bunch of yml files to sth different. This command needs an implementation via plugin
 
+## Computed values
+
+Similar to scripts, scaffolders do support computed values, by adding a `computedValues`-block to the yaml-file. Computed values get evaluated before the scaffold starts and store the results of the executed commands as variables which can be consumed later on in the script.
+
+An example:
+
+```yaml
+computedValues:
+    usingOutdatedScaffolder: cd %rootFolder% && grep -q drupal-composer/drupal-scaffold composer.json
+
+scaffold:
+    - assert_nonzero(%computed.usingOutdatedScaffolder%, "The project is using the outdated drupal scaffolder from contrib, please upgrade first!")
+```
+
+The value for `usingOutdatedScaffolder` gets evaluated before the scaffolder starts and get injected as `%computed.usingOutdatedScaffolder%` which can be used in the script if needed.
+
+If the command (in this example `grep`) produces an output, then the output is used for the stored value. If no output is created, then the exitcode will be used for the value. See the documentation about [scripts](/scripts.md) for more info.
 
 ## `copy_assets`
 

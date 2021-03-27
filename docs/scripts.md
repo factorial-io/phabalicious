@@ -134,6 +134,8 @@ phab -cconfig script createRelease --arguments version=1.0.0
 
 Computed values allows to call external commands and store their return value as a replacement pattern, which can be used in the script-part later. The results of the commands are stored under the corresponding key in the `%computed%` dictionary. In the below example the result of `git describe ...` gets stored as `%computed.currentVersion%` and can be used in the scripts-part.
 
+If the executed command does not produce any output then the exit code is stored as the value.
+
 ```yaml
 scripts:
   showVersion:

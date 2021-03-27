@@ -210,6 +210,10 @@ class Scaffolder
         }
 
         $context->set(ScriptMethod::SCRIPT_DATA, $data['scaffold']);
+        if (isset($data['computedValues'])) {
+            $context->set(ScriptMethod::SCRIPT_COMPUTED_VALUES, $data['computedValues']);
+        }
+
         $context->set('variables', $tokens);
         $context->set('options', $options);
 

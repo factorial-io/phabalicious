@@ -12,6 +12,7 @@ use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
+use Symfony\Component\Yaml\Yaml;
 
 class ScriptMethod extends BaseMethod implements MethodInterface
 {
@@ -114,7 +115,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $environment = Utilities::mergeData($environment, $host_config['environment']);
         }
         $variables = Utilities::buildVariablesFrom($host_config, $context);
-        $variables['computed'] = $this->resolveComputedValues($context);
+        $variables['computed'] = $this->resolveComputedValues($context, $variables);
 
         if (!empty($questions = $context->get(self::SCRIPT_QUESTIONS, []))) {
             $factory = new QuestionFactory();
@@ -434,11 +435,14 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    private function resolveComputedValues(TaskContextInterface $context)
+    private function resolveComputedValues(TaskContextInterface $context, $variables)
     {
         $shell = $context->getShell();
         $result = [];
         $computed_values = $context->get(self::SCRIPT_COMPUTED_VALUES, []);
+        $replacements = Utilities::expandVariables($variables);
+        $computed_values = Utilities::expandStrings($computed_values, $replacements);
+
         foreach ($computed_values as $key => $cmd) {
             $cmd_result = $shell->run($cmd, true);
             $output = '';
@@ -446,6 +450,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $output = trim(implode("\n", $cmd_result->getOutput()));
             }
             $result[$key] = $output == "" ? $cmd_result->getExitCode() : $output;
+            $this->logger->info(sprintf("Results for computed value %s: %s", $key, $result[$key]));
         }
 
         return $result;
