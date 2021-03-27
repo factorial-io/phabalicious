@@ -20,6 +20,13 @@ class GetFilesDumpCommand extends BaseCommand
             ->setDescription('Get a current dump of all files')
             ->setHelp('Gets a dump of all files and copies it to your local computer');
         $this->setAliases(['getFilesDump']);
+
+        $this->addArgument(
+            'options',
+            InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
+            'The options to pass to tar',
+            []
+        );
         parent::configure();
     }
 
@@ -43,6 +50,7 @@ class GetFilesDumpCommand extends BaseCommand
         }
 
         $context = $this->getContext();
+        $context->set('tarOptions', $input->getArgument('options'));
 
         $this->getMethods()->runTask('getFilesDump', $this->getHostConfig(), $context);
         $to_copy = $context->getResult('files');

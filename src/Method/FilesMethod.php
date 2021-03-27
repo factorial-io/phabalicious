@@ -4,7 +4,6 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 
@@ -118,11 +117,10 @@ class FilesMethod extends BaseMethod implements MethodInterface
         array $source_folders,
         string $backup_file_name
     ) {
-        return $this->tarFiles($host_config, $context, $shell, $source_folders, $backup_file_name, 'backup');
+        return $this->tarFiles($context, $shell, $source_folders, $backup_file_name, 'backup');
     }
 
     private function tarFiles(
-        HostConfig $host_config,
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         array $source_folders,
@@ -130,14 +128,19 @@ class FilesMethod extends BaseMethod implements MethodInterface
         string $type
     ) {
         $exclude_files = $context->getConfigurationService()->getSetting('excludeFiles.' . $type, false);
-        $cmd = '#!tar';
+        $cmd = ['#!tar'];
 
         if ($exclude_files) {
-            $cmd .= ' --exclude="' . implode('" --exclude="', $exclude_files) . '"';
+            foreach ($exclude_files as $e) {
+                $cmd[] = '--exclude=' . $e;
+            }
         }
-        $cmd .= ' -czPf ' . $backup_file_name;
-        $cmd .= ' ' . implode(' ', $source_folders);
-        $result = $shell->run($cmd);
+        $cmd[] = ' -czPf ' . $backup_file_name;
+        $tar_options = $context->get('tarOptions', []);
+        $cmd = array_merge($cmd, $tar_options);
+
+        $cmd = array_merge($cmd, $source_folders);
+        $result = $shell->run(implode(' ', $cmd));
 
         return $result->succeeded() ? $backup_file_name : false;
     }
@@ -239,7 +242,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
                     '/' . $host_config['configName'] .
                     '.' . $key . '.'
                     . date('YmdHms') . '.tgz';
-                $filename = $this->tarFiles($host_config, $context, $shell, [$host_config[$name]], $filename, $key);
+                $filename = $this->tarFiles($context, $shell, [$host_config[$name]], $filename, $key);
 
                 if ($filename) {
                     $context->addResult('files', [$filename]);
