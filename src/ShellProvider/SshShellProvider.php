@@ -29,7 +29,10 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
     {
         $result =  parent::getDefaultConfig($configuration_service, $host_config);
         $result['shellProviderExecutable'] = '/usr/bin/ssh';
-        $result['shellProviderOptions'] = [];
+        $result['shellProviderOptions'] = [
+            '-o',
+            'PasswordAuthentication=no'
+        ];
         $result['disableKnownHosts'] = $configuration_service->getSetting('disableKnownHosts', false);
         $result['port'] = 22;
 
