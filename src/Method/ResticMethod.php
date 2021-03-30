@@ -125,14 +125,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShellForRestic($host_config, $context);
 
         $repository = $host_config['restic']['repository'];
-
-        if (substr($repository, 0, 5) == 'sftp:') {
-            EnsureKnownHosts::ensureKnownHosts(
-                $context->getConfigurationService(),
-                $this->getKnownHosts($host_config, $context),
-                $shell
-            );
-        }
+        $this->ensureKnownHosts($host_config, $context, $shell);
         $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
 
         $context->io()->comment(sprintf(
@@ -157,7 +150,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
             return;
         }
         $shell = $this->getShellForRestic($host_config, $context);
-
+        $this->ensureKnownHosts($host_config, $context, $shell);
         $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
 
         $backup_set = $context->get('backup_set', []);
@@ -248,6 +241,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
     {
         $shell = $this->getShellForRestic($host_config, $context);
         $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
+        $this->ensureKnownHosts($host_config, $context, $shell);
 
         $options = $this->getResticOptions($host_config, $context);
         $options[] = '--json';
@@ -317,10 +311,30 @@ class ResticMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShell($host_config, $context);
         $environment = $host_config['restic']['environment'];
         if ($context->getPasswordManager()) {
-            $environment = $context->getPasswordManager()
-                ->resolveSecrets($environment);
+            $environment = $context->getPasswordManager()->resolveSecrets($environment);
         }
         $shell->applyEnvironment($environment);
         return $shell;
+    }
+
+    /**
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @param ShellProviderInterface|null $shell
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     */
+    protected function ensureKnownHosts(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell
+    ): void {
+        $repository = $host_config['restic']['repository'];
+        if (substr($repository, 0, 5) == 'sftp:') {
+            $a = parse_url($repository);
+            $known_hosts = [
+                sprintf("%s:%d", $a['host'], $a['port'] ?? 22)
+            ];
+            EnsureKnownHosts::ensureKnownHosts($context->getConfigurationService(), $known_hosts, $shell);
+        }
     }
 }
