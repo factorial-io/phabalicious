@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.6.0-beta.9 / 2021-04-06
+
+### Fixed:
+
+  * Add restic sftp host to known hosts automatically
+  * Throw an error instead of asking for a ssh password, can be overriden, if needed (Fixes #142)
+  * Update dependencies
+
 ## 3.6.0-beta.8 / 2021-04-06
 
 ### New:
