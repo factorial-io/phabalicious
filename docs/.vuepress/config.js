@@ -27,6 +27,7 @@ module.exports = {
       "/app-create-destroy.html",
       "/deploying-artifacts.html",
       "/kubernetes.html",
+      "/offsite-backups.html",
       "/local-overrides.html",
       "/passwords.html",
       "/contribute.html",
