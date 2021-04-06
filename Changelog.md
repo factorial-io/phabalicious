@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.6.0-beta.8 / 2021-04-06
+
+### New:
+
+  * Allow user to provide tar-options for `get:files-dump` (Fixes #138)
+  * Add new option for `put:file` to set the destination for the file copy. (Fixes #137)
+  * Allow `computedValues` also for scaffold scripts
+
 ## 3.6.0-beta.6 / 2021-03-25
 
 ### Fixes:
