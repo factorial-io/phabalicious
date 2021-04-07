@@ -1,5 +1,25 @@
 # Changelog
 
+## 3.6.0 / 2021-04-07
+
+The easter relase 3.6.0
+
+```
+      (\(\
+     (='.')
+    o(_")")
+```
+
+### New in this release (from the changelog of the beta releases):
+
+  * offsite backups via new `restic`-method
+  * Introduce new secrets mechanims to retrieve secrets from the outside
+  * Refactor app:create and app:destroy, add implementation for k8s
+  * Allow prefixing paths for inheritsFrom with `@` and introduce `inheritanceBaseUrl` to set a common base path
+  * Implement base url mechanism for scaffolds
+  * Allow inheritance in blueprints using `blueprintInheritsFrom`
+
+
 ## 3.6.0-beta.9 / 2021-04-06
 
 ### Fixed:
