@@ -116,6 +116,9 @@ class Scaffolder
         }
 
         $data['base_path'] = dirname($url);
+        if (!empty($data['baseUrl']) && empty($options->getBaseUrl())) {
+            $options->setBaseUrl($data['baseUrl']);
+        }
 
         if ($options->getBaseUrl()) {
             $this->configuration->setInheritanceBaseUrl($options->getBaseUrl());
