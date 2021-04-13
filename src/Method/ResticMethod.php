@@ -181,7 +181,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
             '%s %s backup %s',
             $restic_path,
             implode(' ', $options),
-            implode(' ', $files),
+            implode(' ', $files)
         ), false, true);
 
         if ($result->failed()) {
@@ -213,7 +213,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         ShellProviderInterface $shell,
         HostConfig $host_config,
         TaskContextInterface $context
-    ) {
+    ): string {
         $result = $shell->run('#!restic --help', true);
         if ($result->succeeded()) {
             return '#!restic';
@@ -274,6 +274,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
 
     /**
      * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param \Phabalicious\Method\TaskContextInterface $context
      *
      * @return array|mixed
      */
