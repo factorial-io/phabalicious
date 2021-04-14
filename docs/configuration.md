@@ -181,7 +181,14 @@ This will print all host configuration for the host `staging`.
 * `siteFolder` is a drupal-specific folder, where the settings.php resides for the given installation. This allows to interact with multisites etc.
 * `filesFolder` the path to the files-folder, where user-assets get stored and which should be backed up by the `files`-method
 * `revertFeatures`, defaults to `True`, when set all features will be reverted when running a reset (drush only)
-* `configurationManagement`, an array of configuration-labels to import on `reset`, defaults to `['staging']`. You can add command arguments for drush, e.g. `['staging', 'dev --partial']`
+* `configurationManagement`, an array of configuration-labels to import on `reset`, defaults to `['staging']`. You can add command arguments for drush, e.g.
+
+      configurationManagement:
+        sync:
+          - drush cim -y
+          - echo "do sth else"
+
+* `configBaseFolder`, where all the configurations are stored, it defaults to `../config` -- the folder to the actual configuration gets computed, e.g. with the above example it would be `../config/sync`
 * `database` the database-credentials the `install`-tasks uses when installing a new installation.
     * `name` the database name
     * `host` the database host

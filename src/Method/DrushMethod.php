@@ -121,6 +121,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $config['supportsZippedBackups'] = true;
         $config['siteFolder'] = '/sites/default';
         $config['filesFolder'] = '/sites/default/files';
+        $config['configBaseFolder'] = '../config';
 
         return $config;
     }
@@ -752,7 +753,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
     private function getConfigSyncDirectory(HostConfig $host_config)
     {
-        return $host_config['rootFolder'] . '/../config/' . array_key_last($host_config['configurationManagement']);
+        return implode('/', [
+            $host_config['rootFolder'],
+            $host_config['configBaseFolder'],
+            array_key_last($host_config['configurationManagement']),
+        ]);
     }
 
     private function setupConfigurationManagement(HostConfig $host_config, TaskContextInterface $context)
@@ -856,7 +861,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         if ($settings_file_exists) {
             $result = $shell->run(
-                '#!grep -q "^\$settings\[\'config_sync_directory\'] = \'../config/" settings.php',
+                sprintf(
+                    '#!grep -q "^\$settings\[\'config_sync_directory\'] = \'%s/" settings.php',
+                    $host_config["configBaseFolder"]
+                ),
                 true,
                 false
             );
