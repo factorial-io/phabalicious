@@ -3,6 +3,7 @@
 
 namespace Phabalicious\Utilities;
 
+use Dotenv\Dotenv;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\UnknownSecretException;
 use Phabalicious\Method\TaskContextInterface;
@@ -136,6 +137,17 @@ class PasswordManager implements PasswordManagerInterface
         $env_name = !empty($secret_data['env']) ? $secret_data['env'] : Utilities::toUpperSnakeCase($secret);
         if ($value = getenv($env_name)) {
             return $value;
+        }
+
+        static $envvars = [];
+        $env_file = $this->getContext()->getConfigurationService()->getFabfilePath() . '/.env';
+        if (empty($envvars) && file_exists($env_file)) {
+            $dotenv = new \Symfony\Component\Dotenv\Dotenv();
+            $contents = file_get_contents($env_file);
+            $envvars = $dotenv->parse($contents);
+        }
+        if (isset($envvars[$env_name])) {
+            return $envvars[$env_name];
         }
 
         $args = $this->getContext()->getInput()->getOption('secret');
