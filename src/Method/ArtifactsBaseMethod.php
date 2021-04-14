@@ -156,6 +156,7 @@ abstract class ArtifactsBaseMethod extends BaseMethod
             }
             $cloned_host_config[$key] = $dir;
         }
+        $shell->setHostConfig($cloned_host_config);
         $shell->cd($cloned_host_config['tmpFolder']);
         $context->set('outerShell', $shell);
         $context->set('installDir', $install_dir);
