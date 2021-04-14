@@ -139,6 +139,7 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         $install_dir = $context->get('installDir');
 
         $cloned_host_config = clone $host_config;
+        $cloned_host_config['configName'] = $host_config['configName'] . '--cloned--' . time();
         $keys = [];
         foreach ($context->getConfigurationService()->getMethodFactory()->all() as $method) {
             if ($root_folder = $method->getRootFolderKey()) {
@@ -164,6 +165,8 @@ abstract class ArtifactsBaseMethod extends BaseMethod
             $this->getKnownHosts($host_config, $context),
             $shell
         );
+
+        $context->getConfigurationService()->addHost($cloned_host_config->raw());
 
         AppDefaultStages::executeStages(
             $context->getConfigurationService()->getMethodFactory(),
