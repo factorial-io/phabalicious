@@ -51,10 +51,10 @@ abstract class BaseCallback implements CallbackInterface
         $input = $read_fn($file_path);
 
         $data = $this->getData($context);
-        if (isset($data[$data_key])) {
+        if ($override = Utilities::getProperty($data, $data_key, false)) {
             $variables = $context->get('tokens', []);
             $replacements = Utilities::expandVariables($variables);
-            $override = Utilities::expandStrings($data[$data_key], $replacements);
+            $override = Utilities::expandStrings($override, $replacements);
             $override = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($override);
 
             $output = Utilities::mergeData($input, $override);
