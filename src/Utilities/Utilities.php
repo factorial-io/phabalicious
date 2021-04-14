@@ -131,7 +131,10 @@ class Utilities
         $result = $strings;
 
         foreach ($chunked_patterns as $chunk) {
-            $pattern = implode('|', array_filter($chunk, 'preg_quote'));
+            $pattern = implode('|', array_map(function ($e) {
+                return preg_quote($e, '/');
+            }, $chunk));
+
             $result = self::expandStringsImpl($result, $replacements, $pattern, $ignore_list);
         }
 
