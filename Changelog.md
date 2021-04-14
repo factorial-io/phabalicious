@@ -4,7 +4,7 @@
 
 ### Fixes
 
-  * Update changelog, bump version number
+  * Allow multiple secrets in one line
 
 ## 3.6.1 / 2021-04-14
 
