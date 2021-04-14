@@ -100,16 +100,18 @@ class PasswordManager implements PasswordManagerInterface
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $this->resolveSecretsImpl($value, $replacements);
-            } elseif (is_string($value) && ($secret_key = $this->containsSecret($value))) {
-                $replacements['%secret.' . $secret_key . '%'] = $this->getSecret($secret_key);
+            } elseif (is_string($value) && ($secret_keys = $this->containsSecrets($value))) {
+                foreach ($secret_keys as $secret_key) {
+                    $replacements['%secret.' . $secret_key . '%'] = $this->getSecret($secret_key);
+                }
             }
         }
     }
 
-    private function containsSecret(string $string)
+    private function containsSecrets(string $string)
     {
         $matches = [];
-        if (preg_match("/%secret\.(.*)%/", $string, $matches)) {
+        if (preg_match_all("/%secret\.(.*?)%/", $string, $matches)) {
             return $matches[1];
         }
         return false;

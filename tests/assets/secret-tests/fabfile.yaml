@@ -23,24 +23,28 @@ hosts:
     database:
       password: "%secret.mysql-password%"
       password_combined: "123--%secret.mysql-password%--321"
+      multiple_secrets: "--%secret.mysql-password%--%secret.smtp-password%--"
 
   testEnv:
     inheritsFrom: base
     smtp:
       password: "%secret.smtp-password%"
       password_combined: "123--%secret.smtp-password%--321"
+      multiple_secrets: "--%secret.mysql-password%--%secret.smtp-password%--"
 
   test1Password:
     inheritsFrom: base
     smtp:
       password: "%secret.op-password%"
       password_combined: "123--%secret.op-password%--321"
+      multiple_secrets: "--%secret.mysql-password%--%secret.smtp-password%--"
 
   testUnknownSecret:
     inheritsFrom: base
     database:
       password: "%secret.unknown-password%"
       password_combined: "123--%secret.mysql-password%--321"
+      multiple_secrets: "--%secret.mysql-password%--%secret.smtp-password%--"
 
   testBlueprint:
     inheritsFrom: base
@@ -50,3 +54,4 @@ hosts:
       database:
         password: "%secret.mysql-password%"
         password_combined: "123--%secret.mysql-password%--321"
+        multiple_secrets: "--%secret.mysql-password%--%secret.smtp-password%--"

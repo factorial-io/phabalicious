@@ -44,12 +44,13 @@ class SecretsTest extends PhabTestCase
             '--blueprint' => 'test',
             '--what' => 'host',
             '--config' => 'testBlueprint',
-            '--secret' => [ 'mysql-password=top_Secret']
+            '--secret' => [ 'mysql-password=top_Secret', 'smtp-password=$leet%']
         ));
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('top_Secret', $output);
         $this->assertStringContainsString('123--top_Secret--321', $output);
+        $this->assertStringContainsString('--top_Secret--$leet%--', $output);
         $this->assertStringNotContainsString('%secret.mysql-password', $output);
     }
 
@@ -62,18 +63,20 @@ class SecretsTest extends PhabTestCase
             'command' => $command->getName(),
             '--what' => 'host',
             '--config' => 'testHost',
-            '--secret' => [ 'mysql-password=top_Secret']
+            '--secret' => [ 'mysql-password=top_Secret', 'smtp-password=$leet%']
         ));
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('top_Secret', $output);
         $this->assertStringContainsString('123--top_Secret--321', $output);
+        $this->assertStringContainsString('--top_Secret--$leet%--', $output);
         $this->assertStringNotContainsString('%secret.mysql-password', $output);
     }
 
     public function testSecretsAsCustomEnvironmentVar()
     {
 
+        putenv("SMTP_PASSWORD=top_Secret");
         putenv("MARIADB_PASSWORD=top_Secret");
         $command = $this->application->find('output');
         $commandTester = new CommandTester($command);
