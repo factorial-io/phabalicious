@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.6.1 / 2021-04-14
+
+### Fixes
+
+  * Fixing parsing error #145
+  * Set base-url from scaffold-file as a fallback (fixes #144)
+
 ## 3.6.0 / 2021-04-07
 
 The easter relase 3.6.0
