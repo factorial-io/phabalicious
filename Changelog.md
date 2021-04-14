@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.2 / 2021-04-14
+
+### Fixes
+
+  * Update changelog, bump version number
+
 ## 3.6.1 / 2021-04-14
 
 ### Fixes
