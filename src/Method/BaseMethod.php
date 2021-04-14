@@ -122,6 +122,9 @@ abstract class BaseMethod implements MethodInterface
         ) {
             $args['--arguments'] = Utilities::buildOptionsForArguments($variables['arguments']);
         }
+        if ($command->getDefinition()->hasOption('secret') && $context->getInput()->hasOption('secret')) {
+            $args['--secret'] = $context->getInput()->getOption('secret');
+        }
         $args['--config'] = $context->get('host_config')['configName'];
         $input = new ArrayInput($args);
         return $command->run($input, $context->getOutput());
