@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.6.3 / 2021-04-15
+
+### Changed:
+
+  * Set hostconfig for subsequent commands in artifact based deployments
+  * Use dot-notation to define the data to use when altering files
+  * Add configBaseFolder configuration option to override the config base folder name
+  * Add support for storing secrets in .env file
+  * Add support for named scripts (from the scripts section) in artifact based deployment
+
+### Fixed:
+
+  * Fix bug in escaping replacement patterns
+  * Pass secrets to subsequent calls via execute callback
+  * Save cloned hostconfig when running artifact based deployment, so execute callback works on latest data
+
 ## 3.6.2 / 2021-04-14
 
 ### Fixes
