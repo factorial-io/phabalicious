@@ -210,6 +210,9 @@ This action comes handy when degugging the build process, as it will stop the ex
   arguments:
     - echo "Hello world"
     - cp .env.production .env
+- action: script
+  arguments:
+    name: compile:vue
 ```
 
 The `script`-action will run the script from the arguments section line by line. You can use the usual replacement patterns as for other scripts. Most helpful are:
@@ -218,6 +221,8 @@ The `script`-action will run the script from the arguments section line by line.
 |---------|-------------|
 | `%context.data.installDir%` | The installation dir, where the app got installed into |
 | `%context.data.targetDir%` | The targetdir, where the app got copied to, which gets committed or synced |
+
+If `arguments` contains a name, then this named script will be executed. It should be available under the global `scripts`-section or on the hosts' scripts section.
 
 ### message
 
