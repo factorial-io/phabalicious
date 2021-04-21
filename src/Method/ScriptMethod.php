@@ -339,6 +339,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      */
     public function runTaskSpecificScripts(HostConfig $config, string $task, TaskContextInterface $context)
     {
+        $this->logger->debug("Try runtaskSpecific scripts for " . $task);
+
         $this->handledTaskSpecificScripts[$task] = true;
 
         $common_scripts = $context->getConfigurationService()->getSetting('common', []);

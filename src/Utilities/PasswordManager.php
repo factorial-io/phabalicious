@@ -165,7 +165,7 @@ class PasswordManager implements PasswordManagerInterface
         }
 
         if (isset($secret_data['onePasswordId'])) {
-            $pw = $this->getSecretFrom1Password($secret_data['onePasswordId']);
+            $pw = $this->getSecretFrom1Password($secret, $secret_data['onePasswordId']);
             if ($pw) {
                 return $pw;
             }
@@ -177,7 +177,7 @@ class PasswordManager implements PasswordManagerInterface
         return $pw;
     }
 
-    private function getSecretFrom1Password($item_id)
+    private function getSecretFrom1Password($secret, $item_id)
     {
         $op_file_path = getenv('PHAB_OP_FILE_PATH') ?: '/usr/local/bin/op';
         if (!$op_file_path || !file_exists($op_file_path)) {
@@ -201,11 +201,18 @@ class PasswordManager implements PasswordManagerInterface
                 }
             } else {
                 $this->getContext()->getConfigurationService()->getLogger()->warning(
-                    "Could not get password from 1password!\n" . implode("\n", $output)
+                    sprintf(
+                        "Could not get password for `%s` from 1password!\n%s",
+                        $secret,
+                        implode("\n", $output)
+                    )
                 );
             }
         } else {
-            throw new \RuntimeException("1Password returned an error, are you logged in?");
+            throw new \RuntimeException(sprintf(
+                "1Password returned an error while trying to resolve secret `%s`, are you logged in?",
+                $secret
+            ));
         }
 
         return false;

@@ -31,6 +31,11 @@ class Options extends CallbackOptions
     /** @var ShellProviderInterface */
     protected $shell = null;
 
+    /** @var array */
+    protected $definition = null;
+
+    protected $twigLoaderBase = null;
+
     public function getAllowOverride(): bool
     {
         return $this->allowOverride;
@@ -231,8 +236,43 @@ class Options extends CallbackOptions
         return $this;
     }
 
-    public function getDynamicOptions()
+    public function getDynamicOptions(): array
     {
         return $this->dynamicOptions;
+    }
+
+    /**
+     * @return null|array
+     */
+    public function getScaffoldDefinition(): ?array
+    {
+        return $this->definition;
+    }
+
+    /**
+     * @param array $definition
+     *
+     * @return Options
+     */
+    public function setScaffoldDefinition(array $definition): Options
+    {
+        $this->definition = $definition;
+        return $this;
+    }
+
+    public function getTwigLoaderBase(): ?string
+    {
+        return $this->twigLoaderBase;
+    }
+
+    /**
+     * @param mixed $twigLoaderBase
+     *
+     * @return Options
+     */
+    public function setTwigLoaderBase($twigLoaderBase)
+    {
+        $this->twigLoaderBase = $twigLoaderBase;
+        return $this;
     }
 }

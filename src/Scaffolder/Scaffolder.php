@@ -51,7 +51,7 @@ class Scaffolder
     /**
      * Scaffold sth from an file/url.
      *
-     * @param $url
+     * @param string $url
      * @param $root_folder
      * @param TaskContextInterface $context
      * @param array $tokens
@@ -81,22 +81,27 @@ class Scaffolder
         }
 
         $is_remote = false;
-        try {
-            if (substr($url, 0, 4) !== 'http') {
-                $data = Yaml::parseFile($url);
-                $twig_loader_base = dirname($url);
-            } else {
-                $data = $this->configuration->readHttpResource($url);
-                $data = Yaml::parse($data);
-                $twig_loader_base = '/tmp';
-                $is_remote = true;
+        $base_path = $twig_loader_base = $options->getTwigLoaderBase();
+        if (!$data = $options->getScaffoldDefinition()) {
+            $base_path = dirname($url);
+            try {
+                if (substr($url, 0, 4) !== 'http') {
+                    $data = Yaml::parseFile($url);
+                    $twig_loader_base = dirname($url);
+                } else {
+                    $data = $this->configuration->readHttpResource($url);
+                    $data = Yaml::parse($data);
+                    $twig_loader_base = '/tmp';
+                    $is_remote = true;
+                }
+            } catch (ParseException $e) {
+                throw new YamlParseException(sprintf("Could not parse %s!", $url), 0, $e);
             }
-        } catch (ParseException $e) {
-            throw new YamlParseException(sprintf("Could not parse %s!", $url), 0, $e);
+            if (!$data) {
+                throw new InvalidArgumentException('Could not read yaml from ' . $url);
+            }
         }
-        if (!$data) {
-            throw new InvalidArgumentException('Could not read yaml from ' . $url);
-        }
+
 
         // Allow implementation to override parts of the data.
         $data = Utilities::mergeData($context->get('dataOverrides', []), $data);
@@ -115,7 +120,7 @@ class Scaffolder
             }
         }
 
-        $data['base_path'] = dirname($url);
+        $data['base_path'] = $base_path;
         if (!empty($data['baseUrl']) && empty($options->getBaseUrl())) {
             $options->setBaseUrl($data['baseUrl']);
         }
@@ -137,7 +142,7 @@ class Scaffolder
             }
         }
 
-        $data = $this->configuration->resolveInheritance($data, [], dirname($url));
+        $data = $this->configuration->resolveInheritance($data, [], $base_path);
         if (!empty($data['plugins']) && $options->getPluginRegistrationCallback()) {
             $options->getPluginRegistrationCallback()($data['plugins']);
         }
@@ -267,14 +272,11 @@ class Scaffolder
             ));
         }
 
-        if (!empty($data['successMessage'])) {
-            $context->io()->block($data['successMessage'], 'Notes', 'fg=white;bg=blue', ' ', true);
-        }
         if ($options->useCacheTokens()) {
             $this->writeTokens($tokens['rootFolder'], $tokens);
         }
-
-        $context->io()->success('Scaffolding finished successfully!');
+        $success_message = $data['successMessage'] ?? 'Scaffolding finished successfully!';
+        $context->io()->success($success_message);
         if ($options->isDryRun()) {
             $result = new CommandResult(0, $shell->getCapturedCommands());
         }

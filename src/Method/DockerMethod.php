@@ -11,6 +11,9 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
+use Phabalicious\Scaffolder\Options;
+use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ScopedLogLevel\ScopedErrorLogLevel;
 use Phabalicious\ScopedLogLevel\ScopedLogLevel;
 use Phabalicious\ShellProvider\CommandResult;
@@ -20,6 +23,8 @@ use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LogLevel;
+use Symfony\Component\DependencyInjection\Dumper\YamlDumper;
+use Symfony\Component\Yaml\Yaml;
 
 class DockerMethod extends BaseMethod implements MethodInterface
 {
@@ -53,6 +58,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         ) {
             $config['sshTunnel']['destHostFromDockerContainer'] = $host_config['docker']['name'];
         }
+        $config['docker']['scaffold'] = false;
         return $config;
     }
 
@@ -77,6 +83,17 @@ class DockerMethod extends BaseMethod implements MethodInterface
             );
             $validation->checkForValidFolderName('projectFolder');
             $validation->hasKey('configuration', 'name of the docker-configuration to use');
+
+            if ($config['docker']['scaffold']) {
+                $validation = new ValidationService(
+                    $config['docker']['scaffold'],
+                    $errors,
+                    sprintf('host.docker.scaffold: `%s`', $config['configName'])
+                );
+                $validation->hasKeys([
+                    'assets' => 'The list of assets to scaffold',
+                ]);
+            }
         }
     }
 
@@ -114,12 +131,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws FailedShellCommandException
-     * @throws MethodNotFoundException
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws MissingScriptCallbackImplementation
-     * @throws ValidationFailedException
+     *
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function docker(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -137,12 +156,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @param string $task
      * @param bool $silent
-     * @throws MethodNotFoundException
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws MissingScriptCallbackImplementation
-     * @throws ValidationFailedException
-     * @throws FailedShellCommandException
+     *
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     private function runTaskImpl(HostConfig $host_config, TaskContextInterface $context, $task, $silent)
     {
@@ -193,7 +214,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
         return [
             'waitForServices',
             'copySSHKeys',
-            'startRemoteAccess'
+            'startRemoteAccess',
+            'scaffoldDockerFiles'
         ];
     }
 
@@ -601,6 +623,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $task
         );
 
+        if ($host_config['docker']['scaffold']) {
+            $this->scaffoldDockerFiles($host_config, $context);
+        }
+
         if ($needs_running_container && empty($host_config['docker']['name'])) {
             $this->logger->info('Try to get docker container name ...');
             try {
@@ -671,5 +697,51 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $context->setResult('command', [
             $command
         ]);
+    }
+
+    protected function scaffoldDockerFiles(HostConfig $host_config, TaskContextInterface $context)
+    {
+        static $scaffolder_did_run = [];
+        if (!empty($scaffolder_did_run[$host_config['configName']])) {
+            return;
+        }
+        $scaffolder_did_run[$host_config['configName']] = true;
+
+        $docker_config = self::getDockerConfig($host_config, $context->getConfigurationService());
+        $project_folder = self::getProjectFolder($docker_config, $host_config);
+        $shell = $docker_config->shell();
+
+        $assets = $host_config['docker']['scaffold']['assets'];
+        if (!is_array($assets)) {
+            $assets = [ $assets ];
+        }
+        $tokens = Utilities::buildVariablesFrom($host_config, $context);
+        unset($tokens['context']);
+        $options = new Options();
+        $options
+            ->setTwigLoaderBase($project_folder)
+            ->setShell($shell)
+            ->setSkipSubfolder(true)
+            ->setAllowOverride(true)
+            ->setUseCacheTokens(true)
+            ->setScaffoldDefinition([
+                "questions" => [],
+                "assets" => $assets,
+                "successMessage" => "Scaffolded files for docker successfully!",
+                "scaffold" => [
+                    "copy_assets(%rootFolder%)",
+                ]
+            ]);
+
+        $context->set('scaffoldStrategy', CopyAssetsCallback::IGNORE_SUBFOLDERS_STRATEGY);
+        $scaffolder = new Scaffolder($context->getConfigurationService());
+
+        $scaffolder->scaffold(
+            false,
+            $project_folder,
+            $context,
+            $tokens,
+            $options
+        );
     }
 }
