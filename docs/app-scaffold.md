@@ -3,9 +3,9 @@ sidebarDepth: 3
 ---
 # Scaffolding a new app
 
-Phabalicious has a simple but powerful scaffold-command. It will read a yml-file and interpret the contents. It will use the existing pattern-replacement used for scripts and twig for changing file-contents. The scaffolding and fixture-files can live on a remote server or on your file-system.
+Phabalicious has a simple but powerful app:scaffold-command. It will read a yml-file and interpret the contents. It will use the existing pattern-replacement used for scripts and twig for changing file-contents. The scaffolding and fixture-files can live on a remote server or on your file-system.
 
-Here's an example of a scaffold-file:
+Here's an example of an app scaffold-file:
 
 ```yaml
 questions:
@@ -109,7 +109,7 @@ key:
 ```
 ### Non-interactive usage
 
-For non-interactive usage you can pass the values via commandline-options, where the option-name is the same as the key, for the above example:
+For non-interactive usage you can pass the values via commandline-options, where the option-name is dash-cased version of the key, for the above example:
 
 |command-line option|Question key|
 |------|------|
