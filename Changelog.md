@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.6.4 / 2021-04-30
+
+###Fixed:
+
+  * Fix relative inherits from remote and using `@` (Fixes #150)
+  * Update app:scaffold docs
+
 ## 3.6.3 / 2021-04-15
 
 ### Changed:
