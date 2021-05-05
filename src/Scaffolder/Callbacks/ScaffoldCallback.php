@@ -33,7 +33,7 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
     {
         if (count($arguments) < 2) {
             throw new \InvalidArgumentException(
-                'The scaffold callbacks requires 3 parameters: url, root_folder, project_folder'
+                'The scaffold callbacks requires 2 parameters: url, root_folder, and optionally tokens'
             );
         }
         $scaffold_url = array_shift($arguments);
