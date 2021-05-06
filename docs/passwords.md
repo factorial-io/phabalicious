@@ -25,6 +25,7 @@ secrets:
   mysql-password:
     question: Please provide the Mysql password for the cluster
     onePasswordId: 1234418718212s121
+    onePasswordVaultId: 768131213124
 ````
 
 
@@ -49,8 +50,51 @@ Phab will resolve the references on runtime and try to get the secret from
   * from the command line via the option `--secret`, e.g. `--secret registry-password=123 --secret mysql-password=iamsecret`
   * from the local password file (see below)
   * from the 1password cli if it is installed, and the secret declaration has a `onePasswordId` set. You need to be signed into 1password via the cli beforehand. (See the [documentation](https://support.1password.com/command-line-getting-started/))
+
+  * If a `onePasswordVaultId` is set and a global config for `onePassword` is available then phab will try to lookup the secret using 1password connect. (See below)
   * As a last resort, the user get prompted for the password.
 
+## Using 1Password CLI
+
+Make sure, that you have `op` up and running, ([Docs here](https://1password.com/downloads/command-line/)) and your secret has set a `onePasswordId` as in the following example:
+
+```yaml
+
+secrets:
+  mysql-password:
+    question: Please provide the Mysql password for the cluster
+    onePasswordId: 1234418718212s121
+```
+
+(You can get the id either by querying the database with `op`, or online via the web-ui).
+
+1. Log into 1password cli with `eval (op signin <YOUR_TEAM_NAME>)`
+2. Run your phab command.
+
+If you are not logged in before phab needs the secret, the command will fail with an error message. You can override the path to the `op`-executable by setting the environment variable `PHAB_OP_FILE_PATH`.
+
+## Using 1password connect
+
+Make sure, you have a runnning 1password-connect-instance (See 1passwords [documentation](https://support.1password.com/secrets-automation/)). Phab needs the api-endpoint and the token for the service to authenticate against it. Best practice is to store this data in an override-file either in your home-folder or up to 5 levels up from your project-folder. E.g. in `../../fabfile.local.override.yaml`
+
+```yaml
+onePassword:
+  endpoint: https://vault.your-domain.tld
+  token: <your-bearer-token>
+```
+
+Then your secret needs to reference both the id and the vault-id as with this example:
+
+
+````yaml
+secrets:
+  mysql-password:
+    question: Please provide the Mysql password for the cluster
+    onePasswordId: 1234418718212s121
+    onePasswordVaultId: 768131213124
+````
+
+Then just run your command as usual, phab will try to resolve the secret from 1password connect and use it.
 
 ## FTP-passwords
 
