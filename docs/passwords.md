@@ -68,14 +68,14 @@ secrets:
 
 (You can get the id either by querying the database with `op`, or online via the web-ui).
 
-1. Log into 1password cli with `eval (op signin <YOUR_TEAM_NAME>)`
+1. Log into 1password cli with `eval (op signin <YOUR_TEAM_NAME>)` (this is for the fish-shell, other shells might need a different syntax)
 2. Run your phab command.
 
 If you are not logged in before phab needs the secret, the command will fail with an error message. You can override the path to the `op`-executable by setting the environment variable `PHAB_OP_FILE_PATH`.
 
 ## Using 1password connect
 
-Make sure, you have a runnning 1password-connect-instance (See 1passwords [documentation](https://support.1password.com/secrets-automation/)). Phab needs the api-endpoint and the token for the service to authenticate against it. Best practice is to store this data in an override-file either in your home-folder or up to 5 levels up from your project-folder. E.g. in `../../fabfile.local.override.yaml`
+Make sure, you have a runnning 1password-connect-instance (See 1passwords [documentation](https://support.1password.com/secrets-automation/)). Phab needs the api-endpoint and the token for the service to authenticate against it. Best practice is to store this data in an override-file either in your home-folder or up to 5 levels up from your project-folder. E.g. in `../../fabfile.local.override.yaml` **DO NOT COMMIT THE TOKEN INTO THE REPOSITORY**
 
 ```yaml
 onePassword:
