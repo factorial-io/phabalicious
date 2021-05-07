@@ -51,7 +51,7 @@ Phab will resolve the references on runtime and try to get the secret from
   * from the local password file (see below)
   * from the 1password cli if it is installed, and the secret declaration has a `onePasswordId` set. You need to be signed into 1password via the cli beforehand. (See the [documentation](https://support.1password.com/command-line-getting-started/))
 
-  * If a `onePasswordVaultId` is set and a global config for `onePassword` is available then phab will try to lookup the secret using 1password connect. (See below)
+  * If a `onePasswordVaultId` is set and a global config for `onePassword` is available, then phab will try to lookup the secret using 1password connect. (See below)
   * As a last resort, the user get prompted for the password.
 
 ## Using 1Password CLI
