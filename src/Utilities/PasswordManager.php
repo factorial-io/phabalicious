@@ -236,7 +236,7 @@ class PasswordManager implements PasswordManagerInterface
             $validation_service = new ValidationService($onepassword_connect, $errors, 'onePassword');
             $validation_service->hasKeys([
                 'token' => 'The access token to authenticate against onePassword connect',
-                'endpoint' => 'The onepassword api endpoint to connect to'
+                'endpoint' => 'The onePassword api endpoint to connect to'
             ]);
 
             if ($errors->hasErrors()) {
