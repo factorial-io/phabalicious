@@ -137,7 +137,9 @@ class PasswordManager implements PasswordManagerInterface
 
         $secret_data = $secrets[$secret];
 
-        $env_name = !empty($secret_data['env']) ? $secret_data['env'] : Utilities::toUpperSnakeCase($secret);
+        $env_name = !empty($secret_data['env'])
+            ? $secret_data['env']
+            : str_replace('.', '_', Utilities::toUpperSnakeCase($secret));
         if ($value = getenv($env_name)) {
             return $value;
         }
@@ -168,10 +170,11 @@ class PasswordManager implements PasswordManagerInterface
         }
 
         // Check onepassword connect ...
-        if (isset($secret_data['onePasswordVaultId']) && isset($secret_data['onePasswordId'])) {
+        if (!empty($secret_data['onePasswordVaultId']) && !empty($secret_data['onePasswordId'])) {
             if ($pw = $this->getSecretFrom1PasswordConnect(
                 $secret_data['onePasswordVaultId'],
-                $secret_data['onePasswordId']
+                $secret_data['onePasswordId'],
+                $secret
             )) {
                 return $pw;
             } else {
@@ -190,6 +193,16 @@ class PasswordManager implements PasswordManagerInterface
         }
 
         $pw = $this->getQuestionFactory()->askAndValidate($this->getContext()->io(), $secret_data, null);
+
+        if (is_null($pw)) {
+            throw new \RuntimeException(sprintf(
+                "Could not determine value for secret `%s`!\n\n" .
+                "Use `setenv %s=<value>` or \nadd `--secret %s=<value>` to your command",
+                $secret,
+                $env_name,
+                $secret
+            ));
+        }
 
         $this->passwords[$secret] = $pw;
         return $pw;
@@ -213,7 +226,7 @@ class PasswordManager implements PasswordManagerInterface
         }
     }
 
-    private function getSecretFrom1PasswordConnect($vault_id, $item_id)
+    private function getSecretFrom1PasswordConnect($vault_id, $item_id, $secret_name)
     {
 
         $configuration_service = $this->getContext()->getConfigurationService();
@@ -232,7 +245,9 @@ class PasswordManager implements PasswordManagerInterface
 
             try {
                 $url = $onepassword_connect['endpoint'] . "/v1/vaults/$vault_id/items/$item_id";
-                $configuration_service->getLogger()->info(sprintf("Querying %s for secret...", $url));
+                $configuration_service->getLogger()->info(
+                    sprintf("Querying %s for secret `%s` ...", $url, $secret_name)
+                );
 
                 $client = new Client();
                 $response = $client->get($url, [
@@ -242,7 +257,11 @@ class PasswordManager implements PasswordManagerInterface
                 ]);
                 return $this->extractSecretFrom1PasswordPayload((string) $response->getBody(), false);
             } catch (\Exception $exception) {
-                throw new \RuntimeException("Could not get secret from 1password-connect", 0, $exception);
+                throw new \RuntimeException(
+                    sprintf("Could not get secret `%s` from 1password-connect", $secret_name),
+                    0,
+                    $exception
+                );
             }
         }
 
