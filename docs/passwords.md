@@ -56,7 +56,7 @@ Phab will resolve the references on runtime and try to get the secret from
 
 ## Using 1Password CLI
 
-Make sure, that you have `op` up and running, ([Docs here](https://1password.com/downloads/command-line/)) and your secret has set a `onePasswordId` as in the following example:
+Make sure that you have `op` up and running (see the [documentation](https://1password.com/downloads/command-line/)), and your secret has set an `onePasswordId` as in the following example:
 
 ```yaml
 
