@@ -206,18 +206,52 @@ class K8sMethod extends BaseMethod implements MethodInterface
         $pod_selectors = $host_config['kube']['podSelector'];
         $pod_selectors = $this->expandReplacements($host_config, $context, $pod_selectors);
 
-        $result = $this->kubectl(
+        $deployment_result = $this->getJsonFromKubectl(
+            $host_config,
+            $context,
+            sprintf(
+                'get deployment -l %s -o json',
+                implode(',', $pod_selectors)
+            )
+        );
+
+        if (!empty($deployment_result['items'][0]['metadata']['annotations']['deployment.kubernetes.io/revision'])) {
+            $revision = $deployment_result['items'][0]['metadata']['annotations']['deployment.kubernetes.io/revision'];
+            $this->logger->debug("Got revision from deployment: " . $revision);
+
+            $replica_set_result = $this->getJsonFromKubectl(
+                $host_config,
+                $context,
+                sprintf(
+                    'get replicaset -l %s -o json',
+                    implode(',', $pod_selectors)
+                )
+            );
+
+            $pod_template_hash = false;
+            foreach ($replica_set_result['items'] as $item) {
+                if (!empty($item['metadata']['annotations']['deployment.kubernetes.io/revision'])) {
+                    $replica_revision = $item['metadata']['annotations']['deployment.kubernetes.io/revision'];
+                    if ($replica_revision == $revision) {
+                        $pod_template_hash = $item['metadata']['labels']['pod-template-hash'] ?? false;
+                        break;
+                    }
+                }
+            }
+            if ($pod_template_hash) {
+                $this->logger->debug("Got pod-template-hash from replicaset: " . $pod_template_hash);
+                $pod_selectors[] = "pod-template-hash=" . $pod_template_hash;
+            }
+        }
+        $data = $this->getJsonFromKubectl(
             $host_config,
             $context,
             sprintf(
                 'get pods -l %s -o json',
                 implode(',', $pod_selectors)
-            ),
-            true
+            )
         );
 
-        $content = implode("\n", $result->getOutput());
-        $data = json_decode($content, JSON_OBJECT_AS_ARRAY);
 
         $pod_name = $data['items'][0]['metadata']['name'] ?? null;
         if (empty($pod_name)) {
@@ -229,6 +263,20 @@ class K8sMethod extends BaseMethod implements MethodInterface
             );
         }
         return $pod_name;
+    }
+
+    protected function getJsonFromKubectl(HostConfig $host_config, TaskContextInterface $context, string $command)
+    {
+
+        $result = $this->kubectl(
+            $host_config,
+            $context,
+            $command,
+            true
+        );
+
+        $content = implode("\n", $result->getOutput());
+        return json_decode($content, JSON_OBJECT_AS_ARRAY);
     }
 
     public function deployPrepare(HostConfig $host_config, TaskContextInterface $context)
