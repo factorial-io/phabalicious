@@ -209,7 +209,7 @@ This will make sure, that the context is not available after phab finished its w
 
 ## Getting a shell to one of the pods
 
-Phab contains a shell-provider for kubernetes, but it needs some guidance so it knows which pod to connect to. Phab is using a set of selectors to acquire the name of the actual running pod.  As every project is different it makes sense to store this information in the `kube`-section of your host configuration:
+Phab contains a shell-provider for kubernetes, but it needs some guidance so it knows which pod to connect to. Phab is using a set of selectors to acquire the name of the actual running pod. As every project is different it makes sense to store this information in the `kube`-section of your host configuration:
 
 ```yaml
 hosts:
