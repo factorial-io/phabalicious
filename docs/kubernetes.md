@@ -70,7 +70,7 @@ hosts:
 | `kubectlOptions` | array with command-line options for kubectl, in the format `--option: value` | `- --insecure-skip-tls-verify: ""` |
 | `kube.kubeconfig` | the kubeconfig to use for any kubectl command | `%globals.userFolder%/.kube/my-kube-config` |
 | `kube.context` | the context to switch before calling any kubectl command ||
-| `kube.environment`| An array of environment variables to set before calling any kubectl command. | 
+| `kube.environment`| An array of environment variables to set before calling any kubectl command. |
 | `kube.namespace` | The namespace to apply to all kubectl commands | `myapp`|
 | `kube.scaffolder.baseUrl`| Base-URL for the scaffolder | |
 | `kube.scaffolder.template` | the template file name to use when scaffolding the definition files ||
@@ -209,7 +209,7 @@ This will make sure, that the context is not available after phab finished its w
 
 ## Getting a shell to one of the pods
 
-Phab contains a shell-provider for kubernetes, but it needs some guidance so it knows which pod to connect to. Phab is using a set of selectors to acquire the name of the actual running pod. As every project is different it makes sense to store this information in the `kube`-section of your host configuration:
+Phab contains a shell-provider for kubernetes, but it needs some guidance so it knows which pod to connect to. Phab is using a set of selectors to acquire the name of the actual running pod.  As every project is different it makes sense to store this information in the `kube`-section of your host configuration:
 
 ```yaml
 hosts:
@@ -221,7 +221,7 @@ hosts:
       ...
 ```
 
-The `podSelector` contains one or more selectors which get appended to the kubctl call to get the name of the pod. In the above example the podSelector is using a `%property%` to use another property of the kube config. This makes it easy to change the pod-selector via the `--set`-option.
+The `podSelector` contains one or more selectors which get appended to the kubctl call to get the name of the pod. In the above example the podSelector is using a `%property%` to use another property of the kube config. This makes it easy to change the pod-selector via the `--set`-option. Phab will also query the actual deployment and the relevant replicaset to append a `pod-template-hash` selector to the query to make sure, to connect to the latest pod.
 
 To actually start a shell:
 
