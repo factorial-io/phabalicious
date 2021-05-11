@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.6.5 / 2021-05-11
+
+### New:
+
+  * Support for [1password connect](https://support.1password.com/secrets-automation/), see updated docs.
+
+### Fixed:
+
+  * Fix jira command (fixes #155)
+  * Use the pod-template-hash to get the actual running pod, instead of any pod (Fixes #153)
+  * Better error messages and throw an exception if a secret could not be retreived
+
 ## 3.6.4 / 2021-04-30
 
 ###Fixed:
