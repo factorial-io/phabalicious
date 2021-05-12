@@ -231,6 +231,9 @@ class PasswordManager implements PasswordManagerInterface
 
         $configuration_service = $this->getContext()->getConfigurationService();
         $onepassword_connect = $configuration_service->getSetting('onePassword', []);
+        if ($token = getenv("PHAB_OP_JWT_TOKEN")) {
+            $onepassword_connect['token'] = $token;
+        }
         if (is_array($onepassword_connect)) {
             $errors = new ValidationErrorBag();
             $validation_service = new ValidationService($onepassword_connect, $errors, 'onePassword');

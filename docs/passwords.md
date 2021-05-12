@@ -71,7 +71,7 @@ secrets:
 1. Log into 1password cli with `eval (op signin <YOUR_TEAM_NAME>)` (this is for the fish-shell, other shells might need a different syntax)
 2. Run your phab command.
 
-If you are not logged in before phab needs the secret, the command will fail with an error message. 
+If you are not logged in before phab needs the secret, the command will fail with an error message.
 
 You can override the path to the `op`-executable by setting the environment variable `PHAB_OP_FILE_PATH`.
 
@@ -82,10 +82,10 @@ Make sure, you have a runnning 1password-connect-instance (See 1passwords [docum
 ```yaml
 onePassword:
   endpoint: https://vault.your-domain.tld
-  token: <your-bearer-token>
+  token: <your-jwt-token>
 ```
 
-Then your secret needs to reference both the id and the vault-id as with this example:
+The jwt-token can also be passed via the environment variable `PHAB_OP_JWT_TOKEN`. Then your secret needs to reference both the id and the vault-id as with this example:
 
 
 ````yaml
