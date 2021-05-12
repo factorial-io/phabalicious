@@ -189,7 +189,7 @@ This will print all host configuration for the host `staging`.
           - echo "do sth else"
 
 * `configBaseFolder`, where all the configurations are stored, it defaults to `../config` -- the folder to the actual configuration gets computed, e.g. with the above example it would be `../config/sync`
-* `database` the database-credentials the `install`-tasks uses when installing a new installation.
+* `forceConfigurationManagement` defaults to false. If set to true, phab will not try to autodetect if a config import is doable and force the config importsync `database` the database-credentials the `install`-tasks uses when installing a new installation.
     * `name` the database name
     * `host` the database host
     * `user` the database user
@@ -198,6 +198,7 @@ This will print all host configuration for the host `staging`.
     * `skipCreateDatabase` do not create a database when running the install task.
 * `adminUser`, default is `admin`, the name of the admin-user to set when running the reset-task on `dev`-instances
 * `adminPass`, default is empty, will be computed on request. You can get it via `phab -c<config> get:property adminPass` -- this can be overridden per host or globally.
+* `deploymentModule` name of the deployment-module the drush-method enables when doing a deploy
 * `replaceSettingsFile`, default is true. If set to false, the settings.php file will not be replaced when running an install.
 * `alterSettingsFile`, default is true. If set to false, the settings.php file wont be touched by phabalicious.
 * `installOptions` default is `distribution: minimal, locale: en, options: ''`. You can change the distribution to install and/ or the locale.
@@ -493,9 +494,8 @@ host:
 
 ## other
 
-* `deploymentModule` name of the deployment-module the drush-method enables when doing a deploy
 * `sqlSkipTables` a list of table-names drush should omit when doing a backup.
-* `configurationManagement` a list of configuration-labels to import on `reset`. This defaults to `['staging']` and may be overridden on a per-host basis. You can add command arguments to the the configuration label.
+* `configurationManagement` a list of configuration-labels to import on `reset`. This defaults to `['sync']` and may be overridden on a per-host basis. You can add command arguments to the the configuration label.
 
 Example:
 ```yaml
@@ -514,7 +514,7 @@ configurationManagement:
    staging:
      - drush config-import -y staging
    dev:
-	   - Drusch config-import -y dev --partial
+	   - drush config-import -y dev --partial
 ```
 
 
