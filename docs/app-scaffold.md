@@ -58,19 +58,20 @@ The following question-types are supported:
 
 ### `question`
 
-A regular question, with optional default, validation and/ or autocomplete values
+A regular question, with optional default, validation and/ or autocomplete values. If `hidden` is true then the user wont see his input, ideal for sensitive data like passwords.
 
 ```yaml
 key:
-  question: the prompot to show 
+  question: the prompot to show
   type: question
   validation: the regex to use to validate the input
   error: the message to display, if the validation fails
   default: the default-value, when the user hits return
   transform: [lowercase|uppercase]
+  hidden: [true|false]
   autocomplete:
     - Option 1
-    - Option 2 
+    - Option 2
     - Option 3
 ```
 

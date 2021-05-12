@@ -24,10 +24,13 @@ class Question extends QuestionBase implements QuestionInterface
                 return $this->validate($answer);
             });
         }
+        if (!empty($this->data['hidden'])) {
+            $question->setHidden(true);
+        }
         if (isset($this->data['autocomplete'])) {
             $question->setAutocompleterValues($this->data['autocomplete']);
         }
-        
+
         return $io->askQuestion($question);
     }
 }
