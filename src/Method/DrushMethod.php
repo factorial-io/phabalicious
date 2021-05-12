@@ -67,8 +67,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
             'replaceSettingsFile' => true,
             'alterSettingsFile' => true,
             'configurationManagement' => [
-                'staging' => [
-                    '#!drush config-import -y staging'
+                'sync' => [
+                    '#!drush config-import -y sync'
                 ],
             ],
             'installOptions' => [
