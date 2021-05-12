@@ -169,27 +169,32 @@ class PasswordManager implements PasswordManagerInterface
             throw new \RuntimeException("Cant resolve secrets as no valid context is available!");
         }
 
-        // Check onepassword connect ...
-        if (!empty($secret_data['onePasswordVaultId']) && !empty($secret_data['onePasswordId'])) {
-            if ($pw = $this->getSecretFrom1PasswordConnect(
-                $secret_data['onePasswordVaultId'],
-                $secret_data['onePasswordId'],
-                $secret
-            )) {
-                return $pw;
-            } else {
-                $configuration_service->getLogger()->warning(
-                    'No configuration for onePassword-connect found, skipping ...'
-                );
+        try {
+            // Check onepassword connect ...
+            if (!empty($secret_data['onePasswordVaultId']) && !empty($secret_data['onePasswordId'])) {
+                if ($pw = $this->getSecretFrom1PasswordConnect(
+                    $secret_data['onePasswordVaultId'],
+                    $secret_data['onePasswordId'],
+                    $secret
+                )) {
+                    return $pw;
+                } else {
+                    $configuration_service->getLogger()->warning(
+                        'No configuration for onePassword-connect found, skipping ...'
+                    );
+                }
             }
-        }
 
-        // Check onepassword cli ...
-        if (isset($secret_data['onePasswordId'])) {
-            $pw = $this->getSecretFrom1PasswordCli($secret_data['onePasswordId']);
-            if ($pw) {
-                return $pw;
+            // Check onepassword cli ...
+            if (isset($secret_data['onePasswordId'])) {
+                $pw = $this->getSecretFrom1PasswordCli($secret_data['onePasswordId']);
+                if ($pw) {
+                    return $pw;
+                }
             }
+        } catch (\Exception $e) {
+            $configuration_service->getLogger()->error($e->getMessage());
+            // Give the user the chance to input the secret.
         }
 
         $pw = $this->getQuestionFactory()->askAndValidate($this->getContext()->io(), $secret_data, null);
