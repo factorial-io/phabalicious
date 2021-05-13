@@ -514,7 +514,7 @@ configurationManagement:
    staging:
      - drush config-import -y staging
    dev:
-	   - drush config-import -y dev --partial
+     - drush config-import -y dev --partial
 ```
 
 
