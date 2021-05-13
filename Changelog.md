@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.6.6 / 2021-05-13
+
+### New:
+
+  * Allow passing of 1password JWT token via environment variable
+  * Add support for hidden questions (e.g. for passwords)
+  * Add option `forceConfigurationManagement` for cases where phab cant detect it properly
+
+### Changed:
+
+  * Set new default for configurationManagement
+  * If there's an error with 1password cli or connect, display error, but continue
+
 ## 3.6.5 / 2021-05-11
 
 ### New:
