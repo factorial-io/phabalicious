@@ -67,8 +67,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
             'replaceSettingsFile' => true,
             'alterSettingsFile' => true,
             'configurationManagement' => [
-                'staging' => [
-                    '#!drush config-import -y staging'
+                'sync' => [
+                    '#!drush config-import -y sync'
                 ],
             ],
             'installOptions' => [
@@ -122,6 +122,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $config['siteFolder'] = '/sites/default';
         $config['filesFolder'] = '/sites/default/files';
         $config['configBaseFolder'] = '../config';
+        $config['forceConfigurationManagement'] = false;
 
         return $config;
     }
@@ -868,15 +869,27 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 true,
                 false
             );
-            $config_used = $result->succeeded() && $config_dir_exists;
+
+            $config_used = $host_config['forceConfigurationManagement'] || ($result->succeeded() && $config_dir_exists);
         }
         $shell->popWorkingDir();
+
+        $supported_by_drush = $host_config['drushVersion'] >= 9;
+
+        $this->logger->debug(sprintf("Settings file exists: %s", $settings_file_exists ? "TRUE" : "FALSE"));
+        $this->logger->debug(sprintf(
+            "Configuration dir %s exists: %s",
+            $this->getConfigSyncDirectory($host_config),
+            $config_dir_exists ? "TRUE" : "FALSE"
+        ));
+        $this->logger->debug(sprintf("Configuration used: %s", $config_used ? "TRUE" : "FALSE"));
+        $this->logger->debug(sprintf("Drush supports config import: %s", $supported_by_drush ? "TRUE" : "FALSE"));
 
         $context->setResult(self::SETTINGS_FILE_EXISTS, $settings_file_exists);
         $context->setResult(self::CONFIGURATION_EXISTS, $config_dir_exists);
         $context->setResult(
             self::CONFIGURATION_USED,
-            $config_dir_exists && $config_used && ($host_config['drushVersion'] >= 9)
+            $config_dir_exists && $config_used && $supported_by_drush
         );
     }
 

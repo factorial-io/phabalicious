@@ -1,5 +1,37 @@
 # Changelog
 
+## 3.6.6 / 2021-05-13
+
+### New:
+
+  * Allow passing of 1password JWT token via environment variable
+  * Add support for hidden questions (e.g. for passwords)
+  * Add option `forceConfigurationManagement` for cases where phab cant detect it properly
+
+### Changed:
+
+  * Set new default for configurationManagement
+  * If there's an error with 1password cli or connect, display error, but continue
+
+## 3.6.5 / 2021-05-11
+
+### New:
+
+  * Support for [1password connect](https://support.1password.com/secrets-automation/), see updated docs.
+
+### Fixed:
+
+  * Fix jira command (fixes #155)
+  * Use the pod-template-hash to get the actual running pod, instead of any pod (Fixes #153)
+  * Better error messages and throw an exception if a secret could not be retreived
+
+## 3.6.4 / 2021-04-30
+
+###Fixed:
+
+  * Fix relative inherits from remote and using `@` (Fixes #150)
+  * Update app:scaffold docs
+
 ## 3.6.3 / 2021-04-15
 
 ### Changed:
