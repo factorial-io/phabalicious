@@ -27,10 +27,13 @@ use Phabalicious\Validation\ValidationService;
 use Phar;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Environment;
+use Twig\Extra\String\StringExtension;
 use Twig\Loader\FilesystemLoader;
 
 class Scaffolder
@@ -75,10 +78,6 @@ class Scaffolder
         if (!$options) {
             $options = new Options();
         }
-        $saved_verbosity_level = $context->io()->getVerbosity();
-        if ($options->isQuiet()) {
-            $context->io()->setVerbosity(OutputInterface::VERBOSITY_QUIET);
-        }
 
         $is_remote = false;
         $base_path = $twig_loader_base = $options->getTwigLoaderBase();
@@ -102,6 +101,7 @@ class Scaffolder
             }
         }
 
+        $io = $options->isQuiet() ? new SymfonyStyle($context->getInput(), new NullOutput()) : $context->io();
 
         // Allow implementation to override parts of the data.
         $data = Utilities::mergeData($context->get('dataOverrides', []), $data);
@@ -183,6 +183,10 @@ class Scaffolder
             $tokens['projectFolder'] = $tokens['name'];
         }
 
+        $tokens = Utilities::mergeData(
+            Utilities::getGlobalReplacements($context->getConfigurationService()),
+            $tokens
+        );
         $variables = $tokens;
         foreach ($options->getVariables() as $key => $value) {
             $variables[$key] = $value;
@@ -232,9 +236,8 @@ class Scaffolder
 
         // Setup twig
         $loader = new FilesystemLoader($twig_loader_base);
-        $this->twig = new Environment($loader, array(
-
-        ));
+        $this->twig = new Environment($loader, array( ));
+        $this->twig->addExtension(new StringExtension());
 
         $options
             ->addCallback(
@@ -246,7 +249,7 @@ class Scaffolder
         $context->set('callbacks', $options->getCallbacks());
 
         if (is_dir($tokens['rootFolder']) && !$options->getAllowOverride()) {
-            if (!$context->io()->confirm(
+            if (!$io->confirm(
                 'Destination folder exists! Continue anyways?',
                 false
             )) {
@@ -254,13 +257,13 @@ class Scaffolder
             }
         }
         if ($context->getOutput()->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-            $context->io()->note('Available tokens:' . PHP_EOL . print_r($tokens, true));
+            $io->note('Available tokens:' . PHP_EOL . print_r($tokens, true));
         }
 
-        $context->io()->comment(sprintf('Create destination folder `%s`...', $tokens['rootFolder']));
+        $io->comment(sprintf('Create destination folder `%s`...', $tokens['rootFolder']));
         $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
 
-        $context->io()->comment('Start scaffolding script ...');
+        $io->comment('Start scaffolding script ...');
         $script->runScript($host_config, $context);
 
         /** @var CommandResult $result */
@@ -277,22 +280,20 @@ class Scaffolder
             $this->writeTokens($tokens['rootFolder'], $tokens);
         }
         $success_message = $data['successMessage'] ?? 'Scaffolding finished successfully!';
-        $context->io()->success($success_message);
+        $io->success($success_message);
         if ($options->isDryRun()) {
             $result = new CommandResult(0, $shell->getCapturedCommands());
         }
-
-        $context->io()->setVerbosity($saved_verbosity_level);
 
         return $result;
     }
 
     /**
-     * @param InputInterface $input
      * @param array $questions
      * @param TaskContextInterface $context
      * @param array $tokens
      * @param Options $options
+     *
      * @return array
      */
     protected function askQuestions(

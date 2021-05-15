@@ -210,6 +210,8 @@ class Options extends CallbackOptions
 
     /**
      * @param bool $quiet
+     *
+     * @return \Phabalicious\Scaffolder\Options
      */
     public function setQuiet(bool $quiet): Options
     {

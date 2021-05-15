@@ -96,6 +96,7 @@ class Utilities
             'userFolder' => self::getUserFolder(),
             'cwd' => getcwd(),
             'fabfileLocation' => $config->getFabfileLocation(),
+            'fabfilePath' => $config->getFabfilePath(),
         ];
     }
 

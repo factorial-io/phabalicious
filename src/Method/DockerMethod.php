@@ -721,6 +721,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $options
             ->setTwigLoaderBase($project_folder)
             ->setShell($shell)
+            ->setQuiet(true)
             ->setSkipSubfolder(true)
             ->setAllowOverride(true)
             ->setUseCacheTokens(true)
