@@ -35,8 +35,6 @@ class ScriptMethodTest extends PhabTestCase
     /** @var TaskContext */
     private $context;
 
-    private $savedArguments;
-
     /**
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
@@ -126,10 +124,10 @@ class ScriptMethodTest extends PhabTestCase
     public function testIgnoreExitCode()
     {
         $this->context->set('scriptData', [
-            'breakOnFirstError(0)',
+            'break_on_first_error(0)',
             '(exit 42)',
             '(exit 0)',
-            'breakOnFirstError(1)'
+            'break_on_first_error(1)'
         ]);
 
         $host_config = $this->configurationService->getHostConfig('hostA');
@@ -240,8 +238,9 @@ class ScriptMethodTest extends PhabTestCase
 
     public function testParsingCallbackParameters()
     {
+        $callback = new DebugCallback(true);
         $this->context->set('callbacks', [
-            'debug' => [$this, 'saveArgumentsCallback'],
+            $callback::getName() => $callback,
         ]);
 
         $this->context->set('scriptData', [
@@ -254,21 +253,19 @@ class ScriptMethodTest extends PhabTestCase
         $host_config = $this->configurationService->getHostConfig('hostA');
         $this->method->runScript($host_config, $this->context);
 
-        $this->assertEquals(["hello world"], $this->savedArguments[0]);
-        $this->assertEquals(["hello world"], $this->savedArguments[1]);
-        $this->assertEquals(["hello", "world"], $this->savedArguments[2]);
-        $this->assertEquals(["hello, world", "Foo, bar"], $this->savedArguments[3]);
-    }
 
-    public function saveArgumentsCallback($context, ...$args)
-    {
-        $this->savedArguments[] = $args;
+
+        $this->assertEquals(["hello world"], $callback->debugOutput[0]);
+        $this->assertEquals(["hello world"], $callback->debugOutput[1]);
+        $this->assertEquals(["hello", "world"], $callback->debugOutput[2]);
+        $this->assertEquals(["hello, world", "Foo, bar"], $callback->debugOutput[3]);
     }
 
     public function testTaskSpecificScripts()
     {
+        $callback = new DebugCallback(false);
         $this->context->set('callbacks', [
-            'debug' => [$this, 'scriptDebugCallback'],
+            $callback::getName() => $callback,
         ]);
 
         $host_config = $this->configurationService->getHostConfig('hostA');
@@ -284,18 +281,9 @@ class ScriptMethodTest extends PhabTestCase
             'deploy on hostA',
             'deployFinished on dev',
             'deployFinished on hostA'
-        ], $this->context->get('debug'));
+        ], $callback->debugOutput);
     }
 
-    public function scriptDebugCallback(TaskContextInterface $context, $message)
-    {
-        $debug =  $context->get('debug');
-        if (empty($debug)) {
-            $debug = [];
-        }
-        $debug[] = $message;
-        $context->set('debug', $debug);
-    }
 
     public function testValidateReplacements()
     {

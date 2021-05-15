@@ -4,7 +4,6 @@ namespace Phabalicious\Scaffolder\Callbacks;
 
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\Utilities;
-use Symfony\Component\Yaml\Yaml;
 
 abstract class BaseCallback implements CallbackInterface
 {

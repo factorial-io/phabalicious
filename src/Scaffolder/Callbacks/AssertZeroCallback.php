@@ -9,7 +9,7 @@ class AssertZeroCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'assert_zero';
     }
@@ -17,7 +17,7 @@ class AssertZeroCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function requires()
+    public static function requires(): string
     {
         return '3.5.10';
     }

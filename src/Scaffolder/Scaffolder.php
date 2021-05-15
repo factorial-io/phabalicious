@@ -240,10 +240,7 @@ class Scaffolder
         $this->twig->addExtension(new StringExtension());
 
         $options
-            ->addCallback(
-                CopyAssetsCallback::getName(),
-                [new CopyAssetsCallback($this->configuration, $this->twig), 'handle']
-            )
+            ->addCallback(new CopyAssetsCallback($this->configuration, $this->twig))
             ->addDefaultCallbacks();
 
         $context->set('callbacks', $options->getCallbacks());

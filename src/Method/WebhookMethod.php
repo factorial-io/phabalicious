@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -73,6 +74,8 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $config
      * @param string $task
      * @param TaskContextInterface $context
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function runTaskSpecificWebhooks(HostConfig $config, string $task, TaskContextInterface $context)
     {
@@ -93,12 +96,15 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             );
         }
     }
+
     /**
      * Run fallback webhooks.
      *
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -112,6 +118,8 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -125,6 +133,8 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -144,6 +154,9 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function webhook(HostConfig $host_config, TaskContextInterface $context)
     {
         $webhook_name = $context->get('webhook_name');
@@ -155,6 +168,9 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         $context->setResult('webhook_result', $result ? $result->getBody() : false);
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function runWebhook($webhook_name, HostConfig $config, TaskContextInterface $context)
     {
         $webhook = $context->getConfigurationService()->getSetting("webhooks.$webhook_name", false);
@@ -215,28 +231,9 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      */
     public function alterScriptCallbacks(CallbackOptions &$options)
     {
-        $options->addCallback('webhook', [$this, 'webhookScriptCallback']);
+        $options->addCallback(new WebHookCallback($this));
     }
 
-    public function webhookScriptCallback(TaskContextInterface $context, $webhook_name, ...$args)
-    {
-        $cloned_context = clone $context;
-        if (!empty($args)) {
-            $named_args = Utilities::parseArguments($args);
-
-            $variables = $cloned_context->get('variables', []);
-            $variables['arguments'] = $named_args;
-            $cloned_context->set('variables', $variables);
-        }
-        $host_config = $context->get('host_config');
-        $result = $this->runWebhook($webhook_name, $host_config, $cloned_context);
-        $this->handleWebhookResult(
-            $cloned_context,
-            $result,
-            $webhook_name,
-            sprintf('Could not find webhook `%s`', $webhook_name)
-        );
-    }
 
     /**
      * @param TaskContextInterface $context
@@ -244,7 +241,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      * @param string $webhook_name
      * @param string $msg
      */
-    protected function handleWebhookResult(TaskContextInterface $context, $result, string $webhook_name, string $msg)
+    public function handleWebhookResult(TaskContextInterface $context, $result, string $webhook_name, string $msg)
     {
         if (!$result) {
             throw new \InvalidArgumentException($msg);

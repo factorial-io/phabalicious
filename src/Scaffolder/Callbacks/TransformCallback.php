@@ -16,7 +16,7 @@ class TransformCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'transform';
     }
@@ -24,7 +24,7 @@ class TransformCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function requires()
+    public static function requires(): string
     {
         return '3.4';
     }
