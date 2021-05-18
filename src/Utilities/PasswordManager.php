@@ -137,9 +137,17 @@ class PasswordManager implements PasswordManagerInterface
 
         $secret_data = $secrets[$secret];
 
+
         $env_name = !empty($secret_data['env'])
             ? $secret_data['env']
             : str_replace('.', '_', Utilities::toUpperSnakeCase($secret));
+
+        $configuration_service->getLogger()->debug(sprintf(
+            "Trying to get secret `%s` from env-var `%s` ...",
+            $secret,
+            $env_name
+        ));
+
         if ($value = getenv($env_name)) {
             return $value;
         }
@@ -154,6 +162,12 @@ class PasswordManager implements PasswordManagerInterface
         if (isset($envvars[$env_name])) {
             return $envvars[$env_name];
         }
+
+        $configuration_service->getLogger()->debug(sprintf(
+            "Trying to get secret `%s` from command-line-argument `--secret %s=<VALUE>` ...",
+            $secret,
+            $secret
+        ));
 
         $args = $this->getContext()->getInput()->getOption('secret');
         foreach ($args as $p) {
@@ -172,9 +186,15 @@ class PasswordManager implements PasswordManagerInterface
         try {
             // Check onepassword connect ...
             if (!empty($secret_data['onePasswordVaultId']) && !empty($secret_data['onePasswordId'])) {
+                $configuration_service->getLogger()->debug(sprintf(
+                    "Trying to get secret `%s` from 1password.connect",
+                    $secret
+                ));
+
                 if ($pw = $this->getSecretFrom1PasswordConnect(
                     $secret_data['onePasswordVaultId'],
                     $secret_data['onePasswordId'],
+                    $secret_data['tokenId'] ?? 'default',
                     $secret
                 )) {
                     return $pw;
@@ -184,9 +204,18 @@ class PasswordManager implements PasswordManagerInterface
                     );
                 }
             }
+        } catch (\Exception $e) {
+            $configuration_service->getLogger()->error($e->getMessage());
+            // Give the user the chance to input the secret.
+        }
 
+        try {
             // Check onepassword cli ...
             if (isset($secret_data['onePasswordId'])) {
+                $configuration_service->getLogger()->debug(sprintf(
+                    "Trying to get secret `%s` from 1password cli",
+                    $secret
+                ));
                 $pw = $this->getSecretFrom1PasswordCli($secret_data['onePasswordId']);
                 if ($pw) {
                     return $pw;
@@ -231,17 +260,17 @@ class PasswordManager implements PasswordManagerInterface
         }
     }
 
-    private function getSecretFrom1PasswordConnect($vault_id, $item_id, $secret_name)
+    private function getSecretFrom1PasswordConnect($vault_id, $item_id, $token_id, $secret_name)
     {
 
         $configuration_service = $this->getContext()->getConfigurationService();
-        $onepassword_connect = $configuration_service->getSetting('onePassword', []);
-        if ($token = getenv("PHAB_OP_JWT_TOKEN")) {
+        $onepassword_connect = $configuration_service->getSetting("onePassword.$token_id", []);
+        if ($token = getenv("PHAB_OP_JWT_TOKEN__" . Utilities::toUpperSnakeCase($token_id))) {
             $onepassword_connect['token'] = $token;
         }
         if (is_array($onepassword_connect)) {
             $errors = new ValidationErrorBag();
-            $validation_service = new ValidationService($onepassword_connect, $errors, 'onePassword');
+            $validation_service = new ValidationService($onepassword_connect, $errors, "onePassword.$token_id");
             $validation_service->hasKeys([
                 'token' => 'The access token to authenticate against onePassword connect',
                 'endpoint' => 'The onePassword api endpoint to connect to'
@@ -253,7 +282,7 @@ class PasswordManager implements PasswordManagerInterface
 
             try {
                 $url = $onepassword_connect['endpoint'] . "/v1/vaults/$vault_id/items/$item_id";
-                $configuration_service->getLogger()->info(
+                $configuration_service->getLogger()->debug(
                     sprintf("Querying %s for secret `%s` ...", $url, $secret_name)
                 );
 
