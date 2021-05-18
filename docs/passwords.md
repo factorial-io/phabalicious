@@ -81,11 +81,15 @@ Make sure, you have a runnning 1password-connect-instance (See 1passwords [docum
 
 ```yaml
 onePassword:
-  endpoint: https://vault.your-domain.tld
-  token: <your-jwt-token>
+  default:
+    endpoint: https://vault.your-domain.tld
+    token: <your-jwt-token>
+  client-a:
+    endpoint: <Another endpoint>
+    token:    <another JWT>
 ```
 
-The jwt-token can also be passed via the environment variable `PHAB_OP_JWT_TOKEN`. Then your secret needs to reference both the id and the vault-id as with this example:
+The jwt-token can also be passed via the environment variable `PHAB_OP_JWT_TOKEN__<TOKEN_ID>`, e.g. `PHAB_OP_JWT_TOKEN__CLIENT_A`. Then your secret needs to reference both the id and the vault-id as with this example:
 
 
 ````yaml
@@ -94,6 +98,7 @@ secrets:
     question: Please provide the Mysql password for the cluster
     onePasswordId: 1234418718212s121
     onePasswordVaultId: 768131213124
+    tokenId: client-a
 ````
 
 Then just run your command as usual, phab will try to resolve the secret from 1password connect and use it.
