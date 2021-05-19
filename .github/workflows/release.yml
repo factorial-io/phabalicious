@@ -45,7 +45,7 @@ jobs:
           chmod +x ./box
           sudo mv ./box /usr/local/bin
       - name: Build Application PHAR
-        run: composer build-phar
+        run: git describe && composer build-phar
 
       - name: Geting Tag Name
         id: get-version
