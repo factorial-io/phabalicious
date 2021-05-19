@@ -1,0 +1,31 @@
+name: Phabalicious
+
+scripts:
+  create-release:
+    questions:
+      version:
+        help: The latest tag on the current branch "%computed.currentBranch%" is "%computed.currentVersion%"
+        question: What version should we use to tag the current commit? [x.x.x[-(alpha|beta).x]]"
+        validation: '/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/'
+        error: "The version needs to adhere to the following schema: x.x.x[-(alpha|beta).x]"
+    computedValues:
+      cleanWorkingDir: git diff-index --quiet HEAD
+      currentVersion: git describe --abbrev=0 --tag
+      currentBranch: git rev-parse --abbrev-ref HEAD
+    script:
+      - set_directory(%host.gitRootFolder%)
+      - assert_zero(%computed.cleanWorkingDir%, "Working copy not clean, aborting!")
+      - assert_nonzero(%computed.currentBranch%, "Could not detect current branch, aborting!")
+      - git push
+      - log_message(Tagging current commit with %arguments.version% ...)
+      - git tag %arguments.version% -m "tagging %arguments.version%"
+      - cd build && sh create-release.sh
+      - log_message(success, Please update the release notes on github)
+hosts:
+  ci:
+    gitRootFolder: .
+    rootFolder: .
+    needs:
+      - local
+      - git
+
