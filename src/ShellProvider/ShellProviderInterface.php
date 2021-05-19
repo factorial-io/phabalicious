@@ -93,4 +93,9 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
         string $to_path,
         string $from_path
     );
+
+    /**
+     * Terminates a running shell, so that it gets recreated with the next command.
+     */
+    public function terminate();
 }

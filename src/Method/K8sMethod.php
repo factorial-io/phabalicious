@@ -404,6 +404,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $host_config->setChild('kube', 'podForCli', null);
             $host_config->setChild('kube', 'podForCliSet', null);
         }
+        if ($host_config->shell()) {
+            $host_config->shell()->terminate();
+        }
     }
 
     public function rollout(HostConfig $host_config, TaskContextInterface $context, $command)
