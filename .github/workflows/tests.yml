@@ -1,4 +1,4 @@
-name: Create phar and release
+name: Run phpunit tests
 
 on: [push]
 
