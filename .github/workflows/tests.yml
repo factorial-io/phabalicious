@@ -1,0 +1,32 @@
+name: Create phar and release
+
+on: [push]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+          extensions: intl, zip, zlib
+          coverage: none
+          ini-values: memory_limit=1G, phar.readonly=0
+
+      - name: Install Project Dependencies
+        run: composer install --no-interaction --no-ansi --no-progress --no-suggest
+
+      - name: Run unit tests
+        run: ./vendor/bin/phpunit tests --exclude-group docker
+      - name: Build Application PHAR
+        run: git describe && composer build-phar
+
+ 
