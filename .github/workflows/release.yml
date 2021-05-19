@@ -39,7 +39,7 @@ jobs:
       - name: Install Box
         run: |
           wget \
-            "https://github.com/humbug/box/releases/download/3.8.4/box.phar" \
+            "https://github.com/humbug/box/releases/download/3.11.1/box.phar" \
             --quiet \
             -O ./box
           chmod +x ./box
