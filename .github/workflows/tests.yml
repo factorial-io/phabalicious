@@ -12,6 +12,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Setup git
+        run: git config --global user.email "phpunit@factorial.io"
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
