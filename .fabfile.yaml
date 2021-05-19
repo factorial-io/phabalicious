@@ -1,6 +1,9 @@
 name: Phabalicious
 
 scripts:
+  install-locally:
+    script:
+      - composer build-phar && sudo composer install-phar
   create-release:
     questions:
       version:

@@ -38,8 +38,7 @@ You'll need [box](https://github.com/humbug/box) for building the phar-file.
 
 * Clone the repository
 * run `composer install`
-* run `composer build-phar`
-* run `composer install-phar` this will copy the app to /usr/local/bin and make it executable.
+* run `bin/phab -cci script install-locally`
 
 ## Add it via composer.json
 
@@ -81,7 +80,13 @@ Please add test-cases for your bug-fixes or new features. We are using GrumPHP t
 
 ## Create a release
 
-This repo is using git-flow to manage versions.
+This repo is using git-flow to manage versions. You can use phab to create a new release via
+
+```
+bin/phab -cci create-release
+```
+
+and answer the questions. You can create a release also manually:
 
 * Create a release or a hotfix branch depending of cour changes. Make sure, it is
   tagged with the correct version
