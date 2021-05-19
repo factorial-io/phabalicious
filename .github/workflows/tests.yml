@@ -11,9 +11,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
-      - name: Setup git
-        run: git config --global user.email "phpunit@factorial.io"
+          fetch-depth: 1
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -27,8 +25,7 @@ jobs:
         run: composer install --no-interaction --no-ansi --no-progress --no-suggest
 
       - name: Run unit tests
-        run: ./vendor/bin/phpunit tests --exclude-group docker
-      - name: Build Application PHAR
-        run: git describe && composer build-phar
+        run: git config --global user.email "phpunit@factorial.io" && ./vendor/bin/phpunit tests --exclude-group docker
+
 
  
