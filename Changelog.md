@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.8 / 2021-05-19
+
+### Fixed:
+
+* Terminate current shell, when new app gets deployed via k8s
+
 ## 3.6.7 / 2021-05-19
 
 ### Changed:
