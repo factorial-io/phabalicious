@@ -1,11 +1,12 @@
-# This file is part of the PPCRE.
+# based on parts of PPCRE.
 #
 # (c) Serghei Iakovlev <egrep@protonmail.ch>
+# (c) Stephan Huber <stephan@factorial.io>
 #
 # For the full copyright and license information, please view
 # the LICENSE file that was distributed with this source code.
 
-name: release
+name: Create phar and release
 
 on:
   push:
