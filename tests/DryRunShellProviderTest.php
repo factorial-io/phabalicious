@@ -5,10 +5,7 @@ namespace Phabalicious\Tests;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\DryRunShellProvider;
-use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\PasswordManager;
-use Phabalicious\Validation\ValidationErrorBag;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
 class DryRunShellProviderTest extends PhabTestCase
