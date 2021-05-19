@@ -10,8 +10,21 @@ name: Create phar and release
 
 on:
   push:
-    tags:
-      - '*'
+    # tags:
+    #  - '*'
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+ build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
 
 jobs:
   build:
@@ -20,8 +33,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -59,7 +70,8 @@ jobs:
           # You DO NOT need to create your own token.
           token: ${{ secrets.GITHUB_TOKEN }}
           name: ${{ steps.get-version.outputs.version }}
-          tag: ${{ steps.get-version.outputs.version }}
+          # tag: ${{ steps.get-version.outputs.version }}
+          tag: 3.6.10
           body: 'Next stable release.'
           # This will update existing tags if any
           allowUpdates: true
