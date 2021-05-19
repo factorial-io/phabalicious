@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.9 / 2021-05-19
+
+### Fixed:
+
+  * Fix missing method in DryRunShellProvider, add test coverage
+
 ## 3.6.8 / 2021-05-19
 
 ### Fixed:
