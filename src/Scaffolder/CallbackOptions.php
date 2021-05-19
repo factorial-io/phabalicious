@@ -10,6 +10,7 @@ use Phabalicious\Scaffolder\Callbacks\AssertContainsCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertFileCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertNonZeroCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertZeroCallback;
+use Phabalicious\Scaffolder\Callbacks\CallbackInterface;
 use Phabalicious\Scaffolder\Callbacks\ConfirmCallback;
 use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
 use Phabalicious\Scaffolder\Callbacks\ScaffoldCallback;
@@ -22,23 +23,23 @@ class CallbackOptions implements AlterableDataInterface
     public function addDefaultCallbacks(): CallbackOptions
     {
         $this
-            ->addCallback(ConfirmCallback::getName(), [new ConfirmCallback(), 'handle'])
-            ->addCallback(LogMessageCallback::getName(), [new LogMessageCallback(), 'handle'])
-            ->addCallback(AssertNonZeroCallback::getName(), [new AssertNonZeroCallback(), 'handle'])
-            ->addCallback(AssertZeroCallback::getName(), [new AssertZeroCallback(), 'handle'])
-            ->addCallback(AssertFileCallback::getName(), [new AssertFileCallback(), 'handle'])
-            ->addCallback(AssertContainsCallback::getName(), [new AssertContainsCallback(), 'handle'])
-            ->addCallback(SetDirectoryCallBack::getName(), [new SetDirectoryCallBack(), 'handle'])
-            ->addCallback(AlterYamlFileCallback::getName(), [new AlterYamlFileCallback(), 'handle'])
-            ->addCallback(AlterJsonFileCallback::getName(), [new AlterJsonFileCallback(), 'handle'])
-            ->addCallback(ScaffoldCallback::getName(), [new ScaffoldCallback(), 'handle']);
+            ->addCallback(new ConfirmCallback())
+            ->addCallback(new LogMessageCallback())
+            ->addCallback(new AssertNonZeroCallback())
+            ->addCallback(new AssertZeroCallback())
+            ->addCallback(new AssertFileCallback())
+            ->addCallback(new AssertContainsCallback())
+            ->addCallback(new SetDirectoryCallBack())
+            ->addCallback(new AlterYamlFileCallback())
+            ->addCallback(new AlterJsonFileCallback())
+            ->addCallback(new ScaffoldCallback());
 
         return $this;
     }
 
-    public function addCallback($name, $callable): CallbackOptions
+    public function addCallback(CallbackInterface $callback): CallbackOptions
     {
-        $this->callbacks[$name] = $callable;
+        $this->callbacks[$callback::getName()] = $callback;
         return $this;
     }
 

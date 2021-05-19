@@ -424,7 +424,7 @@ class ConfigurationService
         return Utilities::getProperty($this->settings, $key, $default_value);
     }
 
-    public function readHttpResource(string $resource):string
+    public function readHttpResource(string $resource)
     {
         $cid = 'resource:' . $resource;
         $contents = false;

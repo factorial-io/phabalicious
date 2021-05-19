@@ -7,6 +7,7 @@ use Phabalicious\Utilities\PluginInterface;
 
 interface CallbackInterface extends PluginInterface
 {
+
     /**
      * transforms a bunch of files to another bunch of files.
      *

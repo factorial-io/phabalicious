@@ -10,6 +10,8 @@ use Twig\Environment;
 class CopyAssetsCallback implements CallbackInterface
 {
 
+    const IGNORE_SUBFOLDERS_STRATEGY = 'ignoreSubfolders';
+
     /** @var ConfigurationService */
     protected $configuration;
 
@@ -25,7 +27,7 @@ class CopyAssetsCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'copy_assets';
     }
@@ -33,7 +35,7 @@ class CopyAssetsCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function requires()
+    public static function requires(): string
     {
         return '3.4';
     }
@@ -52,20 +54,22 @@ class CopyAssetsCallback implements CallbackInterface
      * @param string $data_key
      * @param bool $limitedForTwigExtension
      *
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
      */
     public function copyAssets(
         TaskContextInterface $context,
-        $target_folder,
-        $data_key,
+        string $target_folder,
+        string $data_key,
         $limitedForTwigExtension
     ) {
         if (!is_dir($target_folder)) {
             mkdir($target_folder, 0777, true);
         }
         $data = $context->get('scaffoldData');
+        $ignore_subfolders = $context->get('scaffoldStrategy', 'default') == self::IGNORE_SUBFOLDERS_STRATEGY;
         $tokens = $context->get('tokens');
         $is_remote = substr($data['base_path'], 0, 4) == 'http';
         $replacements = Utilities::getReplacements($tokens);
@@ -112,22 +116,40 @@ class CopyAssetsCallback implements CallbackInterface
             }
 
             $file_name = strtr($file_name, $replacements);
-            if (strpos($file_name, '/') !== false) {
-                $file_name = substr($file_name, strpos($file_name, '/', 1) + 1);
-            }
+            $file_name = $this->getTargetFileName($file_name, $ignore_subfolders);
 
             $target_file_path = $target_folder . '/' . $file_name;
             if (!is_dir(dirname($target_file_path))) {
                 mkdir(dirname($target_file_path), 0777, true);
             }
 
+            $this->configuration->getLogger()->debug(sprintf("Scaffolding file '%s'", $target_file_path));
             if ($use_progress) {
                 $context->io()->progressAdvance();
             }
+
             file_put_contents($target_file_path, $converted);
         }
         if ($use_progress) {
             $context->io()->progressFinish();
         }
+    }
+
+    /**
+     * @param string $file_name
+     * @param bool $ignore_subfolders
+     *
+     * @return false|string
+     */
+    protected function getTargetFileName(string $file_name, bool $ignore_subfolders)
+    {
+        if (strpos($file_name, '/') !== false) {
+            if ($ignore_subfolders) {
+                $file_name = basename($file_name);
+            } else {
+                $file_name = substr($file_name, strpos($file_name, '/', 1) + 1);
+            }
+        }
+        return $file_name;
     }
 }

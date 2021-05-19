@@ -4,7 +4,11 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\Callbacks\BreakOnFirstError;
+use Phabalicious\Method\Callbacks\ExecuteCallback;
+use Phabalicious\Method\Callbacks\FailOnMissingDirectory;
 use Phabalicious\Scaffolder\CallbackOptions;
+use Phabalicious\Scaffolder\Callbacks\CallbackInterface;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
@@ -12,7 +16,6 @@ use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
-use Symfony\Component\Yaml\Yaml;
 
 class ScriptMethod extends BaseMethod implements MethodInterface
 {
@@ -85,10 +88,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $options = new CallbackOptions();
         $options->addDefaultCallbacks();
         $options
-            ->addCallback('execute', [$this, 'handleExecuteCallback'])
-            ->addCallback('fail_on_error', [$this, 'handleFailOnErrorDeprecatedCallback'])
-            ->addCallback('breakOnFirstError', [$this, 'handleFailOnErrorCallback'])
-            ->addCallback('fail_on_missing_directory', [$this, 'handleFailOnMissingDirectoryCallback']);
+            ->addCallback(new ExecuteCallback($this))
+            ->addCallback(new BreakOnFirstError($this))
+            ->addCallback(new FailOnMissingDirectory($this));
 
         // Allow other methods to add their callbacks.
         if (!empty($host_config['needs'])) {
@@ -190,7 +192,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      *
      * @return CommandResult|null
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
-     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     private function runScriptImpl(
         string $root_folder,
@@ -234,87 +235,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         return $command_result;
     }
 
-
-
-    /**
-     * Execute callback.
-     *
-     * @param TaskContextInterface $context
-     * @param array $callbacks
-     * @param string $callback
-     * @param array $args
-     *
-     * @return bool
-     * @throws MissingScriptCallbackImplementation
-     */
-    private function executeCallback(TaskContextInterface $context, $callbacks, $callback, $args)
-    {
-        if (!isset($callbacks[$callback])) {
-            return false;
-        }
-
-        if (!is_callable($callbacks[$callback])) {
-            throw new MissingScriptCallbackImplementation($callback, $callbacks);
-        }
-        $fn = $callbacks[$callback];
-        $args_with_context = $args;
-        array_unshift($args_with_context, $context);
-        call_user_func_array($fn, $args_with_context);
-
-        return true;
-    }
-
-
-    /**
-     *
-     * @throws \Exception
-     */
-    public function handleExecuteCallback()
-    {
-        $args = func_get_args();
-        $context = array_shift($args);
-        $task_name = array_shift($args);
-
-        $return_code = $this->executeCommand($context, $task_name, $args);
-
-        if ($return_code !== 0 && $this->getBreakOnFirstError()) {
-            // The command returned a non zero value, lets stop here.
-            throw new \RuntimeException(sprintf('Execute callback returned a non-zero return-code: %d', $return_code));
-        }
-    }
-
-    /**
-     * @param TaskContextInterface $context
-     * @param bool $flag
-     */
-    public function handleFailOnErrorDeprecatedCallback(TaskContextInterface $context, $flag)
-    {
-        $this->logger->warning('`fail_on_error` is deprecated, please use `breakOnFirstError()`');
-        $this->handleFailOnErrorCallback($context, $flag);
-    }
-
-    /**
-     * @param TaskContextInterface $context
-     * @param bool $flag
-     */
-    public function handleFailOnErrorCallback(TaskContextInterface $context, $flag)
-    {
-        $context->set('break_on_first_error', $flag);
-        $this->setBreakOnFirstError($flag);
-    }
-
-    /**
-     * @param TaskContextInterface $context
-     * @param string $dir
-     * @throws \Exception
-     */
-    public function handleFailOnMissingDirectoryCallback(TaskContextInterface $context, $dir)
-    {
-        if (!$context->getShell()->exists($dir)) {
-            throw new \Exception('`' . $dir . '` . does not exist!');
-        }
-    }
-
     /**
      * @return bool
      */
@@ -330,15 +250,49 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     {
         $this->breakOnFirstError = $flag;
     }
+    /**
+     * Execute callback.
+     *
+     * @param TaskContextInterface $context
+     * @param array $callbacks
+     * @param string $callback_name
+     * @param array $args
+     *
+     * @return bool
+     * @throws MissingScriptCallbackImplementation
+     */
+    private function executeCallback(
+        TaskContextInterface $context,
+        array $callbacks,
+        string $callback_name,
+        array $args
+    ): bool {
+        if (!isset($callbacks[$callback_name])) {
+            return false;
+        }
+
+        /** @var \Phabalicious\Scaffolder\Callbacks\CallbackInterface $fn */
+        $fn = $callbacks[$callback_name];
+        if (!($fn instanceof CallbackInterface)) {
+            throw new MissingScriptCallbackImplementation($callback_name, $callbacks);
+        }
+        $fn->handle($context, ...$args);
+
+        return true;
+    }
 
     /**
      * @param HostConfig $config
      * @param string $task
      * @param TaskContextInterface $context
+     *
      * @throws MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     public function runTaskSpecificScripts(HostConfig $config, string $task, TaskContextInterface $context)
     {
+        $this->logger->debug("Try runTaskSpecific scripts for " . $task);
+
         $this->handledTaskSpecificScripts[$task] = true;
 
         $common_scripts = $context->getConfigurationService()->getSetting('common', []);
@@ -379,7 +333,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
+     *
      * @throws MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -393,7 +349,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
+     *
      * @throws MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -411,7 +369,9 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
+     *
      * @throws MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -435,7 +395,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    private function resolveComputedValues(TaskContextInterface $context, $variables)
+    private function resolveComputedValues(TaskContextInterface $context, $variables): array
     {
         $shell = $context->getShell();
         $result = [];
