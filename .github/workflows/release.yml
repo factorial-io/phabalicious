@@ -1,0 +1,71 @@
+# This file is part of the PPCRE.
+#
+# (c) Serghei Iakovlev <egrep@protonmail.ch>
+#
+# For the full copyright and license information, please view
+# the LICENSE file that was distributed with this source code.
+
+name: release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set Environment Variables
+        uses: allenevans/set-env@v1.0.0
+        with:
+          BOX_VERSION: '3.8.4'
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+          extensions: intl, zip, zlib
+          coverage: none
+          ini-values: memory_limit=1G, phar.readonly=0
+
+      - name: Install Project Dependencies
+        run: composer install --prefer-dist --no-interaction --no-ansi --no-progress --no-suggest
+
+      - name: Install Box
+        run: |
+          wget \
+            "https://github.com/humbug/box/releases/download/${BOX_VERSION}/box.phar" \
+            --quiet \
+            -O ./box
+          chmod +x ./box
+          sudo mv ./box /usr/local/bin
+      - name: Build Application PHAR
+        run: composer build-phar
+
+      - name: Geting Tag Name
+        id: get-version
+        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
+
+      - name: Self-Test
+        run: ./build/phabalicious.phar --version
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          # This token is provided by GitHub Actions.
+          # You DO NOT need to create your own token.
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ steps.get-version.outputs.version }}
+          tag: ${{ steps.get-version.outputs.version }}
+          body: 'Next stable release.'
+          # This will update existing tags if any
+          allowUpdates: true
+          artifacts: .build/phabalicious.phar
+          artifactContentType: application/x-php
