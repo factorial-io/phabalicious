@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.7 / 2021-05-19
+
+### Changed:
+
+  * Make secret-gathering more verbose, support for multiple 1password-connect-tokens (Fixes #156)
+
 ## 3.6.6 / 2021-05-13
 
 ### New:
