@@ -1,6 +1,7 @@
 # Phabalicious
 
-[![factorial-io](https://circleci.com/gh/factorial-io/phabalicious.svg?style=shield)](https://circleci.com/gh/factorial-io/phabalicious)
+![unit tests](https://github.com/factorial-io/phabalicious/actions/workflows/tests.yml/badge.svg?branch=main)
+![docs built](https://github.com/factorial-io/phabalicious/actions/workflows/main.yml/badge.svg?branch=main)
 
 Phabalicious is using configuration stored in a special file in the root of your project (the fabfile.yaml) to run tasks in a shell. This shell can be provided by a docker-container, a ssh-connection or a local shell. This means, you can store all your devops-scripts in the fabfile and apply it to a list of configurations. Phabalicious tries to abstract away the inner workings of a host and give the user a handful useful commands to run common tasks, like:
 
