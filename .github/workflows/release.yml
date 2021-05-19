@@ -68,5 +68,5 @@ jobs:
           body: 'Next stable release.'
           # This will update existing tags if any
           allowUpdates: true
-          artifacts: .build/phabalicious.phar
+          artifacts: ./build/phabalicious.phar
           artifactContentType: application/x-php
