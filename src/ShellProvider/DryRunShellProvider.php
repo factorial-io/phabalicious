@@ -117,4 +117,9 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
     {
         return $this->captured;
     }
+
+    public function terminate()
+    {
+        // Nothing to see here.
+    }
 }
