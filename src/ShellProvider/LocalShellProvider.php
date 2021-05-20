@@ -172,7 +172,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      */
     public function terminate()
     {
-        if (!$this->process->isTerminated()) {
+        if ($this->process && !$this->process->isTerminated()) {
             $this->logger->info("Terminating current running shell ...");
             $this->process->stop();
         }
