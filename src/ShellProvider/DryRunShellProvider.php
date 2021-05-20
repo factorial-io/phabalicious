@@ -6,12 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Utilities\SetAndRestoreObjProperty;
-use Phabalicious\Utilities\Utilities;
-use Phabalicious\Validation\ValidationErrorBagInterface;
-use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
 
 class DryRunShellProvider extends BaseShellProvider implements ShellProviderInterface
@@ -116,5 +111,10 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
     public function getCapturedCommands(): array
     {
         return $this->captured;
+    }
+
+    public function terminate()
+    {
+        // Nothing to see here.
     }
 }

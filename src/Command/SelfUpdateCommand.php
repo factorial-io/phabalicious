@@ -118,6 +118,11 @@ class SelfUpdateCommand extends BaseOptionsCommand
         );
         $releases = json_decode($payload);
 
+        if (!is_array($releases)) {
+            $this->getConfiguration()->getLogger()->warning("Could not get release information from github!");
+            return false;
+        }
+
         // Filter prereleases.
         if (!$allow_unstable) {
             $releases = array_filter($releases, function ($r) {
@@ -127,7 +132,8 @@ class SelfUpdateCommand extends BaseOptionsCommand
         }
 
         if (!isset($releases[0])) {
-            throw new \Exception('API error - no release found at GitHub repository');
+            $this->getConfiguration()->getLogger()->warning("Could not get release information from github!");
+            return false;
         }
 
         $version = $releases[0]->tag_name;

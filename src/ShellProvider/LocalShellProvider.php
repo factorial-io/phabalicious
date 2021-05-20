@@ -168,6 +168,21 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     }
 
     /**
+     * Terminate current shell process.
+     */
+    public function terminate()
+    {
+        if ($this->process && !$this->process->isTerminated()) {
+            $this->logger->info("Terminating current running shell ...");
+            $this->process->stop();
+        }
+        $this->process = null;
+
+        // Reset prefix.
+        $this->logger->setPrefix(bin2hex(random_bytes(3)));
+    }
+
+    /**
      * Run a command in the shell.
      *
      * @param string $command

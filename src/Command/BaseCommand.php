@@ -12,7 +12,6 @@ use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
 use Phabalicious\ShellProvider\ShellOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
@@ -21,7 +20,6 @@ use Phabalicious\Utilities\Utilities;
 use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -69,7 +67,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                 'variants',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'Run the command on a given set of blueprints simultanously',
+                'Run the command on a given set of blueprints simultaneously',
                 null
             )
             ->addOption(

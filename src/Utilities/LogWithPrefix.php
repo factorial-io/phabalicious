@@ -6,16 +6,21 @@ use Psr\Log\LoggerInterface;
 
 class LogWithPrefix implements LoggerInterface
 {
-    
+
     protected $logger;
     protected $prefix;
-    
+
     public function __construct(LoggerInterface $logger, $prefix)
     {
         $this->logger = $logger;
         $this->prefix = $prefix;
     }
-    
+
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+    }
+
     private function addPrefix($message)
     {
         return sprintf("[%s] %s", $this->prefix, $message);
