@@ -4,7 +4,7 @@ on: [push]
 
 
 jobs:
-  build:
+  phpunit:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,12 +23,12 @@ jobs:
 
       - name: Install Project Dependencies
         run: composer install --no-interaction --no-ansi --no-progress --no-suggest
-        
+
       - name: setup git
-        run: git config --global user.email "phpunit@factorial.io" && git config --global user.name "phpunit" && git config --global init.defaultBranch master 
-    
+        run: git config --global user.email "phpunit@factorial.io" && git config --global user.name "phpunit" && git config --global init.defaultBranch master
+
       - name: Run unit tests
         run: ./vendor/bin/phpunit tests --exclude-group docker
 
 
- 
+

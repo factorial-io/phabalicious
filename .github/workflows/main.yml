@@ -2,7 +2,7 @@
 
 name: Build and deploy documentation
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
@@ -13,8 +13,9 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
- build-and-deploy:
+  build-and-deploy-docs:
     runs-on: ubuntu-latest
+    needs: phpunit
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -24,5 +25,5 @@ jobs:
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BUILD_DIR: docs/.vuepress/dist
-        BUILD_SCRIPT: yarn install && yarn run docs:build 
+        BUILD_SCRIPT: yarn install && yarn run docs:build
         PAGES_CNAME: docs.phab.io
