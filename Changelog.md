@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.6.10 / 2021-05-20
+
+### Fixed:
+
+  * Better error handling for version check
+  * Fix broken `isTerminated()`
+  * Use github actions for creating automatic releases
+  * Run php unit tests in github actions
+
+
 ## 3.6.9 / 2021-05-19
 
 ### Fixed:
