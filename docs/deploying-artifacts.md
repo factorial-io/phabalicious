@@ -167,7 +167,7 @@ You can customize the list of actions be run when deploying an artifact. Here's 
     to: targetsubfolder
 ```
 
-This will copy the three mentioned files and folders into the subfolder `targetsubfolder` of the target folder. Please be aware, that you might need to create subdirectories beforehand manually via the `script`-method
+This will copy the three mentioned files and folders into the subfolder `targetsubfolder` of the target folder. Please be aware, that you might need to create subdirectories beforehand manually via the `script`-method. Also be aware that copy action deletes existing files and folders from target before doing the copy, if you want to combine files from multiple sources it is better to also use the `script`-method for that.
 
 ### delete
 
