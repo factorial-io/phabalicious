@@ -332,7 +332,11 @@ class K8sMethod extends BaseMethod implements MethodInterface
             ->setShell($this->kubectlShell);
 
         // create kube-folder if necessary, and delete its content.
-        $this->kubectlShell->run(sprintf("mkdir -p %s && rm -rf %s/*", $projectFolder, $projectFolder));
+        $this->kubectlShell->run(sprintf(
+            "mkdir -p %s && rm -rf %s",
+            escapeshellarg($projectFolder),
+            escapeshellarg($projectFolder . "/*")
+        ));
         $scaffolder->scaffold(
             $scaffold_url,
             $projectFolder,
