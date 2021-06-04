@@ -293,11 +293,11 @@ abstract class BaseCommand extends BaseOptionsCommand
 
         $base_path = getcwd();
 
-        $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig['configName']);
+        $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig->getConfigName());
         if (!$available_variants) {
             throw new \InvalidArgumentException(sprintf(
                 'Could not find variants for `%s` in `blueprints`',
-                $this->hostConfig['configName']
+                $this->hostConfig->getConfigName()
             ));
         }
 

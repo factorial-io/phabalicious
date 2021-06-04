@@ -239,7 +239,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
         foreach ($keys as $key => $name) {
             if (!empty($host_config[$name])) {
                 $filename = $host_config['tmpFolder'] .
-                    '/' . $host_config['configName'] .
+                    '/' . $host_config->getConfigName() .
                     '.' . $key . '.'
                     . date('YmdHms') . '.tgz';
                 $filename = $this->tarFiles($context, $shell, [$host_config[$name]], $filename, $key);
@@ -291,8 +291,8 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
         $this->logger->notice(sprintf(
             'Syncing files from `%s` to `%s`',
-            $from_config['configName'],
-            $to_config['configName']
+            $from_config->getConfigName(),
+            $to_config->getConfigName()
         ));
 
         $rsync_args = [];

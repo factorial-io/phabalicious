@@ -138,7 +138,7 @@ class MethodFactory
         $fn_called = false;
 
         if (!$context->get('quiet')) {
-            $this->logger->debug('Running task ' . $task_name . ' on configuration ' . $configuration['configName']);
+            $this->logger->debug('Running task ' . $task_name . ' on configuration ' . $configuration->getConfigName());
         }
 
         foreach ($configuration['needs'] as $method_name) {

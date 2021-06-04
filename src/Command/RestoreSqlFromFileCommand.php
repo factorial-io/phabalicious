@@ -55,7 +55,7 @@ class RestoreSqlFromFileCommand extends BaseCommand
 
         $shell = $host_config->shell();
         $dest = $host_config['tmpFolder'] . '/' .
-            $host_config['configName'] . '.' .
+            $host_config->getConfigName() . '.' .
             date('YmdHis') . '.' .
             basename($file);
 

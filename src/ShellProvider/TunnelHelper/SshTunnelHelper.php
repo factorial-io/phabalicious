@@ -45,7 +45,7 @@ class SshTunnelHelper extends TunnelHelperBase implements HostToHostTunnelInterf
         TaskContextInterface $context,
         TunnelDataInterface $tunnel_data = null
     ) {
-        $key = $source_config['configName'] . '->' . $target_config['configName'];
+        $key = $source_config->getConfigName() . '->' . $target_config->getConfigName();
         if ($remote) {
             $key .= '--remote';
         }
@@ -55,7 +55,7 @@ class SshTunnelHelper extends TunnelHelperBase implements HostToHostTunnelInterf
         $tunnel_data->setState(TunnelDataInterface::CREATING_STATE);
 
         if (empty($target_config['sshTunnel']['destHost'])) {
-            $this->logger->notice('Getting ip for config `' . $target_config['configName'] . '`...');
+            $this->logger->notice('Getting ip for config `' . $target_config->getConfigName() . '`...');
             $ctx = clone $context;
             $context->getConfigurationService()->getMethodFactory()->runTask('getIp', $target_config, $ctx);
             $tunnel = $target_config['sshTunnel'];
@@ -63,7 +63,7 @@ class SshTunnelHelper extends TunnelHelperBase implements HostToHostTunnelInterf
                 $tunnel['destHost'] = $ctx->getResult('ip');
                 $target_config['sshTunnel'] = $tunnel;
             } else {
-                $this->logger->warning(sprintf('Could not get ip for config `%s`!', $target_config['configName']));
+                $this->logger->warning(sprintf('Could not get ip for config `%s`!', $target_config->getConfigName()));
                 $tunnel_data->setState(TunnelDataInterface::FAILED_STATE);
                 return $tunnel_data;
             }

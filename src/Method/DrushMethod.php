@@ -471,7 +471,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         ShellProviderInterface $shell,
         string $backup_file_name
     ) {
-        $context->io()->comment(sprintf('Dumping database of `%s` ...', $host_config['configName']));
+        $context->io()->comment(sprintf('Dumping database of `%s` ...', $host_config->getConfigName()));
         $shell->cd($host_config['siteFolder']);
 
         $dump_options = '';
@@ -519,7 +519,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
     public function getSQLDump(HostConfig $host_config, TaskContextInterface $context)
     {
-        $filename = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '.' . date('YmdHms') . '.sql';
+        $filename = $host_config['tmpFolder'] . '/' . $host_config->getConfigName() . '.' . date('YmdHms') . '.sql';
         $shell = $this->getShell($host_config, $context);
         $filename = $this->backupSQL($host_config, $context, $shell, $filename);
 
@@ -629,7 +629,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $shell = $this->getShell($host_config, $context);
         $from_shell = $context->get('fromShell', $from_config->shell());
 
-        $from_filename = $from_config['tmpFolder'] . '/' . $from_config['configName'] . '.' . date('YmdHms') . '.sql';
+        $from_filename = $from_config['tmpFolder'] . '/' . $from_config->getConfigName()
+            . '.' . date('YmdHms') . '.sql';
         $from_filename = $this->backupSQL($from_config, $context, $from_shell, $from_filename);
 
         $to_filename = $host_config['tmpFolder'] . '/to--' . basename($from_filename);
@@ -637,8 +638,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
         // Copy filename to host
         $context->io()->comment(sprintf(
             'Copying dump from `%s` to `%s` ...',
-            $from_config['configName'],
-            $host_config['configName']
+            $from_config->getConfigName(),
+            $host_config->getConfigName()
         ));
 
         $result = $shell->copyFileFrom($from_shell, $from_filename, $to_filename, $context, true);
@@ -652,7 +653,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         // Import db.
         $context->io()->comment(sprintf(
             'Importing dump into `%s` ...',
-            $host_config['configName']
+            $host_config->getConfigName()
         ));
 
         $shell->cd($host_config['siteFolder']);
@@ -797,10 +798,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         foreach ($result as $key => $value) {
             if ($what == 'pull') {
-                $this->logger->info(sprintf('Pulling `%s` from `%s`', $key, $host_config['configName']));
+                $this->logger->info(sprintf('Pulling `%s` from `%s`', $key, $host_config->getConfigName()));
                 $result[$key] = $this->getVariable($host_config, $context, $key);
             } elseif ($what == 'push' && !is_null($value)) {
-                $this->logger->info(sprintf('Pushing `%s` to `%s`', $key, $host_config['configName']));
+                $this->logger->info(sprintf('Pushing `%s` to `%s`', $key, $host_config->getConfigName()));
                 $this->putVariable($host_config, $context, $key, $value);
             }
             $context->io()->progressAdvance();

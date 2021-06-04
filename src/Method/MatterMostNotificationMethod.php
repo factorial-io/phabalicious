@@ -98,7 +98,7 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
                 $attachment->error();
             }
             $attachment
-                ->field('Configuration', $host_config['configName'], true)
+                ->field('Configuration', $host_config->getConfigName(), true)
                 ->field('Branch', $host_config['branch'], true);
 
             /** @var MetaInformation $item */

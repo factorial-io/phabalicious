@@ -74,7 +74,7 @@ class DeployCommand extends BaseCommand
             $context->io()->comment(sprintf(
                 'Deploying branch `%s` with config `%s` ...',
                 $this->getHostConfig()['branch'],
-                $this->getHostConfig()['configName']
+                $this->getHostConfig()->getConfigName()
             ));
         }
 

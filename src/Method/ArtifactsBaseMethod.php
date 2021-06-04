@@ -87,11 +87,11 @@ abstract class ArtifactsBaseMethod extends BaseMethod
             $install_dir = $host_config['gitRootFolder'];
             $stages = array_diff($stages, ['installCode']);
         } else {
-            $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . $hash;
+            $install_dir = $host_config['tmpFolder'] . '/' . $host_config->getConfigName() . '-' . $hash;
         }
 
         $target_dir = $host_config['tmpFolder']
-            . '/' . $host_config['configName']
+            . '/' . $host_config->getConfigName()
             . '-target-' . $hash;
 
         $context->set('useLocalRepository', $use_local_repository);

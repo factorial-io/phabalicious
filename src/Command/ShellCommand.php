@@ -59,7 +59,7 @@ class ShellCommand extends BaseCommand
         $this->getMethods()->runTask('shell', $host_config, $context);
         $shell = $context->getResult('shell', $host_config->shell());
 
-        $output->writeln('<info>Starting shell on `' . $host_config['configName'] . '`');
+        $output->writeln('<info>Starting shell on `' . $host_config->getConfigName() . '`');
 
         $options = new ShellOptions();
         $options->setUseTty(true);
