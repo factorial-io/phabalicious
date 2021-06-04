@@ -13,6 +13,7 @@ use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -46,7 +47,7 @@ class ListCommand extends BaseOptionsCommand
     {
         $this->readConfiguration($input);
 
-        $hosts = array_keys(
+        $host_config_names = array_keys(
             array_filter(
                 $this->configuration->getAllHostConfigs(),
                 function ($host_config) {
@@ -55,10 +56,43 @@ class ListCommand extends BaseOptionsCommand
             )
         );
 
+
         $io = new SymfonyStyle($input, $output);
         $io->title('List of found host-configurations:');
-        $io->listing($hosts);
+        if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
+            $this->showDetails($io, $host_config_names);
+        } else {
+            $io->listing($host_config_names);
+        }
 
         return 0;
+    }
+
+    /**
+     * @param SymfonyStyle $io
+     * @param array $host_config_names
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     */
+    protected function showDetails(SymfonyStyle $io, array $host_config_names): void
+    {
+        $rows = [];
+        foreach ($host_config_names as $ndx => $config_name) {
+            $host = $this->configuration->getHostConfig($config_name);
+            $rows[] = [
+                'name' => $host->getConfigName(),
+                'public urls' => implode("\n", $host->getPublicUrls()),
+                'description' => $host->getDescription()
+            ];
+            if ($ndx !== count($host_config_names) - 1) {
+                $rows[] = new TableSeparator();
+            }
+        }
+
+        $io->table(['config name', 'public urls', 'description'], $rows);
     }
 }

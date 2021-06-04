@@ -682,6 +682,16 @@ class ConfigurationService
             }
         }
 
+        // Populate info if available:
+        if (isset($data['info'])) {
+            $replacements = Utilities::expandVariables([
+                'globals' => Utilities::getGlobalReplacements($this),
+                'host' => $data,
+            ]);
+            $data['info'] = Utilities::expandStrings($data['info'], $replacements);
+        }
+
+
         // Create host-config and return.
         $host_config = new HostConfig($data, $shell_provider, $this);
 

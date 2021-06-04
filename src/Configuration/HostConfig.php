@@ -151,15 +151,19 @@ class HostConfig implements \ArrayAccess
         $this->data = $data;
     }
 
-    public function getConfigName() {
+    public function getConfigName()
+    {
         return $this->data['configName'];
     }
 
-    public function getPublicUrl() {
-        return $this->data['info']['publicUrl'] ?? '';
+    public function getPublicUrls()
+    {
+        $urls = $this->data['info']['publicUrl'] ?? '';
+        return is_array($urls) ? $urls : [ $urls ];
     }
 
-    public function getDescription() {
-        return $this->data['info']['description'] ?? sprintf("A %s installation of %s", $this->data['type'], $this->getConfigName());
+    public function getDescription()
+    {
+        return $this->data['info']['description'] ?? '';
     }
 }
