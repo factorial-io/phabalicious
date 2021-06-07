@@ -51,7 +51,7 @@ class ListCommand extends BaseOptionsCommand
             array_filter(
                 $this->configuration->getAllHostConfigs(),
                 function ($host_config) {
-                    return empty($host_config['inheritOnly']);
+                    return empty($host_config['hidden']) && empty($host_config['inheritOnly']);
                 }
             )
         );
@@ -82,12 +82,20 @@ class ListCommand extends BaseOptionsCommand
     {
         $rows = [];
         foreach ($host_config_names as $ndx => $config_name) {
-            $host = $this->configuration->getHostConfig($config_name);
-            $rows[] = [
-                'name' => $host->getConfigName(),
-                'public urls' => implode("\n", $host->getPublicUrls()),
-                'description' => $host->getDescription()
-            ];
+            try {
+                $host = $this->configuration->getHostConfig($config_name);
+                $rows[] = [
+                    'name' => $host->getConfigName(),
+                    'public urls' => implode("\n", $host->getPublicUrls()),
+                    'description' => $host->getDescription()
+                ];
+            } catch (ValidationFailedException $exception) {
+                $rows[] = [
+                    'name' => $config_name,
+                    'public urls' => '',
+                    'description' => "<error>Could not validate configuration</error>"
+                ];
+            }
             if ($ndx !== count($host_config_names) - 1) {
                 $rows[] = new TableSeparator();
             }
