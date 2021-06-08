@@ -26,6 +26,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
     const SKIP_NEXT_CONFIGURATION_IMPORT = 'skipNextConfigurationImport';
     const SETTINGS_FILE_EXISTS = 'settingsFileExists';
 
+    const LAX_ERROR_HANDLING = 'lax';
+    const STRICT_ERROR_HANDLING = 'strict';
+
     public function getName(): string
     {
         return 'drush';
@@ -123,6 +126,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $config['filesFolder'] = '/sites/default/files';
         $config['configBaseFolder'] = '../config';
         $config['forceConfigurationManagement'] = false;
+        $config['drushErrorHandling'] = self::STRICT_ERROR_HANDLING;
 
         return $config;
     }
@@ -139,6 +143,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $service->hasKey('filesFolder', 'drush needs to know where files are stored for this drupal instance');
         $service->hasKey('backupFolder', 'drush needs to know where to store backups into');
         $service->hasKey('tmpFolder', 'drush needs to know where to store temporary files');
+
+        $service->isOneOf('drushErrorHandling', [ self::STRICT_ERROR_HANDLING, self::LAX_ERROR_HANDLING]);
 
         if (!empty($config['database'])) {
             $service = new ValidationService($config['database'], $errors, 'host.database');
@@ -200,12 +206,21 @@ class DrushMethod extends BaseMethod implements MethodInterface
         ]);
     }
 
+    private function useStrictErrorHandling(HostConfig $host_config): bool
+    {
+        $drush_error_handling = $host_config->get('drushErrorHandling', self::LAX_ERROR_HANDLING);
+        return $drush_error_handling == self::STRICT_ERROR_HANDLING;
+    }
 
     private function runDrush(ShellProviderInterface $shell, bool $throw_exception_on_failure, $cmd, ...$args)
     {
         array_unshift($args, '#!drush ' . $cmd);
         $command = call_user_func_array('sprintf', $args);
-        return $shell->run($command, false, $throw_exception_on_failure);
+        return $shell->run(
+            $command,
+            false,
+            $throw_exception_on_failure && $this->useStrictErrorHandling($shell->getHostConfig())
+        );
     }
 
     /**
