@@ -49,10 +49,10 @@ class BlueprintTemplate
 
         $replacements['%identifier%'] = $identifier;
         $replacements['%slug%'] = Utilities::slugify($identifier);
-        $replacements['%slug.with-hyphens%'] = Utilities::slugify($identifier, '-');
         $replacements['%slug.without-feature%'] = Utilities::slugify($identifier_wo_feature);
         $replacements['%slug.without-prefix%'] = Utilities::slugify($identifier_wo_prefix);
-        $replacements['%slug.with-hyphens.without-prefix%'] = Utilities::slugify($identifier_wo_prefix);
+        $replacements['%slug.with-hyphens%'] = Utilities::slugify($identifier, '-');
+        $replacements['%slug.with-hyphens.without-prefix%'] = Utilities::slugify($identifier_wo_prefix, '-');
         $replacements['%slug.with-hyphens.without-feature%'] = Utilities::slugify($identifier_wo_feature, '-');
         $replacements['%project-identifier%'] = $project_name;
         $replacements['%project-slug%'] = Utilities::slugify($project_name);

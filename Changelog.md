@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.6.11 / 2021-06-01
+
+### Fixed:
+
+  * Fix blueprint template variable `slug.with-hyphens.without-prefix`
+  * Bump dns-packet from 1.3.1 to 1.3.4
+  * Bump browserslist from 4.16.3 to 4.16.6
+  * Update copy action docs
+
 ## 3.6.10 / 2021-05-20
 
 ### Fixed:

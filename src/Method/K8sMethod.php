@@ -295,18 +295,21 @@ class K8sMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
+     *
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
      * @throws MismatchedVersionException
      * @throws MissingScriptCallbackImplementation
      * @throws UnknownReplacementPatternException
-     * @throws ValidationFailedException
+     * @throws ValidationFailedException|\Phabalicious\Exception\YamlParseException
      */
     protected function scaffold(HostConfig $host_config, TaskContextInterface $context): void
     {
         $kube_config = $host_config['kube'];
         $host_data = $host_config->raw();
-        $kube_config['parameters']['projectFolder'] = $kube_config['projectFolder'];
+        $projectFolder = $kube_config['projectFolder'];
+
+        $kube_config['parameters']['projectFolder'] = $projectFolder;
         $kube_config['parameters']['host'] = $host_data;
         $kube_config['parameters']['namespace'] = $kube_config['namespace'];
 
@@ -328,9 +331,15 @@ class K8sMethod extends BaseMethod implements MethodInterface
             ->addVariable('context', $context->getData())
             ->setShell($this->kubectlShell);
 
+        // create kube-folder if necessary, and delete its content.
+        $this->kubectlShell->run(sprintf(
+            "mkdir -p %s && rm -rf %s",
+            escapeshellarg($projectFolder),
+            escapeshellarg($projectFolder . "/*")
+        ));
         $scaffolder->scaffold(
             $scaffold_url,
-            $kube_config['projectFolder'],
+            $projectFolder,
             $context,
             $kube_config['parameters'],
             $options
