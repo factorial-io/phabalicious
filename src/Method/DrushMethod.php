@@ -200,19 +200,22 @@ class DrushMethod extends BaseMethod implements MethodInterface
         ]);
     }
 
-    private function runDrush(ShellProviderInterface $shell, $cmd, ...$args)
+
+    private function runDrush(ShellProviderInterface $shell, bool $throw_exception_on_failure, $cmd, ...$args)
     {
         array_unshift($args, '#!drush ' . $cmd);
         $command = call_user_func_array('sprintf', $args);
-        return $shell->run($command, false, false);
+        return $shell->run($command, false, $throw_exception_on_failure);
     }
 
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
+     *
      * @throws MethodNotFoundException
      * @throws MissingScriptCallbackImplementation
      * @throws UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\FailedShellCommandException
      */
     public function reset(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -224,7 +227,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
 
         if ($host_config->get('sanitizeOnReset', false)) {
-            $this->runDrush($shell, 'sql-sanitize -y');
+            $this->runDrush($shell, true, 'sql-sanitize -y');
         }
 
         if ($host_config->isType(HostType::DEV)) {
@@ -237,14 +240,14 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 } else {
                     $command = sprintf('user-password %s --password="%s"', $admin_user, $admin_pass);
                 }
-                $this->runDrush($shell, $command);
+                $this->runDrush($shell, true, $command);
             }
 
             $shell->run(sprintf('chmod -R 777 %s', $host_config['filesFolder']));
         }
 
         if ($deployment_module = $context->getConfigurationService()->getSetting('deploymentModule')) {
-            $this->runDrush($shell, 'en -y %s', $deployment_module);
+            $this->runDrush($shell, false, 'en -y %s', $deployment_module);
         }
 
         $this->handleModules($host_config, $context, $shell, 'modules_enabled.txt', true);
@@ -252,16 +255,16 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         // Database updates
         if ($host_config['drupalVersion'] >= 8) {
-            $this->runDrush($shell, 'updb -y --no-cache-clear');
-            $this->runDrush($shell, 'cr -y');
+            $this->runDrush($shell, true, 'updb -y --no-cache-clear');
+            $this->runDrush($shell, true, 'cr -y');
         } else {
-            $this->runDrush($shell, 'updb -y ');
+            $this->runDrush($shell, false, 'updb -y ');
         }
 
         // CMI / Features
         if ($host_config['drupalVersion'] >= 8) {
             $uuid = $context->getConfigurationService()->getSetting('uuid');
-            $this->runDrush($shell, 'cset system.site uuid %s -y', $uuid);
+            $this->runDrush($shell, true, 'cset system.site uuid %s -y', $uuid);
             $this->checkExistingInstall($shell, $host_config, $context);
 
             if (!empty($host_config['configurationManagement'])
@@ -283,7 +286,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             }
         } else {
             if ($host_config['revertFeatures']) {
-                $this->runDrush($shell, 'fra -y');
+                $this->runDrush($shell, false, 'fra -y');
             }
         }
 
@@ -292,13 +295,13 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         // Keep calm and clear the cache.
         if ($host_config['drupalVersion'] >= 8) {
-            $this->runDrush($shell, 'cr -y');
-            $this->runDrush($shell, sprintf('state-set installation_type %s', $host_config['type']));
+            $this->runDrush($shell, true, 'cr -y');
+            $this->runDrush($shell, true, sprintf('state-set installation_type %s', $host_config['type']));
         } else {
-            $this->runDrush($shell, 'cc all -y');
+            $this->runDrush($shell, true, 'cc all -y');
         }
         if ($host_config['drushVersion'] >= 10) {
-            $this->runDrush($shell, 'deploy:hook');
+            $this->runDrush($shell, true, 'deploy:hook');
         }
     }
 
@@ -357,7 +360,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
 
         foreach ($modules as $module) {
-            $result = $this->runDrush($shell, $drush_command, $module);
+            $result = $this->runDrush($shell, false, $drush_command, $module);
             if ($result->failed()) {
                 $result->throwException(sprintf(
                     'Drush reported an error while handling %s and module %s. ' .
@@ -457,7 +460,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $install_options[] = $host_config['installOptions']['distribution'];
         }
 
-        $result = $this->runDrush($shell, 'site-install %s', implode(' ', $install_options));
+        $result = $this->runDrush($shell, false, 'site-install %s', implode(' ', $install_options));
         if ($result->failed()) {
             $result->throwException("Drupal installation failed!");
         }
@@ -492,7 +495,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
 
         $sql_dump_cmd = $host_config->get('sqlDumpCommand', 'sql-dump');
-        $this->runDrush($shell, '%s %s --result-file=%s', $sql_dump_cmd, $dump_options, $backup_file_name);
+        $this->runDrush($shell, true, '%s %s --result-file=%s', $sql_dump_cmd, $dump_options, $backup_file_name);
         return $return;
     }
 
@@ -585,13 +588,13 @@ class DrushMethod extends BaseMethod implements MethodInterface
     {
         $this->logger->notice('Restoring db from ' . $file);
         if ($drop_db) {
-            $this->runDrush($shell, 'sql-drop -y');
+            $this->runDrush($shell, false, 'sql-drop -y');
         }
 
         if (substr($file, strrpos($file, '.') + 1) == 'gz') {
             return $shell->run(sprintf('#!gunzip -c %s | $(#!drush sql-connect)', $file));
         }
-        return $this->runDrush($shell, 'sql-cli < %s', $file);
+        return $this->runDrush($shell, false, 'sql-cli < %s', $file);
     }
 
 
@@ -682,6 +685,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $shell->run(sprintf('mkdir -p %s', $install_dir));
         $result = $this->runDrush(
             $shell,
+            true,
             'dl --destination="%s" --default-major="%d" drupal',
             $install_dir,
             $host_config['drupalVersion']
