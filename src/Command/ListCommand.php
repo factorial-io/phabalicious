@@ -85,14 +85,14 @@ class ListCommand extends BaseOptionsCommand
                 $host = $this->configuration->getHostConfig($config_name);
                 $rows[] = [
                     'name' => $host->getConfigName(),
-                    'public urls' => implode("\n", $host->getPublicUrls()),
-                    'description' => $host->getDescription()
+                    'public urls' => sprintf("<info>%s</info>", implode("</info>\n<info>", $host->getPublicUrls())),
+                    'description' => $host->getDescription(),
                 ];
             } catch (ValidationFailedException $exception) {
                 $rows[] = [
                     'name' => $config_name,
                     'public urls' => '',
-                    'description' => "<error>Could not validate configuration</error>"
+                    'description' => "<error> Could not validate configuration </error>"
                 ];
             }
             if ($ndx !== count($host_config_names) - 1) {
@@ -122,7 +122,7 @@ class ListCommand extends BaseOptionsCommand
                 $url = $host->getMainPublicUrl();
                 $rows[] = $url ? sprintf("%s  <info>%s</info>", $host->getConfigName(), $url) : $host->getConfigName();
             } catch (ValidationFailedException $exception) {
-                $rows[] = $config_name;
+                $rows[] = sprintf("%s  <error> Invalid config </error>", $config_name);
             }
         }
         $io->listing($rows);
