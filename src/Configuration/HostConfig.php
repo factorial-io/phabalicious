@@ -14,6 +14,8 @@ class HostConfig implements \ArrayAccess
 
     private $configurationService;
 
+    private $publicUrls = false;
+
     public function __construct($data, ShellProviderInterface $shell, ConfigurationService $parent)
     {
         $this->configurationService = $parent;
@@ -158,11 +160,21 @@ class HostConfig implements \ArrayAccess
 
     public function getPublicUrls()
     {
-        $urls = $this->data['info']['publicUrl'] ?? false;
+        if ($this->publicUrls) {
+            return $this->publicUrls;
+        }
+        $urls = false;
+        foreach (['publicUrls', 'publicUrl'] as $key) {
+            if (!$urls) {
+                $urls = $this->data['info'][$key] ?? false;
+            }
+        }
         if (!$urls) {
             return [];
         }
-        return is_array($urls) ? $urls : [ $urls ];
+        $this->publicUrls = is_array($urls) ? $urls : [ $urls ];
+
+        return $this->publicUrls;
     }
 
     public function getMainPublicUrl(): ?string

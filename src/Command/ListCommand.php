@@ -62,7 +62,7 @@ class ListCommand extends BaseOptionsCommand
         if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
             $this->showDetails($io, $host_config_names);
         } else {
-            $io->listing($host_config_names);
+            $this->showListing($io, $host_config_names);
         }
 
         return 0;
@@ -74,7 +74,6 @@ class ListCommand extends BaseOptionsCommand
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotReadableException
      * @throws MismatchedVersionException
-     * @throws ValidationFailedException
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      */
@@ -102,5 +101,30 @@ class ListCommand extends BaseOptionsCommand
         }
 
         $io->table(['config name', 'public urls', 'description'], $rows);
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Style\SymfonyStyle $io
+     * @param array $host_config_names
+     *
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     */
+    protected function showListing(SymfonyStyle $io, array $host_config_names)
+    {
+        $rows = [];
+        foreach ($host_config_names as $ndx => $config_name) {
+            try {
+                $host = $this->configuration->getHostConfig($config_name);
+                $url = $host->getMainPublicUrl();
+                $rows[] = $url ? sprintf("%s  <info>%s</info>", $host->getConfigName(), $url) : $host->getConfigName();
+            } catch (ValidationFailedException $exception) {
+                $rows[] = $config_name;
+            }
+        }
+        $io->listing($rows);
     }
 }
