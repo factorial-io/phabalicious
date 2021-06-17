@@ -158,12 +158,28 @@ class HostConfig implements \ArrayAccess
 
     public function getPublicUrls()
     {
-        $urls = $this->data['info']['publicUrl'] ?? '';
+        $urls = $this->data['info']['publicUrl'] ?? false;
+        if (!$urls) {
+            return [];
+        }
         return is_array($urls) ? $urls : [ $urls ];
+    }
+
+    public function getMainPublicUrl(): ?string
+    {
+        $urls = $this->getPublicUrls();
+        return $urls ? $urls[0] : false;
     }
 
     public function getDescription()
     {
         return $this->data['info']['description'] ?? '';
+    }
+
+    public function getLabel()
+    {
+        return $this->getMainPublicUrl()
+            ? sprintf('%s [%s]', $this->getConfigName(), $this->getMainPublicUrl())
+            : $this->getConfigName();
     }
 }

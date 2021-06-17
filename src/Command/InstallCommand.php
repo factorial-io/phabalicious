@@ -76,6 +76,7 @@ class InstallCommand extends BaseCommand
 
         try {
             $this->getMethods()->runTask('install', $this->getHostConfig(), $context, $next_tasks);
+            $context->io()->success(sprintf("%s installed successfully!", $this->getHostConfig()->getLabel()));
         } catch (EarlyTaskExitException $e) {
             return 1;
         }

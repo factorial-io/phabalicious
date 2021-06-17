@@ -84,6 +84,7 @@ class DeployCommand extends BaseCommand
 
         try {
             $this->getMethods()->runTask('deploy', $this->getHostConfig(), $context, ['reset']);
+            $context->io()->success(sprintf("%s deployed successfully!", $this->getHostConfig()->getLabel()));
         } catch (EarlyTaskExitException $e) {
             return 1;
         }
