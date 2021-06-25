@@ -63,11 +63,11 @@ class SshMethod extends BaseMethod implements MethodInterface
     {
         parent::preflightTask($task, $config, $context);
 
-        if (empty($this->knownHostsChecked[$config->get('configName')])
+        if (empty($this->knownHostsChecked[$config->getConfigName()])
           && $config->isMethodSupported($this)
             && !in_array($task, ['about'])
         ) {
-            $this->knownHostsChecked[$config->get('configName')] = true;
+            $this->knownHostsChecked[$config->getConfigName()] = true;
             $known_hosts = $this->getKnownHosts($config, $context);
             if ($config['host'] !== 'localhost' && empty($config['disableKnownHosts'])) {
                 $known_hosts[] = $config['host'] . ':' . $config->get('port', 22);

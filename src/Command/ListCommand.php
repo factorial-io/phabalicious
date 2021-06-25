@@ -13,6 +13,7 @@ use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -46,19 +47,84 @@ class ListCommand extends BaseOptionsCommand
     {
         $this->readConfiguration($input);
 
-        $hosts = array_keys(
+        $host_config_names = array_keys(
             array_filter(
                 $this->configuration->getAllHostConfigs(),
                 function ($host_config) {
-                    return empty($host_config['inheritOnly']);
+                    return empty($host_config['hidden']) && empty($host_config['inheritOnly']);
                 }
             )
         );
 
+
         $io = new SymfonyStyle($input, $output);
         $io->title('List of found host-configurations:');
-        $io->listing($hosts);
+        if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
+            $this->showDetails($io, $host_config_names);
+        } else {
+            $this->showListing($io, $host_config_names);
+        }
 
         return 0;
+    }
+
+    /**
+     * @param SymfonyStyle $io
+     * @param array $host_config_names
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     */
+    protected function showDetails(SymfonyStyle $io, array $host_config_names): void
+    {
+        $rows = [];
+        foreach ($host_config_names as $ndx => $config_name) {
+            try {
+                $host = $this->configuration->getHostConfig($config_name);
+                $rows[] = [
+                    'name' => $host->getConfigName(),
+                    'public urls' => sprintf("<info>%s</info>", implode("</info>\n<info>", $host->getPublicUrls())),
+                    'description' => $host->getDescription(),
+                ];
+            } catch (ValidationFailedException $exception) {
+                $rows[] = [
+                    'name' => $config_name,
+                    'public urls' => '',
+                    'description' => "<error> Could not validate configuration </error>"
+                ];
+            }
+            if ($ndx !== count($host_config_names) - 1) {
+                $rows[] = new TableSeparator();
+            }
+        }
+
+        $io->table(['config name', 'public urls', 'description'], $rows);
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Style\SymfonyStyle $io
+     * @param array $host_config_names
+     *
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     */
+    protected function showListing(SymfonyStyle $io, array $host_config_names)
+    {
+        $rows = [];
+        foreach ($host_config_names as $ndx => $config_name) {
+            try {
+                $host = $this->configuration->getHostConfig($config_name);
+                $url = $host->getMainPublicUrl();
+                $rows[] = $url ? sprintf("%s  <info>%s</info>", $host->getConfigName(), $url) : $host->getConfigName();
+            } catch (ValidationFailedException $exception) {
+                $rows[] = sprintf("%s  <error> Invalid config </error>", $config_name);
+            }
+        }
+        $io->listing($rows);
     }
 }

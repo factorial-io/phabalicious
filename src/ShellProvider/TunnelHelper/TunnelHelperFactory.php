@@ -58,7 +58,7 @@ class TunnelHelperFactory
             return null;
         }
 
-        $tunnel_name = 'local--' . $config['configName'];
+        $tunnel_name = 'local--' . $config->getConfigName();
         if ($tunnel = $this->getTunnel($tunnel_name)) {
             return $tunnel;
         }
@@ -87,7 +87,7 @@ class TunnelHelperFactory
             return null;
         }
 
-        $tunnel_name = $source_config['configName'] . '--' . $target_config['configName'];
+        $tunnel_name = $source_config->getConfigName() . '--' . $target_config->getConfigName();
 
         if ($tunnel = $this->getTunnel($tunnel_name)) {
             return $tunnel;

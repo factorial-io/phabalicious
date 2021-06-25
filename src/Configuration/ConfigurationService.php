@@ -57,7 +57,7 @@ class ConfigurationService
     private $skipCache = false;
     private $disallowDeepMergeForKeys = [];
 
-    /** @var \Phabalicious\Utilities\PasswordManagerInterface */
+    /** @var PasswordManagerInterface */
     private $passwordManager = null;
 
     private $inheritanceBaseUrl = false;
@@ -682,6 +682,16 @@ class ConfigurationService
             }
         }
 
+        // Populate info if available:
+        if (isset($data['info'])) {
+            $replacements = Utilities::expandVariables([
+                'globals' => Utilities::getGlobalReplacements($this),
+                'host' => $data,
+            ]);
+            $data['info'] = Utilities::expandStrings($data['info'], $replacements);
+        }
+
+
         // Create host-config and return.
         $host_config = new HostConfig($data, $shell_provider, $this);
 
@@ -915,9 +925,9 @@ class ConfigurationService
     }
 
     /**
-     * @return \Phabalicious\Utilities\PasswordManagerInterface
+     * @return PasswordManagerInterface
      */
-    public function getPasswordManager(): PasswordManagerInterface
+    public function getPasswordManager(): ?PasswordManagerInterface
     {
         if (!$this->passwordManager) {
             $this->passwordManager = new PasswordManager();
@@ -926,7 +936,7 @@ class ConfigurationService
     }
 
     /**
-     * @param \Phabalicious\Utilities\PasswordManagerInterface $passwordManager
+     * @param PasswordManagerInterface $passwordManager
      *
      * @return ConfigurationService
      */

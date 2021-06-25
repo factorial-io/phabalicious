@@ -63,7 +63,7 @@ class PutFileCommand extends BaseCommand
         $context->set('sourceFile', $file);
         $context->set('destinationFile', $input->getOption('destination'));
 
-        $context->io()->comment('Putting file `' . $file . '` to `' . $this->getHostConfig()['configName']. '`');
+        $context->io()->comment('Putting file `' . $file . '` to `' . $this->getHostConfig()->getConfigName(). '`');
 
         $this->getMethods()->runTask('putFile', $this->getHostConfig(), $context);
 

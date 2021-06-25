@@ -320,7 +320,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $this->logger->info(sprintf(
                 'Running host-specific script for task `%s` and host `%s`',
                 $task,
-                $config['configName']
+                $config->getConfigName()
             ));
             $context->set(self::SCRIPT_DATA, $script);
             $this->runScript($config, $context);

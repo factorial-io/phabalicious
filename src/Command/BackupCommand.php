@@ -49,7 +49,7 @@ class BackupCommand extends BackupBaseCommand
         $what = $this->collectBackupMethods($input, $context);
         $context->set('what', $what);
         $context->setResult('basename', [
-           $this->getHostConfig()['configName'],
+           $this->getHostConfig()->getConfigName(),
            date('Y-m-d--H-i-s')
         ]);
 

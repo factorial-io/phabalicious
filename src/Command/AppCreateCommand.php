@@ -64,6 +64,7 @@ class AppCreateCommand extends AppBaseCommand
             $copy_from = $this->getConfiguration()->getHostConfig($copy_from);
         }
 
+        /** @var \Phabalicious\Configuration\HostConfig $copy_from */
         $context = $this->getContext();
         $host_config = $this->getHostConfig();
 
@@ -82,7 +83,7 @@ class AppCreateCommand extends AppBaseCommand
                     $context->io()->warning(sprintf(
                         'Stopping, as target-folder `%s` already exists on `%s`.',
                         $install_dir,
-                        $host_config['configName']
+                        $host_config->getConfigName()
                     ));
                     return 1;
                 }
@@ -118,7 +119,7 @@ class AppCreateCommand extends AppBaseCommand
             $this->executeStages($stages, 'appCreate', $context, 'Creating app');
 
             if ($copy_from) {
-                $this->runCommand('copy-from', [ 'from' => $copy_from['configName'] ], $input, $output);
+                $this->runCommand('copy-from', [ 'from' => $copy_from->getConfigName() ], $input, $output);
             } else {
                 $this->runCommand('reset', [], $input, $output);
             }

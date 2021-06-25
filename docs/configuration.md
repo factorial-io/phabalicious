@@ -45,6 +45,8 @@ List here all needed methods for that type of project. Available methods are:
   * `platform` for deploying to platform.sh
   * `artifacts--ftp` to deploy to a ftp-server
   * `artifacts--git` to deploy an artifact to a git repository
+  * `yarn` to run yarn tasks when doing a deploy/reset
+  * `npm` to run npm tasks when doing a deploy/reset
 
 **Example for drupal 7**
 
@@ -84,6 +86,9 @@ hosts:
     user: example_user
     port: 2233
     type: dev
+    info:
+      description: An example of a configuration
+      publicUrl: http://www.example.com
     rootFolder: /var/www/public
     gitRootFolder: /var/www
     siteFolder: /sites/default
@@ -112,7 +117,11 @@ phab --config=staging about
 This will print all host configuration for the host `staging`.
 
 ### General keys
-
+* `hidden` hide this configuration from `list:hosts`, but can still be used
+* `inheritOnly` this configuration is just for inheritance, it wont be validated, and hidden for `list:hosts`
+* `info` additional human readable information for this config (supports replacemnt-patterns)
+    * `description`: a human readable description outputted by `list:hosts -v`
+    * `publicUrl`: One or many urls for this configuration, will be displayed to the user on certain occasions. Make sure, that the most important url is the first one
 * `type` defines the type of installation. Currently there are four types available:
     * `dev` for dev-installations, they won't backup the databases on deployment
     * `test` for test-installations, similar than `dev`, no backups on deployments

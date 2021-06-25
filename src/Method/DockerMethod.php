@@ -167,7 +167,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
      */
     private function runTaskImpl(HostConfig $host_config, TaskContextInterface $context, $task, $silent)
     {
-        $this->logger->info('Running docker-task `' . $task . '` on `' . $host_config['configName']);
+        $this->logger->info('Running docker-task `' . $task . '` on `' . $host_config->getConfigName());
 
         if (method_exists($this, $task)) {
             $this->{$task}($host_config, $context);
@@ -294,7 +294,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
     {
         $files = [];
         $temp_files = [];
-        $temp_nam_prefix = 'phab-' . md5($hostconfig['configName'] . mt_rand());
+        $temp_nam_prefix = 'phab-' . md5($hostconfig->getConfigName() . mt_rand());
 
 
         // Backwards-compatibility:
@@ -444,8 +444,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
      */
     public function getIpAddress(HostConfig $host_config, TaskContextInterface $context)
     {
-        if (!empty($this->cache[$host_config['configName']])) {
-            return $this->cache[$host_config['configName']];
+        if (!empty($this->cache[$host_config->getConfigName()])) {
+            return $this->cache[$host_config->getConfigName()];
         }
         $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
         $shell = $docker_config->shell();
@@ -469,7 +469,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $ips = explode('|', $result->getOutput()[0]);
             $ips = array_filter($ips);
             $ip = reset($ips);
-            $this->cache[$host_config['configName']] = $ip;
+            $this->cache[$host_config->getConfigName()] = $ip;
             return $ip;
         }
         return false;
@@ -702,10 +702,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
     protected function scaffoldDockerFiles(HostConfig $host_config, TaskContextInterface $context)
     {
         static $scaffolder_did_run = [];
-        if (!empty($scaffolder_did_run[$host_config['configName']])) {
+        if (!empty($scaffolder_did_run[$host_config->getConfigName()])) {
             return;
         }
-        $scaffolder_did_run[$host_config['configName']] = true;
+        $scaffolder_did_run[$host_config->getConfigName()] = true;
 
         $docker_config = self::getDockerConfig($host_config, $context->getConfigurationService());
         $project_folder = self::getProjectFolder($docker_config, $host_config);
