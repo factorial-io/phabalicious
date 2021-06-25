@@ -8,7 +8,7 @@ questions:
       - linux
   branch:
     question: "What branch should I use to checkout?"
-    default: master
+    default: main
   runSetup:
     question: "Run the host- and docker setup?"
     default: true
