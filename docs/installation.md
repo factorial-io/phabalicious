@@ -1,6 +1,6 @@
-# Installation of needed dependencies
+# Installation
 
-Phabalicious needs at least PHP 7.1 with the json- and openssl-extensions. The best way is to install it globally by downloading the phar-file:
+Phabalicious needs at least PHP 7.2 with the json- and openssl-extensions. The best way is to install it globally by downloading the phar-file:
 
 ## Download phar
 
@@ -54,3 +54,34 @@ hosts:
 
 For more infos about the file-format have a look at the file-format-section.
 
+## Shell autocompletion
+
+Add this to your shell-startup script:
+
+* for fish-shells
+
+    ```
+    phab _completion --generate-hook --shell-type fish | source
+    ```
+
+* for zsh/bash-shells
+
+    ```
+    source <(phab _completion --generate-hook)
+    ```
+
+## Updating phab
+
+* Run `phab self-update`, this will download the latest release from GitHub.
+
+If you want to get the latest dev-version, add `--allow-unstable=1`
+
+## Enhancing phab, contributing to phab
+
+We welcome contributions! Please fork the repository, create a feature branch and submit a pull-request.
+Please add test-cases for your bug-fixes or new features. We are using GrumPHP to check code-style (PSR2), run tests etc when committing new code. This repository uses github-flow as branching strategy.
+
+### View the docs locally
+
+Just run `yarn docs:dev`, this will allow you to browse the docs with your browser with
+hot reloading and all the fancy stuff.

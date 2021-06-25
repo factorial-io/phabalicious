@@ -81,7 +81,7 @@ Please add test-cases for your bug-fixes or new features. We are using GrumPHP t
 
 ## Create a release
 
-This repo is using git-flow to manage versions. You can use phab to create a new release via
+This repo is using github-flow to manage versions. Releases are created by github-action automatically. If you need to create one manually you can use either phab
 
 ```
 bin/phab -cci create-release
