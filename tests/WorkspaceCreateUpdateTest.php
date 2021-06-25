@@ -52,7 +52,7 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
             'command' => $command->getName(),
-            '--branch' => 'master',
+            '--branch' => 'main',
             '--platform' => 'linux',
             '--run-setup' => '',
         ));
@@ -72,7 +72,7 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
             'command' => $command->getName(),
-            '--branch' => 'master',
+            '--branch' => 'main',
             '--platform' => 'linux',
             '--run-setup' => '',
         ));
