@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.6.12 / 2021-06-30
+
+### Fixes:
+
+  * Fix getFile for docker-exec-over-ssh shell provider
+  * Update multibasebox setup for workspace command
+  * Cleanup kube-folder before scaffolding. Fixes #161
+
 ## 3.6.11 / 2021-06-01
 
 ### Fixed:
