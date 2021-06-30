@@ -157,7 +157,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
             return false;
         }
 
-        $result = parent::putFile($tmp_source, $dest, $context, $verbose);
+        $result = parent::getFile($tmp_source, $dest, $context, $verbose);
         $this->sshShell->run(sprintf('rm %s', escapeshellarg($tmp_source)));
 
         return $result;
