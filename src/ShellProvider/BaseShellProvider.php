@@ -195,6 +195,8 @@ abstract class BaseShellProvider implements ShellProviderInterface
             get_class($this)
         ));
 
+        $from_shell->setOutput($this->output);
+
         // This is a naive implementation, copying the file from source to local and
         // then from local to target.
 
@@ -202,11 +204,16 @@ abstract class BaseShellProvider implements ShellProviderInterface
             '/' . basename($source_file_name);
 
         $result = $from_shell->getFile($source_file_name, $immediate_file_name, $context, $verbose);
-        if (!$result) {
-            return false;
+
+        if ($result) {
+            $result = $this->putFile($immediate_file_name, $target_file_name, $context, $verbose);
         }
 
-        return $this->putFile($immediate_file_name, $target_file_name, $context, $verbose);
+        if (file_exists($immediate_file_name)) {
+            unlink($immediate_file_name);
+        }
+
+        return $result;
     }
 
     /**

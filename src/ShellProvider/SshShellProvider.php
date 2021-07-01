@@ -281,7 +281,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         TaskContextInterface $context,
         bool $verbose = false
     ): bool {
-        if ($from_shell instanceof SshShellProvider) {
+        if ($from_shell->getName() == self::PROVIDER_NAME) {
             $from_host_config = $from_shell->getHostConfig();
             $command = [
                 '/usr/bin/scp',
