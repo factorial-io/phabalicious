@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.6.13 / 2021-07-01
+
+### New
+
+* Enable copy-from with kubernetes pod as target as long the source is reachable via SSH
+  and a ssh-connection can be established between the pod and the data-source.
+
 ## 3.6.12 / 2021-06-30
 
 ### Fixes:
