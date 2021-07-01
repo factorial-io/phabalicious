@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Scaffolding a new app | Phabalicious</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="A deployment system and general purpose helper">
+    
+    <link rel="preload" href="/assets/css/0.styles.33a282eb.css" as="style"><link rel="preload" href="/assets/js/app.d313b423.js" as="script"><link rel="preload" href="/assets/js/3.f3cff209.js" as="script"><link rel="preload" href="/assets/js/12.18bc0076.js" as="script"><link rel="prefetch" href="/assets/js/10.f65c235b.js"><link rel="prefetch" href="/assets/js/11.1d424333.js"><link rel="prefetch" href="/assets/js/13.b581a672.js"><link rel="prefetch" href="/assets/js/14.f74f7864.js"><link rel="prefetch" href="/assets/js/15.9057e26f.js"><link rel="prefetch" href="/assets/js/16.e9c348e6.js"><link rel="prefetch" href="/assets/js/17.5b22b3ed.js"><link rel="prefetch" href="/assets/js/18.5e3b11a0.js"><link rel="prefetch" href="/assets/js/19.cf05d58f.js"><link rel="prefetch" href="/assets/js/20.641023fe.js"><link rel="prefetch" href="/assets/js/21.e467906a.js"><link rel="prefetch" href="/assets/js/22.63b611af.js"><link rel="prefetch" href="/assets/js/23.649f52bf.js"><link rel="prefetch" href="/assets/js/24.dbd42627.js"><link rel="prefetch" href="/assets/js/25.0b8b8977.js"><link rel="prefetch" href="/assets/js/26.b2d1f3d7.js"><link rel="prefetch" href="/assets/js/27.5c6f9372.js"><link rel="prefetch" href="/assets/js/4.247c6c4a.js"><link rel="prefetch" href="/assets/js/5.a1bc39df.js"><link rel="prefetch" href="/assets/js/6.28e9410c.js"><link rel="prefetch" href="/assets/js/7.7afa9855.js"><link rel="prefetch" href="/assets/js/8.256bb93e.js"><link rel="prefetch" href="/assets/js/9.b74f6476.js"><link rel="prefetch" href="/assets/js/vendors~docsearch.4a8594da.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.33a282eb.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">Phabalicious</span></a> <div class="links"><form id="search-form" role="search" class="algolia-search-wrapper search-box"><input id="algolia-search-input" class="search-query"></form> <nav class="nav-links can-hide"> <a href="https://github.com/factorial-io/phabalicious" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"> <a href="https://github.com/factorial-io/phabalicious" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><a href="/guide.html" class="sidebar-link">How does phabalicious work in two sentences</a></li><li><a href="/installation.html" class="sidebar-link">Installation of needed dependencies</a></li><li><a href="/usage.html" class="sidebar-link">Running phabalicious</a></li><li><a href="/available-tasks.html" class="sidebar-link">Available tasks</a></li><li><a href="/configuration.html" class="sidebar-link">Structure of the configuration file</a></li><li><a href="/inheritance.html" class="sidebar-link">Inheritance</a></li><li><a href="/docker-integration.html" class="sidebar-link">Docker integration</a></li><li><a href="/workspace.html" class="sidebar-link">Setup a local dev environment (multibasebox)</a></li><li><a href="/scripts.html" class="sidebar-link">Scripts</a></li><li><a href="/scaffolder.html" class="sidebar-link">Scaffolding arbitrary files</a></li><li><a href="/app-scaffold.html" aria-current="page" class="active sidebar-link">Scaffolding a new app</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/app-scaffold.html#the-questions-section" class="sidebar-link">The questions-section</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/app-scaffold.html#question" class="sidebar-link">question</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#array" class="sidebar-link">array</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#confirm" class="sidebar-link">confirm</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#choices" class="sidebar-link">choices</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#non-interactive-usage" class="sidebar-link">Non-interactive usage</a></li></ul></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#the-scaffold-section" class="sidebar-link">The scaffold-section</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#the-variables-section" class="sidebar-link">the variables-section</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#the-assets-section" class="sidebar-link">the assets-section</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#list-of-supported-internal-commands" class="sidebar-link">List of supported internal commands</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#inheritance" class="sidebar-link">Inheritance</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#examples" class="sidebar-link">Examples</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/app-scaffold.html#drupal-8-d8-yml" class="sidebar-link">Drupal 8 (d8.yml)</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#drupal-commerce" class="sidebar-link">drupal commerce</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#thunder" class="sidebar-link">thunder</a></li><li class="sidebar-sub-header"><a href="/app-scaffold.html#laravel" class="sidebar-link">Laravel</a></li></ul></li></ul></li><li><a href="/app-create-destroy.html" class="sidebar-link">Creating/ destroying an app from existing configuration</a></li><li><a href="/deploying-artifacts.html" class="sidebar-link">Deploying artifacts</a></li><li><a href="/kubernetes.html" class="sidebar-link">Kubernetes integration</a></li><li><a href="/offsite-backups.html" class="sidebar-link">Offsite backups</a></li><li><a href="/local-overrides.html" class="sidebar-link">Local overrides</a></li><li><a href="/passwords.html" class="sidebar-link">Passwords and secrets</a></li><li><a href="/contribute.html" class="sidebar-link">Contributing to Phabalicious</a></li><li><a href="/Changelog.html" class="sidebar-link">Changelog</a></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="scaffolding-a-new-app"><a href="#scaffolding-a-new-app" class="header-anchor">#</a> Scaffolding a new app</h1> <p>Phabalicious has a simple but powerful app:scaffold-command. It will read a yml-file and interpret the contents. It will use the existing pattern-replacement used for scripts and twig for changing file-contents. The scaffolding and fixture-files can live on a remote server or on your file-system.</p> <p>Here's an example of an app scaffold-file:</p> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">questions</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span>
+    <span class="token key atrule">question</span><span class="token punctuation">:</span> <span class="token string">&quot;The Name of this project&quot;</span>
+  <span class="token key atrule">shortName</span><span class="token punctuation">:</span>
+    <span class="token key atrule">question</span><span class="token punctuation">:</span> <span class="token string">&quot;The short-name of this project&quot;</span>
+    <span class="token key atrule">validation</span><span class="token punctuation">:</span> <span class="token string">&quot;/^[A-Za-z0-9]{3,5}$/&quot;</span>
+    <span class="token key atrule">error</span><span class="token punctuation">:</span> <span class="token string">&quot;The shortname may consist of 3 to 5 letters (A-Z) or digits (0-9)&quot;</span>
+    <span class="token comment"># Questions can have a default:</span>
+    <span class="token key atrule">default</span><span class="token punctuation">:</span> <span class="token string">&quot;SP&quot;</span>
+    <span class="token key atrule">transform</span><span class="token punctuation">:</span> lowercase
+
+<span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> drupal<span class="token punctuation">-</span>composer/drupal<span class="token punctuation">-</span>project<span class="token punctuation">:</span>8.x<span class="token punctuation">-</span>dev
+  <span class="token key atrule">webRoot</span><span class="token punctuation">:</span> web
+  <span class="token key atrule">allowOverride</span><span class="token punctuation">:</span> <span class="token number">0</span> <span class="token comment"># Setting it to 1 will not show a warning if the target folder exists.</span>
+  <span class="token key atrule">skipSubfolder</span><span class="token punctuation">:</span> <span class="token number">0</span> <span class="token comment"># Setting it to 1 will instruct phabalicious to not create a subfolder.</span>
+
+<span class="token key atrule">assets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> .fabfile.yaml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose.yml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose<span class="token punctuation">-</span>mbb.yml
+
+<span class="token key atrule">deployModuleAssets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.info.yml
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.module
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.install
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> rm <span class="token punctuation">-</span>rf %rootFolder%
+  <span class="token punctuation">-</span> composer create<span class="token punctuation">-</span>project %composerProject% %rootFolder% <span class="token punctuation">-</span><span class="token punctuation">-</span>stability dev <span class="token punctuation">-</span><span class="token punctuation">-</span>no<span class="token punctuation">-</span>interaction
+  <span class="token punctuation">-</span> cd %rootFolder%; composer require drupal/coffee
+  <span class="token punctuation">-</span> cd %rootFolder%; composer require drupal/devel
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%)
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%/%webRoot%/modules/custom/%shortName%_deploy<span class="token punctuation">,</span> deployModuleAssets)
+  <span class="token punctuation">-</span> cd %rootFolder%; git init .
+  <span class="token punctuation">-</span> cd %rootFolder%; git add .
+  <span class="token punctuation">-</span> cd %rootFolder%; git commit <span class="token punctuation">-</span>m &quot;Initial commit by phabalicious&quot;
+</code></pre></div><p>The fabfile needs at least the <code>questions</code>and the <code>scaffold</code>-section. The <code>scaffold</code>-section is a list of commands, executed by phabalicious one by one. It will use the pattern-replacement known for scripts.</p> <h2 id="the-questions-section"><a href="#the-questions-section" class="header-anchor">#</a> The <code>questions</code>-section</h2> <p>This section contains a list of questions to be asked when running the scaffold-command. The yaml-key will get the value inputted by the user and can be used as a replacement pattern or in twig-templates. Answers can be validated against a regex and/or transformed to lower- or uppercase.</p> <p>The following question-types are supported:</p> <h3 id="question"><a href="#question" class="header-anchor">#</a> <code>question</code></h3> <p>A regular question, with optional default, validation and/ or autocomplete values. If <code>hidden</code> is true then the user wont see his input, ideal for sensitive data like passwords.</p> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">key</span><span class="token punctuation">:</span>
+  <span class="token key atrule">question</span><span class="token punctuation">:</span> the prompot to show
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> question
+  <span class="token key atrule">validation</span><span class="token punctuation">:</span> the regex to use to validate the input
+  <span class="token key atrule">error</span><span class="token punctuation">:</span> the message to display<span class="token punctuation">,</span> if the validation fails
+  <span class="token key atrule">default</span><span class="token punctuation">:</span> the default<span class="token punctuation">-</span>value<span class="token punctuation">,</span> when the user hits return
+  <span class="token key atrule">transform</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>lowercase<span class="token punctuation">|</span>uppercase<span class="token punctuation">]</span>
+  <span class="token key atrule">hidden</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>true<span class="token punctuation">|</span>false<span class="token punctuation">]</span>
+  <span class="token key atrule">autocomplete</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> Option 1
+    <span class="token punctuation">-</span> Option 2
+    <span class="token punctuation">-</span> Option 3
+</code></pre></div><h3 id="array"><a href="#array" class="header-anchor">#</a> <code>array</code></h3> <p>A question, where the use can supply multiple values. The question gets repeated until the user provides an empty answer. For possible options see <code>question</code>.</p> <h3 id="confirm"><a href="#confirm" class="header-anchor">#</a> <code>confirm</code></h3> <p>A question which can be answered with yes or no. The value will be <code>1</code> or <code>0</code>. The default value can be <code>true</code> or <code>false</code>.</p> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">key</span><span class="token punctuation">:</span>
+  <span class="token key atrule">question</span><span class="token punctuation">:</span> Should we continue<span class="token punctuation">?</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> confirm
+  <span class="token key atrule">default</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+</code></pre></div><h3 id="choices"><a href="#choices" class="header-anchor">#</a> <code>choices</code></h3> <p>Choices provides a list of options, where the user can pick one or many answers from:</p> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">key</span><span class="token punctuation">:</span>
+  <span class="token key atrule">question</span><span class="token punctuation">:</span> What fruits do you want to buy
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> choices
+  <span class="token key atrule">multiselect</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">choices</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> Apples
+    <span class="token punctuation">-</span> Oranges
+    <span class="token punctuation">-</span> Lemons
+    <span class="token punctuation">-</span> Papayas
+    <span class="token punctuation">-</span> Coconuts
+
+</code></pre></div><h3 id="non-interactive-usage"><a href="#non-interactive-usage" class="header-anchor">#</a> Non-interactive usage</h3> <p>For non-interactive usage you can pass the values via commandline-options, where the option-name is dash-cased version of the key, for the above example:</p> <table><thead><tr><th>command-line option</th> <th>Question key</th></tr></thead> <tbody><tr><td>--[key]</td> <td>[key]</td></tr> <tr><td>--name</td> <td>name</td></tr> <tr><td>--short-name</td> <td>shortName</td></tr></tbody></table> <p>The scaffolder stores the answers in a hidden file called <code>.phab-scaffold-tokens</code> in the newly created folder and will reuse if the scaffolder runs aagain.</p> <h2 id="the-scaffold-section"><a href="#the-scaffold-section" class="header-anchor">#</a> The <code>scaffold</code>-section</h2> <p>Phabalicious will provide the following replacement-patterns out of the box:</p> <table><thead><tr><th>Pattern</th> <th>Value</th></tr></thead> <tbody><tr><td>%rootFolder%</td> <td>The folder the app will be installed into</td></tr> <tr><td>%name%</td> <td>The name of the app</td></tr> <tr><td>%projectFolder%</td> <td>a cleaned version of the app-name, suitable for machine-names.</td></tr> <tr><td>%shortName%</td> <td>The short-name</td></tr> <tr><td>%uuid%</td> <td>a random-uuid</td></tr></tbody></table> <h2 id="the-variables-section"><a href="#the-variables-section" class="header-anchor">#</a> the <code>variables</code>-section</h2> <p>You can add own variables via the <code>variables</code>-section. In the above example, the variable <code>composerProject</code> will be available in the <code>scaffold</code>-section via the pattern <code>%composerProject%</code></p> <h2 id="the-assets-section"><a href="#the-assets-section" class="header-anchor">#</a> the <code>assets</code>-section</h2> <p>You can have multiple assets-sections, <code>assets</code> is a default one.  It contains a list if template files which will be processed by twig and placed at a specific location. You'll have all variables available as twig-variables inside the template, to use them, just use <code></code> e.g. <code></code>
+To add a new asset-section, just use a new root-level key (in the above example this would be <code>deploymentModuleAssets</code></p> <p>The assets-paths must be relative to the yaml-file containing the scaffold-commands.</p> <h2 id="list-of-supported-internal-commands"><a href="#list-of-supported-internal-commands" class="header-anchor">#</a> List of supported internal commands</h2> <ul><li><code>copy_assets</code></li> <li><code>alter_json_file</code></li> <li><code>log_message</code></li></ul> <p>These are documented <a href="/scaffolder.html">here</a>.</p> <h2 id="inheritance"><a href="#inheritance" class="header-anchor">#</a> Inheritance</h2> <p>Similar to other parts of Phabalicious, scaffold-files can use inheritance, for example to use the above scaffold-file, but install drupal commerce:</p> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> drupal<span class="token punctuation">-</span>8.yml
+  <span class="token punctuation">-</span>
+<span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> drupalcommerce/project<span class="token punctuation">-</span>base
+</code></pre></div><p>This will inherit all content from the drupal-8.yml-file and merged with this content. This means, the `composerProject´-variable will be overridden, but everything else will be inherited. This makes it easy to reuse existing scaffold-files</p> <h2 id="examples"><a href="#examples" class="header-anchor">#</a> Examples</h2> <h3 id="drupal-8-d8-yml"><a href="#drupal-8-d8-yml" class="header-anchor">#</a> Drupal 8 (d8.yml)</h3> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> drupal<span class="token punctuation">-</span>composer/drupal<span class="token punctuation">-</span>project<span class="token punctuation">:</span>8.x<span class="token punctuation">-</span>dev
+  <span class="token key atrule">webRoot</span><span class="token punctuation">:</span> web
+<span class="token key atrule">assets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> .fabfile.yaml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose.yml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose<span class="token punctuation">-</span>mbb.yml
+
+<span class="token key atrule">deployModuleAssets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.info.yml
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.module
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.install
+
+<span class="token key atrule">sshKeys</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> ssh<span class="token punctuation">-</span>keys/docker<span class="token punctuation">-</span>root<span class="token punctuation">-</span>key
+  <span class="token punctuation">-</span> ssh<span class="token punctuation">-</span>keys/docker<span class="token punctuation">-</span>root<span class="token punctuation">-</span>key.pub
+  <span class="token punctuation">-</span> ssh<span class="token punctuation">-</span>keys/known_hosts
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> rm <span class="token punctuation">-</span>rf %rootFolder%
+  <span class="token punctuation">-</span> composer create<span class="token punctuation">-</span>project %composerProject% %rootFolder% <span class="token punctuation">-</span><span class="token punctuation">-</span>stability dev <span class="token punctuation">-</span><span class="token punctuation">-</span>no<span class="token punctuation">-</span>interaction
+  <span class="token punctuation">-</span> cd %rootFolder%; composer require drupal/coffee
+  <span class="token punctuation">-</span> cd %rootFolder%; composer require drupal/devel
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%)
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%/%webRoot%/modules/custom/%shortName%_deploy<span class="token punctuation">,</span> deployModuleAssets)
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%/ssh<span class="token punctuation">-</span>keys<span class="token punctuation">,</span> sshKeys)
+  <span class="token punctuation">-</span> cd %rootFolder%; git init .
+  <span class="token punctuation">-</span> cd %rootFolder%; git add .
+  <span class="token punctuation">-</span> cd %rootFolder%; git commit <span class="token punctuation">-</span>m &quot;Initial commit by phabalicious&quot;
+</code></pre></div><h3 id="drupal-commerce"><a href="#drupal-commerce" class="header-anchor">#</a> drupal commerce</h3> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> d8.yml
+
+<span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> drupalcommerce/project<span class="token punctuation">-</span>base
+</code></pre></div><h3 id="thunder"><a href="#thunder" class="header-anchor">#</a> thunder</h3> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> d8.yml
+
+<span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> burdamagazinorg/thunder<span class="token punctuation">-</span>project
+  <span class="token key atrule">webRoot</span><span class="token punctuation">:</span> docroot
+</code></pre></div><h3 id="laravel"><a href="#laravel" class="header-anchor">#</a> Laravel</h3> <h4 id="the-scaffold-file"><a href="#the-scaffold-file" class="header-anchor">#</a> the scaffold-file:</h4> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> laravel/laravel<span class="token punctuation">:</span><span class="token number">5.4</span>
+  <span class="token key atrule">webRoot</span><span class="token punctuation">:</span> public
+
+<span class="token key atrule">assets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> .fabfile.yaml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose.yml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose<span class="token punctuation">-</span>mbb.yml
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> rm <span class="token punctuation">-</span>rf %rootFolder%
+  <span class="token punctuation">-</span> composer create<span class="token punctuation">-</span>project %composerProject% %rootFolder% <span class="token punctuation">-</span><span class="token punctuation">-</span>stability dev <span class="token punctuation">-</span><span class="token punctuation">-</span>no<span class="token punctuation">-</span>interaction
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%)
+  <span class="token punctuation">-</span> cd %rootFolder%; git init .
+  <span class="token punctuation">-</span> cd %rootFolder%; git add .
+  <span class="token punctuation">-</span> cd %rootFolder%; git commit <span class="token punctuation">-</span>m &quot;Initial commit by phabalicious&quot;
+</code></pre></div><h4 id="the-fabfile-template"><a href="#the-fabfile-template" class="header-anchor">#</a> the fabfile-template</h4> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> name <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token key atrule">key</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> shortName <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token key atrule">deploymentModule</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> shortName <span class="token punctuation">}</span><span class="token punctuation">}</span>_deploy
+
+<span class="token key atrule">requires</span><span class="token punctuation">:</span> 2.0.0
+
+<span class="token key atrule">needs</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> ssh
+  <span class="token punctuation">-</span> composer
+  <span class="token punctuation">-</span> docker
+  <span class="token punctuation">-</span> git
+  <span class="token punctuation">-</span> files
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">mbb</span><span class="token punctuation">:</span>
+    <span class="token key atrule">host</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> projectFolder <span class="token punctuation">}</span><span class="token punctuation">}</span>.test
+    <span class="token key atrule">user</span><span class="token punctuation">:</span> root
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> 1024 + random(20000) <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> dev
+    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> /var/www/<span class="token punctuation">{</span><span class="token punctuation">{</span> webRoot <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">gitRootFolder</span><span class="token punctuation">:</span> /var/www
+    <span class="token key atrule">backupFolder</span><span class="token punctuation">:</span> /var/www/backups
+    <span class="token key atrule">branch</span><span class="token punctuation">:</span> develop
+    <span class="token key atrule">database</span><span class="token punctuation">:</span>
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> projectFolder<span class="token punctuation">|</span>replace(<span class="token punctuation">{</span><span class="token key atrule">'-'</span><span class="token punctuation">:</span> <span class="token string">'_'</span><span class="token punctuation">}</span>) <span class="token punctuation">}</span><span class="token punctuation">}</span>_db
+      <span class="token key atrule">user</span><span class="token punctuation">:</span> root
+      <span class="token key atrule">pass</span><span class="token punctuation">:</span> admin
+      <span class="token key atrule">host</span><span class="token punctuation">:</span> mysql
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/factorial-io/phabalicious/edit/master/docs/app-scaffold.md" target="_blank" rel="noopener noreferrer">Help us improve this page!</a> <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/scaffolder.html" class="prev">
+        Scaffolding arbitrary files
+      </a></span> <span class="next"><a href="/app-create-destroy.html">
+        Creating/ destroying an app from existing configuration
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.d313b423.js" defer></script><script src="/assets/js/3.f3cff209.js" defer></script><script src="/assets/js/12.18bc0076.js" defer></script>
+  </body>
+</html>
