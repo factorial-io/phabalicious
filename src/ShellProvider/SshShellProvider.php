@@ -334,8 +334,14 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         string $to_path,
         string $from_path
     ) {
-        if ((!in_array($to_host_config->shell()->getName(), ['local', 'ssh'])) ||
-            ($from_host_config->shell()->getName() !== 'ssh')) {
+        $supported_to_shells = [
+            LocalShellProvider::PROVIDER_NAME,
+            self::PROVIDER_NAME,
+            KubectlShellProvider::PROVIDER_NAME
+        ];
+
+        if ((!in_array($to_host_config->shell()->getName(), $supported_to_shells)) ||
+            ($from_host_config->shell()->getName() !== self::PROVIDER_NAME)) {
             return false;
         }
 
