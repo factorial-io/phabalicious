@@ -505,6 +505,7 @@ host:
 
 * `sqlSkipTables` a list of table-names drush should omit when doing a backup.
 * `configurationManagement` a list of configuration-labels to import on `reset`. This defaults to `['sync']` and may be overridden on a per-host basis. You can add command arguments to the the configuration label.
+* `rsyncOptions` additional options to pass to rsync when doing a copyFrom.
 
 Example:
 ```yaml
@@ -524,6 +525,8 @@ configurationManagement:
      - drush config-import -y staging
    dev:
      - drush config-import -y dev --partial
+rsyncOptions:
+  - --delete
 ```
 
 

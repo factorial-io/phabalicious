@@ -295,7 +295,8 @@ class FilesMethod extends BaseMethod implements MethodInterface
             $to_config->getConfigName()
         ));
 
-        $rsync_args = [];
+        $rsync_args = $context->getConfigurationService()->getSetting('rsyncOptions', []);
+
         $exclude_settings = $context->getConfigurationService()->getSetting('excludeFiles.copyFrom', false);
         if ($exclude_settings) {
             foreach ($exclude_settings as $e) {
