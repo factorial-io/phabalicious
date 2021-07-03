@@ -42,5 +42,5 @@ interface MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task);
 
-    public function getMethodDependencies(array $data): array;
+    public function getMethodDependencies(MethodFactory $factory, array $data): array;
 }

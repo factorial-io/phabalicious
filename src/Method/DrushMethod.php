@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Method;
 
-use http\Exception\RuntimeException;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\HostType;
@@ -40,8 +39,14 @@ class DrushMethod extends BaseMethod implements MethodInterface
         return (in_array($method_name, ['drush', 'drush7', 'drush8', 'drush9']));
     }
 
-    public function getMethodDependencies(array $data): array
+    public function getMethodDependencies(MethodFactory $factory, array $data): array
     {
+        // Check if there is already a database methods declared in `needs`.
+        $db_methods = $factory->getSubsetImplementing($data['needs'], DatabaseMethodInterface::class);
+        if (!empty($db_methods)) {
+            return [];
+        }
+
         return [
             $data['database']['driver'] ?? MysqlMethod::METHOD_NAME,
         ];

@@ -627,7 +627,7 @@ class ConfigurationService
         // other methods.
         $gathered_methods = [];
         foreach ($used_methods as $method) {
-            $dependencies = $method->getMethodDependencies($data);
+            $dependencies = $method->getMethodDependencies($this->getMethodFactory(), $data);
             $gathered_methods = array_merge(array_values($gathered_methods), $dependencies, [$method->getName()]);
         }
         $data['needs'] = $gathered_methods;

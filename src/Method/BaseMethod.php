@@ -39,7 +39,7 @@ abstract class BaseMethod implements MethodInterface
         return false;
     }
 
-    public function getMethodDependencies(array $data): array
+    public function getMethodDependencies(MethodFactory $factory, array $data): array
     {
         return [];
     }

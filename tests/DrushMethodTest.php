@@ -12,6 +12,7 @@ use Phabalicious\Tests\PhabTestCase;
 use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
+use Symfony\Component\Console\Application;
 
 class DrushMethodTest extends PhabTestCase
 {
@@ -24,7 +25,7 @@ class DrushMethodTest extends PhabTestCase
     public function setup()
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
-        $app = $this->getMockBuilder(\Symfony\Component\Console\Application::class)->getMock();
+        $app = $this->getMockBuilder(Application::class)->getMock();
         $this->method = new DrushMethod($logger);
         $this->configurationService = new ConfigurationService($app, $logger);
 
@@ -125,5 +126,25 @@ class DrushMethodTest extends PhabTestCase
         $this->assertEquals('drush status', $configuration_management['staging'][0]);
         $this->assertArrayNotHasKey('sync', $configuration_management);
         $this->assertArrayNotHasKey('prod', $configuration_management);
+    }
+
+    public function testDrushUnneededMethodDependency()
+    {
+        $config = $this->configurationService->getHostConfig('method-dependency');
+
+        $this->assertEquals(
+            [],
+            $this->method->getMethodDependencies($this->configurationService->getMethodFactory(), $config->raw())
+        );
+    }
+
+    public function testDrushMethodDependency()
+    {
+        $this->assertEquals(
+            ['mysql'],
+            $this->method->getMethodDependencies($this->configurationService->getMethodFactory(), [
+                'needs' => ['drush']
+            ])
+        );
     }
 }
