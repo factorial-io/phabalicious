@@ -41,4 +41,6 @@ interface MethodInterface
     public function getRootFolderKey(): string;
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task);
+
+    public function getMethodDependencies(array $data): array;
 }

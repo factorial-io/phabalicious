@@ -39,6 +39,11 @@ abstract class BaseMethod implements MethodInterface
         return false;
     }
 
+    public function getMethodDependencies(array $data): array
+    {
+        return [];
+    }
+
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
     }

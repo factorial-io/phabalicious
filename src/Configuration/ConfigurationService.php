@@ -622,6 +622,17 @@ class ConfigurationService
          * @var \Phabalicious\Method\MethodInterface $method
          */
         $used_methods = $this->methods->getSubset($data['needs']);
+
+        // Give the referenced methods a chance to declare dependencies to
+        // other methods.
+        $gathered_methods = [];
+        foreach ($used_methods as $method) {
+            $dependencies = $method->getMethodDependencies($data);
+            $gathered_methods = array_merge(array_values($gathered_methods), $dependencies, [$method->getName()]);
+        }
+        $data['needs'] = $gathered_methods;
+        $used_methods = $this->methods->getSubset($data['needs']);
+
         foreach ($used_methods as $method) {
             $data = $this->applyDefaults(
                 $data,
