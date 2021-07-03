@@ -3,8 +3,10 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\BaseMethod;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Tests\PhabTestCase;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -28,6 +30,7 @@ class DrushMethodTest extends PhabTestCase
 
         $method_factory = new MethodFactory($this->configurationService, $logger);
         $method_factory->addMethod(new ScriptMethod($logger));
+        $method_factory->addMethod(new MysqlMethod($logger));
         $method_factory->addMethod($this->method);
 
         $this->configurationService->readConfiguration($this->getcwd() . '/assets/drush-tests/fabfile.yaml');
