@@ -20,7 +20,6 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
 
         if (isset($host_config['database'])) {
-            $config['database']['host'] = 'localhost';
             $config['database']['skipCreateDatabase'] = false;
             $config['database']['prefix'] = false;
             $config['database']['driver'] = $this->getName();
@@ -30,6 +29,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
         return $config;
     }
+
     /**
      * @param \Phabalicious\Configuration\HostConfig $host_config
      * @param \Phabalicious\Method\TaskContextInterface $context
@@ -291,24 +291,6 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
         return $data;
     }
 
-    /**
-     * @param array $data
-     * @param \Phabalicious\Validation\ValidationErrorBag $errors
-     * @param false $validate_working_dir
-     */
-    private function validateCredentials(array $data, ValidationErrorBag $errors, $validate_working_dir = false)
-    {
-        $service = new ValidationService($data, $errors, 'database');
-        $service->hasKeys([
-            'host' => 'the database-host',
-            'user' => 'the database user',
-            'pass' => 'the password for the database-user',
-            'name' => 'the database name to use',
-        ]);
-        if ($validate_working_dir) {
-            $service->hasKey('workingDir', 'working dir is missing!');
-        }
-    }
 
     public function waitForDatabase(HostConfig $host_config, TaskContextInterface $context): bool
     {
@@ -333,5 +315,21 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
             $result->throwException('Could not connect to database!');
         }
         return false;
+    }
+
+    /**
+     * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     *
+     * @return array
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws \Phabalicious\Exception\ValidationFailedException
+     */
+    protected function getDatabaseCredentials(HostConfig $host_config, TaskContextInterface $context): array
+    {
+        $data = $host_config['database'] ?: [];
+        $data = $this->requestCredentialsAndWorkingDir($host_config, $context, $data);
+        return $data;
     }
 }

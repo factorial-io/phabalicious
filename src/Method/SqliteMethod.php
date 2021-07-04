@@ -2,16 +2,15 @@
 
 namespace Phabalicious\Method;
 
-use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 
-class MysqlMethod extends DatabaseMethod implements MethodInterface
+class SqliteMethod extends DatabaseMethod implements MethodInterface
 {
-    const METHOD_NAME = 'mysql';
+    const METHOD_NAME = 'sqlite';
 
     /**
      * @return string
@@ -38,26 +37,13 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     {
         return [
             'executables' => [
-                'mysql' => 'mysql',
-                'grep' => 'grep',
-                'mysqladmin' => 'mysqladmin',
-                'mysqldump' => 'mysqladmin',
+                'sqlite3' => 'sqlite3',
                 'gunzip' => 'gunzip',
                 'gzip' => 'gzip',
             ],
         ];
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
-    {
-        $config = parent::getDefaultConfig($configuration_service, $host_config);
-
-        if (isset($host_config['database'])) {
-            $config['database']['host'] = 'localhost';
-        }
-
-        return $config;
-    }
 
     /**
      * @param \Phabalicious\Configuration\HostConfig $host_config
@@ -69,35 +55,6 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     {
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($host_config, $context);
-
-        // Determine what kind of install operation this will be.
-
-        $o = $host_config['database'] ?? false;
-        if ($o && !$host_config['database']['skipCreateDatabase']) {
-            $this->logger->info('Creating database ...');
-
-            $cmd = sprintf(
-                "CREATE DATABASE IF NOT EXISTS %s; GRANT ALL PRIVILEGES ON %s.* TO '%s'@'%%'; FLUSH PRIVILEGES;",
-                $o['name'],
-                $o['name'],
-                $o['user']
-            );
-            try {
-                $shell->run(sprintf(
-                    '#!mysql -h %s -u %s --password="%s" -e "%s"',
-                    $o['host'],
-                    $o['user'],
-                    $o['pass'],
-                    $cmd
-                ), false, true);
-            } catch (\Exception $e) {
-                $context->io()
-                    ->error("Could not create database, or grant privileges!");
-                $context->io()
-                    ->comment("Create the db by yourself and set host.database.skipCreateDatabase to true");
-                throw ($e);
-            }
-        }
     }
 
 
@@ -113,36 +70,18 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         ShellProviderInterface $shell,
         array $data
     ) {
-        $this->logger->notice('Dropping all tables from database ...');
-
-        $cmd = [
-            "#!mysqldump",
-            "-u",
-            $data['user'],
-            sprintf("-p%s", $data['pass']),
-            "-h",
-            $data["host"],
-            "--add-drop-table",
-            "--no-data",
-            $data['name'],
-            "|",
-            "#!grep ^DROP",
-            "|",
-            "#!mysql",
-            "-u",
-            $data['user'],
-            sprintf("-p%s", $data['pass']),
-            "-h",
-            $data["host"],
-            $data["name"]
-        ];
-
-        $shell->run(implode(" ", $cmd), false, true);
+        $shell->run(sprintf("rm %s", $data['database']));
     }
 
     /**
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
+     * @param string $backup_file_name
+     *
+     * @return string
      * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function exportSqlToFile(
@@ -151,26 +90,17 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         ShellProviderInterface $shell,
         string $backup_file_name
     ): string {
+
         $data = $this->getDatabaseCredentials($host_config, $context);
 
         $context->io()->comment(sprintf('Dumping database of `%s` ...', $host_config->getConfigName()));
         $shell->pushWorkingDir($data['workingDir']);
 
         $cmd = [
-            "#!mysqldump",
-            $data["name"],
-            "-u",
-            $data['user'],
-            sprintf("-p%s", $data['pass']),
-            "-h",
-            $data["host"],
-            "--port",
-            $data["port"] ?? "3306"
+            "#!sqlite3",
+            $data["database"],
+            ".dump"
         ];
-
-        foreach ($context->getConfigurationService()->getSetting('sqlSkipTables', []) as $table_name) {
-            $cmd[] = sprintf("--ignore-table %s.%s", $data['name'], $table_name);
-        }
 
         if (!$shell->exists(dirname($backup_file_name))) {
             $shell->run(sprintf('mkdir -p %s', dirname($backup_file_name)));
@@ -188,6 +118,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $cmd[] = $backup_file_name;
 
         $shell->run(implode(" ", $cmd), false, true);
+
         $shell->popWorkingDir();
 
         return $backup_file_name;
@@ -223,19 +154,14 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $this->logger->notice(sprintf('Restoring db from %s ...', $file));
 
         $cmd = [
-            "#!mysql",
-            $data["name"],
-            "-u",
-            $data['user'],
-            sprintf("-p%s", $data['pass']),
-            "-h",
-            $data["host"],
-            "--port",
-            $data["port"] ?? "3306"
+            "#!sqlite3",
+            $data["database"],
         ];
 
         if (substr($file, strrpos($file, '.') + 1) == 'gz') {
             array_unshift($cmd, "#!gunzip", "-c", $file, "|");
+        } else {
+            array_unshift($cmd, "#!cat", $file, "|");
         }
         $result = $shell->run(implode(" ", $cmd));
         $shell->popWorkingDir();
@@ -255,14 +181,9 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell
     ): CommandResult {
-        return $shell->run(sprintf(
-            '#!mysqladmin --no-defaults -u%s --password="%s" -h %s ping',
-            $host_config['database']['user'],
-            $host_config['database']['pass'],
-            $host_config['database']['host']
-        ), true, false);
+        // This is a no op.
+        return new CommandResult(0, []);
     }
-
 
     /**
      * @param array $data
@@ -273,10 +194,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     {
         $service = new ValidationService($data, $errors, 'database');
         $service->hasKeys([
-            'host' => 'the database-host',
-            'user' => 'the database user',
-            'pass' => 'the password for the database-user',
-            'name' => 'the database name to use',
+            'database' => 'the path to the sqlite-database on your file-system',
         ]);
         if ($validate_working_dir) {
             $service->hasKey('workingDir', 'working dir is missing!');

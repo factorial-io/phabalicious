@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Validation\ValidationErrorBag;
 
 interface DatabaseMethodInterface
 {
@@ -86,4 +87,15 @@ interface DatabaseMethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell
     );
+
+    /**
+     * Validate database credentials.
+     *
+     * @param array $data
+     * @param \Phabalicious\Validation\ValidationErrorBag $errors
+     * @param false $validate_working_dir
+     *
+     * @return mixed
+     */
+    public function validateCredentials(array $data, ValidationErrorBag $errors, bool $validate_working_dir = false);
 }

@@ -426,7 +426,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 $install_options[] = ' --db-prefix=' . $host_config['database']['prefix'];
             }
             $install_options[] = sprintf(
-                '--db-url=mysql://%s:%s@%s/%s',
+                '--db-url=%s://%s:%s@%s/%s',
+                $o['driver'] ?? MysqlMethod::METHOD_NAME,
                 $o['user'],
                 $o['pass'],
                 $o['host'],
@@ -654,7 +655,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
      */
     public function requestDatabaseCredentialsAndWorkingDir(HostConfig $host_config, TaskContextInterface  $context)
     {
-        $data = $context->get(MysqlMethod::DATABASE_CREDENTIALS, []);
+        $data = $context->get(DatabaseMethod::DATABASE_CREDENTIALS, []);
         if (empty($data)) {
             if ($host_config['drushVersion'] < 9) {
                 throw new \RuntimeException("Could not retrieve database configuration via drush, ' .
@@ -665,17 +666,38 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $shell->pushWorkingDir($host_config['siteFolder']);
             $result = $shell->run('drush --show-passwords --format=json sql:conf', true, false);
             $json = json_decode(implode("\n", $result->getOutput()), true);
-            foreach ([
-                "database" => "name",
-                "username" => "user",
-                "password" => "pass",
-                "host" => "host",
-                "port" => "port"
-            ] as $key => $mapped) {
+            $mapping = [
+                'mysql' => [
+                    "database" => "name",
+                    "username" => "user",
+                    "password" => "pass",
+                    "host" => "host",
+                    "port" => "port"
+                ],
+                'sqlite' => [
+                    "database" => "database",
+                ],
+            ];
+            foreach ($mapping[$json['driver']] as $key => $mapped) {
                 $data[$mapped] = $json[$key];
             }
+            $data['driver'] = $json['driver'];
         }
-        $data['workingDir'] = $host_config['siteFolder'];
-        $context->setResult(MysqlMethod::DATABASE_CREDENTIALS, $data);
+        switch ($data['driver']) {
+            case 'sqlite':
+                $context
+                    ->io()
+                    ->warning(
+                        "Drupal is using custom collation types which are not supported by sqlite3. " .
+                        "YMMV! See https://www.drupal.org/project/drupal/issues/3036487"
+                    );
+                $data['workingDir'] = $host_config['rootFolder'];
+                break;
+
+            default:
+                $data['workingDir'] = $host_config['siteFolder'];
+                break;
+        }
+        $context->setResult(DatabaseMethod::DATABASE_CREDENTIALS, $data);
     }
 }
