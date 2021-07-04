@@ -425,14 +425,16 @@ class DrushMethod extends BaseMethod implements MethodInterface
             if ($host_config['database']['prefix']) {
                 $install_options[] = ' --db-prefix=' . $host_config['database']['prefix'];
             }
-            $install_options[] = sprintf(
-                '--db-url=%s://%s:%s@%s/%s',
-                $o['driver'] ?? MysqlMethod::METHOD_NAME,
-                $o['user'],
-                $o['pass'],
-                $o['host'],
-                $o['name']
-            );
+
+            switch ($o['driver'] ?? 'mysql') {
+                case 'sqlite':
+                    $db_url = SqliteMethod::createCredentialsUrlForDrupal($o);
+                    break;
+                default:
+                    $db_url = MysqlMethod::createCredentialsUrlForDrupal($o);
+                    break;
+            }
+            $install_options[] = sprintf('--db-url=%s', $db_url);
         }
 
         // Install drupal, this can be skipped if install from configuration is

@@ -98,4 +98,13 @@ interface DatabaseMethodInterface
      * @return mixed
      */
     public function validateCredentials(array $data, ValidationErrorBag $errors, bool $validate_working_dir = false);
+
+    /**
+     * Get an url encoding the database credentials for drupal.
+     *
+     * @param array $database
+     *
+     * @return string
+     */
+    public static function createCredentialsUrlForDrupal(array $database): string;
 }

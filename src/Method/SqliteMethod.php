@@ -200,4 +200,13 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
             $service->hasKey('workingDir', 'working dir is missing!');
         }
     }
+
+    public static function createCredentialsUrlForDrupal(array $o): string
+    {
+        return sprintf(
+            '%s://%s',
+            $o['driver'] ?? self::METHOD_NAME,
+            $o['database']
+        );
+    }
 }
