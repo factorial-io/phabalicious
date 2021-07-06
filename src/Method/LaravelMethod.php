@@ -18,6 +18,19 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
         return "php artisan";
     }
 
+
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
+    {
+        return parent::isRunningAppRequired($host_config, $context, $task) ||
+            in_array($task, [
+                'laravel',
+                'install',
+                'deploy',
+                'reset',
+                'requestDatabaseCredentialsAndWorkingDir',
+            ]);
+    }
+
     public function artisan(HostConfig $host_config, TaskContextInterface $context)
     {
         $command = $context->get('command');

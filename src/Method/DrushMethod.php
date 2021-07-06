@@ -199,6 +199,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             'reset',
             'appUpdate',
             'variables',
+            'requestDatabaseCredentialsAndWorkingDir',
         ]);
     }
 
