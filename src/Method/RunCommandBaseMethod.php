@@ -64,9 +64,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         return [
-            $this->getRootFolderKey() => isset($host_config['gitRootFolder'])
-                ? $host_config['gitRootFolder']
-                : $host_config['rootFolder'],
+            $this->getRootFolderKey() => $host_config['gitRootFolder'] ?? $host_config['rootFolder'],
             $this->getRunContextKey() => self::HOST_CONTEXT,
         ];
     }

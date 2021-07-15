@@ -3,9 +3,11 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\BaseMethod;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\SshMethod;
 use Phabalicious\Utilities\PasswordManager;
@@ -164,6 +166,7 @@ class ConfigurationServiceTest extends PhabTestCase
 
     public function testExecutables()
     {
+        $this->config->getMethodFactory()->addMethod(new MysqlMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new DrushMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
         $this->config->readConfiguration($this->getcwd() . '/assets/executables-tests');

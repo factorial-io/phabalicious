@@ -13,6 +13,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\Utilities;
@@ -40,6 +41,7 @@ class ShellCommandOptionsTest extends PhabTestCase
 
         $this->configuration = new ConfigurationService($this->application, $logger);
         $method_factory = new MethodFactory($this->configuration, $logger);
+        $method_factory->addMethod(new MysqlMethod($logger));
         $method_factory->addMethod(new DrushMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));

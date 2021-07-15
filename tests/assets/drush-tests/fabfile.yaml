@@ -37,3 +37,10 @@ hosts:
     configurationManagement:
       staging:
       - drush status
+
+  method-dependency:
+    backupFolder: /var/www
+    needs:
+      - mysql
+      - drush
+    type: dev
