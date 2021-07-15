@@ -40,6 +40,7 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
                 'sqlite3' => 'sqlite3',
                 'gunzip' => 'gunzip',
                 'gzip' => 'gzip',
+                'cat' => 'cat',
             ],
         ];
     }
