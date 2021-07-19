@@ -98,4 +98,31 @@ class ValidationService
     {
         return $this->config;
     }
+
+    public function getNewValidatorFor(string $key)
+    {
+        $this->isArray($key, 'Sub-config needs to be an array');
+        if (is_array($this->config[$key])) {
+            return new ValidationService($this->config[$key], $this->getErrorBag(), $this->prefixMessage);
+        }
+
+        return false;
+    }
+
+    public function hasAtLeast(array $keys, string $message)
+    {
+
+        $has_key = false;
+        foreach ($keys as $key) {
+            if (isset($this->config[$key])) {
+                $has_key = true;
+            }
+        }
+
+        if (!$has_key) {
+            $this->errors->addError(implode(', ', $keys), $message);
+        }
+
+        return $has_key;
+    }
 }
