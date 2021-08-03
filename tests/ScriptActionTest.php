@@ -11,11 +11,13 @@ use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\Utilities\TestableLogger;
 use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ScriptActionTest extends TestCase
@@ -35,7 +37,7 @@ class ScriptActionTest extends TestCase
     {
         $app = $this->getMockBuilder(Application::class)
             ->getMock();
-        $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
+        $logger = new TestableLogger();
 
         $config  = new ConfigurationService($app, $logger);
         $config->setMethodFactory(new MethodFactory($config, $logger));
@@ -54,6 +56,8 @@ class ScriptActionTest extends TestCase
             $this->getMockBuilder(InputInterface::class)->getMock(),
             $this->getMockBuilder(OutputInterface::class)->getMock()
         );
+        $this->context->set('installDir', getcwd());
+        $this->context->set('targetDir', getcwd());
         $this->context->setConfigurationService($config);
     }
 
@@ -93,6 +97,7 @@ class ScriptActionTest extends TestCase
     {
         $action = $this->createAction([
             'script' => [
+                'env',
                 'echo "hello world"',
             ],
             'context' => 'host',
@@ -118,13 +123,14 @@ class ScriptActionTest extends TestCase
         ]);
     }
 
+    /**
+     * @group docker
+     */
     public function testScriptInDockerContext()
     {
-        $this->expectException(ValidationFailedException::class);
-
         $action = $this->createAction([
             "script" => [
-                'echo "hello world"',
+                'env',
             ],
             "context" => 'docker',
             "image" => "busybox"
@@ -133,7 +139,53 @@ class ScriptActionTest extends TestCase
         $action->run($this->hostConfig, $this->context);
         $output = $this->context->getCommandResult()->getOutput();
 
-        $this->assertEquals(1, count($output));
-        $this->assertEquals("hello world", $output[0]);
+        $this->assertContains("PHAB_SUB_SHELL=1", $output);
+    }
+
+    /**
+     * @group docker
+     */
+    public function testNodeVersionInDockerContext()
+    {
+        $action = $this->createAction([
+            "script" => [
+                'node --version',
+            ],
+            "context" => 'docker',
+            "image" => "node:14"
+        ]);
+
+        $action->run($this->hostConfig, $this->context);
+        $output = $this->context->getCommandResult()->getOutput();
+
+        $this->assertContains("v14.", $output[0]);
+    }
+
+    /**
+     * @group docker
+     */
+    public function testNpmInstallInDockerContext()
+    {
+        $action = $this->createAction([
+            "script" => [
+                'npm config set prefix /app',
+                'npm install -g gulp-cli',
+                'npm install',
+                '/app/bin/gulp --tasks'
+            ],
+            "context" => 'docker',
+            "image" => "node:14"
+        ]);
+
+
+        $context = clone $this->context;
+
+        $context->set('installDir', getcwd() . '/tests/assets/script-action-npm-install');
+        $context->set('targetDir', getcwd() . '/tests/assets/script-action-npm-install');
+
+        $action->run($this->hostConfig, $context);
+        $output = $context->getCommandResult()->getOutput();
+
+        $this->assertContains("Tasks for /app/gulpfile.js", $output[0]);
     }
 }

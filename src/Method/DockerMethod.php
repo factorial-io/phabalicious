@@ -17,14 +17,10 @@ use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ScopedLogLevel\ScopedErrorLogLevel;
 use Phabalicious\ScopedLogLevel\ScopedLogLevel;
 use Phabalicious\ShellProvider\CommandResult;
-use Phabalicious\ShellProvider\ShellOptions;
-use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LogLevel;
-use Symfony\Component\DependencyInjection\Dumper\YamlDumper;
-use Symfony\Component\Yaml\Yaml;
 
 class DockerMethod extends BaseMethod implements MethodInterface
 {

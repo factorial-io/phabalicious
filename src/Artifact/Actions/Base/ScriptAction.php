@@ -44,9 +44,23 @@ class ScriptAction extends ActionBase
     ) {
         $dir = $this->runInTargetDir ? $target_dir : $install_dir;
         $shell->pushWorkingDir($dir);
-
+        $inner_shell = false;
         if ($this->getArgument('context') == 'docker') {
-            $docker_shell = $this->prepareDockerContext($shell, $dir);
+            $inner_shell = $shell->startSubShell([
+                'docker',
+                'run',
+                '-e',
+                'PHAB_SUB_SHELL=1',
+                '-i',
+                '-w',
+                '/app',
+                '-u',
+                sprintf('%d:%d', posix_getuid(), posix_getgid()),
+                '-v',
+                sprintf('%s:/app', $dir),
+                $this->getArgument('image'),
+                $this->getArgument('shellExecutable', '/bin/sh')
+            ]);
         }
         /** @var ScriptMethod $script */
         $script = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
@@ -67,35 +81,41 @@ class ScriptAction extends ActionBase
         $cloned_context->set(ScriptMethod::SCRIPT_DATA, $script_data);
         $cloned_context->set('variables', $context->get('deployArguments'));
 
-        $saved = $script->getBreakOnFirstError();
-        $script->setBreakOnFirstError(true);
+        if ($inner_shell) {
+            $inner_shell->cd('/app');
+            $cloned_context->set('shell', $inner_shell);
+            $cloned_context->setShell($inner_shell);
+            $cloned_context->set('rootFolder', '/app');
+        }
+        try {
+            $saved = $script->getBreakOnFirstError();
+            $script->setBreakOnFirstError(true);
 
-        $script->runScript($host_config, $cloned_context);
-        /** @var CommandResult $cr */
-        if ($cr = $context->getResult('commandResult')) {
-            if ($cr->failed()) {
-                $cr->throwException('Script action failed with an error!');
+            $script->runScript($host_config, $cloned_context);
+            /** @var CommandResult $cr */
+            if ($cr = $context->getResult('commandResult')) {
+                if ($cr->failed()) {
+                    $cr->throwException('Script action failed with an error!');
+                }
+            }
+
+            $script->setBreakOnFirstError($saved);
+            $context->mergeResults($cloned_context);
+        } catch (\Exception $e) {
+            if ($inner_shell) {
+                $inner_shell->terminate();
+            }
+            throw $e;
+        } finally {
+            if ($inner_shell) {
+                $inner_shell->terminate();
             }
         }
-
-        $script->setBreakOnFirstError($saved);
-        $context->mergeResults($cloned_context);
 
         $shell->popWorkingDir();
     }
 
-    protected function prepareDockerContext(ShellProviderInterface $shell, $dir)
+    protected function prepareDockerContext(ShellProviderInterface $shell, $dir): ShellProviderInterface
     {
-        $cmd = [
-            'docker',
-            'run',
-            '-it',
-            '-v',
-            sprintf('%s:/app', $dir),
-            $this->getArgument('image'),
-            '/bin/bash'
-
-        ];
-        // @todo add implementation.
     }
 }

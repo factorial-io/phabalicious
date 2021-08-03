@@ -196,25 +196,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         $scoped_capture_output = new SetAndRestoreObjProperty('captureOutput', $this, $capture_output);
 
-        $this->setup();
-        $this->process->clearErrorOutput();
-        $this->process->clearOutput();
-
-        $password_manager = $this->getHostConfig()->getConfigurationService()->getPasswordManager();
-        if ($password_manager) {
-            $command = $password_manager->resolveSecrets($command);
-        }
-
-        $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
-        if (substr($command, -1) == ';') {
-            $command = substr($command, 0, -1);
-        }
-        $this->logger->log($this->loglevel->get(), $command);
-
-
-        // Send to shell.
-        $input = $command . '; echo \n"' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL;
-        $this->input->write($input);
+        $command = $this->sendCommandToShell($command);
 
         // Get result.
         $result = '';
@@ -347,5 +329,44 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         $this->process = $process;
         $this->input = $input;
+    }
+
+    public function startSubShell(array $cmd): ShellProviderInterface
+    {
+        $this->sendCommandToShell(implode(' ', $cmd), false);
+        return new SubShellProvider($this->logger, $this);
+    }
+
+    /**
+     * @param string $command
+     *
+     * @return false|string
+     */
+    protected function sendCommandToShell(string $command, $include_result_identifier = true)
+    {
+        $this->setup();
+        $this->process->clearErrorOutput();
+        $this->process->clearOutput();
+
+        $password_manager = $this->getHostConfig()
+            ->getConfigurationService()
+            ->getPasswordManager();
+        if ($password_manager) {
+            $command = $password_manager->resolveSecrets($command);
+        }
+
+        $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
+        if (substr($command, -1) == ';') {
+            $command = substr($command, 0, -1);
+        }
+        $this->logger->log($this->loglevel->get(), $command);
+
+        // Send to shell.
+        $input = $include_result_identifier
+            ? $command . '; echo \n"' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL
+            : $command . PHP_EOL;
+
+        $this->input->write($input);
+        return $command;
     }
 }

@@ -23,9 +23,9 @@ abstract class ActionBase implements ActionInterface
         return $this->arguments;
     }
 
-    protected function getArgument($name)
+    protected function getArgument($name, $default = null)
     {
-        return $this->arguments[$name] ?? null;
+        return $this->arguments[$name] ?? $default;
     }
 
     public function validateConfig($host_config, array $action_config, ValidationErrorBagInterface $errors)
