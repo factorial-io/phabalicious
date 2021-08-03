@@ -39,15 +39,26 @@ class DrushMethod extends BaseMethod implements MethodInterface
         return (in_array($method_name, ['drush', 'drush7', 'drush8', 'drush9']));
     }
 
+    public function getMethodDependencies(MethodFactory $factory, array $data): array
+    {
+        // Check if there is already a database methods declared in `needs`.
+        $db_methods = $factory->getSubsetImplementing($data['needs'], DatabaseMethodInterface::class);
+        if (!empty($db_methods)) {
+            return [];
+        }
+
+        return [
+            $data['database']['driver'] ?? MysqlMethod::METHOD_NAME,
+        ];
+    }
+
     public function getGlobalSettings(): array
     {
         return [
             'adminUser' => 'admin',
             'executables' => [
                 'drush' => 'drush',
-                'mysql' => 'mysql',
                 'grep' => 'grep',
-                'mysqladmin' => 'mysqladmin',
                 'gunzip' => 'gunzip',
                 'chmod' => 'chmod',
                 'sed' => 'sed',
@@ -141,20 +152,9 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $service->hasKey('drupalVersion', 'the major version of the drupal-instance');
         $service->hasKey('siteFolder', 'drush needs a site-folder to locate the drupal-instance');
         $service->hasKey('filesFolder', 'drush needs to know where files are stored for this drupal instance');
-        $service->hasKey('backupFolder', 'drush needs to know where to store backups into');
         $service->hasKey('tmpFolder', 'drush needs to know where to store temporary files');
 
         $service->isOneOf('drushErrorHandling', [ self::STRICT_ERROR_HANDLING, self::LAX_ERROR_HANDLING]);
-
-        if (!empty($config['database'])) {
-            $service = new ValidationService($config['database'], $errors, 'host.database');
-            $service->hasKeys([
-                'host' => 'the database-host',
-                'user' => 'the database user',
-                'pass' => 'the password for the database-user',
-                'name' => 'the database name to use',
-            ]);
-        }
 
         if (array_intersect($config['needs'], ['drush7', 'drush8', 'drush9'])) {
             $errors->addWarning(
@@ -162,6 +162,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 '`drush7`, `drush8` and `drush9` are deprecated, ' .
                 'please replace with `drush` and set `drupalVersion` and `drushVersion` accordingly.'
             );
+        }
+
+        if (!empty($config['sqlDumpCommand'])) {
+            $errors->addWarning('sqlDumpCommand', '`sqlDumpCommand` is not supported anymore!');
         }
     }
 
@@ -190,19 +194,12 @@ class DrushMethod extends BaseMethod implements MethodInterface
         return parent::isRunningAppRequired($host_config, $context, $task) ||
             in_array($task, [
             'drush',
-            'backup',
-            'restore',
             'install',
-            'listBackups',
-            'restoreSqlFromFilePreparation',
-            'restoreSqlFromFile',
-            'getSQLDump',
-            'copyFrom',
-            'copyFromPrepareSource',
             'deploy',
             'reset',
             'appUpdate',
             'variables',
+            'requestDatabaseCredentialsAndWorkingDir',
         ]);
     }
 
@@ -401,29 +398,6 @@ class DrushMethod extends BaseMethod implements MethodInterface
         // Create DB.
         $shell->cd($host_config['siteFolder']);
         $o = $host_config['database'] ?? false;
-        if ($o && !$host_config['database']['skipCreateDatabase']) {
-            $this->logger->info('Creating database ...');
-
-            $cmd = sprintf(
-                "CREATE DATABASE IF NOT EXISTS %s; GRANT ALL PRIVILEGES ON %s.* TO '%s'@'%%'; FLUSH PRIVILEGES;",
-                $o['name'],
-                $o['name'],
-                $o['user']
-            );
-            try {
-                $shell->run(sprintf(
-                    '#!mysql -h %s -u %s --password="%s" -e "%s"',
-                    $o['host'],
-                    $o['user'],
-                    $o['pass'],
-                    $cmd
-                ), false, true);
-            } catch (\Exception $e) {
-                $context->io()->error("Could not create database, or grant privileges!");
-                $context->io()->comment("Create the db by yourself and set host.database.skipCreateDatabase to true");
-                throw ($e);
-            }
-        }
 
         // Prepare settings.php
         $shell->run(sprintf('#!chmod u+w %s', $host_config['siteFolder']));
@@ -452,13 +426,16 @@ class DrushMethod extends BaseMethod implements MethodInterface
             if ($host_config['database']['prefix']) {
                 $install_options[] = ' --db-prefix=' . $host_config['database']['prefix'];
             }
-            $install_options[] = sprintf(
-                '--db-url=mysql://%s:%s@%s/%s',
-                $o['user'],
-                $o['pass'],
-                $o['host'],
-                $o['name']
-            );
+
+            switch ($o['driver'] ?? 'mysql') {
+                case 'sqlite':
+                    $db_url = SqliteMethod::createCredentialsUrlForDrupal($o);
+                    break;
+                default:
+                    $db_url = MysqlMethod::createCredentialsUrlForDrupal($o);
+                    break;
+            }
+            $install_options[] = sprintf('--db-url=%s', $db_url);
         }
 
         // Install drupal, this can be skipped if install from configuration is
@@ -483,207 +460,6 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $this->setupConfigurationManagement($host_config, $context);
     }
 
-    protected function backupSQL(
-        HostConfig $host_config,
-        TaskContextInterface $context,
-        ShellProviderInterface $shell,
-        string $backup_file_name
-    ) {
-        $context->io()->comment(sprintf('Dumping database of `%s` ...', $host_config->getConfigName()));
-        $shell->cd($host_config['siteFolder']);
-
-        $dump_options = '';
-        if ($skip_tables = $context->getConfigurationService()->getSetting('sqlSkipTables')) {
-            $dump_options .= ' --structure-tables-list=' . implode(',', $skip_tables);
-        }
-        if (!$shell->exists(dirname($backup_file_name))) {
-            $shell->run(sprintf('mkdir -p %s', dirname($backup_file_name)));
-        }
-
-        if ($host_config['supportsZippedBackups']) {
-            $shell->run(sprintf('rm -f %s.gz', $backup_file_name));
-            $dump_options .= ' --gzip';
-            $return = $backup_file_name . '.gz';
-        } else {
-            $shell->run(sprintf('rm -f %s', $backup_file_name));
-            $return = $backup_file_name;
-        }
-
-        $sql_dump_cmd = $host_config->get('sqlDumpCommand', 'sql-dump');
-        $this->runDrush($shell, true, '%s %s --result-file=%s', $sql_dump_cmd, $dump_options, $backup_file_name);
-        return $return;
-    }
-
-    public function backup(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $shell = $this->getShell($host_config, $context);
-        $what = $context->get('what', []);
-        if (!in_array('db', $what)) {
-            return;
-        }
-
-        $basename = $context->getResult('basename');
-        $backup_file_name = $host_config['backupFolder'] . '/' . implode('--', $basename) . '.sql';
-
-        $backup_file_name = $this->backupSQL($host_config, $context, $shell, $backup_file_name);
-
-        $context->addResult('files', [[
-            'type' => 'db',
-            'file' => $backup_file_name
-        ]]);
-
-        $this->logger->notice('Database dumped to `' . $backup_file_name . '`');
-    }
-
-    public function getSQLDump(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $filename = $host_config['tmpFolder'] . '/' . $host_config->getConfigName() . '.' . date('YmdHms') . '.sql';
-        $shell = $this->getShell($host_config, $context);
-        $filename = $this->backupSQL($host_config, $context, $shell, $filename);
-
-        $context->addResult('files', [$filename]);
-    }
-
-    public function listBackups(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $shell = $this->getShell($host_config, $context);
-        $files = $this->getRemoteFiles($shell, $host_config['backupFolder'], ['*.sql.gz', '*.sql']);
-        $result = [];
-        foreach ($files as $file) {
-            $tokens = $this->parseBackupFile($host_config, $file, 'db');
-            if ($tokens) {
-                $result[] = $tokens;
-            }
-        }
-
-        $existing = $context->getResult('files', []);
-        $context->setResult('files', array_merge($existing, $result));
-    }
-
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     * @throws FailedShellCommandException
-     */
-    public function restore(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $shell = $this->getShell($host_config, $context);
-        $what = $context->get('what', []);
-        if (!in_array('db', $what)) {
-            return;
-        }
-
-        $backup_set = $context->get('backup_set', []);
-        foreach ($backup_set as $elem) {
-            if ($elem['type'] != 'db') {
-                continue;
-            }
-
-            $shell->pushWorkingDir($host_config['siteFolder']);
-            $result = $this->importSqlFromFile($shell, $host_config['backupFolder'] . '/' . $elem['file']);
-            $shell->popWorkingDir();
-
-            if (!$result->succeeded()) {
-                $result->throwException('Could not restore backup from ' . $elem['file']);
-            }
-            $context->addResult('files', [[
-                'type' => 'db',
-                'file' => $elem['file']
-            ]]);
-        }
-    }
-
-    /**
-     * @param ShellProviderInterface $shell
-     * @param string $file
-     * @param bool $drop_db
-     * @return CommandResult
-     */
-    private function importSqlFromFile(ShellProviderInterface $shell, string $file, $drop_db = false)
-    {
-        $this->logger->notice('Restoring db from ' . $file);
-        if ($drop_db) {
-            $this->runDrush($shell, false, 'sql-drop -y');
-        }
-
-        if (substr($file, strrpos($file, '.') + 1) == 'gz') {
-            return $shell->run(sprintf('#!gunzip -c %s | $(#!drush sql-connect)', $file));
-        }
-        return $this->runDrush($shell, false, 'sql-cli < %s', $file);
-    }
-
-
-    public function restoreSqlFromFile(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $file = $context->get('source', false);
-        if (!$file) {
-            throw new \InvalidArgumentException('Missing file parameter');
-        }
-        $shell = $this->getShell($host_config, $context);
-
-        $shell->pushWorkingDir($host_config['siteFolder']);
-        $result = $this->importSqlFromFile($shell, $file);
-        $shell->popWorkingDir();
-
-        $context->setResult('exitCode', $result->getExitCode());
-    }
-
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     * @throws FailedShellCommandException
-     */
-    public function copyFrom(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $what = $context->get('what');
-        if (!in_array('db', $what)) {
-            return;
-        }
-
-        /** @var HostConfig $from_config */
-        /** @var ShellProviderInterface $shell */
-        /** @var ShellProviderInterface $from_shell */
-        $from_config = $context->get('from', false);
-        $shell = $this->getShell($host_config, $context);
-        $from_shell = $context->get('fromShell', $from_config->shell());
-
-        $from_filename = $from_config['tmpFolder'] . '/' . $from_config->getConfigName()
-            . '.' . date('YmdHms') . '.sql';
-        $from_filename = $this->backupSQL($from_config, $context, $from_shell, $from_filename);
-
-        $to_filename = $host_config['tmpFolder'] . '/to--' . basename($from_filename);
-
-        // Copy filename to host
-        $context->io()->comment(sprintf(
-            'Copying dump from `%s` to `%s` ...',
-            $from_config->getConfigName(),
-            $host_config->getConfigName()
-        ));
-
-        $result = $shell->copyFileFrom($from_shell, $from_filename, $to_filename, $context, true);
-        if (!$result) {
-            throw new \RuntimeException(
-                sprintf('Could not copy file from `%s` to `%s`', $from_filename, $to_filename)
-            );
-        }
-        $from_shell->run(sprintf(' rm %s', $from_filename));
-
-        // Import db.
-        $context->io()->comment(sprintf(
-            'Importing dump into `%s` ...',
-            $host_config->getConfigName()
-        ));
-
-        $shell->cd($host_config['siteFolder']);
-        $result = $this->importSqlFromFile($shell, $to_filename, true);
-        if (!$result->succeeded()) {
-            $result->throwException('Could not import DB from file `' . $to_filename . '`');
-        }
-
-        $shell->run(sprintf('rm %s', $to_filename));
-
-        $context->io()->success('Copied the database successfully!');
-    }
 
     public function appUpdate(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -731,45 +507,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
         if ($current_stage === 'install') {
-            $this->waitForDatabase($host_config, $context);
             $this->install($host_config, $context);
         }
-    }
-
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     * @return bool
-     * @throws FailedShellCommandException
-     */
-    private function waitForDatabase(HostConfig $host_config, TaskContextInterface $context)
-    {
-        $shell = $this->getShell($host_config, $context);
-        $tries = 0;
-        $result = false;
-        while ($tries < 10) {
-            $result = $shell->run(sprintf(
-                '#!mysqladmin --no-defaults -u%s --password="%s" -h %s ping',
-                $host_config['database']['user'],
-                $host_config['database']['pass'],
-                $host_config['database']['host']
-            ), true, false);
-            if ($result->succeeded()) {
-                return true;
-            }
-            $this->logger->info(sprintf(
-                'Wait another 5 secs for database at %s@%s',
-                $host_config['database']['host'],
-                $host_config['database']['user']
-            ));
-
-            sleep(5);
-            $tries++;
-        }
-        if ($result) {
-            $result->throwException('Could not connect to database!');
-        }
-        return false;
     }
 
     private function getConfigSyncDirectory(HostConfig $host_config)
@@ -913,8 +652,55 @@ class DrushMethod extends BaseMethod implements MethodInterface
         );
     }
 
-    public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
+    /**
+     * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     */
+    public function requestDatabaseCredentialsAndWorkingDir(HostConfig $host_config, TaskContextInterface  $context)
     {
-        $context->addResult('backupMethods', ['db']);
+        $data = $context->get(DatabaseMethod::DATABASE_CREDENTIALS, []);
+        if (empty($data)) {
+            if ($host_config['drushVersion'] < 9) {
+                throw new \RuntimeException("Could not retrieve database configuration via drush, ' .
+                'as your drush version is outdated, use drush 9 or newer.");
+            }
+            /** @var ShellProviderInterface $shell */
+            $shell = $context->get('shell', $host_config->shell());
+            $shell->pushWorkingDir($host_config['siteFolder']);
+            $result = $shell->run('drush --show-passwords --format=json sql:conf', true, false);
+            $json = json_decode(implode("\n", $result->getOutput()), true);
+            $mapping = [
+                'mysql' => [
+                    "database" => "name",
+                    "username" => "user",
+                    "password" => "pass",
+                    "host" => "host",
+                    "port" => "port"
+                ],
+                'sqlite' => [
+                    "database" => "database",
+                ],
+            ];
+            foreach ($mapping[$json['driver']] as $key => $mapped) {
+                $data[$mapped] = $json[$key];
+            }
+            $data['driver'] = $json['driver'];
+        }
+        switch ($data['driver']) {
+            case 'sqlite':
+                $context
+                    ->io()
+                    ->warning(
+                        "Drupal is using custom collation types which are not supported by sqlite3. " .
+                        "YMMV! See https://www.drupal.org/project/drupal/issues/3036487"
+                    );
+                $data['workingDir'] = $host_config['rootFolder'];
+                break;
+
+            default:
+                $data['workingDir'] = $host_config['siteFolder'];
+                break;
+        }
+        $context->setResult(DatabaseMethod::DATABASE_CREDENTIALS, $data);
     }
 }
