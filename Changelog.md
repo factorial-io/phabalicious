@@ -1,8 +1,22 @@
 # Changelog
 
+## 3.6.14 / 2021-07-01
+
+### Fixed:
+
+  * Fix `copy-from db` for `dockerExecOverSsh`-shells, fixes #175
+  * Fix `get:file` and `put:file` for `dockerExecOverSsh` on Mac OS
+
+## 3.6.13 / 2021-07-01
+
+### New:
+
+* Enable copy-from with kubernetes pod as target as long the source is reachable via SSH
+  and a ssh-connection can be established between the pod and the data-source.
+
 ## 3.6.12 / 2021-06-30
 
-### Fixes:
+### Fixed:
 
   * Fix getFile for docker-exec-over-ssh shell provider
   * Update multibasebox setup for workspace command

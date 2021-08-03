@@ -123,12 +123,20 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         $this->sshShell->cd(DockerMethod::getProjectFolder($docker_config, $this->hostConfig));
     }
 
+    protected function getTempFileName($str): string
+    {
+        return
+            $this->getHostConfig()->get('tmpFolder', '/tmp') . '/' .
+            bin2hex(random_bytes(8)) . '--' .
+            basename($str);
+    }
+
     /**
      * {@inheritdoc}
      */
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
-        $tmp_dest = tempnam($this->hostConfig['tmpFolder'], $dest);
+        $tmp_dest = $this->getTempFileName($dest);
 
         if (!parent::putFile($source, $tmp_dest, $context, $verbose)) {
             return false;
@@ -148,7 +156,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
      */
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
-        $tmp_source = tempnam($this->hostConfig['tmpFolder'], $dest);
+        $tmp_source = $this->getTempFileName($source);
 
         $this->ensureSshShell();
         $cmd = $this->dockerExec->getGetFileCommand($source, $tmp_source);
