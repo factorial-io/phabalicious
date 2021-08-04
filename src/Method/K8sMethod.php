@@ -205,6 +205,8 @@ class K8sMethod extends BaseMethod implements MethodInterface
     {
         $pod_selectors = $host_config['kube']['podSelector'];
         $pod_selectors = $this->expandReplacements($host_config, $context, $pod_selectors);
+        $initial_pod_selectors = $pod_selectors;
+        $pod_template_hash = false;
 
         $deployment_result = $this->getJsonFromKubectl(
             $host_config,
@@ -228,7 +230,6 @@ class K8sMethod extends BaseMethod implements MethodInterface
                 )
             );
 
-            $pod_template_hash = false;
             foreach ($replica_set_result['items'] as $item) {
                 if (!empty($item['metadata']['annotations']['deployment.kubernetes.io/revision'])) {
                     $replica_revision = $item['metadata']['annotations']['deployment.kubernetes.io/revision'];
@@ -243,17 +244,14 @@ class K8sMethod extends BaseMethod implements MethodInterface
                 $pod_selectors[] = "pod-template-hash=" . $pod_template_hash;
             }
         }
-        $data = $this->getJsonFromKubectl(
-            $host_config,
-            $context,
-            sprintf(
-                'get pods -l %s -o json',
-                implode(',', $pod_selectors)
-            )
-        );
 
+        $pod_name = $this->extractCurrentRunningPod($host_config, $context, $pod_selectors);
 
-        $pod_name = $data['items'][0]['metadata']['name'] ?? null;
+        // Couldn't get pod from last deployment, fall back to a more general approach.
+        if ($pod_template_hash && empty($pod_name)) {
+            $pod_name = $this->extractCurrentRunningPod($host_config, $context, $initial_pod_selectors);
+        }
+
         if (empty($pod_name)) {
             $this->logger->warning(
                 sprintf(
@@ -550,5 +548,31 @@ class K8sMethod extends BaseMethod implements MethodInterface
     public function appDestroy(HostConfig $host_config, TaskContextInterface $context)
     {
         $this->appCreate($host_config, $context);
+    }
+
+    /**
+     * Extract current running pods from an array of pod_selectors.
+     *
+     * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param array $pod_selectors
+     *
+     * @return string|null
+     */
+    protected function extractCurrentRunningPod(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        array $pod_selectors
+    ): ?string {
+        $data = $this->getJsonFromKubectl(
+            $host_config,
+            $context,
+            sprintf(
+                'get pods -l %s -o json --field-selector=status.phase=Running',
+                implode(',', $pod_selectors)
+            )
+        );
+
+        return $data['items'][0]['metadata']['name'] ?? null;
     }
 }
