@@ -1,0 +1,4 @@
+{
+    "slug":"{{ slugInput| slug }}",
+    "md5": "{{ md5Input | md5 }}"
+}

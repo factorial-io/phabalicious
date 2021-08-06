@@ -142,7 +142,6 @@ class ScaffoldTest extends PhabTestCase
      */
     public function testScaffoldCallback()
     {
-
         $scaffolder = new Scaffolder($this->configuration);
         $context = $this->createContext();
         $options = new Options();
@@ -171,5 +170,31 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
         $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
+    }
+
+    public function testTwigExtensions()
+    {
+        $scaffolder = new Scaffolder($this->configuration);
+        $context = $this->createContext();
+        $options = new Options();
+        $options->setAllowOverride(true)
+            ->setUseCacheTokens(false);
+
+        $result = $scaffolder->scaffold(
+            $this->getCwd() . '/assets/scaffolder-test/scaffold-twig.yml',
+            $this->getcwd(),
+            $context,
+            [
+                'name' => 'test-scaffold-twig',
+            ],
+            $options
+        );
+
+        $this->assertEquals(0, $result->getExitCode());
+
+        $json = json_decode(file_get_contents($this->getCwd() . '/test-scaffold-twig/test-twig.json'), true);
+
+        $this->assertEquals('A-test-string-to-be-slugified', $json['slug']);
+        $this->assertEquals('a4d756f3e68abb99c986e2541785e998', $json['md5']);
     }
 }

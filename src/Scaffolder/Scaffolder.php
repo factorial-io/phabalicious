@@ -17,6 +17,7 @@ use Phabalicious\Exception\YamlParseException;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
+use Phabalicious\Scaffolder\TwigExtensions\Md5Extension;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\DryRunShellProvider;
 use Phabalicious\ShellProvider\LocalShellProvider;
@@ -26,7 +27,6 @@ use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 use Phar;
 use RuntimeException;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -238,6 +238,7 @@ class Scaffolder
         $loader = new FilesystemLoader($twig_loader_base);
         $this->twig = new Environment($loader, array( ));
         $this->twig->addExtension(new StringExtension());
+        $this->twig->addExtension(new Md5Extension());
 
         $options
             ->addCallback(new CopyAssetsCallback($this->configuration, $this->twig))
@@ -329,8 +330,8 @@ class Scaffolder
     }
 
     /**
-     * @param $root_folder
-     * @param $tokens
+     * @param string $root_folder
+     * @param mixed $tokens
      */
     protected function writeTokens($root_folder, $tokens)
     {
@@ -338,8 +339,8 @@ class Scaffolder
     }
 
     /**
-     * @param $root_folder
-     * @param $name
+     * @param string $root_folder
+     * @param string $name
      * @return array|mixed
      */
     protected function readTokens($root_folder, $name)
