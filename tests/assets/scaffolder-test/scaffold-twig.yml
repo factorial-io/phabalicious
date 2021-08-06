@@ -6,7 +6,7 @@ assets:
 
 variables:
   slugInput: "A test string to be slugified"
-  md5Input: " a string taht will be hashed by md5"
+  md5Input: " a string that will be hashed by md5"
 
 scaffold:
   - mkdir -p %rootFolder%

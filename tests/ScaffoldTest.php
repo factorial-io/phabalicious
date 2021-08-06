@@ -195,6 +195,6 @@ class ScaffoldTest extends PhabTestCase
         $json = json_decode(file_get_contents($this->getCwd() . '/test-scaffold-twig/test-twig.json'), true);
 
         $this->assertEquals('A-test-string-to-be-slugified', $json['slug']);
-        $this->assertEquals('a4d756f3e68abb99c986e2541785e998', $json['md5']);
+        $this->assertEquals('db42607fd51c90a4d9c49130f1fe98a8', $json['md5']);
     }
 }
