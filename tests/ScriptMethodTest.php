@@ -15,6 +15,7 @@ use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\ScriptExecutionContext;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Method\TaskContextInterface;
@@ -75,7 +76,7 @@ class ScriptMethodTest extends PhabTestCase
      */
     public function testRunScript()
     {
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo "hello"',
             'echo "world"',
             'echo "hello world"'
@@ -100,7 +101,7 @@ class ScriptMethodTest extends PhabTestCase
      */
     public function testExitOnExitCode()
     {
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             '(exit 42)',
             '(exit 0)'
         ]);
@@ -123,7 +124,7 @@ class ScriptMethodTest extends PhabTestCase
      */
     public function testIgnoreExitCode()
     {
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'break_on_first_error(0)',
             '(exit 42)',
             '(exit 0)',
@@ -153,7 +154,7 @@ class ScriptMethodTest extends PhabTestCase
         $this->context->set('environment', [
             'TEST_VAR' => '42',
         ]);
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo $TEST_VAR',
         ]);
 
@@ -180,7 +181,7 @@ class ScriptMethodTest extends PhabTestCase
         $this->context->set('environment', [
             'TEST_VAR' => '%host.testEnvironmentVar%',
         ]);
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo "$TEST_VAR"',
         ]);
 
@@ -204,7 +205,7 @@ class ScriptMethodTest extends PhabTestCase
      */
     public function testExpandedEnvironmentVariablesFromHostConfig()
     {
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo "$ROOT_FOLDER"',
         ]);
 
@@ -224,11 +225,11 @@ class ScriptMethodTest extends PhabTestCase
     {
         $this->expectException(MissingScriptCallbackImplementation::class);
 
-        $this->context->set('callbacks', [
+        $this->context->set(ScriptMethod::SCRIPT_CALLBACKS, [
             'debug' => [$this, 'missingScriptDebugCallback'],
         ]);
 
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'debug(hello world)',
         ]);
 
@@ -239,11 +240,11 @@ class ScriptMethodTest extends PhabTestCase
     public function testParsingCallbackParameters()
     {
         $callback = new DebugCallback(true);
-        $this->context->set('callbacks', [
+        $this->context->set(ScriptMethod::SCRIPT_CALLBACKS, [
             $callback::getName() => $callback,
         ]);
 
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'debug(hello world)',
             'debug("hello world")',
             'debug("hello", "world")',
@@ -264,7 +265,7 @@ class ScriptMethodTest extends PhabTestCase
     public function testTaskSpecificScripts()
     {
         $callback = new DebugCallback(false);
-        $this->context->set('callbacks', [
+        $this->context->set(ScriptMethod::SCRIPT_CALLBACKS, [
             $callback::getName() => $callback,
         ]);
 
@@ -319,5 +320,25 @@ class ScriptMethodTest extends PhabTestCase
             "%here%%huhu%",
             "khjkhjkjhkjh",
         ]));
+    }
+
+    /**
+     * @group docker
+     */
+    public function testScriptRunInDockerContext()
+    {
+        $this->context->set(ScriptMethod::SCRIPT_CONTEXT, ScriptExecutionContext::DOCKER_IMAGE);
+        $this->context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, ['image' => 'busybox']);
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
+            'env',
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+
+        $this->method->runScript($host_config, $this->context);
+
+        $output = $this->context->getCommandResult()->getOutput();
+
+        $this->assertContains("PHAB_SUB_SHELL=1", $output);
     }
 }

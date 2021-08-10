@@ -5,6 +5,7 @@ namespace Phabalicious\Artifact\Actions\Base;
 
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\ScriptExecutionContext;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\CommandResult;
@@ -27,7 +28,7 @@ class ScriptAction extends ActionBase
             $validation->hasAtLeast(['script', 'name'], 'missing key');
 
             if (isset($action_arguments['arguments']['context'])) {
-                $validation->isOneOf('context', ['host', 'docker']);
+                $validation->isOneOf('context', ScriptExecutionContext::VALID_CONTEXTS);
                 if ($action_arguments['arguments']['context'] == 'docker') {
                     $validation->hasKey('image', 'Please provide the name of the docker image to use.');
                 }
@@ -44,24 +45,10 @@ class ScriptAction extends ActionBase
     ) {
         $dir = $this->runInTargetDir ? $target_dir : $install_dir;
         $shell->pushWorkingDir($dir);
-        $inner_shell = false;
-        if ($this->getArgument('context') == 'docker') {
-            $inner_shell = $shell->startSubShell([
-                'docker',
-                'run',
-                '-e',
-                'PHAB_SUB_SHELL=1',
-                '-i',
-                '-w',
-                '/app',
-                '-u',
-                sprintf('%d:%d', posix_getuid(), posix_getgid()),
-                '-v',
-                sprintf('%s:/app', $dir),
-                $this->getArgument('image'),
-                $this->getArgument('shellExecutable', '/bin/sh')
-            ]);
-        }
+
+        $context->set(ScriptMethod::SCRIPT_CONTEXT, $this->getArgument('context', 'host'));
+        $context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, $this->getArguments());
+
         /** @var ScriptMethod $script */
         $script = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
 
@@ -81,41 +68,21 @@ class ScriptAction extends ActionBase
         $cloned_context->set(ScriptMethod::SCRIPT_DATA, $script_data);
         $cloned_context->set('variables', $context->get('deployArguments'));
 
-        if ($inner_shell) {
-            $inner_shell->cd('/app');
-            $cloned_context->set('shell', $inner_shell);
-            $cloned_context->setShell($inner_shell);
-            $cloned_context->set('rootFolder', '/app');
-        }
-        try {
-            $saved = $script->getBreakOnFirstError();
-            $script->setBreakOnFirstError(true);
+        $saved = $script->getBreakOnFirstError();
+        $script->setBreakOnFirstError(true);
 
-            $script->runScript($host_config, $cloned_context);
-            /** @var CommandResult $cr */
-            if ($cr = $context->getResult('commandResult')) {
-                if ($cr->failed()) {
-                    $cr->throwException('Script action failed with an error!');
-                }
-            }
-
-            $script->setBreakOnFirstError($saved);
-            $context->mergeResults($cloned_context);
-        } catch (\Exception $e) {
-            if ($inner_shell) {
-                $inner_shell->terminate();
-            }
-            throw $e;
-        } finally {
-            if ($inner_shell) {
-                $inner_shell->terminate();
+        $script->runScript($host_config, $cloned_context);
+        /** @var CommandResult $cr */
+        if ($cr = $context->getResult('commandResult')) {
+            if ($cr->failed()) {
+                $cr->throwException('Script action failed with an error!');
             }
         }
+
+        $script->setBreakOnFirstError($saved);
+        $context->mergeResults($cloned_context);
 
         $shell->popWorkingDir();
     }
 
-    protected function prepareDockerContext(ShellProviderInterface $shell, $dir): ShellProviderInterface
-    {
-    }
 }

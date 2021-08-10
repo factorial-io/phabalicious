@@ -22,7 +22,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     protected $hostConfig;
 
     /** @var string */
-    private $workingDir;
+    private $workingDir = '';
 
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;

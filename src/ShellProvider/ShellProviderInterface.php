@@ -100,5 +100,4 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
     public function terminate();
 
     public function startSubShell(array $cmd): ShellProviderInterface;
-
 }

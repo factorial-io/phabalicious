@@ -132,7 +132,7 @@ class ScriptActionTest extends TestCase
             "script" => [
                 'env',
             ],
-            "context" => 'docker',
+            "context" => 'docker-image',
             "image" => "busybox"
         ]);
 
@@ -151,7 +151,7 @@ class ScriptActionTest extends TestCase
             "script" => [
                 'node --version',
             ],
-            "context" => 'docker',
+            "context" => 'docker-image',
             "image" => "node:14"
         ]);
 
@@ -173,7 +173,7 @@ class ScriptActionTest extends TestCase
                 'npm install',
                 '/app/bin/gulp --tasks'
             ],
-            "context" => 'docker',
+            "context" => 'docker-image',
             "image" => "node:14"
         ]);
 

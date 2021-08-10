@@ -20,12 +20,14 @@ use Phabalicious\Exception\MissingScriptCallbackImplementation;
 class ScriptMethod extends BaseMethod implements MethodInterface
 {
 
-    const HOST_SCRIPT_CONTEXT = 'host';
     const SCRIPT_COMMAND_LINE_DEFAULTS = 'scriptCommandLineDefaults';
     const SCRIPT_QUESTIONS = 'scriptQuestions';
     const SCRIPT_DATA = 'scriptData';
     const SCRIPT_CONTEXT = 'scriptContext';
+    const SCRIPT_CONTEXT_DATA = 'scriptContextData';
     const SCRIPT_COMPUTED_VALUES = 'scriptComputedValues';
+    const SCRIPT_CALLBACKS = 'callbacks';
+
 
     private $breakOnFirstError = true;
     private $callbacks = [];
@@ -133,21 +135,21 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             );
         }
 
-        $replacements = Utilities::expandVariables($variables);
-        $environment = Utilities::expandStrings($environment, $replacements);
-        $environment = Utilities::validateScriptCommands($environment, $replacements);
-        $environment = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($environment);
-
-        $commands = Utilities::expandStrings($commands, $replacements, []);
-        $commands = Utilities::expandStrings($commands, $replacements);
-        $commands = Utilities::validateScriptCommands($commands, $replacements);
-
-
-        $commands = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($commands);
-
-        $context->set('host_config', $host_config);
-
         try {
+            $replacements = Utilities::expandVariables($variables);
+            $environment = Utilities::expandStrings($environment, $replacements);
+            $environment = Utilities::validateScriptCommands($environment, $replacements);
+            $environment = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($environment);
+
+            $commands = Utilities::expandStrings($commands, $replacements, []);
+            $commands = Utilities::expandStrings($commands, $replacements);
+            $commands = Utilities::validateScriptCommands($commands, $replacements);
+
+
+            $commands = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($commands);
+
+            $context->set('host_config', $host_config);
+
             $result = $this->runScriptImpl(
                 $root_folder,
                 $commands,
@@ -204,10 +206,17 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $context->set('break_on_first_error', $this->getBreakOnFirstError());
 
         $shell = $context->getShell();
-        $shell->setOutput($context->getOutput());
-        $shell->applyEnvironment($environment);
+        $execution_context = new ScriptExecutionContext(
+            $root_folder,
+            $context->get(self::SCRIPT_CONTEXT, ScriptExecutionContext::HOST),
+            $context->get(self::SCRIPT_CONTEXT_DATA, [])
+        );
 
-        $shell->pushWorkingDir($root_folder);
+        $shell = $execution_context->enter($shell);
+        $shell->setOutput($context->getOutput());
+
+        $shell->pushWorkingDir($execution_context->getInitialWorkingDir());
+        $shell->applyEnvironment($environment);
 
         foreach ($commands as $line) {
             $line = trim($line);
@@ -226,12 +235,15 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
                 if ($command_result->failed() && $this->getBreakOnFirstError()) {
                     $shell->popWorkingDir();
+                    $execution_context->exit();
                     return $command_result;
                 }
             }
         }
 
         $shell->popWorkingDir();
+        $execution_context->exit();
+
         return $command_result;
     }
 
@@ -418,16 +430,19 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
     public static function prepareContextFromScript(TaskContextInterface $context, array $script_data)
     {
-
-        $script_context = $script_data['context'] ?? ScriptMethod::HOST_SCRIPT_CONTEXT;
+        $script_context = $script_data['context'] ?? ScriptExecutionContext::HOST;
         $script_questions = $script_data['questions'] ?? [];
         $computed_values = $script_data['computedValues'] ?? [];
+        $script_context_data = $script_data;
         if (!empty($script_data['script'])) {
             $script_data = $script_data['script'];
+        } else {
+            $script_context_data = [];
         }
 
         $context->set(ScriptMethod::SCRIPT_DATA, $script_data);
         $context->set(ScriptMethod::SCRIPT_CONTEXT, $script_context);
+        $context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, $script_context_data);
         $context->set(ScriptMethod::SCRIPT_QUESTIONS, $script_questions);
         $context->set(ScriptMethod::SCRIPT_COMPUTED_VALUES, $computed_values);
     }
