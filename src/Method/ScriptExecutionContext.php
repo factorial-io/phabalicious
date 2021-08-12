@@ -84,6 +84,7 @@ class ScriptExecutionContext
                 $this->shell = $shell->startSubShell([
                     'docker',
                     'run',
+                    '--rm',
                     '-e',
                     'PHAB_SUB_SHELL=1',
                     '-i',

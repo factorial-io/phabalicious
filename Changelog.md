@@ -1,5 +1,45 @@
 # Changelog
 
+## 3.7.0
+
+### New
+
+  * Introduction of script execution contexts. Scripts can now be executed in a
+    docker image of your choice
+
+    ```yaml
+    scripts:
+      build-frontend:
+        script:
+          - npm install -g gulp-cli
+          - npm install
+          - gulp run
+        context: docker-image
+        image: node:12
+    ```
+
+    The current folder is mounted to `/app` in the container, and the current user-
+    and group will be used inside the running container. If you need to persist any files
+    after the container got killed, make sure to copy/ move them into the `/app`-folder.
+
+    The container will be removed after the script finishes.
+
+    `script`-actions for scaffolders are supporting this too, e.g.
+
+    ```yaml
+    hosts:
+      scaffold:
+        actions:
+          - action: script
+            arguments:
+              context: docker-image
+              image: node:14
+              script:
+                - npm install -g gulp-cli
+                - npm install
+                - gulp run
+    ````
+
 ## 3.6.14 / 2021-07-01
 
 ### Fixed:
