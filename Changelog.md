@@ -2,6 +2,13 @@
 
 ## 3.7.0
 
+### Breaking changes:
+
+  * phabalicious now requires PHP 7.2
+  * failing drush commands will now exit phab with an error code, instead of
+    continuing. This might break your deployments.  To switch back to the old
+    behaviour set `drushErrorHandling` to `lax`
+
 ### New
 
   * Introduction of script execution contexts. Scripts can now be executed in a
@@ -19,8 +26,9 @@
     ```
 
     The current folder is mounted to `/app` in the container, and the current user-
-    and group will be used inside the running container. If you need to persist any files
-    after the container got killed, make sure to copy/ move them into the `/app`-folder.
+    and group will be used inside the running container. If you need to persist any
+    files after the container got killed, make sure to copy/ move them into the
+    `/app`-folder.
 
     The container will be removed after the script finishes.
 
@@ -39,6 +47,38 @@
                 - npm install
                 - gulp run
     ````
+
+  * Add `md5`-twig-filter to scaffolder
+  * Host-configs can be hidden from `list:hosts` by setting `hidden` to `true`
+  * Add a new `info`-section to `host`-configs. This allows the user to add a short
+    description and one or more urls which will be displayed on `phab list:hosts`
+
+    ```yaml
+    hosts:
+      local:
+        info:
+          description: A local installation aimed for development
+          publicUrl: https://localhost
+       someDevInstance:
+        info:
+          description: |-
+            A multiline string describing someDevInstance which has multiple public
+            urls
+          publicUrls:
+            - https://web.example.com
+            - https://bo.example.com
+            - https://search.example.com
+    ```
+
+    Note, that `list:hosts` will show only the first `publicUrl`. But you can run
+    `phab list:hosts -v` to get a more verbose output with all urls and descriptions
+
+
+### Changed
+
+  * Refactor how script-callbacks are handled internally, use a more oo-style
+
+
 
 ## 3.6.15 / 2021-08-04
 
