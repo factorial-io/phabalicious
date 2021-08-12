@@ -49,7 +49,24 @@
     ````
 
   * Add `md5`-twig-filter to scaffolder
+
+    ```twig
+    aValue: "{{ "Hello world" | md5 }}"
+    ```
+    will be scaffolded to
+
+    ```yaml
+    aValue: "f0ef7081e1539ac00ef5b761b4fb01b3"
+    ```
+
   * Host-configs can be hidden from `list:hosts` by setting `hidden` to `true`
+
+    ```yaml
+    hosts:
+      hiddenHost:
+        hidden: true # host config will not be shownn on `list:hsots`
+    ```
+
   * Add a new `info`-section to `host`-configs. This allows the user to add a short
     description and one or more urls which will be displayed on `phab list:hosts`
 
@@ -72,6 +89,18 @@
 
     Note, that `list:hosts` will show only the first `publicUrl`. But you can run
     `phab list:hosts -v` to get a more verbose output with all urls and descriptions
+
+    Example output:
+
+    ```shell
+    $ phab list:hosts
+
+    List of found host-configurations:
+    ==================================
+
+    * local  https://localhost
+    * someDevInstance  https://web.example.com
+    ```
 
 
 ### Changed
