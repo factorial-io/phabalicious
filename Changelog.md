@@ -40,6 +40,12 @@
                 - gulp run
     ````
 
+## 3.6.15 / 2021-08-04
+
+### Fixed:
+
+* Harden the way how phab determines the current running pod
+
 ## 3.6.14 / 2021-07-01
 
 ### Fixed:
