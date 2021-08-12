@@ -54,4 +54,39 @@ class ScriptCommandTest extends PhabTestCase
         $this->assertContains('Value A: a', $output);
         $this->assertContains('Value B: b', $output);
     }
+
+    /**
+     * @group docker
+     */
+    public function testRunScriptInDockerImageContext()
+    {
+        $command = $this->application->find('script');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            '--config' => 'hostA',
+            'script' => 'testInsideDockerImage'
+        ));
+
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains('v12', $output);
+    }
+    /**
+     * @group docker
+     */
+    public function testRunScriptInDockerImageContext2()
+    {
+        $command = $this->application->find('script');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            '--config' => 'hostA',
+            'script' => 'envInsideDockerImage'
+        ));
+
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains('PHAB_SUB_SHELL=1', $output);
+    }
 }

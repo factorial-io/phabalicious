@@ -22,7 +22,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     protected $hostConfig;
 
     /** @var string */
-    private $workingDir;
+    private $workingDir = '';
 
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
@@ -98,7 +98,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     public function cd(string $dir): ShellProviderInterface
     {
-        if ($dir[0] == '.') {
+        if (empty($dir) || $dir[0] == '.') {
             $result = $this->run(sprintf('cd %s; echo $PWD', $dir), true);
             $dir = $result->getOutput()[0];
         }

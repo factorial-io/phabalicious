@@ -98,4 +98,6 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
      * Terminates a running shell, so that it gets recreated with the next command.
      */
     public function terminate();
+
+    public function startSubShell(array $cmd): ShellProviderInterface;
 }

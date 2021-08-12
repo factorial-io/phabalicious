@@ -10,4 +10,5 @@ node_modules
 docs/.vuepress/dist
 tests/workspace
 tests/test-alter/
+tests/test-scaffold-callback/
 tests/test-scaffold-twig

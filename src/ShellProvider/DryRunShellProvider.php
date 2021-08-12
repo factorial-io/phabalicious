@@ -117,4 +117,9 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
     {
         // Nothing to see here.
     }
+
+    public function startSubShell(array $cmd): ShellProviderInterface
+    {
+        return $this;
+    }
 }

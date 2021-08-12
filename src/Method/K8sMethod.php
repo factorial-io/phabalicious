@@ -22,8 +22,6 @@ use Phabalicious\Validation\ValidationService;
 
 class K8sMethod extends BaseMethod implements MethodInterface
 {
-    const KUBECTL_SCRIPT_CONTEXT = 'kubectl';
-
     const AVAILABLE_SUB_COMMANDS = [
         'delete',
         'apply',
@@ -177,11 +175,14 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $config->setChild('kube', 'podForCli', $this->getPodNameFromSelector($config, $context));
             $config->setChild('kube', 'podForCliSet', true);
         }
-        $script_context = $context->get(ScriptMethod::SCRIPT_CONTEXT, 'host');
-        if ($task == 'runScript' && $script_context == self::KUBECTL_SCRIPT_CONTEXT) {
-            $context->set('rootFolder', $this->kubectlShell->getHostConfig()['rootFolder']);
+        $script_context = $context->get(ScriptMethod::SCRIPT_CONTEXT, ScriptExecutionContext::HOST);
+        if ($task == 'runScript' && $script_context == ScriptExecutionContext::KUBE_CTL) {
             $this->ensureShell($config, $context);
-            $context->setShell($this->kubectlShell);
+
+            $context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, [
+                'rootFolder' => $this->kubectlShell->getHostConfig()['rootFolder'],
+                'kubectlShell' => $this->kubectlShell,
+            ]);
         }
     }
 
