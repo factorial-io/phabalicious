@@ -28,10 +28,8 @@ class ScriptAction extends ActionBase
             $validation->hasAtLeast(['script', 'name'], 'missing key');
 
             if (isset($action_arguments['arguments']['context'])) {
-                $validation->isOneOf('context', ScriptExecutionContext::VALID_CONTEXTS);
-                if ($action_arguments['arguments']['context'] == 'docker') {
-                    $validation->hasKey('image', 'Please provide the name of the docker image to use.');
-                }
+                $validation_errors = ScriptExecutionContext::validate($action_arguments['arguments']);
+                $validation->getErrorBag()->addErrorBag($validation_errors);
             }
         }
     }
@@ -84,5 +82,4 @@ class ScriptAction extends ActionBase
 
         $shell->popWorkingDir();
     }
-
 }

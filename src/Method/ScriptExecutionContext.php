@@ -3,7 +3,11 @@
 namespace Phabalicious\Method;
 
 use http\Exception\RuntimeException;
+use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Validation\ValidationErrorBag;
+use Phabalicious\Validation\ValidationErrorBagInterface;
+use Phabalicious\Validation\ValidationService;
 
 class ScriptExecutionContext
 {
@@ -31,17 +35,41 @@ class ScriptExecutionContext
 
     public function __construct($working_dir, string $context_name, array $context_data)
     {
-        if (!self::validate($context_name)) {
-            throw new \RuntimeException(sprintf('Unknown script context name `%s`', $context_name));
+        $errors = self::validate(array_merge($context_data, [
+            'context' => $context_name
+        ]));
+        if ($errors->hasErrors()) {
+            throw new ValidationFailedException($errors);
         }
         $this->workingDir = $working_dir;
         $this->currentContextName = $context_name;
         $this->contextData = $context_data;
     }
 
-    public static function validate($context_name): bool
+    public static function validate(array $arguments): ValidationErrorBagInterface
     {
-        return in_array($context_name, self::VALID_CONTEXTS);
+        $errors = new ValidationErrorBag();
+        $validation = new ValidationService($arguments, $errors, "ScriptExecutionContext");
+
+        $validation->isOneOf('context', self::VALID_CONTEXTS);
+        if ($errors->hasErrors()) {
+            return $errors;
+        }
+
+        switch ($arguments['context']) {
+            case self::DOCKER_IMAGE:
+                $validation->hasKey('image', 'The name of the docker image to use');
+                break;
+
+            case self::KUBE_CTL:
+                $validation->hasKey('kubectlShell', 'the kubectl-shell');
+                $validation->hasKey('rootFolder', 'the rootFolder to use');
+                break;
+
+            default:
+        }
+
+        return $errors;
     }
 
     protected function getArgument($name, $default = null)
@@ -53,7 +81,6 @@ class ScriptExecutionContext
     {
         switch ($this->currentContextName) {
             case self::DOCKER_IMAGE:
-                $this->checkArguments(['image']);
                 $this->shell = $shell->startSubShell([
                     'docker',
                     'run',
@@ -74,7 +101,6 @@ class ScriptExecutionContext
                 break;
 
             case self::KUBE_CTL:
-                $this->checkArguments(['kubectlShell', 'rootFolder']);
                 $this->shell = $this->getArgument('kubectlShell');
                 $this->setInitialWorkingDir($this->getArgument('rootFolder'));
                 break;
@@ -105,18 +131,5 @@ class ScriptExecutionContext
     protected function setInitialWorkingDir($working_dir)
     {
         $this->initialWorkingDir = $working_dir;
-    }
-
-    protected function checkArguments(array $array)
-    {
-        foreach ($array as $arg) {
-            if (is_null($this->getArgument($arg))) {
-                throw new \RuntimeException(sprintf(
-                    'Cant run script in contect %s, as %s not provided!',
-                    $this->currentContextName,
-                    $arg
-                ));
-            }
-        }
     }
 }

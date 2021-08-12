@@ -38,4 +38,14 @@ class ValidationErrorBag implements ValidationErrorBagInterface
     {
         return $this->warnings;
     }
+
+    public function addErrorBag(ValidationErrorBagInterface $validation_errors)
+    {
+        foreach ($validation_errors->getErrors() as $key => $message) {
+            $this->addError($key, $message);
+        }
+        foreach ($validation_errors->getWarnings() as $key => $message) {
+            $this->addWarning($key, $message);
+        }
+    }
 }
