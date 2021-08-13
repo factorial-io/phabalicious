@@ -102,10 +102,53 @@
     * someDevInstance  https://web.example.com
     ```
 
+  * New methods for handling database tasks (importing or exporting a dump) added:
+
+      * `mysql`
+      * `sqlite`
+
+    The functionality was moved out from the `drush`-method and replaced by the new
+    methods.
+
+    Database credentials will be obtained automatically if not part of the cofiguration
+    e.g. from drush or environment-variables/ the .env-file for laravel-based projects
+
+  * New command `artisan` and new method `laravel` for laravel-based projects. Just
+    run e.g. `phab -cyourconfig artisan db:seed`
+
+  * Methods can declare dependencies to other methods, e.g. using the method `drush`
+    will implicitely use method `mysql` if not stated differently in `needs`.
+
+  * Allow users to override rsync options via the `rsyncOptions` settings, e.g.
+
+      ```yaml
+      rsyncOptions:
+        - --delete
+      ```
+  * You can now scaffold your docker configuration before running any docker-related
+    command e.g. `docker` or `docker-compose`. That means you can scaffold the
+    corresponding `docker-compose.yml` or `docker-compose.override.yml` before running
+    a command against the config. An example:
+
+      ```yaml
+      hosts:
+        example:
+          docker:
+            scaffold:
+              assets:
+                - templates/docker-compose.yml
+                - templates/docker-compose.override.yml
+      ``
+
+    This will copy the two files in `templates` into the root-folder and apply any
+    configuration from the host `example` before copying it to the destination.
+
 
 ### Changed
 
   * Refactor how script-callbacks are handled internally, use a more oo-style
+  * Moved all db related functinality out of `drush` into the methods `mysql`
+    and `sqlite`
 
 
 
