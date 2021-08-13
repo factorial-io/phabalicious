@@ -138,7 +138,7 @@
               assets:
                 - templates/docker-compose.yml
                 - templates/docker-compose.override.yml
-      ``
+      ```
 
     This will copy the two files in `templates` into the root-folder and apply any
     configuration from the host `example` before copying it to the destination.
