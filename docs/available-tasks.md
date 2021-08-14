@@ -184,9 +184,10 @@ Will display all available arguments and options for that given `<task>` and som
 
 ``` bash
 phab list:hosts
+phab list:hosts -v
 ```
 
-This task will list all your hosts defined in your `hosts`-section of your `fabfile.yaml`.
+This task will list all your hosts defined in your `hosts`-section of your `fabfile.yaml`. If you increase verbosity via `-v` phab will output the descriptions and list of public urls for every found configuration.
 
 ## list:blueprints
 
@@ -731,3 +732,12 @@ This will push all variables listed in `path/to/yaml.file` and set them on the r
 ## k8s
 
 Runs a command against a kubernetes cluster. More info [here](/kubernetes.html)
+
+## artisan
+
+Runs a laravel artisan command
+
+```bash
+phab -chost artisan db:seed
+phab -chost artisan migrate
+```

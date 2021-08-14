@@ -77,7 +77,10 @@ The value for `usingOutdatedScaffolder` gets evaluated before the scaffolder sta
 
 If the command (in this example `grep`) produces an output, then the output is used for the stored value. If no output is created, then the exitcode will be used for the value. See the documentation about [scripts](/scripts.md) for more info.
 
-## `copy_assets`
+## Callbacks provided by phabalicious
+
+
+### `copy_assets`
 
 `copy_assets` can be used in the scaffold-section to copy assets  into a specific location. The syntax is
 
@@ -87,7 +90,7 @@ copy_assets(<targetFolder>, <assetsKey=assets>, <fileExtensionForTwigParsing>)
 
 Phabalicious will load the asset-file, apply the replacement-patterns to the file-name ([see](app-scaffold.md) the `deploymentAssetsfor` an example) and parse the content via twig. The result will be stored inside the `<targetFolder>`. If `<fileExtensionForTwigParsing>` is set, then only files with that extension will be handled by twig.
 
-## `log_message(severity, message)`
+### `log_message(severity, message)`
 
 `log_message` will log a string to the output of phabalicious. It supports several notification levels, e.g.
 
@@ -96,7 +99,7 @@ scaffold:
   - log_message(info|warning|error|success, the message to display)
 ```
 
-## `alter_json_file(file_path, data_ref)`
+### `alter_json_file(file_path, data_ref)`
 
 This internal command can alter a json-file. It will merge the data from a yaml section into the json file. Here's an example:
 
@@ -113,7 +116,7 @@ scaffold:
   alter_json_file(package.json, dataToInject)
 ```
 
-## `alter_yaml_file(file_path, data_ref)`
+### `alter_yaml_file(file_path, data_ref)`
 
 This internal command can alter a yaml-file. It will merge the data from a yaml section into the yaml file. Note that the order in the resulting yaml file might be different, also comments might get removed. Here's an example:
 
@@ -129,7 +132,8 @@ dataToInject:
 scaffold:
   alter_yaml_file(config.yaml, dataToInject)
 ```
-## `assert_zero(variable, error_message)`
+
+### `assert_zero(variable, error_message)`
 
 This internal command will throw an exception if the specified argument is not zero.
 
@@ -140,7 +144,7 @@ scaffold:
   - assert_zero(%foo%, foo is not zero)
 ```
 
-## `assert_non_zero(variable, error_message)`
+### `assert_non_zero(variable, error_message)`
 
 This internal command will throw an exception if the specified argument is zero.
 
@@ -151,7 +155,7 @@ scaffold:
   - assert_non_zero(%foo%, foo is zero)
 ```
 
-## `assert_contains(needle, haystack)`
+### `assert_contains(needle, haystack)`
 
 This internal command will throw an exception if `needle` is not found in `haystack`
 
@@ -160,24 +164,8 @@ scaffold:
   - assert_contains(foo, bar, Could not find foo)
 -
 ```
-## `assert_file(file_path, error_message)`
 
-This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.
-
-```yaml
-scaffold:
-  - assert_file(<file_path>, <error_message>)
-```
-## `assert_file(file_path, error_message)`
-
-This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.
-
-```yaml
-scaffold:
-  - assert_file(<file_path>, <error_message>)
-```
-
-## `assert_file(file_path, error_message)`
+### `assert_file(file_path, error_message)`
 
 This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.
 
@@ -186,7 +174,25 @@ scaffold:
   - assert_file(<file_path>, <error_message>)
 ```
 
-## `set_directory(directory)`
+### `assert_file(file_path, error_message)`
+
+This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.
+
+```yaml
+scaffold:
+  - assert_file(<file_path>, <error_message>)
+```
+
+### `assert_file(file_path, error_message)`
+
+This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.
+
+```yaml
+scaffold:
+  - assert_file(<file_path>, <error_message>)
+```
+
+### `set_directory(directory)`
 
 This internal command will change the current directory for the following commands to `directory`.
 
@@ -196,7 +202,7 @@ scaffold:
   - echo $PWD # will output <directory>
 ```
 
-## `confirm(message)`
+### `confirm(message)`
 
 This internal command will ask the user for confirmation before continuing showing `message`.
 
@@ -205,7 +211,7 @@ scaffold:
   - confirm(<message>)
 ```
 
-## `scaffold(url, rootFolder)`
+### `scaffold(url, rootFolder)`
 
 This internal command will run another scaffolder from the given `url` or filepath into the given `rootFolder`. Additional arguments in the form of `key=value` will be passed to the scaffolder.
 
@@ -221,7 +227,7 @@ scaffold:
     - scaffold("http://foo.bar/d8-module.yml", "%rootFolder%/web/modules/custom/d8-module", "key1=value1", "key2=value2")
 ```
 
-## `transform`
+### `transform`
 
 This internal command will transform a list of yml files to sth different with the help of plugins. THe plugins need to be declared in the `plugins`-section.
 
@@ -233,3 +239,13 @@ scaffold:
 * `<nameOfPlugin>` is the plugin-name to use for the trnasforming. Depends on the plugin implementation
 * `<yamlKeyToGetListOfFilesFrom>` Similar to `copy_assets`, its a reference in the yaml-file which contains a list of files/ directories where phabalicious will try to load yaml files from.
 * `<targetPath>` the target directory where the resulting files should be saved to.
+
+
+## Twig extensions
+
+`copy_assets` will use twig to replace any configuration values inside the files with their values. You can use all functions and filters, available with twig.
+
+Additionally these filters are available:
+
+* `md5` e.g. `{{ "hello world" | md5 }}` will result in `f0ef7081e1539ac00ef5b761b4fb01b3`
+* `slug` e.g. `{{ "a string with ümlauts" }}` will result in `a-string-with-umlauts`
