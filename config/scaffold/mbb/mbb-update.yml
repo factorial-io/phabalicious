@@ -26,7 +26,7 @@ successMessage:
 
     Then try visiting http://multibasebox.test:1936 (haproxy/yxorpah), this should give you the admin page of haproxy
 
-    Try visiting http://muitbasebox.test this should give you an 503 error message, which is fine!
+    Try visiting http://multibasebox.test this should list all exposed docker containers in a list!
 
     For troubleshooting visit https://github.com/factorial-io/multibasebox
 
