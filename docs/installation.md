@@ -2,10 +2,10 @@
 ## Dependencies
 Phabalicious needs at least PHP 7.2 with the json- and openssl-extensions. Most of the methods dependes on installed cli commands, you will get an error-message if they can't be found.
 
-## Installation using published Phar
+## Installation using published phar
 
 * Download the latest version from [Github](https://github.com/factorial-io/phabalicious/releases)
-* copy the phar to a suitable folder, e.g. `cp phabalicious.phab /usr/local/bin/phab` 
+* copy the phar to a suitable folder, e.g. `cp phabalicious.phar /usr/local/bin/phab` 
 * Make it executable, e.g. `chmod u+x /usr/local/bin/phab`
 
 ## Installation from source
@@ -22,10 +22,35 @@ Phabalicious needs at least PHP 7.2 with the json- and openssl-extensions. Most 
 
 Note, phabalicious is using Symfony 4 so you might get some unresolvable conflicts (Merge Requests welcome!)
 
-## and then ...
+## Shell autocompletion
+
+Add this to your shell-startup script:
+
+### for fish-shells
+    
+```
+phab _completion --generate-hook --shell-type fish | source
+```
+
+(Add this to your `~/.config/fish/config.fish`)
+    
+###  for zsh/bash-shells
+    
+```
+source <(phab _completion --generate-hook)
+```
+
+## Updating phab
+
+-   Run `phab self-update`, this will download the latest release from GitHub.
+
+If you want to get the latest dev-version, add `--allow-unstable=1`
+
+## And then ...
 
 1. Run `phab list`, this should give you a list of all available commands.
-2. Create a configuration file called `fabfile.yaml`
+2. Run `phab help <command>` to get some help
+3. Create a [configuration](./configuration.md) file called `fabfile.yaml`
 
 ## A simple configuration-example
 Here's a simple example demonstrating a `fabfile.yaml`:
