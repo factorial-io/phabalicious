@@ -45,6 +45,7 @@ List here all needed methods for that type of project. Available methods are:
   * `platform` for deploying to platform.sh
   * `artifacts--ftp` to deploy to a ftp-server
   * `artifacts--git` to deploy an artifact to a git repository
+  * `k8s` to interact with an application hosted in a kubernetes cluster
 
 **Example for drupal 7**
 
@@ -261,6 +262,9 @@ This will print all host configuration for the host `staging`.
 ### Configuration of the mattermost-method
 
 * `notifyOn`: a list of all tasks where to send a message to a Mattermost channel. Have a look at the global Mattermost-configuration-example below.
+
+### Configuration of the k8s-method
+The kubernetes integration is documented [here](kubernetes.md).
 
 ## dockerHosts
 

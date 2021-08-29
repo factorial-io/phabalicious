@@ -10,3 +10,4 @@ node_modules
 docs/.vuepress/dist
 tests/workspace
 tests/test-alter/
+.obsidian

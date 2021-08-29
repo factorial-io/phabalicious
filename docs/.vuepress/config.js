@@ -14,14 +14,15 @@ module.exports = {
     docsDir: "docs",
     sidebar: [
       {
-        title: 'Documentation',   // required
-        path: '/guide.html',      // optional, link of the title, which should be an absolute path and must exist
-        collapsable: false, // optional, defaults to true
+        title: 'Documentation',
+        path: '/guide.html',
+        sidebarDepth: 2,
+        collapsable: false,
         children: [
           "/guide.html",
           "/installation.html",
           "/usage.html",
-          "/available-tasks.html",
+          "/commands.html",
           "/configuration.html",
           "/inheritance.html",
           "/docker-integration.html",
@@ -36,18 +37,19 @@ module.exports = {
           "/local-overrides.html",
           "/passwords.html",
           "/contribute.html",
-          "/Changelog.html"
         ]
       },
       {
-        title: 'Blog',   // required
-        path: '/blog/',      // optional, link of the title, which should be an absolute path and must exist
-        collapsable: false, // optional, defaults to true
+        title: "Blog",
+        path: "/blog/",
+        collapsable: false,
+        sidebarDepth: 3,
         children: [
-            "/blog/",
-            "/blog/secrets-in-phab.html"
+            "/blog/architecture.html",
+            "/blog/how-to-use-secrets.html"
         ],
-      }
+      },
+      "/Changelog.html"
     ]
   }
 };
