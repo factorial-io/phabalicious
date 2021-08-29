@@ -13,25 +13,41 @@ module.exports = {
     editLinkText: "Help us improve this page!",
     docsDir: "docs",
     sidebar: [
-      "/guide.html",
-      "/installation.html",
-      "/usage.html",
-      "/available-tasks.html",
-      "/configuration.html",
-      "/inheritance.html",
-      "/docker-integration.html",
-      "/workspace.html",
-      "/scripts.html",
-      "/scaffolder.html",
-      "/app-scaffold.html",
-      "/app-create-destroy.html",
-      "/deploying-artifacts.html",
-      "/kubernetes.html",
-      "/offsite-backups.html",
-      "/local-overrides.html",
-      "/passwords.html",
-      "/contribute.html",
-      "/Changelog.html"
+      {
+        title: 'Documentation',   // required
+        path: '/guide.html',      // optional, link of the title, which should be an absolute path and must exist
+        collapsable: false, // optional, defaults to true
+        children: [
+          "/guide.html",
+          "/installation.html",
+          "/usage.html",
+          "/available-tasks.html",
+          "/configuration.html",
+          "/inheritance.html",
+          "/docker-integration.html",
+          "/workspace.html",
+          "/scripts.html",
+          "/scaffolder.html",
+          "/app-scaffold.html",
+          "/app-create-destroy.html",
+          "/deploying-artifacts.html",
+          "/kubernetes.html",
+          "/offsite-backups.html",
+          "/local-overrides.html",
+          "/passwords.html",
+          "/contribute.html",
+          "/Changelog.html"
+        ]
+      },
+      {
+        title: 'Blog',   // required
+        path: '/blog/',      // optional, link of the title, which should be an absolute path and must exist
+        collapsable: false, // optional, defaults to true
+        children: [
+            "/blog/",
+            "/blog/secrets-in-phab.html"
+        ],
+      }
     ]
   }
 };
