@@ -8,7 +8,7 @@ Phabalicious "knows" **how to interact with certain types of applications** like
 
 Phabalicious knows also **how to handle the evironment** which is hosting the application, be it your local computer, a dockerized environment, a remote server or a kubernetes cluster. That helps the developer to control the application.
 
-Phabalicious' **open architecture and its flexibility makes it easy to extend the core functionality** to support hard-to-integrate environments e.g. ssh jump hosts, docker on remote instances etc. **The scaffolding system helps generating host-specific configuration files** e.g. for docker-compose or kubernetes or by scaffolding whole new projects. 
+Phabalicious' **open architecture and its flexibility makes it easy to extend the core functionality** to support hard-to-integrate environments e.g. ssh jump hosts, docker on remote instances, etc. **The scaffolding system helps generating host-specific configuration files** e.g. for docker-compose or kubernetes or by scaffolding whole new projects. 
 
 Phabalicious can be used with a multitude of applications, hosting environments and can be tightly integrated with e.g. Continuous Deployment Tooling. 
 
