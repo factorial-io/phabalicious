@@ -44,7 +44,7 @@ hosts:
 ![Example Step 1](./phab-secrets-01.svg)
 
 ### Step 2: Declare the secret
-Now lets declare the secret, so phabalicious recognizes it:
+Now let's declare the secret, so phabalicious recognizes it:
 
 ```yaml
 name: Secrets in phabalicious
