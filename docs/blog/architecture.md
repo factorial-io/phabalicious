@@ -64,7 +64,7 @@ This should give you an overall idea how things are connected in phabalicious. A
 
 The fabfile is the central place for all project related configuration. It [can inherit configuration](../inheritance.md) from local and remote files to include centralized configuration very easily which helps a team to prevent copy-pasta which leads to outdated configurations on the long run. Local overrides allows the developer to adapt the global project configuration to his particular needs.
 
-The fabfile contains also all [custom scripts](../scripts.md) which can use pattern-replacements to inject configuration-values into the running script to enhance reusability of code. Scripts can also be invoked before, on, or after the execution of specific _tasks_.
+The fabfile contains also all [custom scripts](../scripts.md) which can use pattern-replacements to inject configuration values into the running script to enhance reusability of code. Scripts can also be invoked before, on, or after the execution of specific _tasks_.
 
 ### The scaffolder
 
