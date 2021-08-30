@@ -565,4 +565,4 @@ This will push all variables listed in `path/to/yaml.file` and set them on the r
 
 ## k8s
 
-Runs a command against a kubernetes cluster. More info [here](/kubernetes.html)
+Runs a command against a Kubernetes cluster. More info [here](/kubernetes.html)

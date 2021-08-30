@@ -4,21 +4,21 @@
 
 Phabalicious stores **all project related configuration for tooling and setup in a single place** per project, the so-called `fabfile.yaml` which lives in the root-folder of a project. It documents all available installations of a given application (e.g. local, dev-, stage- and prod-instances)
 
-Phabalicious "knows" **how to interact with certain types of applications** like drupal, laravel etc. and offers the developer a handful of useful commands to interact with these applications like deploying a new version of the application to a remote instance, getting a database from a dev-environment or getting a shell on a remote instance **regardless where the application is hosted**. 
+Phabalicious "knows" **how to interact with certain types of applications** like drupal, laravel etc. and offers the developer a handful of useful commands to interact with these applications like deploying a new version of the application to a remote instance, getting a database from a dev-environment or getting a shell on a remote instance **regardless where the application is hosted**.
 
-Phabalicious knows also **how to handle the evironment** which is hosting the application, be it your local computer, a dockerized environment, a remote server or a kubernetes cluster. That helps the developer to control the application.
+Phabalicious knows also **how to handle the evironment** which is hosting the application, be it your local computer, a dockerized environment, a remote server or a Kubernetes cluster. That helps the developer to control the application.
 
-Phabalicious' **open architecture and its flexibility makes it easy to extend the core functionality** to support hard-to-integrate environments e.g. ssh jump hosts, docker on remote instances, etc. **The scaffolding system helps generating host-specific configuration files** e.g. for docker-compose or kubernetes or by scaffolding whole new projects. 
+Phabalicious' **open architecture and its flexibility makes it easy to extend the core functionality** to support hard-to-integrate environments e.g. ssh jump hosts, docker on remote instances, etc. **The scaffolding system helps generating host-specific configuration files** e.g. for docker-compose or Kubernetes or by scaffolding whole new projects.
 
-Phabalicious can be used with a multitude of applications, hosting environments and can be tightly integrated with e.g. Continuous Deployment Tooling. 
+Phabalicious can be used with a multitude of applications, hosting environments and can be tightly integrated with e.g. Continuous Deployment Tooling.
 
-Inheritance and remote configuration files allows teams to store configuration centrally and override and extend it on a per project- and host-level which helps in minimizing outdated configuration.
+Inheritance and remote configuration files allow teams to store configuration centrally and override and extend it on a per project- and host-level which helps in minimizing outdated configuration.
 
 ## Architecture
 
 ### Naming things
 
-Phabalicous is using special naming to differentiate things better. Here's short explanation:
+Phabalicous uses a custom naming convention to differentiate things better. Here's a short explanation:
 
 * A _host_ is an entry in the fabfile under the `hosts`-section which encapsulates all configuration under a unique name.
 * A _command_ is the command you execute by running phab, e.g. `phab list:hosts`. Here the _command_ is `list:hosts`. A _command_ is usually executed against a given _host_-configuration

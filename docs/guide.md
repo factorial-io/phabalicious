@@ -1,6 +1,6 @@
 # How does phabalicious work in two sentences
 
-Phabalicious is using configuration stored in a special file in the root of your project (the `fabfile.yaml`) to run tasks in a shell. This shell can be provided by a docker-container, a ssh-connection, a kubernetes-pod or a local shell. This means, you can store all your devops-scripts in the fabfile and apply it to a list of configurations. Phabalicious tries to abstract away the inner workings of a configuration and give the user a handful useful commands to run common tasks, like:
+Phabalicious is using configuration stored in a special file in the root of your project (the `fabfile.yaml`) to run tasks in a shell. This shell can be provided by a docker-container, a ssh-connection, a Kubernetes-pod or a local shell. This means, you can store all your devops-scripts in the fabfile and apply it to a list of configurations. Phabalicious tries to abstract away the inner workings of a configuration and give the user a handful useful commands to run common tasks, like:
 
  * deploying new code to a remote installation
  * reset a remote installation to its defaults.
@@ -12,10 +12,10 @@ Phabalicious is using configuration stored in a special file in the root of your
  * trigger webhooks
  * send notifications via mattermost
  * optionally work with our docker-based local development-stack [multibasebox](https://github.com/factorial-io/multibasebox)
- * scaffold and deploy definition files to a kubernetes cluster (poor-mans-helm)
+ * scaffold and deploy definition files to a Kubernetes cluster (poor-mans-helm)
  * build the app into an artifact and sync that with ftp or push it to a repository
 
-It integrates nicely with existing solutions like for continuous integration or docker-based setups or diverse hosting environments like Acquia SiteFactory, Lagoon, platform.sh, kubernetes or other complicated custom IT infrastructures.
+It integrates nicely with existing solutions like for continuous integration or docker-based setups or diverse hosting environments like Acquia SiteFactory, Lagoon, platform.sh, Kubernetes or other complicated custom IT infrastructures.
 
 
 ## History
