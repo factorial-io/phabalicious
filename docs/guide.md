@@ -15,7 +15,7 @@ Phabalicious is using configuration stored in a special file in the root of your
  * scaffold and deploy definition files to a kubernetes cluster (poor-mans-helm)
  * build the app into an artifact and sync that with ftp or push it to a repository
 
-It integrates nicely with existing solutions like for continous integration or docker-based setups or diverse hosting environments like Aquias SiteFactory, Lagoon, platform.sh, kubernetes or other complicated custom IT infrastructures.
+It integrates nicely with existing solutions like for continuous integration or docker-based setups or diverse hosting environments like Acquia SiteFactory, Lagoon, platform.sh, kubernetes or other complicated custom IT infrastructures.
 
 
 ## History
