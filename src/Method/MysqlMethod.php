@@ -117,9 +117,10 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
 
         $cmd = [
             "#!mysqldump",
+            '--column-statistics=0',
             "-u",
             $data['user'],
-            sprintf("-p%s", $data['pass']),
+            sprintf("-p'%s'", $data['pass']),
             "-h",
             $data["host"],
             "--add-drop-table",
@@ -131,7 +132,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             "#!mysql",
             "-u",
             $data['user'],
-            sprintf("-p%s", $data['pass']),
+            sprintf("-p'%s'", $data['pass']),
             "-h",
             $data["host"],
             $data["name"]
@@ -158,10 +159,11 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
 
         $cmd = [
             "#!mysqldump",
+            '--column-statistics=0',
             $data["name"],
             "-u",
             $data['user'],
-            sprintf("-p%s", $data['pass']),
+            sprintf("-p'%s'", $data['pass']),
             "-h",
             $data["host"],
             "--port",
@@ -227,7 +229,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             $data["name"],
             "-u",
             $data['user'],
-            sprintf("-p%s", $data['pass']),
+            sprintf("-p'%s'", $data['pass']),
             "-h",
             $data["host"],
             "--port",
@@ -256,7 +258,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         ShellProviderInterface $shell
     ): CommandResult {
         return $shell->run(sprintf(
-            '#!mysqladmin --no-defaults -u%s --password="%s" -h %s ping',
+            "#!mysqladmin --no-defaults -u%s --password='%s' -h %s ping",
             $host_config['database']['user'],
             $host_config['database']['pass'],
             $host_config['database']['host']
