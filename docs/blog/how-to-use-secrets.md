@@ -38,8 +38,8 @@ hosts:
     fooSecret: bar
 ```
 
-* Save the file as `fabfile.yaml` 
-* Run the command `phab -clocal script test`
+* Save the file as `fabfile.yaml`
+* Run the command `phab -clocal script demo`
 
 ![Example Step 1](./phab-secrets-01.svg)
 
@@ -107,6 +107,6 @@ Let's run the script again:
 
 ### There's even more
 
-Phabalicious supports also [1Password secrets automation](https://support.1password.com/secrets-automation/) (getting secrets via a REST-API). 
+Phabalicious supports also [1Password secrets automation](https://support.1password.com/secrets-automation/) (getting secrets via a REST-API).
 
 For more in-depth information please continue reading in the [official documentation](../passwords.md)
