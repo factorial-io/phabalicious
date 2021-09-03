@@ -1,6 +1,6 @@
 # Kubernetes integration
 
-Phabalicious can help you integrating your app with a kubernetes stack and running your common tasks against an installation hosted on a kubernetes cluster. You can leverage phabalicious scaffolder to create yml definitions for your app and apply them to your cluster automatically. Phab can also help you getting a shell to one of your pods.
+Phabalicious can help you integrating your app with a Kubernetes stack and running your common tasks against an installation hosted on a Kubernetes cluster. You can leverage phabalicious scaffolder to create yml definitions for your app and apply them to your cluster automatically. Phab can also help you getting a shell to one of your pods.
 
 **Note:**
 The current version of phabalicious does not support any kind of authorization or authentication. It expects that the local environment is set up correctly for executing `kubectl`!
@@ -37,7 +37,7 @@ hosts:
 ```
 
 ## The defaults
-The kubernetes intergration provides sensible defaults for most use-cases. These defaults can be overridden via the actual configuration.
+The Kubernetes intergration provides sensible defaults for most use-cases. These defaults can be overridden via the actual configuration.
 
 ```yaml
 hosts:
@@ -86,7 +86,7 @@ hosts:
 
 ## Scaffolding yml definitions
 
-Phab can scaffold your yml definition files before running a deployment or on request. You can use all the possibilities from the scaffolding engine and store your parameters inside the fabfile.yaml. This allows you to reuse existing configuration and adapt your kubernetes definition files to environment specific settings.
+Phab can scaffold your yml definition files before running a deployment or on request. You can use all the possibilities from the scaffolding engine and store your parameters inside the fabfile.yaml. This allows you to reuse existing configuration and adapt your Kubernetes definition files to environment specific settings.
 
 For this to work your `kube`-section needs to contain the following parts:
 
@@ -109,7 +109,7 @@ Phab adds the following parameters automatically:
 
 | Property | Description | Example |
 | -------- | ----------- | ------- |
-| `scaffoldTimeStamp` | a slugified timestamp when the scaffolding was done. Useful to indicate a change in the definition so kubernetes will recreate a pod for example.| `20200721-083614Z` |
+| `scaffoldTimeStamp` | a slugified timestamp when the scaffolding was done. Useful to indicate a change in the definition so Kubernetes will recreate a pod for example.| `20200721-083614Z` |
 | `host.*` | The current host configuration | `host.rootFolder`, `host.kube.namespace`|
 | `namespace` | The namespace taken from the kube config, defaults to `default` | `my-namespace` |
 
@@ -209,7 +209,7 @@ This will make sure, that the context is not available after phab finished its w
 
 ## Getting a shell to one of the pods
 
-Phab contains a shell-provider for kubernetes, but it needs some guidance so it knows which pod to connect to. Phab is using a set of selectors to acquire the name of the actual running pod. As every project is different it makes sense to store this information in the `kube`-section of your host configuration:
+Phab contains a shell-provider for Kubernetes, but it needs some guidance so it knows which pod to connect to. Phab is using a set of selectors to acquire the name of the actual running pod. As every project is different it makes sense to store this information in the `kube`-section of your host configuration:
 
 ```yaml
 hosts:
