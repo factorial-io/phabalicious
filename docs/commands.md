@@ -1,169 +1,4 @@
-# Available tasks
-
-## -v/ -vv/ -vvv/ -vvvv
-
-Setting this option will increase the verbosity of phabalicious. Without this settings you'll get only warnings and errors and some informational stuff. If you encounter a problem try increasing the verbosity-level.
-
-## --config
-
-``` bash
-phab --config=<your-config>
-```
-
-Most of the phabalicious tasks need the option `config`. Setting the option will lookup `<your-config>` in the `hosts`-section of your `fabfile.yaml` and the data will be used to run your task with the correct environment.
-
-## --offline
-
-``` bash
-phab --offline=1 --config=<your-config> <task>
-```
-
-This task will disable remote configuration files. As phabalicious keeps copies of remote configuration-files in `~/.phabalicious` it will try to load the configuration-file from there.
-
-## --fabfile
-``` bash
-Phab --fabfile=<path-to-your-fabfile ...
-```
-
-This will try to load the `fabfile.yaml` from a different location: `path-to-your-fabfile`
-
-## --blueprint
-
-``` bash
-phab --config=<your-config> --blueprint=<branch-name> <task>
-```
-
-`blueprint` will try to load a blueprint-template from the fabfile.yaml and apply the input given as `<branch-name>` to the template. This is helpful if you want to create/ use a new configuration which has some dynamic parts like the name of the database, the name of the docker-container, etc.
-
-The task will look first in the host-config for the property `blueprint`, afterwards in the dockerHost-configuration `<config-name>` and eventually in the global namespace. If you want to print the generated configuration as yaml, then use the `output`-command. The computed configuration is used as the current configuration, that means, you can run other tasks against the generated configuration.
-
-**Available replacement-patterns** and what they do.
-
-_Input is `feature/XY-123-my_Branch-name`, the project-name is `Example project`_
-
-|  Replacement Pattern                    | value                         |
-|-----------------------------------------|-------------------------------|
-| **%slug.with-hyphens.without-feature%** | xy-123-my-branch-name         |
-| **%slug.with-hyphens%**                 | feature-xy-123-my-branch-name |
-| **%project-slug.with-hypens%**          | example-project               |
-| **%slug%**                              | featurexy123mybranchname      |
-| **%project-slug%**                      | exampleproject                |
-| **%project-identifier%**                | Example project               |
-| **%identifier%**                        | feature/XY-123-my_Branch-name |
-| **%slug.without-feature%**              | xy123mybranchname             |
-
-
-Here's an example blueprint:
-
-```yaml
-blueprint:
-  inheritsFrom: http://some.host/data.yaml
-  configName: '%project-slug%-%slug.with-hyphens.without-feature%.some.host.tld'
-  branch: '%identifier%'
-  database:
-    name: '%slug.without-feature%_mysql'
-  docker:
-    projectFolder: '%project-slug%--%slug.with-hyphens.without-feature%'
-    vhost: '%project-slug%-%slug.without-feature%.some.host.tld'
-    name: '%project-slug%%slug.without-feature%_web_1'
-```
-
-And the output of `phab --blueprint=feature/XY-123-my_Branch-name --config=<config-name> output` is
-
-```yaml
-  phbackend-xy-123-my-branch-name.some.host.tld:
-    branch: feature/XY-123-my_Branch-name
-    configName: phbackend-xy-123-my-branch-name.some.host.tld
-    database:
-      name: xy123mybranchname_mysql
-    docker:
-      name: phbackendxy123mybranchname_web_1
-      projectFolder: phbackend--xy-123-my-branch-name
-      vhost: phbackend-xy123mybranchname.some.host.tld
-    inheritsFrom: http://some.host/data.yaml
-```
-
-**Note**
-
-You can create new configurations via the global `blueprints`-settings:
-
-```
-blueprints:
-  - configName: mbb
-    variants:
-      - de
-      - en
-      - it
-      - fr
-```
-
-will create 4 new configurations using the blueprint-config `mbb`.
-
-**Note**
-
-You can even create a new host-config from a blueprint and override some of its setting:
-
-```
-hosts:
-  myHost:
-    inheritFromBluePrint:
-      config: my-blueprint-config
-      variant: my-variable
-    otherSettings...
-```
-
-## --variants
-
-When using `blueprint`, you can run one command on multiple variants Just pass the `--variants`-flag with the wanted variants.
-
-```
-phab --config=my-blueprinted-config --variants=all  about
-phab --config=my-blueprinted-config --variants=de,it,fr  about
-
-```
-
-This will prompt you with a list of commands which phab will run and ask for confirmation.
-
-## -s / --set
-
-You can override existing configuration using the dot notation and pass arbitrary values to phabalicious. Currently this is supported for host configs and dockerhost configs.
-
-```yaml
-hosts:
-  example:
-    host: example.test
-    port: 2222
-    ...
-```
-
-To set a value from command line just pass it via the `--set`-option:
-
-```bash
-phab -cexample about --set host.host=overriden.test --set host.port=22
-```
-
-## -a / --arguments
-
-Pass arbitrary arguments to scripts or other parts. Passed arguments can be consumed by scripts using `%arguments.<name>%` syntax. An example:
-
-```
-scripts:
-  test-arguments:
-    - echo %arguments.message%
-```
-
-```bash
-phab -c<yourconfig> script test-arguments --arguments message="hello world"
-```
-
-## --offline
-
-Prevent loading of additional data from remote. Helpful when you do not have an internet connection.
-
-## --skip-cache
-
-Phab caches remote files in `~/.phabalicious` and will use the cached version if it not older than an hour. If you think you get outdated information, pass this flag. It makes sure, that all remote data is read from remote.
-
+# Available commands
 
 ## list
 
@@ -171,14 +6,14 @@ Phab caches remote files in `~/.phabalicious` and will use the cached version if
 phab list
 ```
 
-This command will list all available tasks. You can get specific help for a task with the next command:
+This command will list all available commands. You can get specific help for a command with the next command:
 
 ## help
 ``` bash
-phab help:<task>
+phab help:<command>
 ```
 
-Will display all available arguments and options for that given `<task>` and some explanatory text.
+Will display all available arguments and options for that given `<command>` and some explanatory text.
 
 ## list:hosts
 
@@ -187,7 +22,7 @@ phab list:hosts
 phab list:hosts -v
 ```
 
-This task will list all your hosts defined in your `hosts`-section of your `fabfile.yaml`. If you increase verbosity via `-v` phab will output the descriptions and list of public urls for every found configuration.
+This command will list all your hosts defined in your `hosts`-section of your `fabfile.yaml`. If you increase verbosity via `-v` phab will output the descriptions and list of public urls for every found configuration.
 
 ## list:blueprints
 
@@ -237,7 +72,7 @@ This command will display the installed version of the code on the installation 
 
 **Available methods**:
 
-* `git`. The task will get the installed version via `git describe`, so if you tag your source properly (.e.g. by using  git flow), you'll get a nice version-number.
+* `git`. The command will get the installed version via `git describe`, so if you tag your source properly (.e.g. by using  git flow), you'll get a nice version-number.
 
 ## deploy
 
@@ -246,9 +81,9 @@ phab --config=<your-config> deploy
 phab --config=<your-config> deploy <branch-to-deploy>
 ```
 
-This task will deploy the latest code to the given installation. If the installation-type is not `dev` or `test` the `backupDB`-task is run before the deployment starts. If `<branch-to-deploy>` is stated the specific branch gets deployed.
+This command will deploy the latest code to the given installation. If the installation-type is not `dev` or `test` the `backupDB`-command is run before the deployment starts. If `<branch-to-deploy>` is stated the specific branch gets deployed.
 
-After a successfull deployment the `reset`-task will be run.
+After a successfull deployment the `reset`-command will be run.
 
 **Available methods:**
 
@@ -268,7 +103,7 @@ After a successfull deployment the `reset`-task will be run.
 phab config=<your-config> reset
 ```
 
-This task will reset your installation
+This command will reset your installation
 
 **Available methods:**
 
@@ -293,7 +128,7 @@ This task will reset your installation
 phab config=<your-config> install
 ```
 
-This task will install a new Drupal installation with the minimal-distribution. You can install different distributions, see the examples.
+This command will install a new Drupal installation with the minimal-distribution. You can install different distributions, see the examples.
 
 **Available methods:**
 
@@ -312,7 +147,7 @@ installOptions:
 **Examples:**
 
 * `phab --config=mbb install` will install a new Drupal installation
-* `phab --config=mbb install --skip-reset=1` will install a new Drupal installation and will not run the reset-task afterwards.
+* `phab --config=mbb install --skip-reset=1` will install a new Drupal installation and will not run the reset-command afterwards.
 
 
 
@@ -322,7 +157,7 @@ installOptions:
 phab --config=<your-config> install:from <source-config> <what>
 ```
 
-This task will install a new installation (see the `install`-task) and afterwards will do a `copyFrom`. The `reset`-task after the `install`-task will be skipped and executed after the `copyFrom`-task. You can limit, what should be copied from: `db` or `files`. If `<what>` is omitted, then everything is copied from.
+This command will install a new installation (see the `install`-command) and afterwards will do a `copyFrom`. The `reset`-command after the `install`-command will be skipped and executed after the `copyFrom`-command. You can limit, what should be copied from: `db` or `files`. If `<what>` is omitted, then everything is copied from.
 
 **See also:**
 
@@ -404,9 +239,9 @@ This command will copy a remote backup-set to your local computer into the curre
 phab --config=<dest-config> copy-from <source-config> <what>
 ```
 
-This task will copy all files via rsync from `source-config` to `dest-config` and will dump the database from `source-config` and restore it to `dest-config` when `<what>` is omitted.
+This command will copy all files via rsync from `source-config` to `dest-config` and will dump the database from `source-config` and restore it to `dest-config` when `<what>` is omitted.
 
-After that the `reset`-task gets executed. This is the ideal task to copy a complete installation from one host to another.
+After that the `reset`-command gets executed. This is the ideal command to copy a complete installation from one host to another.
 
 You can limit what to copy by adding `db` or `files`  as arguments.
 
@@ -429,7 +264,7 @@ You can limit what to copy by adding `db` or `files`  as arguments.
 phab --config=<config> drush "<drush-command>"
 ```
 
-This task will execute the `drush-command` on the remote host specified in `<config>`. Please note, that you'll have to quote the drush-command when it contains spaces.
+This command will execute the `drush-command` on the remote host specified in `<config>`. Please note, that you'll have to quote the drush-command when it contains spaces.
 
 **Available methods**
 
@@ -443,7 +278,7 @@ This task will execute the `drush-command` on the remote host specified in `<con
 
 ## drupal
 
-This task will execute a drupal-console task on the remote host. Please note, that you'll have to quote the command when it contains spaces.
+This command will execute a drupal-console command on the remote host. Please note, that you'll have to quote the command when it contains spaces.
 
 **Available methods**
 
@@ -490,7 +325,7 @@ Copy a local file to the configured root-folder of a remote configuration, if `r
 phab --config=<config> get:files-dump
 ```
 
-This task will tar all files in `filesFolder` and `privateFilesFolder` and download it to the local computer.
+This command will tar all files in `filesFolder` and `privateFilesFolder` and download it to the local computer.
 
 **Available methods**
 
@@ -544,14 +379,14 @@ The `script`-command is rather powerful, have a read about it in the extra secti
 ## docker
 
 ``` bash
-phab --config=<config> docker <docker-task>
+phab --config=<config> docker <docker-subcommand>
 ```
 
-The docker command is suitable for orchestrating and administering remote instances of docker-containers. The basic setup is that your host-configuration has a `docker`-section, which contains a `configuration`-key. The `dockerHosts`-section of your fabfile.yaml has a list of tasks which are executed on the "parent-host" of the configuration. Please have a look at the docker-section for more information.
+The docker command is suitable for orchestrating and administering remote instances of docker-containers. The basic setup is that your host-configuration has a `docker`-section, which contains a `configuration`-key. The `dockerHosts`-section of your fabfile.yaml has a list of commands which are executed on the "parent-host" of the configuration. Please have a look at the docker-section for more information.
 
 Most of the time the docker-container do not have a public or known ip-address. phabalicious tries to find out the ip-address of a given instance and use that for communicating with its services.
 
-There are three implicit tasks available:
+There are three implicit subcommands available:
 
 ### copySSHKeys
 
@@ -565,11 +400,11 @@ This will copy the ssh-keys into the docker-instance. You'll need to provide the
 * `dockerKnownHostsFile`, the path to the file for `known_hosts`
 * `dockerNetRcFile`, the path to a `.netrc`-file to copy into the container. This is helpful if you are using https-repositories and want to authenticate against them.
 
-As docker-container do not have any state, this task is used to copy any necessary ssh-configuration into the docker-container, so communication per ssh does not need any passwords.
+As docker-container do not have any state, this command is used to copy any necessary ssh-configuration into the docker-container, so communication per ssh does not need any passwords.
 
 ### waitForServices
 
-This task will try to run `supervisorctl status` in the container and  waits until all services are running. This is useful in scripts to wait for any services that need some time to start up. Obviously this task depends on `supervisorctl`.
+This command will try to run `supervisorctl status` in the container and  waits until all services are running. This is useful in scripts to wait for any services that need some time to start up. Obviously this command depends on `supervisorctl`.
 
 
 ## start-remote-access
@@ -582,7 +417,7 @@ phab --config=<config> start-remote-access \
   --public-ip=<public-ip>
 ```
 
-This task will run a command to forward a local port to a remote port. It starts a new ssh-session which will do the forwarding. When finished, type `exit`.
+This command will run a command to forward a local port to a remote port. It starts a new ssh-session which will do the forwarding. When finished, type `exit`.
 
 **Examples**
 
@@ -683,7 +518,7 @@ This will download the latest version of phab and replace the current installed 
 phab jira
 ```
 
-This command will display your open tasks for that given project. For this to work, the command needs some configuration-options.
+This command will display your open command for that given project. For this to work, the command needs some configuration-options.
 
 ## webhook
 
@@ -702,7 +537,7 @@ phab npm run build:css --config hostA
 phab npm run lint --config hostB
 ```
 
-This will run an npm task on the given configuration. Make sure, that your host config has `npm` as a need a `npmRootFolder` points to the folder containing package.json.
+This will run an npm command on the given configuration. Make sure, that your host config has `npm` as a need a `npmRootFolder` points to the folder containing package.json.
 
 ## yarn
 

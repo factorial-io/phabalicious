@@ -50,6 +50,7 @@ List here all needed methods for that type of project. Available methods are:
   * `mysql` to add support for a mysql database
   * `sqlite` to add support for a sqlite database
   * `laravel` for laravel-based applications
+  * `k8s` to interact with an application hosted in a Kubernetes cluster
 
 **Example for drupal 7**
 
@@ -304,6 +305,9 @@ This will print all host configuration for the host `staging`.
 ### Configuration of the mattermost-method
 
 * `notifyOn`: a list of all tasks where to send a message to a Mattermost channel. Have a look at the global Mattermost-configuration-example below.
+
+### Configuration of the k8s-method
+The Kubernetes integration is documented [here](kubernetes.md).
 
 ## dockerHosts
 

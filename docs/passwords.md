@@ -24,6 +24,7 @@ secrets:
     question: Please provide the registry password for user `bot@mu-registry.io`
   mysql-password:
     question: Please provide the Mysql password for the cluster
+    env: DB_PASSWORD
     onePasswordId: 1234418718212s121
     onePasswordVaultId: 768131213124
 ````
@@ -46,7 +47,7 @@ hosts:
 
 Phab will resolve the references on runtime and try to get the secret from
 
-  * an uppercased environment variable e.g. `REGISTRY_PASSWORD`, `MYSQL_PASSWORD`
+  * an uppercased environment variable e.g. `REGISTRY_PASSWORD` (You can set the name of the environment variable with `env`, see above example, `DB_PASSWORD`)
   * from the command line via the option `--secret`, e.g. `--secret registry-password=123 --secret mysql-password=iamsecret`
   * from the local password file (see below)
   * from the 1password cli if it is installed, and the secret declaration has a `onePasswordId` set. You need to be signed into 1password via the cli beforehand. (See the [documentation](https://support.1password.com/command-line-getting-started/))

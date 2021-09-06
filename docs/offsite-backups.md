@@ -1,6 +1,6 @@
 # Offsite backups
 
-Phab supports onsite- and offsite-backups. Onsite means, the backups are stored on the same host as the application is run. Depending on the hosting setup this might not be enough as the backups might not be stored forever, e.g. if the backup folder is not mapped to a persistent volume in kubernetes.
+Phab supports onsite- and offsite-backups. Onsite means, the backups are stored on the same host as the application is run. Depending on the hosting setup this might not be enough as the backups might not be stored forever, e.g. if the backup folder is not mapped to a persistent volume in Kubernetes.
 
 That's why phab supports offsite-backups beginning with 3.6 using [restic](https://restic.readthedocs.io/en/latest/index.html). Restic is a powerful backup application, with no dependencies, easy to install and supports multiple hosts and encrypted backups. Restic itself supports different storage-providers.
 
