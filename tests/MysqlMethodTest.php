@@ -59,6 +59,7 @@ class MysqlMethodTest extends PhabTestCase
                     'mysql' => 'mysql',
                     'mysqladmin' => 'mysqladmin',
                     'mysqldump' => 'mysqldump',
+                    'grep' => 'grep',
                 ],
                 'rootFolder' => $this->getcwd(),
                 'shellExecutable' => '/bin/sh',
@@ -123,17 +124,31 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->method->install($this->hostConfig, $this->context);
         $this->assertEquals(0, $result->getExitCode());
 
+        $cmd = $this->getExecuteSQLCommand(false, "SHOW DATABASES");
+
+        $result = $this->shell->run(implode(' ', $cmd));
+        $this->assertStringContainsString('test-phabalicious', implode("\n", $result->getOutput()));
+
+        $this->method->dropDatabase($this->hostConfig, $this->context, $this->shell, $this->hostConfig['database']);
+
+        $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
+        $result = $this->shell->run(implode(' ', $cmd));
+
+        $this->assertEquals(0, $result->getExitCode());
+        $this->assertEquals(0, count($result->getOutput()));
+    }
+
+    public function getExecuteSQLCommand(bool $include_database_arg, string $sql): array
+    {
         $cmd = $this->method->getMysqlCommand(
             $this->hostConfig,
             $this->context,
             'mysql',
             $this->hostConfig['database'],
-            false
+            $include_database_arg
         );
         $cmd[] = '-e';
-        $cmd[] = escapeshellarg('SHOW DATABASES');
-
-        $result = $this->shell->run(implode(' ', $cmd));
-        $this->assertStringContainsString('test-phabalicious', implode("\n", $result->getOutput()));
+        $cmd[] = escapeshellarg($sql);
+        return $cmd;
     }
 }
