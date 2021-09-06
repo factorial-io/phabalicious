@@ -74,7 +74,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
      *
      * @throws \Exception
      */
-    public function install(HostConfig $host_config, TaskContextInterface $context)
+    public function install(HostConfig $host_config, TaskContextInterface $context): ?CommandResult
     {
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($host_config, $context);
@@ -82,21 +82,22 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         // Determine what kind of install operation this will be.
 
         $o = $host_config['database'] ?? false;
-        if ($o && !$host_config['database']['skipCreateDatabase']) {
+        if ($o && empty($host_config['database']['skipCreateDatabase'])) {
             $this->logger->info('Creating database ...');
 
             $cmd = sprintf(
-                "CREATE DATABASE IF NOT EXISTS \`%s\`; " .
-                "GRANT ALL PRIVILEGES ON \`%s\`.* TO '%s'@'%%'; " .
+                "CREATE DATABASE IF NOT EXISTS `%s`; " .
+                "GRANT ALL PRIVILEGES ON `%s`.* TO '%s'@'%%'; " .
                 "FLUSH PRIVILEGES;",
                 $o['name'],
                 $o['name'],
                 $o['user']
             );
             try {
-                $mysql_cmd = $this->getMysqlCommand($host_config, $context, 'mysql', $o);
-                $mysql_cmd[] = $cmd;
-                $shell->run(implode(' ', $mysql_cmd), false, true);
+                $mysql_cmd = $this->getMysqlCommand($host_config, $context, 'mysql', $o, false);
+                $mysql_cmd[] = '-e';
+                $mysql_cmd[] = escapeshellarg($cmd);
+                return $shell->run(implode(' ', $mysql_cmd), false, true);
             } catch (\Exception $e) {
                 $context->io()
                     ->error("Could not create database, or grant privileges!");
@@ -105,6 +106,8 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
                 throw ($e);
             }
         }
+
+        return null;
     }
 
 
@@ -123,14 +126,14 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $this->logger->notice('Dropping all tables from database ...');
 
         $cmd = array_merge(
-            $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data),
+            $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true),
             [
                 "--no-data",
                 "|",
                 "#!grep ^DROP",
                 "|",
             ],
-            $this->getMysqlCommand($host_config, $context, 'mysql', $data)
+            $this->getMysqlCommand($host_config, $context, 'mysql', $data, true)
         );
 
         $shell->run(implode(" ", $cmd), false, true);
@@ -152,7 +155,8 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $context->io()->comment(sprintf('Dumping database of `%s` ...', $host_config->getConfigName()));
         $shell->pushWorkingDir($data['workingDir']);
 
-        $cmd = $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data);
+        $cmd = $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true);
+        $cmd[] = "--add-drop-table";
 
         foreach ($context->getConfigurationService()->getSetting('sqlSkipTables', []) as $table_name) {
             $cmd[] = sprintf("--ignore-table %s.%s", $data['name'], $table_name);
@@ -208,7 +212,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
 
         $this->logger->notice(sprintf('Restoring db from %s ...', $file));
 
-        $cmd = $this->getMysqlCommand($host_config, $context, 'mysql', $data);
+        $cmd = $this->getMysqlCommand($host_config, $context, 'mysql', $data, true);
 
         if (substr($file, strrpos($file, '.') + 1) == 'gz') {
             array_unshift($cmd, "#!gunzip", "-c", $file, "|");
@@ -231,7 +235,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell
     ): CommandResult {
-        $cmd = $this->getMysqlCommand($host_config, $context, 'mysqlAdmin', $host_config['database']);
+        $cmd = $this->getMysqlCommand($host_config, $context, 'mysqlAdmin', $host_config['database'], false);
         $cmd[] = 'ping';
         return $shell->run(implode(' ', $cmd), true, false);
     }
@@ -268,11 +272,12 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         );
     }
 
-    private function getMysqlCommand(
+    public function getMysqlCommand(
         HostConfig $hostConfig,
         TaskContextInterface $context,
         string $command,
-        array $data
+        array $data,
+        bool $include_database_arg
     ): array {
         $cmd = [
             "#!" . strtolower($command),
@@ -284,7 +289,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             $hostConfig->get($config_key, [])
         );
 
-        return array_merge(
+        $cmd = array_merge(
             $cmd,
             $options,
             [
@@ -293,9 +298,14 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
                 sprintf("-p'%s'", $data['pass']),
                 "-h",
                 $data["host"],
-                "--add-drop-table",
-                $data['name'],
+                "--port",
+                $data["port"] ?? "3306"
             ]
         );
+        if ($include_database_arg) {
+            $cmd[] = $data['name'];
+        }
+
+        return $cmd;
     }
 }
