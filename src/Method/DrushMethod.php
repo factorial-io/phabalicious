@@ -660,14 +660,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
     {
         $data = $context->get(DatabaseMethod::DATABASE_CREDENTIALS, []);
         if (empty($data)) {
-            if ($host_config['drushVersion'] < 9) {
-                throw new \RuntimeException("Could not retrieve database configuration via drush, ' .
-                'as your drush version is outdated, use drush 9 or newer.");
-            }
+            $sql_conf_cmd = ($host_config['drushVersion'] < 9) ? 'sql-conf' : 'sql:conf';
             /** @var ShellProviderInterface $shell */
             $shell = $context->get('shell', $host_config->shell());
             $shell->pushWorkingDir($host_config['siteFolder']);
-            $result = $shell->run('drush --show-passwords --format=json sql:conf', true, false);
+            $result = $shell->run('drush --show-passwords --format=json ' . $sql_conf_cmd, true, false);
             $json = json_decode(implode("\n", $result->getOutput()), true);
             $mapping = [
                 'mysql' => [
