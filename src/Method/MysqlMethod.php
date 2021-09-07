@@ -41,7 +41,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
                 'mysql' => 'mysql',
                 'grep' => 'grep',
                 'mysqladmin' => 'mysqladmin',
-                'mysqldump' => 'mysqladmin',
+                'mysqldump' => 'mysqldump',
                 'gunzip' => 'gunzip',
                 'gzip' => 'gzip',
             ],
