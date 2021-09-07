@@ -281,7 +281,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
             $host_config,
             $cloned_context
         );
-        $data = $cloned_context->getResult(self::DATABASE_CREDENTIALS, []);
+        $data = $cloned_context->getResult(self::DATABASE_CREDENTIALS, $credentials);
         $errors = new ValidationErrorBag();
         $this->validateCredentials($data, $errors);
         if ($errors->hasErrors()) {

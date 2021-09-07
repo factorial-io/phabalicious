@@ -13,11 +13,13 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\MysqlMethod;
+use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
 
@@ -45,6 +47,7 @@ class MysqlMethodTest extends PhabTestCase
 
         $method_factory = new MethodFactory($this->config, $logger);
         $method_factory->addMethod($this->method);
+        $method_factory->addMethod(new ScriptMethod($logger));
 
 
         $this->context = new TaskContext(
@@ -52,29 +55,43 @@ class MysqlMethodTest extends PhabTestCase
             $this->getMockBuilder(InputInterface::class)->getMock(),
             $this->getMockBuilder(OutputInterface::class)->getMock()
         );
-        $this->shell = new LocalShellProvider($logger);
-        $this->hostConfig = new HostConfig(
-            [
-                'executables' => [
-                    'mysql' => 'mysql',
-                    'mysqladmin' => 'mysqladmin',
-                    'mysqldump' => 'mysqldump',
-                    'grep' => 'grep',
-                ],
-                'rootFolder' => $this->getcwd(),
-                'shellExecutable' => '/bin/sh',
-                'database' => [
-                    'host' => '127.0.0.1',
-                    'port' => '33060',
-                    'user' => 'root',
-                    'pass' => 'admin',
-                    'name' => 'test-phabalicious',
-                    'skipCreateDatabase' => false,
-                ],
+        $this->context->setIo($this->getMockBuilder(SymfonyStyle::class)->disableOriginalConstructor()->getMock());
+
+        $host_data = [
+            MysqlMethod::SUPPORTS_ZIPPED_BACKUPS => false,
+            'backupFolder' => '/tmp',
+            'shellProvider' => 'local',
+            'configName' => 'test-mysql',
+            'needs' => [
+                'mysql'
             ],
-            $this->shell,
-            $this->config
-        );
+            'mysqlDumpOptions' => [],
+            'executables' => [
+                'mysql' => 'mysql',
+                'mysqladmin' => 'mysqladmin',
+                'mysqldump' => 'mysqldump',
+                'grep' => 'grep',
+                'cat' => 'cat',
+                'gzip' => 'gzip',
+                'gunzip' => 'gunzip',
+            ],
+            'rootFolder' => $this->getcwd(),
+            'shellExecutable' => '/bin/sh',
+            'database' => [
+                'host' => '127.0.0.1',
+                'port' => '33060',
+                'user' => 'root',
+                'pass' => 'admin',
+                'name' => 'test-phabalicious',
+                'skipCreateDatabase' => false,
+                'workingDir' => __DIR__
+            ],
+        ];
+
+        $this->config->addHost($host_data);
+        $this->hostConfig = $this->config->getHostConfig('test-mysql');
+        $this->shell = $this->hostConfig->shell();
+
         $this->context->setConfigurationService($this->config);
 
         $this->runDockerContainer($logger);
@@ -136,6 +153,42 @@ class MysqlMethodTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
         $this->assertEquals(0, count($result->getOutput()));
+    }
+
+    /**
+     * @dataProvider providerSqlFiles
+     * @group docker
+     */
+    public function testImportExport($filename)
+    {
+        $result = $this->method->install($this->hostConfig, $this->context);
+        $this->assertEquals(0, $result->getExitCode());
+
+        $result = $this->method->importSqlFromFile($this->hostConfig, $this->context, $this->shell, $filename, true);
+        $this->assertEquals(0, $result->getExitCode());
+
+        $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
+        $result = $this->shell->run(implode(' ', $cmd));
+        $this->assertEquals(0, $result->getExitCode());
+        $this->assertContains('customers', $result->getOutput());
+        $this->assertContains('employees', $result->getOutput());
+        $this->assertContains('offices', $result->getOutput());
+
+        // Now export the sql again.
+
+        $export_file_name = '/tmp/' . basename($filename);
+        $result = $this->method->exportSqlToFile($this->hostConfig, $this->context, $this->shell, $export_file_name);
+        $this->assertEquals($export_file_name, $result);
+
+        $this->assertEquals(true, file_exists($export_file_name));
+    }
+
+    public function providerSqlFiles()
+    {
+        return [
+            [ __DIR__ . '/../tests/assets/mysqlsampledatabase.sql.gz' ],
+            [ __DIR__ . '/../tests/assets/mysqlsampledatabase.sql' ],
+        ];
     }
 
     public function getExecuteSQLCommand(bool $include_database_arg, string $sql): array

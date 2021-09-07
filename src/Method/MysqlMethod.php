@@ -12,6 +12,7 @@ use Phabalicious\Validation\ValidationService;
 class MysqlMethod extends DatabaseMethod implements MethodInterface
 {
     const METHOD_NAME = 'mysql';
+    const SUPPORTS_ZIPPED_BACKUPS = 'supportsZippedBackups';
 
     /**
      * @return string
@@ -44,7 +45,17 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
                 'mysqldump' => 'mysqldump',
                 'gunzip' => 'gunzip',
                 'gzip' => 'gzip',
+                'cat' => 'cat',
             ],
+        ];
+    }
+
+    public function getKeysForDisallowingDeepMerge(): array
+    {
+        return [
+            'mysqlOptions',
+            'mysqlDumpOptions',
+            'mysqlAdminOptions',
         ];
     }
 
@@ -62,7 +73,10 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             ],
             'mysql' => []
         ] as $key => $defaults) {
-            $config[$key . 'Options'] = $configuration_service->getSetting($key . 'Options', $defaults);
+            $option_name = $key . 'Options';
+            if (!isset($host_config[$option_name])) {
+                $config[$option_name] = $configuration_service->getSetting($option_name, $defaults);
+            }
         }
 
         return $config;
@@ -165,11 +179,13 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         if (!$shell->exists(dirname($backup_file_name))) {
             $shell->run(sprintf('mkdir -p %s', dirname($backup_file_name)));
         }
-
-        $zipped_backup = $host_config['supportsZippedBackups'];
+        $has_zipped_ext = pathinfo($backup_file_name, PATHINFO_EXTENSION) == 'gz';
+        $zipped_backup = $host_config[self::SUPPORTS_ZIPPED_BACKUPS] || $has_zipped_ext;
 
         if ($zipped_backup) {
-            $backup_file_name .= ".gz";
+            if (!$has_zipped_ext) {
+                $backup_file_name .= ".gz";
+            }
             $cmd[] = "| #!gzip";
         }
         $shell->run(sprintf('rm -f %s', escapeshellarg($backup_file_name)));
@@ -216,6 +232,8 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
 
         if (substr($file, strrpos($file, '.') + 1) == 'gz') {
             array_unshift($cmd, "#!gunzip", "-c", $file, "|");
+        } else {
+            array_unshift($cmd, "#!cat", $file, "|");
         }
         $result = $shell->run(implode(" ", $cmd));
         $shell->popWorkingDir();
