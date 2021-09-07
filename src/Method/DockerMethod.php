@@ -704,6 +704,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $scaffolder_did_run[$host_config->getConfigName()] = true;
 
         $docker_config = self::getDockerConfig($host_config, $context->getConfigurationService());
+        if (!$docker_config->get('runLocally')) {
+            throw new \RuntimeException('Scaffolding is limited to local execution for now!');
+        }
         $project_folder = self::getProjectFolder($docker_config, $host_config);
         $shell = $docker_config->shell();
 
