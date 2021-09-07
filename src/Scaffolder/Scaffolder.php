@@ -71,7 +71,7 @@ class Scaffolder
     public function scaffold(
         $url,
         $root_folder,
-        TaskContextInterface $context,
+        TaskContextInterface $in_context,
         array $tokens = [],
         Options $options = null
     ) {
@@ -101,7 +101,9 @@ class Scaffolder
             }
         }
 
-        $io = $options->isQuiet() ? new SymfonyStyle($context->getInput(), new NullOutput()) : $context->io();
+        $io = $options->isQuiet() ? new SymfonyStyle($in_context->getInput(), new NullOutput()) : $in_context->io();
+        $context = clone ($in_context);
+        $context->setIo($io);
 
         // Allow implementation to override parts of the data.
         $data = Utilities::mergeData($context->get('dataOverrides', []), $data);
@@ -282,6 +284,7 @@ class Scaffolder
         if ($options->isDryRun()) {
             $result = new CommandResult(0, $shell->getCapturedCommands());
         }
+        $in_context->mergeResults($context);
 
         return $result;
     }
