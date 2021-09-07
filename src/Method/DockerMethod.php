@@ -619,7 +619,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $task
         );
 
-        if ($host_config['docker']['scaffold']) {
+        if ($host_config['docker']['scaffold'] && $task == 'docker') {
             $this->scaffoldDockerFiles($host_config, $context);
         }
 
