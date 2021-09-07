@@ -18,7 +18,7 @@ interface DatabaseMethodInterface
      *
      * @return mixed
      */
-    public function install(HostConfig $host_config, TaskContextInterface $context);
+    public function install(HostConfig $host_config, TaskContextInterface $context): ?CommandResult;
 
     /**
      * Export current database into a sql file.

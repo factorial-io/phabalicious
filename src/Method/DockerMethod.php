@@ -723,7 +723,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             ->setQuiet(true)
             ->setSkipSubfolder(true)
             ->setAllowOverride(true)
-            ->setUseCacheTokens(true)
+            ->setUseCacheTokens(false)
             ->setScaffoldDefinition([
                 "questions" => [],
                 "assets" => $assets,

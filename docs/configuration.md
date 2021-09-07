@@ -236,6 +236,7 @@ This will print all host configuration for the host `staging`.
     * `prefix` the optional table-prefix to use
     * `skipCreateDatabase` do not create a database when running the install task.
     * `driver`, which method should handle the database-interactions, `mysql` when using the `mysql` as a need.
+* `mysqlOptions`, `mysqlDumpOptions`, `mysqlAdminOptions`, arrays with cli-options for these commands to apply when running them.
 
 ### Configuration of the sqlite-method
 

@@ -52,10 +52,14 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
      *
      * @throws \Exception
      */
-    public function install(HostConfig $host_config, TaskContextInterface $context)
+    public function install(HostConfig $host_config, TaskContextInterface $context): ?CommandResult
     {
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($host_config, $context);
+
+        // TODO: implement installation.
+
+        return null;
     }
 
 
