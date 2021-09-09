@@ -85,4 +85,14 @@ class SubShellProvider extends BaseShellProvider implements ShellProviderInterfa
     {
         throw new \LogicException("Could not start subshelll in subshell");
     }
+
+    public function getFileContents($filename, TaskContextInterface $context)
+    {
+        throw new \LogicException("getFileContents not implemented");
+    }
+
+    public function putFileContents($filename, $data, TaskContextInterface $context)
+    {
+        throw new \LogicException("putFileContents not implemented");
+    }
 }

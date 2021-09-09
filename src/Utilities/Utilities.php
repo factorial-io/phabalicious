@@ -572,4 +572,9 @@ class Utilities
 
         return $version;
     }
+
+    public static function getTempNamePrefix($hostconfig)
+    {
+        return 'phab-' . md5($hostconfig->getConfigName() . mt_rand());
+    }
 }

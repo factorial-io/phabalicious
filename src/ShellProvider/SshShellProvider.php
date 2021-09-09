@@ -9,6 +9,7 @@ use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\TunnelHelper\SshTunnelHelper;
 use Phabalicious\ShellProvider\TunnelHelper\TunnelSupportInterface;
 use Phabalicious\Utilities\EnsureKnownHosts;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Process\Process;
@@ -65,7 +66,12 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
     {
         parent::validateConfig($config, $errors);
 
-        $validation = new ValidationService($config, $errors, sprintf('host-config: `%s`', $config['configName']));
+        $validation = new ValidationService(
+            $config,
+            $errors,
+            sprintf('host-config: `%s`', $config['configName'] ?? 'unknown config')
+        );
+
         $validation->hasKeys([
             'host' => 'Hostname to connect to',
             'port' => 'The port to connect to',
@@ -360,5 +366,30 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             sprintf('-e "%s"', $ssh_options),
             sprintf(' %s@%s:%s/. %s', $from_host_config['user'], $from_host_config['host'], $from_path, $to_path)
         ];
+    }
+
+    public function getFileContents($filename, TaskContextInterface $context)
+    {
+        $tmp_file_name = tempnam(
+            $this->hostConfig->get('tmpFolder', '/tmp'),
+            Utilities::getTempNamePrefix($this->hostConfig) . '-' . basename($filename)
+        );
+        $this->getFile($filename, $tmp_file_name, $context);
+        $result =  file_get_contents($tmp_file_name);
+        @unlink($tmp_file_name);
+        return $result;
+    }
+
+    public function putFileContents($filename, $data, TaskContextInterface $context)
+    {
+        $tmp_file_name = tempnam(
+            $this->hostConfig->get('tmpFolder', '/tmp'),
+            Utilities::getTempNamePrefix($this->hostConfig) . '-' . basename($filename)
+        );
+        $result =  file_put_contents($tmp_file_name, $data);
+        $this->putFile($tmp_file_name, $filename, $context);
+        @unlink($tmp_file_name);
+
+        return $result;
     }
 }

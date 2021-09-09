@@ -100,4 +100,8 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
     public function terminate();
 
     public function startSubShell(array $cmd): ShellProviderInterface;
+
+    public function getFileContents($filename, TaskContextInterface $context);
+
+    public function putFileContents($filename, $data, TaskContextInterface $context);
 }

@@ -122,4 +122,14 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
     {
         return $this;
     }
+
+    public function getFileContents($filename, TaskContextInterface $context)
+    {
+        return file_get_contents($filename);
+    }
+
+    public function putFileContents($filename, $data, TaskContextInterface $context)
+    {
+        return file_put_contents($filename, $data);
+    }
 }

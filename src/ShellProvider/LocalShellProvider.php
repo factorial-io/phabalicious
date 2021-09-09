@@ -369,4 +369,14 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->input->write($input);
         return $command;
     }
+
+    public function getFileContents($filename, TaskContextInterface $context)
+    {
+        return file_get_contents($filename);
+    }
+
+    public function putFileContents($filename, $data, TaskContextInterface $context)
+    {
+        return file_put_contents($filename, $data);
+    }
 }
