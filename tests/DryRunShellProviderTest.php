@@ -15,7 +15,7 @@ class DryRunShellProviderTest extends PhabTestCase
 
     private $config;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->config = $this->getMockBuilder(ConfigurationService::class)
             ->disableOriginalConstructor()

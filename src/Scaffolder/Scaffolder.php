@@ -231,7 +231,7 @@ class Scaffolder
         $tokens = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($tokens);
 
         $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
-        $tokens['rootFolder'] = realpath($root_folder) . '/' . $tokens['projectFolder'];
+        $tokens['rootFolder'] = $shell->realPath($root_folder, $context) . '/' . $tokens['projectFolder'];
 
 
         $context->set(ScriptMethod::SCRIPT_DATA, $data['scaffold']);

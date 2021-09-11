@@ -16,6 +16,8 @@ class SubShellProvider extends BaseShellProvider implements ShellProviderInterfa
     {
         parent::__construct($logger);
         $this->parentShell = $parent_shell;
+
+        $this->setFileOperationsHandler(new UnsupportedFileOperations());
     }
 
     public function getName(): string
@@ -84,15 +86,5 @@ class SubShellProvider extends BaseShellProvider implements ShellProviderInterfa
     public function startSubShell(array $cmd): ShellProviderInterface
     {
         throw new \LogicException("Could not start subshelll in subshell");
-    }
-
-    public function getFileContents($filename, TaskContextInterface $context)
-    {
-        throw new \LogicException("getFileContents not implemented");
-    }
-
-    public function putFileContents($filename, $data, TaskContextInterface $context)
-    {
-        throw new \LogicException("putFileContents not implemented");
     }
 }

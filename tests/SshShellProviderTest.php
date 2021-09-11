@@ -23,22 +23,7 @@ class SshShellProviderTest extends PhabTestCase
 
     private $config;
 
-    /**
-     * @var \Symfony\Component\Process\Process
-     */
-    private $backgroundProcess;
-
     private $logger;
-
-    /**
-     * @var false|string
-     */
-    private $publicKeyFile;
-
-    /**
-     * @var false|string
-     */
-    private $privateKeyFile;
 
     /**
      * @var \Phabalicious\Method\TaskContext
@@ -56,9 +41,6 @@ class SshShellProviderTest extends PhabTestCase
         $logger = $this->logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 
         $this->shellProvider = new SshShellProvider($logger);
-
-        $this->publicKeyFile = realpath(__DIR__ . '/assets/ssh-shell-tests/test_key.pub');
-        $this->privateKeyFile = realpath(__DIR__ . '/assets/ssh-shell-tests/test_key');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
@@ -113,54 +95,13 @@ class SshShellProviderTest extends PhabTestCase
         $this->assertEquals('ssh', $this->shellProvider->getName());
     }
 
-    private function runDockerContainer($logger)
-    {
-        $runDockerShell = new LocalShellProvider($logger);
-        $host_config = new HostConfig([
-            'shellExecutable' => '/bin/sh',
-            'rootFolder' => dirname(__FILE__)
-        ], $runDockerShell, $this->config);
-
-        $result = $runDockerShell->run('docker pull ghcr.io/linuxserver/openssh-server', true);
-        $result = $runDockerShell->run('docker stop phabalicious_ssh_test | true', true);
-        $result = $runDockerShell->run('docker rm phabalicious_ssh_test | true', true);
-        $result = $runDockerShell->run(sprintf('chmod 600 %s', $this->privateKeyFile));
-        $public_key = trim(file_get_contents($this->publicKeyFile));
-
-        $this->backgroundProcess = new Process([
-            'docker',
-            'run',
-            '-i',
-            '-e',
-            'PUID=1000',
-            '-e',
-            'PGID=1000',
-            '-e',
-            "PUBLIC_KEY=$public_key",
-            '-e',
-            'USER_NAME=test',
-            '-p',
-            '22222:2222',
-            '--name',
-            'phabalicious_ssh_test',
-            'ghcr.io/linuxserver/openssh-server',
-        ]);
-        $input = new InputStream();
-        $this->backgroundProcess->setInput($input);
-        $this->backgroundProcess->setTimeout(0);
-        $this->backgroundProcess->start(function ($type, $buffer) {
-            fwrite(STDOUT, $buffer);
-        });
-        // Give the container some time to spin up
-        sleep(5);
-    }
 
     /**
      * @group docker
      */
     public function testRun()
     {
-        $this->getDockerizedSshShell();
+        $this->getDockerizedSshShell($this->logger, $this->config);
 
         $test_dir = '/';
 
@@ -186,36 +127,11 @@ class SshShellProviderTest extends PhabTestCase
      */
     public function testFilePutContents()
     {
-        $this->getDockerizedSshShell();
+        $shell = $this->getDockerizedSshShell($this->logger, $this->config);
 
         $content = 'helloworld';
-        $result = $this->shellProvider->putFileContents('/tmp/test_put_file_content', $content, $this->context);
-        $test = $this->shellProvider->getFileContents('/tmp/test_put_file_content', $this->context);
+        $result = $shell->putFileContents('/tmp/test_put_file_content', $content, $this->context);
+        $test = $shell->getFileContents('/tmp/test_put_file_content', $this->context);
         $this->assertEquals($content, $test);
-    }
-
-    /**
-     * @return string
-     */
-    public function getDockerizedSshShell()
-    {
-        $this->runDockerContainer($this->logger);
-        $host_config = new HostConfig([
-            'configName' => 'ssh-test',
-            'shellExecutable' => '/bin/sh',
-            'shellProviderExecutable' => '/usr/bin/ssh',
-            'disableKnownHosts' => true,
-            'rootFolder' => '/',
-            'host' => 'localhost',
-            'port' => '22222',
-            'user' => 'test',
-            'shellProviderOptions' => [
-                '-i' .
-                $this->privateKeyFile
-            ],
-        ], $this->shellProvider, $this->config);
-
-
-        $this->shellProvider->setHostConfig($host_config);
     }
 }

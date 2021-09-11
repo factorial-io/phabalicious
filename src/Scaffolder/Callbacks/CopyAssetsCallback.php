@@ -65,8 +65,9 @@ class CopyAssetsCallback implements CallbackInterface
         string $data_key,
         $limitedForTwigExtension
     ) {
-        if (!is_dir($target_folder)) {
-            mkdir($target_folder, 0777, true);
+        $shell = $context->getShell();
+        if (!$shell->exists($target_folder)) {
+            $shell->run(sprintf('mkdir -p %s && chmod 0777 %s', $target_folder, $target_folder));
         }
         $data = $context->get('scaffoldData');
         $ignore_subfolders = $context->get('scaffoldStrategy', 'default') == self::IGNORE_SUBFOLDERS_STRATEGY;
@@ -119,16 +120,19 @@ class CopyAssetsCallback implements CallbackInterface
             $file_name = $this->getTargetFileName($file_name, $ignore_subfolders);
 
             $target_file_path = $target_folder . '/' . $file_name;
-            if (!is_dir(dirname($target_file_path))) {
-                mkdir(dirname($target_file_path), 0777, true);
+
+            $p = dirname($target_file_path);
+            if (!$shell->exists($p)) {
+                $shell->run(sprintf('mkdir -p %s && chmod 0777 %s', $p, $p));
             }
 
             $this->configuration->getLogger()->debug(sprintf("Scaffolding file '%s'", $target_file_path));
+
+            $shell->putFileContents($target_file_path, $converted, $context);
+
             if ($use_progress) {
                 $context->io()->progressAdvance();
             }
-
-            file_put_contents($target_file_path, $converted);
         }
         if ($use_progress) {
             $context->io()->progressFinish();

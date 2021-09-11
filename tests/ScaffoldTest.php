@@ -9,16 +9,22 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Options;
 use Phabalicious\Scaffolder\Scaffolder;
+use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Logger\ConsoleLogger;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Yaml;
@@ -31,11 +37,16 @@ class ScaffoldTest extends PhabTestCase
     /** @var ConfigurationService  */
     protected $configuration;
 
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Psr\Log\LoggerInterface
+     */
+    private $logger;
+
     public function setup()
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
-        $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+        $this->logger = $logger = new ConsoleLogger(new ConsoleOutput());
 
         $this->configuration = new ConfigurationService($this->application, $logger);
         $method_factory = new MethodFactory($this->configuration, $logger);
@@ -172,17 +183,17 @@ class ScaffoldTest extends PhabTestCase
         $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
     }
 
-    public function testTwigExtensions()
+    public function runTestTwigExtensions(ShellProviderInterface $shell, TaskContextInterface $context, $dir)
     {
         $scaffolder = new Scaffolder($this->configuration);
-        $context = $this->createContext();
         $options = new Options();
         $options->setAllowOverride(true)
+            ->setShell($shell)
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
             $this->getCwd() . '/assets/scaffolder-test/scaffold-twig.yml',
-            $this->getcwd(),
+            $dir,
             $context,
             [
                 'name' => 'test-scaffold-twig',
@@ -192,9 +203,33 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
 
-        $json = json_decode(file_get_contents($this->getCwd() . '/test-scaffold-twig/test-twig.json'), true);
+        $content = $shell->getFileContents($dir . '/test-scaffold-twig/test-twig.json', $context);
+        $json = json_decode($content, true);
 
         $this->assertEquals('A-test-string-to-be-slugified', $json['slug']);
         $this->assertEquals('db42607fd51c90a4d9c49130f1fe98a8', $json['md5']);
+    }
+
+    public function testLocalTwigExtension()
+    {
+
+        $context = $this->createContext();
+        $shell = new LocalShellProvider($this->logger);
+        $host_config = new HostConfig([
+            'rootFolder' => $this->getcwd(),
+            'shellExecutable' => '/bin/bash'
+        ], $shell, $this->configuration);
+        $shell->setHostConfig($host_config);
+
+        $this->runTestTwigExtensions($shell, $context, $this->getcwd());
+    }
+
+    public function testRemoteScaffolding()
+    {
+        $shell = $this->getDockerizedSshShell($this->logger, $this->configuration);
+        $context = $this->createContext();
+        $context->setShell($shell);
+
+        $this->runTestTwigExtensions($shell, $context, '/app');
     }
 }

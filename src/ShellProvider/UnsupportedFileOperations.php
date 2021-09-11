@@ -4,21 +4,21 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Method\TaskContextInterface;
 
-class LocalFileOperations implements FileOperationsInterface
+class UnsupportedFileOperations implements FileOperationsInterface
 {
 
     public function getFileContents($filename, TaskContextInterface $context)
     {
-        return file_get_contents($filename);
+        throw new \RuntimeException('getFileContents not supported in this context!');
     }
 
     public function putFileContents($filename, $data, TaskContextInterface $context)
     {
-        return file_put_contents($filename, $data);
+        throw new \RuntimeException('putFileContents not supported in this context!');
     }
 
     public function realPath($filename, $context)
     {
-        return realpath($filename);
+        throw new \RuntimeException('realPath not supported in this context!');
     }
 }

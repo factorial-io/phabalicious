@@ -4,8 +4,9 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Method\TaskContextInterface;
 
-class LocalFileOperations implements FileOperationsInterface
+class NoopFileOperations implements FileOperationsInterface
 {
+
 
     public function getFileContents($filename, TaskContextInterface $context)
     {
@@ -14,11 +15,11 @@ class LocalFileOperations implements FileOperationsInterface
 
     public function putFileContents($filename, $data, TaskContextInterface $context)
     {
-        return file_put_contents($filename, $data);
+        return false;
     }
 
     public function realPath($filename, $context)
     {
-        return realpath($filename);
+        return $filename;
     }
 }
