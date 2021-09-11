@@ -31,7 +31,7 @@ class GetPropertyCommandTest extends PhabTestCase
         $method_factory = new MethodFactory($configuration, $logger);
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/getproperty-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/getproperty-tests/fabfile.yaml');
 
         $this->application->add(new GetPropertyCommand($configuration, $method_factory));
     }

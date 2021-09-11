@@ -30,7 +30,7 @@ class AppCreateCommandTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new DockerMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/app-create-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/app-create-tests/fabfile.yaml');
 
         $this->application->add(new AppCreateCommand($configuration, $method_factory));
         $this->application->add(new ResetCommand($configuration, $method_factory));
@@ -40,7 +40,7 @@ class AppCreateCommandTest extends PhabTestCase
 
     public function testAppCreateWithoutPrepare()
     {
-        $target_folder = $this->getcwd() . '/tmp';
+        $target_folder = $this->getTmpDir();
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
         }
@@ -57,13 +57,11 @@ class AppCreateCommandTest extends PhabTestCase
         $this->assertNotContains('Could not validate', $output);
         $this->assertContains('XX Spin up XX', $output);
         $this->assertContains('XX Install XX', $output);
-
-        shell_exec(sprintf('rm -rf %s', $target_folder));
     }
 
     public function testAppCreateWithPrepare()
     {
-        $target_folder = $this->getcwd() . '/tmp';
+        $target_folder = $this->getTmpDir();
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
         }
@@ -81,7 +79,5 @@ class AppCreateCommandTest extends PhabTestCase
         $this->assertContains('XX Spin up XX', $output);
         $this->assertContains('XX prepareDestination XX', $output);
         $this->assertContains('XX Install XX', $output);
-
-        shell_exec(sprintf('rm -rf %s', $target_folder));
     }
 }

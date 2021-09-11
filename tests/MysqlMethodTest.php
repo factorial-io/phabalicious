@@ -77,7 +77,7 @@ class MysqlMethodTest extends PhabTestCase
                 'gzip' => 'gzip',
                 'gunzip' => 'gunzip',
             ],
-            'rootFolder' => $this->getcwd(),
+            'rootFolder' => __DIR__,
             'shellExecutable' => '/bin/sh',
             'database' => [
                 'host' => '127.0.0.1',

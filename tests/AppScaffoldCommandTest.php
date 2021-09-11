@@ -39,7 +39,7 @@ class AppScaffoldCommandTest extends PhabTestCase
      */
     public function testAppScaffolder()
     {
-        $target_folder = $this->getcwd() . '/tmp';
+        $target_folder = $this->getTmpDir();
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
         }
@@ -51,11 +51,10 @@ class AppScaffoldCommandTest extends PhabTestCase
             '--name' => 'Test',
             '--output' => $target_folder,
             '--override' => true,
-            'scaffold-url' => $this->getcwd() . '/assets/scaffold-tests/scaffold-drupal-commerce.yml'
+            'scaffold-url' => __DIR__ . '/assets/scaffold-tests/scaffold-drupal-commerce.yml'
         ));
 
         $this->checkScaffoldResults($target_folder);
-        shell_exec(sprintf('rm -rf %s', $target_folder));
     }
 
     /**
@@ -63,7 +62,7 @@ class AppScaffoldCommandTest extends PhabTestCase
      */
     public function testScaffoldWithRelativeFolder()
     {
-        $root = $this->getcwd();
+        $root = $this->getTmpDir();
         $target_folder = $this->prepareTargetFolder($root);
 
         $command = $this->application->find('app:scaffold');
@@ -73,17 +72,15 @@ class AppScaffoldCommandTest extends PhabTestCase
             '--name' => 'Test',
             '--output' => '..',
             '--override' => true,
-            'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-drupal-commerce.yml'
+            'scaffold-url' => __DIR__ . '/assets/scaffold-tests/scaffold-drupal-commerce.yml'
         ));
 
         $this->checkScaffoldResults($target_folder);
-
-        shell_exec(sprintf('rm -rf %s', $target_folder));
     }
 
     public function testScaffoldQuestions()
     {
-        $root = $this->getcwd();
+        $root = $this->getTmpDir();
         $this->prepareTargetFolder($root);
 
         $command = $this->application->find('app:scaffold');
@@ -93,7 +90,7 @@ class AppScaffoldCommandTest extends PhabTestCase
             '--name' => 'Test',
             '--output' => '..',
             '--override' => true,
-            'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-simple.yml'
+            'scaffold-url' => __DIR__ . '/assets/scaffold-tests/scaffold-simple.yml'
         ));
 
         // the output of the command in the console
@@ -104,7 +101,7 @@ class AppScaffoldCommandTest extends PhabTestCase
 
     public function testScaffoldSubfolder()
     {
-        $root = $this->getcwd();
+        $root = $this->getTmpDir();
         $target_folder = $root . '/tmp/here';
         if (!is_dir($target_folder)) {
             mkdir($target_folder, 0777, true);
@@ -119,7 +116,7 @@ class AppScaffoldCommandTest extends PhabTestCase
             '--name' => 'Test',
             '--output' => '.',
             '--override' => true,
-            'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-subfolder.yml'
+            'scaffold-url' => __DIR__ . '/assets/scaffold-tests/scaffold-subfolder.yml'
         ));
 
         $this->checkFileContent(
@@ -134,7 +131,7 @@ class AppScaffoldCommandTest extends PhabTestCase
 
     public function testScaffoldExistingProjectFolder()
     {
-        $root = $this->getcwd();
+        $root = $this->getTmpDir();
         $target_folder = $root . '/tmp/tst-test';
         if (!is_dir($target_folder)) {
             mkdir($target_folder, 0777, true);
@@ -148,7 +145,7 @@ class AppScaffoldCommandTest extends PhabTestCase
             '--short-name'  => 'TST',
             '--name' => 'Test',
             '--override' => true,
-            'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-projectfolder.yml'
+            'scaffold-url' => __DIR__ . '/assets/scaffold-tests/scaffold-projectfolder.yml'
         ));
 
         $this->checkFileContent(
@@ -167,7 +164,7 @@ class AppScaffoldCommandTest extends PhabTestCase
      */
     public function testErrorWhileScaffolding()
     {
-        $root = $this->getcwd();
+        $root = $this->getTmpDir();
         $target_folder = $root . '/tmp/tst-test';
         if (!is_dir($target_folder)) {
             mkdir($target_folder, 0777, true);
@@ -181,7 +178,7 @@ class AppScaffoldCommandTest extends PhabTestCase
             '--short-name'  => 'TST',
             '--name' => 'Test',
             '--override' => true,
-            'scaffold-url' => $root . '/assets/scaffold-tests/scaffold-provoke-error.yml'
+            'scaffold-url' => __DIR__ . '/assets/scaffold-tests/scaffold-provoke-error.yml'
         ));
 
         // the output of the command in the console

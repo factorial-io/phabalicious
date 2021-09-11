@@ -20,7 +20,6 @@ use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
@@ -76,8 +75,8 @@ class ScaffoldTest extends PhabTestCase
 
         $context = $this->createContext();
         $scaffolder->scaffold(
-            $this->getCwd() . '/assets/scaffolder-test/version-check.yml',
-            $this->getcwd(),
+            __DIR__ . '/assets/scaffolder-test/version-check.yml',
+            $this->getTmpDir(),
             $context,
             [],
             $options
@@ -97,8 +96,8 @@ class ScaffoldTest extends PhabTestCase
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
-            $this->getCwd() . '/assets/scaffolder-test/override.yml',
-            $this->getcwd(),
+            __DIR__ . '/assets/scaffolder-test/override.yml',
+            $this->getTmpDir(),
             $context,
             [
                 'name' => 'test-overrides',
@@ -119,8 +118,8 @@ class ScaffoldTest extends PhabTestCase
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
-            $this->getCwd() . '/assets/scaffolder-test/alter-file.yml',
-            $this->getcwd(),
+            __DIR__ . '/assets/scaffolder-test/alter-file.yml',
+            $this->getTmpDir(),
             $context,
             [
                 'name' => 'test-alter',
@@ -130,12 +129,12 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
 
-        $json = json_decode(file_get_contents($this->getCwd() . '/test-alter/output.json'));
+        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-alter/output.json'));
 
         $this->assertEquals("b-overridden", $json->b);
         $this->assertEquals("d-overridden", $json->c->d);
 
-        $yaml = Yaml::parseFile($this->getCwd() . '/test-alter/output.yaml');
+        $yaml = Yaml::parseFile($this->getTmpDir() . '/test-alter/output.yaml');
 
         $this->assertEquals("b-overridden", $yaml['b']);
         $this->assertEquals("d-overridden", $yaml['c']['d']);
@@ -160,8 +159,8 @@ class ScaffoldTest extends PhabTestCase
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
-            $this->getCwd() . '/assets/scaffolder-test/scaffold-callback.yml',
-            $this->getcwd(),
+            __DIR__ . '/assets/scaffolder-test/scaffold-callback.yml',
+            $this->getTmpDir(),
             $context,
             [
                 'name' => 'test-scaffold-callback',
@@ -171,13 +170,16 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
 
-        $json = json_decode(file_get_contents($this->getCwd() . '/test-scaffold-callback/composer.json'), true);
+        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-scaffold-callback/composer.json'), true);
 
         $this->assertEquals('phabalicious/helloworld', $json['name']);
         $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
         $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
 
-        $json = json_decode(file_get_contents($this->getCwd() . '/test-scaffold-callback/second/composer.json'), true);
+        $json = json_decode(
+            file_get_contents($this->getTmpDir() . '/test-scaffold-callback/second/composer.json'),
+            true
+        );
 
         $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
         $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
@@ -192,7 +194,7 @@ class ScaffoldTest extends PhabTestCase
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
-            $this->getCwd() . '/assets/scaffolder-test/scaffold-twig.yml',
+            __DIR__ . '/assets/scaffolder-test/scaffold-twig.yml',
             $dir,
             $context,
             [
@@ -216,12 +218,12 @@ class ScaffoldTest extends PhabTestCase
         $context = $this->createContext();
         $shell = new LocalShellProvider($this->logger);
         $host_config = new HostConfig([
-            'rootFolder' => $this->getcwd(),
+            'rootFolder' => $this->getTmpDir(),
             'shellExecutable' => '/bin/bash'
         ], $shell, $this->configuration);
         $shell->setHostConfig($host_config);
 
-        $this->runTestTwigExtensions($shell, $context, $this->getcwd());
+        $this->runTestTwigExtensions($shell, $context, $this->getTmpDir());
     }
 
     public function testRemoteScaffolding()

@@ -27,7 +27,7 @@ class InstallCommandTest extends PhabTestCase
         $method_factory->addMethod(new FilesMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/install-command/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/install-command/fabfile.yaml');
 
         $this->application->add(new InstallCommand($configuration, $method_factory));
     }

@@ -166,6 +166,10 @@ class ScriptActionTest extends TestCase
      */
     public function testNpmInstallInDockerContext()
     {
+        $dir = __DIR__ . '/assets/script-action-npm-install';
+
+        exec(sprintf('rm -rf "%s/bin" "%s/lib" "%s/node_modules"', $dir, $dir, $dir));
+
         $action = $this->createAction([
 
             "script" => [
@@ -183,12 +187,14 @@ class ScriptActionTest extends TestCase
 
         $context = clone $this->context;
 
-        $context->set('installDir', getcwd() . '/tests/assets/script-action-npm-install');
-        $context->set('targetDir', getcwd() . '/tests/assets/script-action-npm-install');
+        $context->set('installDir', $dir);
+        $context->set('targetDir', $dir);
 
         $action->run($this->hostConfig, $context);
         $output = $context->getCommandResult()->getOutput();
 
         $this->assertContains("Tasks for /app/gulpfile.js", $output[0]);
+
+        exec(sprintf('rm -rf "%s/bin" "%s/lib" "%s/node_modules', $dir, $dir, $dir));
     }
 }

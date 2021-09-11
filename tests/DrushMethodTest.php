@@ -34,7 +34,7 @@ class DrushMethodTest extends PhabTestCase
         $method_factory->addMethod(new MysqlMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration($this->getcwd() . '/assets/drush-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__ . '/assets/drush-tests/fabfile.yaml');
     }
 
     public function testGetDefaultConfig()

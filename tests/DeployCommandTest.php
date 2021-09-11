@@ -37,7 +37,7 @@ class DeployCommandTest extends PhabTestCase
         $method_factory->addMethod($method);
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/script-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/script-tests/fabfile.yaml');
 
         $this->application->add(new DeployCommand($configuration, $method_factory));
     }
