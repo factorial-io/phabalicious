@@ -43,11 +43,23 @@ abstract class BaseShellProvider implements ShellProviderInterface
      */
     private $workingDirStack = [];
 
+    /**
+     * @var \Phabalicious\ShellProvider\FileOperationsInterface
+     */
+    protected $fileOperationsHandler;
+
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = new LogWithPrefix($logger, bin2hex(random_bytes(3)));
         $this->loglevel = new LogLevelStack(LogLevel::NOTICE);
         $this->errorLogLevel = new LogLevelStack(LogLevel::ERROR);
+
+        $this->setFileOperationsHandler(new DeferredFileOperations($this));
+    }
+
+    protected function setFileOperationsHandler(FileOperationsInterface $handler)
+    {
+        $this->fileOperationsHandler = $handler;
     }
 
     public function getLogLevelStack(): LoglevelStackInterface
@@ -252,5 +264,15 @@ abstract class BaseShellProvider implements ShellProviderInterface
         string $from_path
     ) {
         return false;
+    }
+
+    public function getFileContents($filename, TaskContextInterface $context)
+    {
+        return $this->fileOperationsHandler->getFileContents($filename, $context);
+    }
+
+    public function putFileContents($filename, $data, TaskContextInterface $context)
+    {
+        return $this->fileOperationsHandler->putFileContents($filename, $data, $context);
     }
 }

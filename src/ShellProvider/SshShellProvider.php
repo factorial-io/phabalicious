@@ -367,29 +367,4 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             sprintf(' %s@%s:%s/. %s', $from_host_config['user'], $from_host_config['host'], $from_path, $to_path)
         ];
     }
-
-    public function getFileContents($filename, TaskContextInterface $context)
-    {
-        $tmp_file_name = tempnam(
-            $this->hostConfig->get('tmpFolder', '/tmp'),
-            Utilities::getTempNamePrefix($this->hostConfig) . '-' . basename($filename)
-        );
-        $this->getFile($filename, $tmp_file_name, $context);
-        $result =  file_get_contents($tmp_file_name);
-        @unlink($tmp_file_name);
-        return $result;
-    }
-
-    public function putFileContents($filename, $data, TaskContextInterface $context)
-    {
-        $tmp_file_name = tempnam(
-            $this->hostConfig->get('tmpFolder', '/tmp'),
-            Utilities::getTempNamePrefix($this->hostConfig) . '-' . basename($filename)
-        );
-        $result =  file_put_contents($tmp_file_name, $data);
-        $this->putFile($tmp_file_name, $filename, $context);
-        @unlink($tmp_file_name);
-
-        return $result;
-    }
 }

@@ -186,7 +186,8 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
      * @param int $public_port
      * @param HostConfig $config
      * @param TaskContextInterface $context
-     * @return bool|void
+     *
+     * @return bool
      */
     public function startRemoteAccess(
         string $ip,

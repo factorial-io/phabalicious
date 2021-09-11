@@ -124,7 +124,7 @@ class SshShellProviderTest extends PhabTestCase
         $result = $runDockerShell->run('docker pull ghcr.io/linuxserver/openssh-server', true);
         $result = $runDockerShell->run('docker stop phabalicious_ssh_test | true', true);
         $result = $runDockerShell->run('docker rm phabalicious_ssh_test | true', true);
-
+        $result = $runDockerShell->run(sprintf('chmod 600 %s', $this->privateKeyFile));
         $public_key = trim(file_get_contents($this->publicKeyFile));
 
         $this->backgroundProcess = new Process([
