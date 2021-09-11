@@ -65,7 +65,9 @@ class MysqlMethodTest extends PhabTestCase
             'needs' => [
                 'mysql'
             ],
-            'mysqlDumpOptions' => [],
+            'mysqlDumpOptions' => [
+                '--column-statistics=0',
+            ],
             'executables' => [
                 'mysql' => 'mysql',
                 'mysqladmin' => 'mysqladmin',

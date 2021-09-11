@@ -91,7 +91,10 @@ class ScriptExecutionContext
                     '-w',
                     '/app',
                     '-u',
-                    sprintf('%d:%d', posix_getuid(), posix_getgid()),
+                    $this->getArgument(
+                        'user',
+                        sprintf('%d:%d', posix_getuid(), posix_getgid())
+                    ),
                     '-v',
                     sprintf('%s:/app', $this->workingDir),
                     $this->getArgument('image'),

@@ -36,7 +36,7 @@ class AssertFileCallback implements CallbackInterface
         $error_message
     ) {
 
-        if (!file_exists($file_path)) {
+        if (!$context->getShell()->exists($file_path)) {
             throw new \RuntimeException(sprintf("%s does not exist! %s", $file_path, $error_message));
         }
     }

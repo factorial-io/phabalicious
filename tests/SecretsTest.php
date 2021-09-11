@@ -113,6 +113,7 @@ class SecretsTest extends PhabTestCase
 
     /**
      * @group docker
+     * @group 1password
      */
     public function testSecretsFrom1Password()
     {

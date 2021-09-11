@@ -23,6 +23,7 @@
           - gulp run
         context: docker-image
         image: node:12
+        user: node # Optional user, if not specified, the current uid:gid will be used
     ```
 
     The current folder is mounted to `/app` in the container, and the current user-

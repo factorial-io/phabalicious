@@ -9,7 +9,7 @@ class PhabTestCase extends TestCase
 
     protected function getcwd()
     {
-        return getcwd() . '/tests';
+        return __DIR__;
     }
 
     protected function checkFileContent($filename, $needle)

@@ -45,6 +45,13 @@ class Scaffolder
 
     protected $configuration;
 
+
+    /** @var \Phabalicious\ShellProvider\ShellProviderInterface */
+    protected $shell;
+
+    /** @var TaskContextInterface */
+    protected $context;
+
     public function __construct(ConfigurationService $configuration)
     {
         $this->questionFactory = new QuestionFactory();
@@ -56,7 +63,7 @@ class Scaffolder
      *
      * @param string $url
      * @param $root_folder
-     * @param TaskContextInterface $context
+     * @param TaskContextInterface $in_context
      * @param array $tokens
      * @param Options|null $options
      *
@@ -102,7 +109,7 @@ class Scaffolder
         }
 
         $io = $options->isQuiet() ? new SymfonyStyle($in_context->getInput(), new NullOutput()) : $in_context->io();
-        $context = clone ($in_context);
+        $this->context = $context = clone ($in_context);
         $context->setIo($io);
 
         // Allow implementation to override parts of the data.
@@ -160,6 +167,31 @@ class Scaffolder
             throw new ValidationFailedException($errors);
         }
 
+        $logger = $this->configuration->getLogger();
+        $script = new ScriptMethod($logger);
+
+        $shell = null;
+        if ($options->isDryRun()) {
+            $shell = new DryRunShellProvider($logger);
+            $shell->setOutput($context->getOutput());
+        }
+        if (!$shell) {
+            $shell = $options->getShell();
+        }
+        if (!$shell) {
+            $shell = new LocalShellProvider($logger);
+        }
+        if ($shell->getHostConfig()) {
+            $host_config = $shell->getHostConfig();
+        } else {
+            $host_config = new HostConfig([
+                'rootFolder' => realpath($root_folder),
+                'shellExecutable' => '/bin/bash'
+            ], $shell, $this->configuration);
+        }
+
+        $this->shell = $shell;
+
         if (empty($data['questions']['name']) && $options->getSkipSubfolder() && $options->getAllowOverride()) {
             $tokens['name'] = $tokens['name'] ?? basename($root_folder);
             $root_folder = dirname($root_folder);
@@ -201,28 +233,6 @@ class Scaffolder
         $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
         $tokens['rootFolder'] = realpath($root_folder) . '/' . $tokens['projectFolder'];
 
-        $logger = $this->configuration->getLogger();
-        $script = new ScriptMethod($logger);
-
-        $shell = null;
-        if ($options->isDryRun()) {
-            $shell = new DryRunShellProvider($logger);
-            $shell->setOutput($context->getOutput());
-        }
-        if (!$shell) {
-            $shell = $options->getShell();
-        }
-        if (!$shell) {
-            $shell = new LocalShellProvider($logger);
-        }
-        if ($shell->getHostConfig()) {
-            $host_config = $shell->getHostConfig();
-        } else {
-            $host_config = new HostConfig([
-                'rootFolder' => realpath($root_folder),
-                'shellExecutable' => '/bin/bash'
-            ], $shell, $this->configuration);
-        }
 
         $context->set(ScriptMethod::SCRIPT_DATA, $data['scaffold']);
         if (isset($data['computedValues'])) {
@@ -336,23 +346,25 @@ class Scaffolder
      * @param string $root_folder
      * @param mixed $tokens
      */
-    protected function writeTokens($root_folder, $tokens)
+    protected function writeTokens(string $root_folder, $tokens)
     {
-        file_put_contents($root_folder . '/.phab-scaffold-tokens', YAML::dump($tokens));
+        $this->shell->putFileContents($root_folder . '/.phab-scaffold-tokens', YAML::dump($tokens), $this->context);
     }
 
     /**
      * @param string $root_folder
      * @param string $name
+     *
      * @return array|mixed
      */
-    protected function readTokens($root_folder, $name)
+    protected function readTokens(string $root_folder, $name)
     {
         $full_path = "$root_folder/$name/.phab-scaffold-tokens";
-        if (!file_exists($full_path)) {
+        if (!$this->shell->exists($full_path)) {
             return [];
         }
-        $tokens = yaml::parseFile($full_path);
+        $content = $this->shell->getFileContents($full_path, $this->context);
+        $tokens = yaml::parse($content);
         return is_array($tokens) ? $tokens : [];
     }
 }
