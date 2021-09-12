@@ -91,6 +91,7 @@ There are two commands builtin, because they are hard to implement in a script-o
 
   * waitForServices
   * copySSHKeysToDocker
+  * scaffoldDockerFiles
 
 ### waitForServices
 
@@ -113,6 +114,26 @@ These are the needed global settings in the fabfile:
 * `dockerNetRcFile`, will copy a `.netrc`-file into the container (suitable for authenticating against https repositories)
 
 Obviously a ssh-demon should be running inside your docker-container.
+
+### scaffoldDockerFiles
+
+This command will scaffold all files necessary for docker when executed. (It will also executed before any other docker command). Make sure, your host-config contains a `scaffold`-section. Here's an example:
+
+```yaml
+hosts:
+  example:
+    docker:
+      scaffold:
+        assets:
+          - hosting/mbb/docker-compose.yml
+          - hosting/mbb/docker-compose.override.yml
+        questions:
+          ...
+        scaffold:
+          - copy_assets(%rootFolder%)
+          - ...
+
+```
 
 ## Predefined docker-tasks
 

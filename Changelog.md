@@ -59,6 +59,11 @@
     ```yaml
     aValue: "f0ef7081e1539ac00ef5b761b4fb01b3"
     ```
+  * Add `secret`-twig-function to the scaffolder. It will return the value for a given secret.
+
+    ```twig
+    The mysql-password is {{ secret("mysql-password" }}
+    ```
 
   * Host-configs can be hidden from `list:hosts` by setting `hidden` to `true`
 
@@ -72,6 +77,10 @@
     description and one or more urls which will be displayed on `phab list:hosts`
 
     ```yaml
+    description: |-
+      A multiline global project description which will be outputted on
+      list:hosts
+
     hosts:
       local:
         info:
