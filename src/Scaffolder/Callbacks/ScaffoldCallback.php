@@ -81,8 +81,6 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
             [$key, $value] = explode("=", $arg, 2);
             $result[$key] = $value;
         }
-        print_r($arguments);
-        print_r($result);
         return $result;
     }
 }

@@ -57,5 +57,4 @@ class ScaffoldToRemoteTest extends PhabTestCase
 
         $this->assertStringContainsString('Scaffolding finished successfully!', $output);
     }
-
 }
