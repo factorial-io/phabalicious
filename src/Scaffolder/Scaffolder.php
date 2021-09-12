@@ -17,6 +17,7 @@ use Phabalicious\Exception\YamlParseException;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
+use Phabalicious\Scaffolder\TwigExtensions\GetSecretExtension;
 use Phabalicious\Scaffolder\TwigExtensions\Md5Extension;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\DryRunShellProvider;
@@ -251,6 +252,7 @@ class Scaffolder
         $this->twig = new Environment($loader, array( ));
         $this->twig->addExtension(new StringExtension());
         $this->twig->addExtension(new Md5Extension());
+        $this->twig->addExtension(new GetSecretExtension($this->configuration->getPasswordManager()));
 
         $options
             ->addCallback(new CopyAssetsCallback($this->configuration, $this->twig))
