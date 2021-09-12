@@ -56,10 +56,12 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
 
         $options = new Options();
         $options->setAllowOverride(true)
+            ->setShell($context->getShell())
             ->setUseCacheTokens(false);
 
         if ($existing_options = $context->get('options', false)) {
             /** @var Options $existing_options */
+            $options->setShell($existing_options->getShell());
             $options->setDryRun($existing_options->isDryRun());
             $options->setDynamicOptions($existing_options->getDynamicOptions());
         }
@@ -73,9 +75,14 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
     {
         $result = [];
         foreach ($arguments as $arg) {
+            if (strpos($arg, "=") === false) {
+                throw new \RuntimeException(sprintf("Can't parse argument %s", $arg));
+            }
             [$key, $value] = explode("=", $arg, 2);
             $result[$key] = $value;
         }
+        print_r($arguments);
+        print_r($result);
         return $result;
     }
 }
