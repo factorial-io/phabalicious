@@ -28,7 +28,7 @@
     -->
     <exclude-pattern>*/autoload.php</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
-
+    <exclude-pattern>*/tests/assets/*</exclude-pattern>
     <!--
        You can hard-code command line values into your custom standard.
        Note that this does not work for the command line values:

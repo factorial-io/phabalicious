@@ -10,6 +10,7 @@ use Phabalicious\Utilities\SetAndRestoreObjProperty;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
@@ -31,6 +32,14 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     protected $shellEnvironmentVars = [];
 
     protected $preventTimeout = false;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        parent::__construct($logger);
+        if ($this->getName() == 'local') {
+            $this->setFileOperationsHandler(new LocalFileOperations());
+        }
+    }
 
     public function getName(): string
     {

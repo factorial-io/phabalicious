@@ -54,7 +54,17 @@ class DockerMethod extends BaseMethod implements MethodInterface
         ) {
             $config['sshTunnel']['destHostFromDockerContainer'] = $host_config['docker']['name'];
         }
-        $config['docker']['scaffold'] = false;
+        if (!empty($host_config['docker']['scaffold'])) {
+            $config['docker']['scaffold'] = [
+                'scaffold'  => [
+                    'copy_assets(%rootFolder%)'
+                ],
+                'questions' => [],
+                'successMessage' => 'Scaffolded files for docker successfully!',
+            ];
+        } else {
+            $config['docker']['scaffold'] = false;
+        }
         return $config;
     }
 
@@ -88,6 +98,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 );
                 $validation->hasKeys([
                     'assets' => 'The list of assets to scaffold',
+                    'scaffold' => 'The scaffolding script',
+                    'questions' => 'The questions to ask before scaffolding',
                 ]);
             }
         }
@@ -697,11 +709,20 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     protected function scaffoldDockerFiles(HostConfig $host_config, TaskContextInterface $context)
     {
+
         static $scaffolder_did_run = [];
         if (!empty($scaffolder_did_run[$host_config->getConfigName()])) {
             return;
         }
         $scaffolder_did_run[$host_config->getConfigName()] = true;
+
+        $scaffold_definition = $host_config['docker']['scaffold'];
+        if (!$scaffold_definition) {
+            throw new \RuntimeException(sprintf(
+                'Configuration `%s` does not support scaffolded docker configuration',
+                $host_config->getConfigName()
+            ));
+        }
 
         $docker_config = self::getDockerConfig($host_config, $context->getConfigurationService());
         if (!$docker_config->get('runLocally')) {
@@ -710,12 +731,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $project_folder = self::getProjectFolder($docker_config, $host_config);
         $shell = $docker_config->shell();
 
-        $assets = $host_config['docker']['scaffold']['assets'];
-        if (!is_array($assets)) {
-            $assets = [ $assets ];
-        }
         $tokens = Utilities::buildVariablesFrom($host_config, $context);
         unset($tokens['context']);
+
         $options = new Options();
         $options
             ->setTwigLoaderBase($project_folder)
@@ -724,14 +742,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             ->setSkipSubfolder(true)
             ->setAllowOverride(true)
             ->setUseCacheTokens(false)
-            ->setScaffoldDefinition([
-                "questions" => [],
-                "assets" => $assets,
-                "successMessage" => "Scaffolded files for docker successfully!",
-                "scaffold" => [
-                    "copy_assets(%rootFolder%)",
-                ]
-            ]);
+            ->setScaffoldDefinition($scaffold_definition);
 
         $context->set('scaffoldStrategy', CopyAssetsCallback::IGNORE_SUBFOLDERS_STRATEGY);
         $scaffolder = new Scaffolder($context->getConfigurationService());

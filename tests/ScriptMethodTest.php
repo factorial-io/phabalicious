@@ -54,7 +54,7 @@ class ScriptMethodTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $this->configurationService->readConfiguration($this->getcwd() . '/assets/script-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__ . '/assets/script-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
@@ -215,7 +215,7 @@ class ScriptMethodTest extends PhabTestCase
 
         $this->assertNotNull($this->context->getCommandResult());
         $this->assertEquals(
-            [$this->getcwd() . '/assets/script-tests'],
+            [__DIR__ . '/assets/script-tests'],
             $this->context->getCommandResult()->getOutput()
         );
     }

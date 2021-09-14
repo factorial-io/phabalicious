@@ -33,7 +33,7 @@ class WebhookCommandTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/webhook-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/webhook-tests/fabfile.yaml');
 
         $this->application->add(new WebhookCommand($configuration, $method_factory));
         $this->application->add(new DeployCommand($configuration, $method_factory));

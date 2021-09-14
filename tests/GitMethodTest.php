@@ -44,7 +44,7 @@ class GitMethodTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration($this->getcwd() . '/assets/git-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__ . '/assets/git-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),

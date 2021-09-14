@@ -41,7 +41,7 @@ class ScaffoldCommandTest extends PhabTestCase
 
         $command_tester->execute([
             'command' => 'scaffold',
-            'scaffold-path' => $this->getcwd() . '/assets/scaffold-tests/simple-scaffold.yml',
+            'scaffold-path' => __DIR__ . '/assets/scaffold-tests/simple-scaffold.yml',
         ]);
 
         $output = $command_tester->getDisplay();
@@ -56,7 +56,7 @@ class ScaffoldCommandTest extends PhabTestCase
 
         $command_tester->execute([
             'command' => 'scaffold',
-            'scaffold-path' => $this->getcwd() . '/assets/scaffold-tests/simple-scaffold.yml',
+            'scaffold-path' => __DIR__ . '/assets/scaffold-tests/simple-scaffold.yml',
             '--age' => '20',
             '--location' => "Berlin"
         ]);

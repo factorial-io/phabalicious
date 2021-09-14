@@ -102,6 +102,7 @@ scripts:
   test-in-docker-container:
     context: docker-image
     image: node:12
+    user: node
     script:
       - npm install
       - npm run build
@@ -119,7 +120,7 @@ These script execution-contexts are available
 
  * `docker-image`
 
-   the script will be executed in a docker-container created with the provided name of the docker-image to use. The current folder will be mounted as a volume inside the docker-container at `/app` and the script will be executed as the current user and group. The container will be deleted afterwards, if you need to keep files persistent, make sure to move/ copy them to `/app`
+   the script will be executed in a docker-container created with the provided name of the docker-image to use. The current folder will be mounted as a volume inside the docker-container at `/app` and the script will be executed as the current user and group (if not a dedicated user is set via `user`). The container will be deleted afterwards, if you need to keep files persistent, make sure to move/ copy them to `/app`
    The above example will install the node-based app and execute the `build`-command
 
 ## Questions

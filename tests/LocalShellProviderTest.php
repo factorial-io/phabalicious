@@ -2,13 +2,17 @@
 
 namespace Phabalicious\Tests;
 
+use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class LocalShellProviderTest extends PhabTestCase
 {
@@ -16,6 +20,11 @@ class LocalShellProviderTest extends PhabTestCase
     private $shellProvider;
 
     private $config;
+
+    /**
+     * @var \Phabalicious\Method\TaskContext
+     */
+    private $context;
 
     public function setUp()
     {
@@ -28,6 +37,13 @@ class LocalShellProviderTest extends PhabTestCase
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 
         $this->shellProvider = new LocalShellProvider($logger);
+
+        $this->context = new TaskContext(
+            $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
+            $this->getMockBuilder(InputInterface::class)->getMock(),
+            $this->getMockBuilder(OutputInterface::class)->getMock()
+        );
+        $this->context->setConfigurationService($this->config);
     }
 
     public function testGetDefaultConfig()
@@ -154,5 +170,21 @@ class LocalShellProviderTest extends PhabTestCase
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertContains('XXvariable_cXX', $output);
+    }
+
+    public function testFileGetContents()
+    {
+        $file = __FILE__;
+        $test = $this->shellProvider->getFileContents($file, $this->context);
+        $original = file_get_contents($file);
+        $this->assertEquals($original, $test);
+    }
+
+    public function testFilePutContents()
+    {
+        $content = 'helloworld';
+        $result = $this->shellProvider->putFileContents('/tmp/test_put_file_content', $content, $this->context);
+        $test = file_get_contents('/tmp/test_put_file_content');
+        $this->assertEquals($content, $test);
     }
 }

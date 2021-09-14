@@ -65,7 +65,9 @@ class MysqlMethodTest extends PhabTestCase
             'needs' => [
                 'mysql'
             ],
-            'mysqlDumpOptions' => [],
+            'mysqlDumpOptions' => [
+                '--column-statistics=0',
+            ],
             'executables' => [
                 'mysql' => 'mysql',
                 'mysqladmin' => 'mysqladmin',
@@ -75,7 +77,7 @@ class MysqlMethodTest extends PhabTestCase
                 'gzip' => 'gzip',
                 'gunzip' => 'gunzip',
             ],
-            'rootFolder' => $this->getcwd(),
+            'rootFolder' => __DIR__,
             'shellExecutable' => '/bin/sh',
             'database' => [
                 'host' => '127.0.0.1',

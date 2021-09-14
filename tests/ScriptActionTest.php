@@ -47,7 +47,7 @@ class ScriptActionTest extends TestCase
         $shellProvider = new LocalShellProvider($logger);
         $this->hostConfig = new HostConfig([
             'configName' => 'test',
-            'rootFolder' => getcwd() . '/tests',
+            'rootFolder' => __DIR__ . '/tests',
             'shellExecutable' => '/bin/bash',
         ], $shellProvider, $config);
 
@@ -166,26 +166,35 @@ class ScriptActionTest extends TestCase
      */
     public function testNpmInstallInDockerContext()
     {
+        $dir = __DIR__ . '/assets/script-action-npm-install';
+
+        exec(sprintf('rm -rf "%s/bin" "%s/lib" "%s/node_modules"', $dir, $dir, $dir));
+
         $action = $this->createAction([
+
             "script" => [
+                'npm cache clean --force  ',
                 'npm config set prefix /app',
                 'npm install -g gulp-cli',
                 'npm install',
                 '/app/bin/gulp --tasks'
             ],
             "context" => 'docker-image',
-            "image" => "node:14"
+            "image" => "node:14",
+            "user" => "node"
         ]);
 
 
         $context = clone $this->context;
 
-        $context->set('installDir', getcwd() . '/tests/assets/script-action-npm-install');
-        $context->set('targetDir', getcwd() . '/tests/assets/script-action-npm-install');
+        $context->set('installDir', $dir);
+        $context->set('targetDir', $dir);
 
         $action->run($this->hostConfig, $context);
         $output = $context->getCommandResult()->getOutput();
 
         $this->assertContains("Tasks for /app/gulpfile.js", $output[0]);
+
+        exec(sprintf('rm -rf "%s/bin" "%s/lib" "%s/node_modules', $dir, $dir, $dir));
     }
 }

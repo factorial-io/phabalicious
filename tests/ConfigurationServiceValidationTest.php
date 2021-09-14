@@ -33,7 +33,7 @@ class ConfigurationServiceValidationTest extends PhabTestCase
         $method_factory->addMethod(new GitMethod($this->logger));
 
         $this->config->setMethodFactory($method_factory);
-        $this->config->readConfiguration($this->getcwd() . '/assets/validation-tests');
+        $this->config->readConfiguration(__DIR__ . '/assets/validation-tests');
     }
 
 

@@ -29,7 +29,7 @@ class DockerComposeCommandTest extends PhabTestCase
         $method_factory->addMethod(new DockerMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/docker-compose-command/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/docker-compose-command/fabfile.yaml');
 
         $this->application->add(new DockerComposeCommand($configuration, $method_factory));
     }

@@ -33,7 +33,7 @@ class VariantBaseCommandTest extends PhabTestCase
         $method_factory->addMethod(new FilesMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/variants-base-command-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/variants-base-command-tests/fabfile.yaml');
 
         $this->application->add(new ScriptCommand($configuration, $method_factory));
     }
@@ -66,7 +66,7 @@ class VariantBaseCommandTest extends PhabTestCase
 
     private function runScript($script_name)
     {
-        $path = $this->getcwd() . '/../bin/phab';
+        $path = __DIR__ . '/../bin/phab';
         $executable = realpath($path);
         putenv('PHABALICIOUS_EXECUTABLE=' . $executable);
 

@@ -122,7 +122,7 @@ class PasswordManager implements PasswordManagerInterface
         return false;
     }
 
-    private function getSecret($secret)
+    public function getSecret($secret)
     {
         $configuration_service = $this->getContext()->getConfigurationService();
         $secrets = $configuration_service
@@ -136,7 +136,6 @@ class PasswordManager implements PasswordManagerInterface
         }
 
         $secret_data = $secrets[$secret];
-
 
         $env_name = !empty($secret_data['env'])
             ? $secret_data['env']

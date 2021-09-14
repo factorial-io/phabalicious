@@ -30,7 +30,7 @@ class ArtifactBasedDeploymentTest extends PhabTestCase
         $method_factory->addMethod(new ArtifactsCustomMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/artifact-based-deployment/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/artifact-based-deployment/fabfile.yaml');
 
         $this->application->add(new DeployCommand($configuration, $method_factory));
     }

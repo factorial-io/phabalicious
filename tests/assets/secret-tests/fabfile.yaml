@@ -37,7 +37,6 @@ hosts:
     smtp:
       password: "%secret.op-password%"
       password_combined: "123--%secret.op-password%--321"
-      multiple_secrets: "--%secret.mysql-password%--%secret.smtp-password%--"
 
   testUnknownSecret:
     inheritsFrom: base

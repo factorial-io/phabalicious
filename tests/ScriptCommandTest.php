@@ -33,7 +33,7 @@ class ScriptCommandTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/script-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/script-tests/fabfile.yaml');
 
         $this->application->add(new ScriptCommand($configuration, $method_factory));
     }

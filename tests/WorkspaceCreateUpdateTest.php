@@ -36,7 +36,7 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
     private function prepareTarget()
     {
 
-        $target_folder = $this->getcwd() . '/workspace';
+        $target_folder = $this->getTmpDir() . '/workspace';
         exec(sprintf('rm -rf "%s"', $target_folder));
         if (!is_dir($target_folder)) {
             mkdir($target_folder);

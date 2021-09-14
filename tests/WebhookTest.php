@@ -38,7 +38,7 @@ class WebhookTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new WebhookMethod($logger));
 
-        $this->configurationService->readConfiguration($this->getcwd() . '/assets/webhook-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__ . '/assets/webhook-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),

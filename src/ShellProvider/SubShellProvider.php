@@ -16,6 +16,8 @@ class SubShellProvider extends BaseShellProvider implements ShellProviderInterfa
     {
         parent::__construct($logger);
         $this->parentShell = $parent_shell;
+
+        $this->setFileOperationsHandler(new UnsupportedFileOperations());
     }
 
     public function getName(): string

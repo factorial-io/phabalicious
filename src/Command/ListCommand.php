@@ -58,7 +58,13 @@ class ListCommand extends BaseOptionsCommand
 
 
         $io = new SymfonyStyle($input, $output);
-        $io->title('List of found host-configurations:');
+        $io->title(sprintf(
+            'Available configurations for %s',
+            $this->configuration->getSetting('name', 'this project')
+        ));
+        if ($description = $this->configuration->getSetting('description')) {
+            $io->block($description, null, 'fg=blue');
+        }
         if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
             $this->showDetails($io, $host_config_names);
         } else {

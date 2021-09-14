@@ -48,7 +48,7 @@ class ShellCommandOptionsTest extends PhabTestCase
 
         $this->application->add(new DrushCommand($this->configuration, $method_factory));
 
-        $this->configuration->readConfiguration($this->getcwd() . '/assets/shell-command-options-tests/fabfile.yaml');
+        $this->configuration->readConfiguration(__DIR__ . '/assets/shell-command-options-tests/fabfile.yaml');
 
         $this->shell = new LocalShellProvider($logger);
         $this->shell->setHostConfig($this->configuration->getHostConfig('local-shell'));
@@ -117,7 +117,7 @@ class ShellCommandOptionsTest extends PhabTestCase
             'command-arguments' => ['version'],
         ];
         if ($override_shell_provider_options) {
-            $filepath =$this->getcwd() . '/assets/shell-command-options-tests/testruns';
+            $filepath =__DIR__ . '/assets/shell-command-options-tests/testruns';
             $args['--set'] = sprintf('host.shellProviderOptions.1=%s', $filepath);
         }
 

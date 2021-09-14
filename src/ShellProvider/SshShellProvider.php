@@ -9,6 +9,7 @@ use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\TunnelHelper\SshTunnelHelper;
 use Phabalicious\ShellProvider\TunnelHelper\TunnelSupportInterface;
 use Phabalicious\Utilities\EnsureKnownHosts;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Process\Process;
@@ -65,7 +66,12 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
     {
         parent::validateConfig($config, $errors);
 
-        $validation = new ValidationService($config, $errors, sprintf('host-config: `%s`', $config['configName']));
+        $validation = new ValidationService(
+            $config,
+            $errors,
+            sprintf('host-config: `%s`', $config['configName'] ?? 'unknown config')
+        );
+
         $validation->hasKeys([
             'host' => 'Hostname to connect to',
             'port' => 'The port to connect to',
