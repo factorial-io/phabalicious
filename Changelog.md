@@ -73,7 +73,7 @@
         hidden: true # host config will not be shownn on `list:hsots`
     ```
 
-  * Add a new `info`-section to `host`-configs. This allows the user to add a short
+  * Add a new `info`-section to `host`-configs and a project specific `description`. This allows the user to add a short
     description and one or more urls which will be displayed on `phab list:hosts`
 
     ```yaml
@@ -159,6 +159,7 @@
   * Refactor how script-callbacks are handled internally, use a more oo-style
   * Moved all db related functinality out of `drush` into the methods `mysql`
     and `sqlite`
+  * Tests do not depend on the current working directory anymore and clean up after themselves.
 
 
 
