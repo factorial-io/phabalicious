@@ -81,6 +81,7 @@ class ScriptExecutionContext
     {
         switch ($this->currentContextName) {
             case self::DOCKER_IMAGE:
+                $shell->run(sprintf('docker pull %s', $this->getArgument('image')));
                 $this->shell = $shell->startSubShell([
                     'docker',
                     'run',

@@ -341,4 +341,25 @@ class ScriptMethodTest extends PhabTestCase
 
         $this->assertContains("PHAB_SUB_SHELL=1", $output);
     }
+
+
+    public function testCleanupScriptSection()
+    {
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
+            '(exit 42)',
+        ]);
+        $this->context->set(ScriptMethod::SCRIPT_CLEANUP, [
+            'echo "$ROOT_FOLDER"'
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+
+        $this->method->runScript($host_config, $this->context);
+
+        $this->assertNotNull($this->context->getCommandResult());
+        $this->assertEquals(
+            [__DIR__ . '/assets/script-tests'],
+            $this->context->getCommandResult()->getOutput()
+        );
+    }
 }

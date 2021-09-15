@@ -99,6 +99,7 @@ scripts:
     context: kubectl
     script:
       - kubectl apply -f whatever
+
   test-in-docker-container:
     context: docker-image
     image: node:12
@@ -149,6 +150,23 @@ If the user provides command line arguments with the same name as the question k
 ```
 phab -cconfig script createRelease --arguments version=1.0.0
 ```
+
+## Cleaning up
+
+Phab supports special clean-up scripts which will be execeuted regardless of the return code of the executed script. You can use them to clean up after a script or to call certain function regardless of the outcome of the script. Here's an example"
+
+```yaml
+script:
+  runTests:
+    script:
+      - composer install
+      - vendor/bin/phpunit
+    finally:
+      - rm test-data
+      - rm -rf vendor
+```
+
+Regardless if `phpunit` succeeds or fails, the script lines in `finally` will be executed, and after that, phab will be terminated with the return code of the script run. Helpful in ci tasks, where you need to cleanup after yourself.
 
 ## Computed values
 

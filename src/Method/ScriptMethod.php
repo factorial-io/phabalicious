@@ -10,6 +10,7 @@ use Phabalicious\Method\Callbacks\FailOnMissingDirectory;
 use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Scaffolder\Callbacks\CallbackInterface;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -27,6 +28,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     const SCRIPT_CONTEXT_DATA = 'scriptContextData';
     const SCRIPT_COMPUTED_VALUES = 'scriptComputedValues';
     const SCRIPT_CALLBACKS = 'callbacks';
+    const SCRIPT_CLEANUP = 'scriptCleanup';
 
 
     private $breakOnFirstError = true;
@@ -80,6 +82,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      *
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function runScript(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -141,22 +144,24 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $environment = Utilities::validateScriptCommands($environment, $replacements);
             $environment = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($environment);
 
-            $commands = Utilities::expandStrings($commands, $replacements, []);
-            $commands = Utilities::expandStrings($commands, $replacements);
-            $commands = Utilities::validateScriptCommands($commands, $replacements);
-
-
-            $commands = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($commands);
+            $commands = $this->resolvePlaceholdersAndSecrets($commands, $replacements, $context);
+            $cleanup_commands = $this->resolvePlaceholdersAndSecrets(
+                $context->get(self::SCRIPT_CLEANUP, []),
+                $replacements,
+                $context
+            );
 
             $context->set('host_config', $host_config);
 
             $result = $this->runScriptImpl(
                 $root_folder,
                 $commands,
+                $cleanup_commands,
                 $context,
                 $callbacks,
                 $environment
             );
+
 
             $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
             $context->setResult('commandResult', $result);
@@ -194,15 +199,16 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      *
      * @return CommandResult|null
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     private function runScriptImpl(
         string $root_folder,
         array $commands,
+        array $cleanup,
         TaskContextInterface $context,
         array $callbacks = [],
         array $environment = []
     ) : ?CommandResult {
-        $command_result = new CommandResult(0, []);
         $context->set('break_on_first_error', $this->getBreakOnFirstError());
 
         $shell = $context->getShell();
@@ -218,6 +224,41 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $shell->pushWorkingDir($execution_context->getInitialWorkingDir());
         $shell->applyEnvironment($environment);
 
+        $command_result = $this->runCommands(
+            $commands,
+            $context,
+            $shell,
+            $callbacks
+        );
+
+        if (!empty($cleanup)) {
+            $cleanup_result = $this->runCommands(
+                $cleanup,
+                $context,
+                $shell,
+                $callbacks
+            );
+            if ($cleanup_result->failed()) {
+                $this->logger->error(implode("\n", $cleanup_result->getOutput()));
+            }
+        }
+
+        $shell->popWorkingDir();
+        $execution_context->exit();
+
+        return $command_result;
+    }
+
+    /**
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     */
+    private function runCommands(
+        array $commands,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        array $callbacks
+    ) {
+        $command_result = new CommandResult(0, []);
         foreach ($commands as $line) {
             $line = trim($line);
             if (empty($line)) {
@@ -234,15 +275,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 $context->setCommandResult($command_result);
 
                 if ($command_result->failed() && $this->getBreakOnFirstError()) {
-                    $shell->popWorkingDir();
-                    $execution_context->exit();
                     return $command_result;
                 }
             }
         }
-
-        $shell->popWorkingDir();
-        $execution_context->exit();
 
         return $command_result;
     }
@@ -433,6 +469,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $script_context = $script_data['context'] ?? ScriptExecutionContext::HOST;
         $script_questions = $script_data['questions'] ?? [];
         $computed_values = $script_data['computedValues'] ?? [];
+        $script_cleanup= $script_data['finally'] ?? [];
         $script_context_data = $script_data;
         if (!empty($script_data['script'])) {
             $script_data = $script_data['script'];
@@ -445,5 +482,29 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, $script_context_data);
         $context->set(ScriptMethod::SCRIPT_QUESTIONS, $script_questions);
         $context->set(ScriptMethod::SCRIPT_COMPUTED_VALUES, $computed_values);
+        $context->set(ScriptMethod::SCRIPT_CLEANUP, $script_cleanup);
+    }
+
+    /**
+     * @param array $commands
+     * @param array $replacements
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     *
+     * @return mixed
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     */
+    public function resolvePlaceholdersAndSecrets(
+        array $commands,
+        array $replacements,
+        TaskContextInterface $context
+    ) {
+        $commands = Utilities::expandStrings($commands, $replacements, []);
+        $commands = Utilities::expandStrings($commands, $replacements);
+        $commands = Utilities::validateScriptCommands($commands, $replacements);
+
+
+        return $context->getConfigurationService()
+            ->getPasswordManager()
+            ->resolveSecrets($commands);
     }
 }
