@@ -21,6 +21,8 @@
           - npm install -g gulp-cli
           - npm install
           - gulp run
+        finally:
+          - rm -rf node_modules
         context: docker-image
         image: node:12
         user: node # Optional user, if not specified, the current uid:gid will be used
@@ -31,7 +33,12 @@
     files after the container got killed, make sure to copy/ move them into the
     `/app`-folder.
 
-    The container will be removed after the script finishes.
+    The container will be removed after the script finishes. Before the script is
+    executed, phabalicious will pull the docker-image.
+
+    The `finally`-step will executed after the script, it allows to cleanup any
+    leftovers, regardless of the result of the script-execution (e.g. returned
+    early because of an error).
 
     `script`-actions for scaffolders are supporting this too, e.g.
 
