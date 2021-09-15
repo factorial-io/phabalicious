@@ -73,6 +73,14 @@ This command will display the installed version of the code on the installation 
 
 * `git`. The command will get the installed version via `git describe`, so if you tag your source properly (.e.g. by using  git flow), you'll get a nice version-number.
 
+
+## shell
+
+```shell
+phab --config=<your-config> shell
+```
+Will open an interactive shell with `your-config`. It will utilize all necessary steps to connect to the remote or local instance and provide a shell.
+
 ## deploy
 
 ``` bash
