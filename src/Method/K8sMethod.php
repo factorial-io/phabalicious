@@ -79,7 +79,6 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $default['kube'] = Utilities::mergeData($global_settings, [
             'context' => false,
-            'kubeconfig' => false,
             'environment' => [],
             'scaffoldBeforeApply' => true,
             'applyBeforeDeploy' => true,
