@@ -23,6 +23,7 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
     {
         return parent::isRunningAppRequired($host_config, $context, $task) ||
             in_array($task, [
+                'artisan',
                 'laravel',
                 'install',
                 'deploy',
