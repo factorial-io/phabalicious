@@ -430,7 +430,7 @@ This command will run a command to forward a local port to a remote port. It sta
 **Examples**
 
 * `phab --config=mbb start-remote-access` will forward `localhost:8888` to port `80` of the docker-container
-* `phab --config=mbb start-remote-access --port=3306 --publicPort=33060` will forward `localhost:33060`to port `3306`
+* `phab --config=mbb start-remote-access --port=3306 --public-port=33060` will forward `localhost:33060`to port `3306`
 
 
 ## docker-compose
