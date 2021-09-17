@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Method;
 
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Symfony\Component\Dotenv\Dotenv;
 
@@ -18,6 +19,25 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
         return "php artisan";
     }
 
+
+    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    {
+        $config = parent::getDefaultConfig($configuration_service, $host_config);
+        $config['artisanTasks'] = [
+            'install' => [
+                'db:wipe --force',
+                'migrate',
+                'db:seed'
+            ],
+            'reset' => [
+                'config:cache',
+                'migrate',
+                'cache:clear'
+            ]
+        ];
+
+        return $config;
+    }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
@@ -38,17 +58,23 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
         $this->runCommand($host_config, $context, $command);
     }
 
+    protected function runArtisanTasks(HostConfig $hostConfig, TaskContextInterface $context, string $what)
+    {
+        $tasks = $hostConfig->get("artisanTasks", []);
+        $tasks = $tasks[$what] ?? [];
+        foreach ($tasks as $task) {
+            $this->runCommand($hostConfig, $context, $task);
+        }
+    }
+
     public function install(HostConfig $host_config, TaskContextInterface $context)
     {
-        $this->runCommand($host_config, $context, "db:wipe");
-        $this->runCommand($host_config, $context, "migrate");
-        $this->runCommand($host_config, $context, "db:seed");
+        $this->runArtisanTasks($host_config, $context, 'install');
     }
 
     public function reset(HostConfig $host_config, TaskContextInterface $context)
     {
-        $this->runCommand($host_config, $context, "migrate");
-        $this->runCommand($host_config, $context, "cache:clear");
+        $this->runArtisanTasks($host_config, $context, 'reset');
     }
 
     public function requestDatabaseCredentialsAndWorkingDir(HostConfig $host_config, TaskContextInterface $context)
