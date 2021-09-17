@@ -725,9 +725,6 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
 
         $docker_config = self::getDockerConfig($host_config, $context->getConfigurationService());
-        if (!$docker_config->get('runLocally')) {
-            throw new \RuntimeException('Scaffolding is limited to local execution for now!');
-        }
         $project_folder = self::getProjectFolder($docker_config, $host_config);
         $shell = $docker_config->shell();
 
@@ -736,7 +733,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         $options = new Options();
         $options
-            ->setTwigLoaderBase($project_folder)
+            ->setTwigLoaderBase($context->getConfigurationService()->getFabfilePath())
             ->setShell($shell)
             ->setQuiet(true)
             ->setSkipSubfolder(true)
