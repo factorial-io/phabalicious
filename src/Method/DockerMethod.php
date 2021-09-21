@@ -27,6 +27,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     protected $cache = [];
 
+    protected $environmentVarsCache = [];
+
     public function getName(): string
     {
         return 'docker';
@@ -123,16 +125,25 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     /**
      * @param HostConfig $host_config
-     * @param ConfigurationService $config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     *
      * @return DockerConfig
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    public static function getDockerConfig(HostConfig $host_config, ConfigurationService $config)
+    public function getDockerConfig(HostConfig $host_config, TaskContextInterface $context): DockerConfig
     {
-        $config = $config->getDockerConfig($host_config['docker']['configuration']);
+        $config = $context->getConfigurationService()->getDockerConfig($host_config['docker']['configuration']);
         $config['executables'] = $host_config['executables'];
+        $environment = $this->environmentVarsCache[$host_config->getConfigName()] ?? false;
+        if (!$environment) {
+            $environment = $this->getHostEnvironment($host_config, $context, $config);
+            $this->environmentVarsCache[$host_config->getConfigName()] = $environment;
+        }
+
+        // Override environment.
+        $config['environment'] = $environment;
         return $config;
     }
 
@@ -182,7 +193,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             return;
         }
 
-        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
+        $docker_config = $this->getDockerConfig($host_config, $context);
         $tasks = $docker_config['tasks'];
 
         if ($silent && empty($tasks[$task])) {
@@ -241,8 +252,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
         $max_tries = 10;
         $tries = 0;
-        $docker_config = $this->getDockerConfig($hostconfig, $context->getConfigurationService());
-        $container_name = $this->getDockerContainerName($hostconfig, $context->getConfigurationService());
+        $docker_config = $this->getDockerConfig($hostconfig, $context);
+        $container_name = $this->getDockerContainerName($hostconfig, $context);
         $shell = $docker_config->shell();
 
         if (!$this->isContainerRunning($docker_config, $container_name)) {
@@ -288,6 +299,26 @@ class DockerMethod extends BaseMethod implements MethodInterface
     public static function getProjectFolder(DockerConfig $docker_config, HostConfig $host_config)
     {
         return $docker_config['rootFolder'] . '/'. $host_config['docker']['projectFolder'];
+    }
+
+    /**
+     * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param \Phabalicious\Configuration\DockerConfig $docker_config
+     *
+     * @return array
+     */
+    public function getHostEnvironment(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        DockerConfig $docker_config
+    ): array {
+        $variables = Utilities::buildVariablesFrom($host_config, $context);
+        $replacements = Utilities::expandVariables($variables);
+        $environment = Utilities::expandStrings($docker_config->get('environment', []), $replacements);
+        return $context->getConfigurationService()
+            ->getPasswordManager()
+            ->resolveSecrets($environment);
     }
 
     /**
@@ -344,7 +375,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             ];
         }
 
-        $docker_config = $this->getDockerConfig($hostconfig, $context->getConfigurationService());
+        $docker_config = $this->getDockerConfig($hostconfig, $context);
         $root_folder = $this->getProjectFolder($docker_config, $hostconfig);
 
         $shell = $docker_config->shell();
@@ -370,7 +401,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
 
         if (count($files) > 0) {
-            $container_name = $this->getDockerContainerName($hostconfig, $context->getConfigurationService());
+            $container_name = $this->getDockerContainerName($hostconfig, $context);
             if (!$this->isContainerRunning($docker_config, $container_name)) {
                 throw new \RuntimeException(sprintf(
                     'Docker container %s not running, check your `host.docker.name` configuration!',
@@ -455,11 +486,11 @@ class DockerMethod extends BaseMethod implements MethodInterface
         if (!empty($this->cache[$host_config->getConfigName()])) {
             return $this->cache[$host_config->getConfigName()];
         }
-        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
+        $docker_config = $this->getDockerConfig($host_config, $context);
         $shell = $docker_config->shell();
         $scoped_loglevel = new ScopedLogLevel($shell, LogLevel::DEBUG);
         try {
-            $container_name = $this->getDockerContainerName($host_config, $context->getConfigurationService());
+            $container_name = $this->getDockerContainerName($host_config, $context);
         } catch (\RuntimeException $e) {
             return false;
         }
@@ -492,7 +523,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
      */
     public function startRemoteAccess(HostConfig $host_config, TaskContextInterface $context)
     {
-        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
+        $docker_config = $this->getDockerConfig($host_config, $context);
         $this->getIp($host_config, $context);
         if (is_a($docker_config->shell(), 'SshShellProvider')) {
             $context->setResult('config', $docker_config);
@@ -522,7 +553,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
     public function appCheckExisting(HostConfig $host_config, TaskContextInterface $context)
     {
         // Set outer-shell to the one provided by the docker-configuration.
-        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
+        $docker_config = $this->getDockerConfig($host_config, $context);
         $context->setResult('outerShell', $docker_config->shell());
         $context->setResult('installDir', $this->getProjectFolder($docker_config, $host_config));
     }
@@ -573,7 +604,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        $docker_config = $this->getDockerConfig($host_config, $context->getConfigurationService());
+        $docker_config = $this->getDockerConfig($host_config, $context);
         $shell = $docker_config->shell();
 
         if (isset($docker_config['tasks'][$current_stage]) ||
@@ -591,13 +622,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @throws MissingDockerHostConfigException
      * @throws ValidationFailedException
      */
-    public static function getDockerContainerName(HostConfig $host_config, ConfigurationService $config)
+    public function getDockerContainerName(HostConfig $host_config, TaskContextInterface $context): string
     {
         if (!empty($host_config['docker']['name'])) {
             return $host_config['docker']['name'];
         }
         if ($composer_service = $host_config['docker']['service']) {
-            $docker_config = self::getDockerConfig($host_config, $config);
+            $docker_config = $this->getDockerConfig($host_config, $context);
             $shell = $docker_config->shell();
             $cwd = $shell->getWorkingDir();
             $shell->cd(self::getProjectFolder($docker_config, $host_config));
@@ -619,6 +650,8 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 $composer_service
             ));
         }
+
+        return '';
     }
 
     public function preflightTask(string $task, HostConfig $host_config, TaskContextInterface $context)
@@ -643,10 +676,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 $host_config->setChild(
                     'docker',
                     'name',
-                    self::getDockerContainerName(
-                        $host_config,
-                        $context->getConfigurationService()
-                    )
+                    $this->getDockerContainerName($host_config, $context)
                 );
             } catch (\Exception $e) {
             }
@@ -675,9 +705,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    /**
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     */
     public function dockerCompose(HostConfig $host_config, TaskContextInterface $context)
     {
-        $docker_config = self::getDockerConfig($host_config, $context->getConfigurationService());
+        $docker_config = $this->getDockerConfig($host_config, $context);
         $shell = $docker_config->shell();
 
         $arguments = $context->get('command', false);
@@ -685,10 +720,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing command arguments for dockerCompose');
         }
 
-        $variables = Utilities::buildVariablesFrom($host_config, $context);
-        $replacements = Utilities::expandVariables($variables);
-        $environment = Utilities::expandStrings($docker_config->get('environment', []), $replacements);
-        $environment = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($environment);
+        $environment = $this->getHostEnvironment($host_config, $context, $docker_config);
 
         $context->setResult('shell', $shell);
 
@@ -724,7 +756,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             ));
         }
 
-        $docker_config = self::getDockerConfig($host_config, $context->getConfigurationService());
+        $docker_config = $this->getDockerConfig($host_config, $context);
         $project_folder = self::getProjectFolder($docker_config, $host_config);
         $shell = $docker_config->shell();
 

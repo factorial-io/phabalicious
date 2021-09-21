@@ -21,7 +21,7 @@ class NpmMethod extends RunCommandBaseMethod
         $service->hasKey('npmBuildCommand', 'build command to run with npm');
     }
 
-    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
+    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command): string
     {
         $production = !in_array($host_config['type'], array('dev', 'test'));
         $command .= ' --no-interaction  --silent';
@@ -53,7 +53,7 @@ class NpmMethod extends RunCommandBaseMethod
             $this->resetPrepare($host_config, $context);
         }
     }
-    
+
     public function npm(HostConfig $host_config, TaskContextInterface $context)
     {
         $command = $context->get('command');

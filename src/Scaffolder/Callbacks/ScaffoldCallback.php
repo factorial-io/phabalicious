@@ -61,7 +61,9 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
 
         if ($existing_options = $context->get('options', false)) {
             /** @var Options $existing_options */
-            $options->setShell($existing_options->getShell());
+            if ($existing_options->getShell()) {
+                $options->setShell($existing_options->getShell());
+            }
             $options->setDryRun($existing_options->isDryRun());
             $options->setDynamicOptions($existing_options->getDynamicOptions());
         }
