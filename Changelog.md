@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.16 / 2021-09-23
+
+### Fixed:
+
+  * Fix stuck drush deploy:hook
+
 ## 3.6.15 / 2021-08-04
 
 ### Fixed:
