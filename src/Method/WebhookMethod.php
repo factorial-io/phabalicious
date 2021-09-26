@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -226,6 +227,16 @@ class WebhookMethod extends BaseMethod implements MethodInterface
     }
 
     /**
+     * Implements alter hook script callbacks
+     *
+     * @param CallbackOptions $options
+     */
+    public function alterScriptCallbacks(CallbackOptions &$options)
+    {
+        $options->addCallback(new WebHookCallback($this));
+    }
+
+    /**
      * @param TaskContextInterface $context
      * @param Response|bool $result
      * @param string $webhook_name
@@ -246,7 +257,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
                 } else {
                     $context->setResult($webhook_name, $result);
                 }
-                $context->io()->title($webhook_name);
+                $context->io()->title("[$webhook_name] result:");
                 $context->io()->writeln($result);
             }
         }
