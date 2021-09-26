@@ -130,6 +130,7 @@ class ShellCommandOptionsTest extends PhabTestCase
     private function startDocker()
     {
         $this->stopRunningDocker();
+        $this->shell->cd(__DIR__ . '/..');
         $this->shell->run(
             sprintf(
                 "docker run -d -p %d:22 --name test-shell-command-options factorial/drupal-docker:php-73",

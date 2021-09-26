@@ -279,7 +279,7 @@ class Scaffolder
             $io->note('Available tokens:' . PHP_EOL . print_r($tokens, true));
         }
 
-        if (!empty($tokens['skipCreateDestinationFolder'])) {
+        if (empty($tokens['skipCreateDestinationFolder'])) {
             $io->comment(sprintf('Create destination folder `%s`...', $tokens['rootFolder']));
             $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
         }
