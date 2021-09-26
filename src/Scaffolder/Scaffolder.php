@@ -14,6 +14,7 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\YamlParseException;
+use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
@@ -128,6 +129,10 @@ class Scaffolder
                     )
                 );
             }
+        }
+        if (!empty($data['secrets'])) {
+            $context->getConfigurationService()->setSetting('secrets', $data['secrets']);
+            unset($data['secrets']);
         }
 
         $data['base_path'] = $base_path;
@@ -256,9 +261,11 @@ class Scaffolder
 
         $options
             ->addCallback(new CopyAssetsCallback($this->configuration, $this->twig))
+            ->addCallback(new WebHookCallback())
             ->addDefaultCallbacks();
 
         $context->set('callbacks', $options->getCallbacks());
+        $context->getConfigurationService()->setSetting('webhooks', $data['webhooks'] ?? []);
 
         if (is_dir($tokens['rootFolder']) && !$options->getAllowOverride()) {
             if (!$io->confirm(
@@ -272,8 +279,10 @@ class Scaffolder
             $io->note('Available tokens:' . PHP_EOL . print_r($tokens, true));
         }
 
-        $io->comment(sprintf('Create destination folder `%s`...', $tokens['rootFolder']));
-        $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
+        if (!empty($tokens['skipCreateDestinationFolder'])) {
+            $io->comment(sprintf('Create destination folder `%s`...', $tokens['rootFolder']));
+            $shell->run(sprintf('mkdir -p %s', $tokens['rootFolder']));
+        }
 
         $io->comment('Start scaffolding script ...');
         $script->runScript($host_config, $context);
@@ -292,7 +301,12 @@ class Scaffolder
             $this->writeTokens($tokens['rootFolder'], $tokens);
         }
         $success_message = $data['successMessage'] ?? 'Scaffolding finished successfully!';
+
+        $success_variables = Utilities::mergeData(Utilities::buildVariablesFrom($host_config, $context), $variables);
+        $replacements = Utilities::expandVariables($success_variables);
+        $success_message = Utilities::expandStrings($success_message, $replacements);
         $io->success($success_message);
+
         if ($options->isDryRun()) {
             $result = new CommandResult(0, $shell->getCapturedCommands());
         }

@@ -382,8 +382,10 @@ class Utilities
         ];
         $identifier = strtr($identifier, $filter);
 
+
         $identifier = preg_replace(
-            '/[^\\x{002D}\\x{0030}-\\x{0039}\\x{0041}-\\x{005A}\\x{005F}\\x{0061}-\\x{007A}\\x{00A1}-\\x{FFFF}]/u',
+            '/[^\\x{002D}\\x{002E}}\\x{0030}-\\x{0039}\\x{0041}-' .
+            '\\x{005A}\\x{005F}\\x{0061}-\\x{007A}\\x{00A1}-\\x{FFFF}]/u',
             '',
             $identifier
         );

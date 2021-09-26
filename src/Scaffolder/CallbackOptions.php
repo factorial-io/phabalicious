@@ -4,6 +4,7 @@
 namespace Phabalicious\Scaffolder;
 
 use Phabalicious\Method\AlterableDataInterface;
+use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Scaffolder\Callbacks\AlterJsonFileCallback;
 use Phabalicious\Scaffolder\Callbacks\AlterYamlFileCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertContainsCallback;

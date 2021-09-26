@@ -2,10 +2,12 @@
 
 namespace Phabalicious\Method\Callbacks;
 
+use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Method\WebhookMethod;
 use Phabalicious\Scaffolder\Callbacks\CallbackInterface;
 use Phabalicious\Utilities\Utilities;
+use Phabalicious\Validation\ValidationErrorBag;
 
 class WebHookCallback implements CallbackInterface
 {
@@ -22,13 +24,36 @@ class WebHookCallback implements CallbackInterface
         return "3.6";
     }
 
-    public function __construct(WebhookMethod $method)
+    public function __construct(WebhookMethod $method = null)
     {
         $this->method = $method;
     }
 
+    protected function getMethod(TaskContextInterface $context): WebhookMethod
+    {
+        if (!$this->method) {
+            $configurationService = $context->getConfigurationService();
+            $this->method = new WebhookMethod($configurationService->getLogger());
+            $errors = new ValidationErrorBag();
+            $config = [
+                'webhooks' =>$configurationService->getSetting('webhooks', []),
+            ];
+            $config = Utilities::mergeData($this->method->getGlobalSettings(), $config);
+            $configurationService->setSetting('webhooks', $config['webhooks']);
+            $this->method->validateGlobalSettings($configurationService->getAllSettings(), $errors);
+            if ($errors->hasErrors()) {
+                throw new ValidationFailedException($errors);
+            }
+        }
+
+        return $this->method;
+    }
+
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param mixed ...$args
+     *
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function handle(TaskContextInterface $context, ...$args)
     {
@@ -42,12 +67,13 @@ class WebHookCallback implements CallbackInterface
             $cloned_context->set('variables', $variables);
         }
         $host_config = $context->get('host_config');
-        $result = $this->method->runWebhook($webhook_name, $host_config, $cloned_context);
-        $this->method->handleWebhookResult(
+        $result = $this->getMethod($context)->runWebhook($webhook_name, $host_config, $cloned_context);
+        $this->getMethod($context)->handleWebhookResult(
             $cloned_context,
             $result,
             $webhook_name,
             sprintf('Could not find webhook `%s`', $webhook_name)
         );
+        $context->mergeResults($cloned_context);
     }
 }

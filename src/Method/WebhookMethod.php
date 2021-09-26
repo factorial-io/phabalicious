@@ -6,7 +6,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -154,9 +153,6 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
     public function webhook(HostConfig $host_config, TaskContextInterface $context)
     {
         $webhook_name = $context->get('webhook_name');
@@ -168,9 +164,6 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         $context->setResult('webhook_result', $result ? $result->getBody() : false);
     }
 
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
     public function runWebhook($webhook_name, HostConfig $config, TaskContextInterface $context)
     {
         $webhook = $context->getConfigurationService()->getSetting("webhooks.$webhook_name", false);
@@ -186,10 +179,18 @@ class WebhookMethod extends BaseMethod implements MethodInterface
 
         $webhook['url'] = Utilities::expandAndValidateString($webhook['url'], $replacements);
 
-        if (!empty($webhook['payload'])) {
-            $payload = $webhook['payload'];
+        foreach (['options', 'payload'] as $key) {
+            if (empty($webhook[$key])) {
+                continue;
+            }
+            $payload = $webhook[$key];
             $payload = Utilities::expandStrings($payload, $replacements);
             $payload = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($payload);
+            $webhook[$key] = $payload;
+        }
+
+        if (!empty($webhook['payload'])) {
+            $payload = $webhook['payload'];
 
             if ($webhook['method'] == 'get') {
                 $webhook['url'] .= '?' . http_build_query($payload);
@@ -205,6 +206,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             $webhook['method'],
             $webhook['format']
         ));
+        $this->logger->info('payload: ' . print_r($webhook['payload'], true));
         $this->logger->debug('guzzle options: ' . print_r($webhook['options'], true));
 
         $client = new Client();
@@ -223,18 +225,6 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         return $response;
     }
 
-
-    /**
-     * Implements alter hook script callbacks
-     *
-     * @param CallbackOptions $options
-     */
-    public function alterScriptCallbacks(CallbackOptions &$options)
-    {
-        $options->addCallback(new WebHookCallback($this));
-    }
-
-
     /**
      * @param TaskContextInterface $context
      * @param Response|bool $result
@@ -248,7 +238,16 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         } else {
             $result = (string)$result->getBody();
             if (!empty($result)) {
-                $context->io()->block($result, $webhook_name);
+                // Try to parse json.
+                $json = json_decode($result, true);
+                if (!is_null($json)) {
+                    $context->setResult($webhook_name, $json);
+                    $result = print_r($json, true);
+                } else {
+                    $context->setResult($webhook_name, $result);
+                }
+                $context->io()->title($webhook_name);
+                $context->io()->writeln($result);
             }
         }
     }
