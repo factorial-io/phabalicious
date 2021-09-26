@@ -178,11 +178,9 @@ class Utilities
             throw new UnknownReplacementPatternException($validated, array_keys($replacements));
         }
 
-        $commands = array_map(function ($r) {
+        return array_map(function ($r) {
             return str_replace('\%', '%', $r);
         }, $commands);
-
-        return $commands;
     }
 
     /**

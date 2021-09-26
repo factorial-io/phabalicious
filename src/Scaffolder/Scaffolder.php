@@ -301,6 +301,9 @@ class Scaffolder
             $this->writeTokens($tokens['rootFolder'], $tokens);
         }
         $success_message = $data['successMessage'] ?? 'Scaffolding finished successfully!';
+        if (!is_array($success_message)) {
+            $success_message = [$success_message];
+        }
 
         $success_variables = Utilities::mergeData(Utilities::buildVariablesFrom($host_config, $context), $variables);
         $replacements = Utilities::expandVariables($success_variables);
