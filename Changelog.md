@@ -167,6 +167,9 @@
   * Moved all db related functinality out of `drush` into the methods `mysql`
     and `sqlite`
   * Tests do not depend on the current working directory anymore and clean up after themselves.
+  * Refactor script execution to allow lazy validated replacements
+  * Fix unresolved replacement patterns in DockerMethod
+  * Allow artisan tasks to be configured
 
 
 
