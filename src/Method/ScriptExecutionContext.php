@@ -12,11 +12,13 @@ use Phabalicious\Validation\ValidationService;
 class ScriptExecutionContext
 {
     const DOCKER_IMAGE = 'docker-image';
+    const DOCKER_COMPOSE_RUN = 'docker-compose-run';
     const HOST = 'host';
     const KUBE_CTL = 'kubectl';
 
     const VALID_CONTEXTS = [
         self::DOCKER_IMAGE,
+        self::DOCKER_COMPOSE_RUN,
         self::HOST,
         self::KUBE_CTL
     ];
@@ -57,6 +59,11 @@ class ScriptExecutionContext
         }
 
         switch ($arguments['context']) {
+            case self::DOCKER_COMPOSE_RUN:
+                $validation->hasKey('rootFolder', 'the folder where the docker-compose is located at.');
+                $validation->hasKey('service', 'The service where to execute the script.');
+                break;
+
             case self::DOCKER_IMAGE:
                 $validation->hasKey('image', 'The name of the docker image to use');
                 break;
@@ -80,6 +87,19 @@ class ScriptExecutionContext
     public function enter(ShellProviderInterface $shell): ShellProviderInterface
     {
         switch ($this->currentContextName) {
+            case self::DOCKER_COMPOSE_RUN:
+                $shell->cd($this->getArgument('rootFolder'));
+                $shell->run('docker-compose pull && docker-compose build');
+                $this->shell = $shell->startSubShell([
+                    'docker-compose',
+                    'run',
+                    $this->getArgument('service'),
+                    $this->getArgument('shellExecutable', '/bin/sh')
+                ]);
+                $this->setInitialWorkingDir('/app');
+
+                break;
+
             case self::DOCKER_IMAGE:
                 $shell->run(sprintf('docker pull %s', $this->getArgument('image')));
                 $this->shell = $shell->startSubShell([
@@ -121,6 +141,12 @@ class ScriptExecutionContext
     public function exit()
     {
         $this->shell->terminate();
+
+        if ($this->currentContextName == self::DOCKER_COMPOSE_RUN) {
+            $this->shell->cd($this->workingDir);
+            $this->shell->cd($this->getArgument('rootFolder'));
+            $this->shell->run('docker-compose rm -s -v --force');
+        }
     }
 
     public function getShell(): ShellProviderInterface
