@@ -21,6 +21,7 @@ use Phabalicious\Method\TaskContext;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\Utilities;
 use Psr\Log\AbstractLogger;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -46,7 +47,7 @@ class ScriptMethodTest extends PhabTestCase
     public function setUp()
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
-        $app = $this->getMockBuilder(\Symfony\Component\Console\Application::class)->getMock();
+        $app = $this->getMockBuilder(Application::class)->getMock();
         $this->method = new ScriptMethod($logger);
         $this->configurationService = new ConfigurationService($app, $logger);
 

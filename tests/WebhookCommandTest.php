@@ -113,7 +113,9 @@ class WebhookCommandTest extends PhabTestCase
 
         $this->assertStringContainsString('[test2Get]', $output);
         $this->assertStringContainsString('[testArguments]', $output);
-        $this->assertStringContainsString('"args":{"q":"foo"}', $output);
+        $this->assertStringContainsString('[args] => Array', $output);
+        $this->assertStringContainsString('[q] => foo', $output);
+        $this->assertStringContainsString('[user-agent] => phabalicious', $output);
         $this->assertStringContainsString('factorial-screensaver', $output);
     }
 }

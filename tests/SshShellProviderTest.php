@@ -101,21 +101,21 @@ class SshShellProviderTest extends PhabTestCase
      */
     public function testRun()
     {
-        $this->getDockerizedSshShell($this->logger, $this->config);
+        $shell_provider = $this->getDockerizedSshShell($this->logger, $this->config);
 
         $test_dir = '/';
 
-        $result = $this->shellProvider
+        $result = $shell_provider
             ->cd($test_dir)
             ->run('ls -la', true);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->succeeded());
-        $this->assertContains('.dockerenv', $output);
-        $this->assertContains('config', $output);
-        $this->assertNotContains(LocalShellProvider::RESULT_IDENTIFIER, $output);
+        $this->assertStringContainsString('.dockerenv', $output);
+        $this->assertStringContainsString('config', $output);
+        $this->assertStringNotContainsString(LocalShellProvider::RESULT_IDENTIFIER, $output);
 
-        $result = $this->shellProvider
+        $result = $shell_provider
             ->run('pwd');
         $this->assertTrue(count($result->getOutput()) >= 1);
         $this->assertEquals($test_dir, trim($result->getOutput()[0]));

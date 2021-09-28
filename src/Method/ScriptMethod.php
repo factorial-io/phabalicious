@@ -138,106 +138,52 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             );
         }
 
-        try {
-            $replacements = Utilities::expandVariables($variables);
-            $environment = Utilities::expandStrings($environment, $replacements);
-            $environment = Utilities::validateScriptCommands($environment, $replacements);
-            $environment = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($environment);
+        $context->set('host_config', $host_config);
 
-            $commands = $this->resolvePlaceholdersAndSecrets($commands, $replacements, $context);
-            $cleanup_commands = $this->resolvePlaceholdersAndSecrets(
-                $context->get(self::SCRIPT_CLEANUP, []),
-                $replacements,
-                $context
-            );
+        $bag = new ScriptDataBag();
+        $bag->setContext($context)
+            ->setRootFolder($root_folder)
+            ->setVariables($variables)
+            ->setCallbacks($callbacks)
+            ->setEnvironment($environment)
+            ->setCommands($commands)
+            ->setCleanupCommands($context->get(self::SCRIPT_CLEANUP, []));
 
-            $context->set('host_config', $host_config);
+        $result = $this->runScriptImpl($bag);
 
-            $result = $this->runScriptImpl(
-                $root_folder,
-                $commands,
-                $cleanup_commands,
-                $context,
-                $callbacks,
-                $environment
-            );
-
-
-            $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
-            $context->setResult('commandResult', $result);
-        } catch (UnknownReplacementPatternException $e) {
-            $context->io()->error('Unknown replacement in line `' . $e->getOffendingLine() .'`');
-
-            $matches = [];
-            if (preg_match_all('/%arguments\.(.*?)%/', $e->getOffendingLine(), $matches)) {
-                foreach ($matches[1] as $a) {
-                    $context->io()->error('Missing argument: `' . $a . '`!');
-                }
-                throw $e;
-            }
-
-            $printed_replacements = array_map(function ($key) use ($replacements) {
-                $value = $replacements[$key];
-                if (strlen($value) > 40) {
-                    $value = substr($value, 0, 40) . '…';
-                }
-                return [$key, $value];
-            }, array_keys($replacements));
-
-            $context->io()->table(['Key', 'Replacement'], $printed_replacements);
-
-            throw $e;
-        }
+        $context->setResult('exitCode', $result ? $result->getExitCode() : 0);
+        $context->setResult('commandResult', $result);
     }
 
     /**
-     * @param string $root_folder
-     * @param array $commands
-     * @param TaskContextInterface $context
-     * @param array $callbacks
-     * @param array $environment
+     * @param \Phabalicious\Method\ScriptDataBag $bag
      *
      * @return CommandResult|null
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
-    private function runScriptImpl(
-        string $root_folder,
-        array $commands,
-        array $cleanup,
-        TaskContextInterface $context,
-        array $callbacks = [],
-        array $environment = []
-    ) : ?CommandResult {
-        $context->set('break_on_first_error', $this->getBreakOnFirstError());
+    private function runScriptImpl(ScriptDataBag $bag) : ?CommandResult
+    {
+        $bag->getContext()->set('break_on_first_error', $this->getBreakOnFirstError());
 
-        $shell = $context->getShell();
+        $shell = $bag->getShell();
         $execution_context = new ScriptExecutionContext(
-            $root_folder,
-            $context->get(self::SCRIPT_CONTEXT, ScriptExecutionContext::HOST),
-            $context->get(self::SCRIPT_CONTEXT_DATA, [])
+            $bag->getRootFolder(),
+            $bag->getContext()->get(self::SCRIPT_CONTEXT, ScriptExecutionContext::HOST),
+            $bag->getContext()->get(self::SCRIPT_CONTEXT_DATA, [])
         );
 
         $shell = $execution_context->enter($shell);
-        $shell->setOutput($context->getOutput());
+        $shell->setOutput($bag->getContext()->getOutput());
 
         $shell->pushWorkingDir($execution_context->getInitialWorkingDir());
-        $shell->applyEnvironment($environment);
+        $shell->applyEnvironment($bag->getEnvironment());
 
-        $command_result = $this->runCommands(
-            $commands,
-            $context,
-            $shell,
-            $callbacks
-        );
+        $command_result = $this->runCommands($bag->getCommands(), $bag);
 
-        if (!empty($cleanup)) {
-            $cleanup_result = $this->runCommands(
-                $cleanup,
-                $context,
-                $shell,
-                $callbacks
-            );
+        if (!empty($bag->getCleanupCommands())) {
+            $cleanup_result = $this->runCommands($bag->getCleanupCommands(), $bag);
             if ($cleanup_result->failed()) {
                 $this->logger->error(implode("\n", $cleanup_result->getOutput()));
             }
@@ -252,15 +198,12 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     /**
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
-    private function runCommands(
-        array $commands,
-        TaskContextInterface $context,
-        ShellProviderInterface $shell,
-        array $callbacks
-    ) {
+    private function runCommands(array $commands, ScriptDataBag $bag): CommandResult
+    {
         $command_result = new CommandResult(0, []);
         foreach ($commands as $line) {
-            $line = trim($line);
+            $line = $bag->applyReplacements($line);
+
             if (empty($line)) {
                 continue;
             }
@@ -268,11 +211,16 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $callback_handled = false;
             if ($result) {
                 [$callback_name, $args] = $result;
-                $callback_handled = $this->executeCallback($context, $callbacks, $callback_name, $args);
+                $callback_handled = $this->executeCallback(
+                    $bag->getContext(),
+                    $bag->getCallbacks(),
+                    $callback_name,
+                    $args
+                );
             }
             if (!$callback_handled) {
-                $command_result = $shell->run($line, false, false);
-                $context->setCommandResult($command_result);
+                $command_result = $bag->getShell()->run($line, false, false);
+                $bag->getContext()->setCommandResult($command_result);
 
                 if ($command_result->failed() && $this->getBreakOnFirstError()) {
                     return $command_result;
@@ -483,28 +431,5 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $context->set(ScriptMethod::SCRIPT_QUESTIONS, $script_questions);
         $context->set(ScriptMethod::SCRIPT_COMPUTED_VALUES, $computed_values);
         $context->set(ScriptMethod::SCRIPT_CLEANUP, $script_cleanup);
-    }
-
-    /**
-     * @param array $commands
-     * @param array $replacements
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     *
-     * @return mixed
-     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
-     */
-    public function resolvePlaceholdersAndSecrets(
-        array $commands,
-        array $replacements,
-        TaskContextInterface $context
-    ) {
-        $commands = Utilities::expandStrings($commands, $replacements, []);
-        $commands = Utilities::expandStrings($commands, $replacements);
-        $commands = Utilities::validateScriptCommands($commands, $replacements);
-
-
-        return $context->getConfigurationService()
-            ->getPasswordManager()
-            ->resolveSecrets($commands);
     }
 }

@@ -979,4 +979,9 @@ class ConfigurationService
         $this->inheritanceBaseUrl = $inheritanceBaseUrl;
         return $this;
     }
+
+    public function setSetting(string $key, $value)
+    {
+        $this->settings[$key] = $value;
+    }
 }
