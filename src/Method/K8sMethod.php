@@ -542,6 +542,10 @@ class K8sMethod extends BaseMethod implements MethodInterface
         /** @var \Phabalicious\Method\ScriptMethod $script_method */
         $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod("script");
         $context->setShell($this->kubectlShell);
+        $context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, [
+            'kubectlShell' => $this->kubectlShell,
+            'rootFolder' => $project_folder
+        ]);
         $script_method->runScript($host_config, $context);
     }
 
