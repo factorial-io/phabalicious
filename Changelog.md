@@ -216,6 +216,12 @@
     This will copy the two files in `templates` into the root-folder and apply any
     configuration from the host `example` before copying it to the destination.
 
+    * new `db`-command with subcommands `install` and `drop`, allows you to create
+      or drop a database.
+    * option `--skip-drop-db` for `copy-from` and `restore:sql-from-file` to not
+      drop the table before running the import
+    * option `--skip-reset` for `copy-from` which will not run the reset-task after
+      the import.
 
 ### Changed
 
