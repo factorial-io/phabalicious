@@ -31,8 +31,6 @@ class DatabaseCommand extends BaseCommand
             InputArgument::REQUIRED,
             'The subcommand to execute on the database'
         );
-
-        $this->setAliases(['getFile']);
     }
 
     /**
