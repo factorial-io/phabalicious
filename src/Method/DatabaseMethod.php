@@ -364,15 +364,13 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
         switch ($what) {
             case 'install':
-                $this->install($host_config, $context);
+                return $this->install($host_config, $context);
                 break;
 
             case 'drop':
-                $this->dropDatabase($host_config, $context, $shell, $data);
+                return $this->dropDatabase($host_config, $context, $shell, $data);
                 break;
-
-            default:
-                throw new RuntimeException(sprintf("Unknown database command `%s`", $what));
         }
+        throw new RuntimeException(sprintf("Unknown database command `%s`", $what));
     }
 }

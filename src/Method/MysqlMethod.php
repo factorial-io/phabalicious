@@ -138,7 +138,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         array $data
-    ) {
+    ):CommandResult {
         $this->logger->notice('Dropping all tables from database ...');
 
         $cmd = array_merge(
@@ -152,7 +152,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             $this->getMysqlCommand($host_config, $context, 'mysql', $data, true)
         );
 
-        $shell->run(implode(" ", $cmd), false, true);
+        return $shell->run(implode(" ", $cmd), false, true);
     }
 
     /**

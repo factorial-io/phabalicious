@@ -71,7 +71,7 @@ interface DatabaseMethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         array $data
-    );
+    ): CommandResult;
 
     /**
      * Check if database can handle connections.

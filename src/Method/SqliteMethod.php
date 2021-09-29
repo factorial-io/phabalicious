@@ -74,8 +74,8 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         array $data
-    ) {
-        $shell->run(sprintf("rm %s", $data['database']));
+    ):CommandResult {
+        return $shell->run(sprintf("rm %s", $data['database']));
     }
 
     /**
