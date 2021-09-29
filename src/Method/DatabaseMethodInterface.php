@@ -13,8 +13,8 @@ interface DatabaseMethodInterface
     /**
      * Install a new database.
      *
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
      *
      * @return mixed
      */
@@ -23,9 +23,9 @@ interface DatabaseMethodInterface
     /**
      * Export current database into a sql file.
      *
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @param ShellProviderInterface $shell
      * @param string $backup_file_name
      *
      * @return string
@@ -40,28 +40,28 @@ interface DatabaseMethodInterface
     /**
      * Import new data into database from sql dump.
      *
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @param ShellProviderInterface $shell
      * @param string $file
      * @param false $drop_db
      *
-     * @return \Phabalicious\ShellProvider\CommandResult
+     * @return CommandResult
      */
     public function importSqlFromFile(
         HostConfig $host_config,
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $file,
-        bool $drop_db = false
+        bool $drop_db
     ): CommandResult;
 
     /**
      * Drop all tables in the database.
      *
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @param ShellProviderInterface $shell
      * @param array $data
      *
      * @return mixed
@@ -76,9 +76,9 @@ interface DatabaseMethodInterface
     /**
      * Check if database can handle connections.
      *
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @param ShellProviderInterface $shell
      *
      * @return mixed
      */
@@ -92,7 +92,7 @@ interface DatabaseMethodInterface
      * Validate database credentials.
      *
      * @param array $data
-     * @param \Phabalicious\Validation\ValidationErrorBag $errors
+     * @param ValidationErrorBag $errors
      * @param false $validate_working_dir
      *
      * @return mixed

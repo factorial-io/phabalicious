@@ -146,7 +146,7 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $file,
-        bool $drop_db = false
+        bool $drop_db
     ): CommandResult {
         $data = $this->getDatabaseCredentials($host_config, $context);
 

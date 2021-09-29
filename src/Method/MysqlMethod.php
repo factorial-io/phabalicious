@@ -2,8 +2,12 @@
 
 namespace Phabalicious\Method;
 
+use Exception;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
+use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -33,7 +37,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     }
 
     /**
-     * @return \string[][]
+     * @return string[][]
      */
     public function getGlobalSettings(): array
     {
@@ -81,10 +85,10 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function install(HostConfig $host_config, TaskContextInterface $context): ?CommandResult
     {
@@ -110,7 +114,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
                 $mysql_cmd[] = '-e';
                 $mysql_cmd[] = escapeshellarg($cmd);
                 return $shell->run(implode(' ', $mysql_cmd), false, true);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $context->io()
                     ->error("Could not create database, or grant privileges!");
                 $context->io()
@@ -124,9 +128,9 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
 
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @param ShellProviderInterface $shell
      * @param array $data
      */
     public function dropDatabase(
@@ -152,9 +156,9 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     }
 
     /**
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws TaskNotFoundInMethodException
+     * @throws MethodNotFoundException
+     * @throws ValidationFailedException
      */
     public function exportSqlToFile(
         HostConfig $host_config,
@@ -198,23 +202,23 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
      * @param ShellProviderInterface $shell
      * @param string $file
      * @param bool $drop_db
      *
      * @return CommandResult
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
+     * @throws ValidationFailedException
      */
     public function importSqlFromFile(
         HostConfig $host_config,
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $file,
-        bool $drop_db = false
+        bool $drop_db
     ): CommandResult {
         $data = $this->getDatabaseCredentials($host_config, $context);
 
@@ -240,11 +244,11 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
+     * @param ShellProviderInterface $shell
      *
-     * @return \Phabalicious\ShellProvider\CommandResult
+     * @return CommandResult
      */
     public function checkDatabaseConnection(
         HostConfig $host_config,
@@ -259,7 +263,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
 
     /**
      * @param array $data
-     * @param \Phabalicious\Validation\ValidationErrorBag $errors
+     * @param ValidationErrorBag $errors
      * @param false $validate_working_dir
      */
     public function validateCredentials(array $data, ValidationErrorBag $errors, bool $validate_working_dir = false)
