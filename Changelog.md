@@ -72,6 +72,7 @@
         context: docker-compose-run
         rootFolder: ./hosting/tests
         service: php
+        workingDir: /app #working dir in the php service
     ```
 
     Corresponding `docker-compose.yml`:

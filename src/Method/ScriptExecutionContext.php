@@ -96,7 +96,7 @@ class ScriptExecutionContext
                     $this->getArgument('service'),
                     $this->getArgument('shellExecutable', '/bin/sh')
                 ]);
-                $this->setInitialWorkingDir('/app');
+                $this->setInitialWorkingDir($this->getArgument('workingDir', '/app'));
 
                 break;
 
@@ -145,7 +145,6 @@ class ScriptExecutionContext
         }
 
         if ($this->currentContextName == self::DOCKER_COMPOSE_RUN) {
-            $this->shell->cd($this->workingDir);
             $this->shell->cd($this->getArgument('rootFolder'));
             $this->shell->run('docker-compose rm -s -v --force');
         }

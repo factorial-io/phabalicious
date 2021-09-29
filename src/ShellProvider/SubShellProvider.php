@@ -37,6 +37,13 @@ class SubShellProvider extends BaseShellProvider implements ShellProviderInterfa
         return $this->parentShell->run($command, $capture_output, $throw_exception_on_error);
     }
 
+    public function cd(string $dir): ShellProviderInterface
+    {
+        parent::cd($dir);
+        $this->parentShell->cd($dir);
+        return $this;
+    }
+
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         throw new \LogicException("getFile not implemented");
