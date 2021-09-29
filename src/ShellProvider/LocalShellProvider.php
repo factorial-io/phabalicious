@@ -173,7 +173,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                 ->resolveSecrets($environment);
         }
 
-        $this->applyEnvironment($environment);
+        $this->setupEnvironment($environment);
     }
 
     /**

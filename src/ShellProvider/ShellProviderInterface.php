@@ -34,6 +34,8 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function run(string $command, $capture_output = false, $throw_exception_on_error = false): CommandResult;
 
+    public function setupEnvironment(array $environment);
+
     public function applyEnvironment(array $environment);
 
     public function setOutput(OutputInterface $output);

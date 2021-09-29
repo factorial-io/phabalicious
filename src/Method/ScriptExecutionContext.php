@@ -140,7 +140,9 @@ class ScriptExecutionContext
 
     public function exit()
     {
-        $this->shell->terminate();
+        if ($this->currentContextName != self::HOST) {
+            $this->shell->terminate();
+        }
 
         if ($this->currentContextName == self::DOCKER_COMPOSE_RUN) {
             $this->shell->cd($this->workingDir);

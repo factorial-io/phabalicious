@@ -234,7 +234,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
      * @param array $environment
      * @throws \Exception
      */
-    public function applyEnvironment(array $environment)
+    public function setupEnvironment(array $environment)
     {
         $files = [
             '/etc/profile',
@@ -245,6 +245,11 @@ abstract class BaseShellProvider implements ShellProviderInterface
                 $this->run(sprintf('. %s', $file), false, false);
             }
         }
+        $this->applyEnvironment($environment);
+    }
+
+    public function applyEnvironment(array $environment)
+    {
         $cmds = [];
         foreach ($environment as $key => $value) {
             $cmds[] = "export \"$key\"=\"$value\"";
