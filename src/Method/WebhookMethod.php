@@ -11,6 +11,7 @@ use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Symfony\Component\Yaml\Yaml;
 
 class WebhookMethod extends BaseMethod implements MethodInterface
 {
@@ -253,7 +254,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
                 $json = json_decode($result, true);
                 if (!is_null($json)) {
                     $context->setResult($webhook_name, $json);
-                    $result = print_r($json, true);
+                    $result = Yaml::dump($json, 4, 2);
                 } else {
                     $context->setResult($webhook_name, $result);
                 }

@@ -17,6 +17,7 @@ use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
+use Symfony\Component\Yaml\Yaml;
 
 class ScriptMethod extends BaseMethod implements MethodInterface
 {
@@ -202,6 +203,13 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     {
         $command_result = new CommandResult(0, []);
         foreach ($commands as $line) {
+            if (empty($line)) {
+                continue;
+            }
+            if (!is_string($line)) {
+                throw new \InvalidArgumentException("Not a valid script block!\n\n" . Yaml::dump($commands, 4));
+            }
+
             $line = $bag->applyReplacements($line);
 
             if (empty($line)) {
