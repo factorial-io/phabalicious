@@ -12,7 +12,9 @@
 ### New
 
   * Introduction of script execution contexts. Scripts can now be executed in a
-    docker image of your choice
+    docker image of your choice, or inside an service of a docker-compose setup
+
+    For scripts using the `docker-image`-script-context
 
     ```yaml
     scripts:
@@ -55,6 +57,59 @@
                 - npm install
                 - gulp run
     ````
+
+    For scripts using the `docker-compose-run` script-context:
+
+    ```yaml
+    scripts:
+      test:backend:
+        script:
+          - composer install
+          - php artisan db:wipe --force
+          - php artisan migrate
+          - php artisan db:seed
+          - vendor/bin/phpunit
+        context: docker-compose-run
+        rootFolder: ./hosting/tests
+        service: php
+    ```
+
+    Corresponding `docker-compose.yml`:
+
+    ```yaml
+    version: '2.1'
+    services:
+      php:
+        depends_on:
+          db:
+            condition: service_healthy
+        build:
+          context: ../../
+          dockerfile: ./hosting/builder/Dockerfile
+
+        environment:
+          DB_PASSWORD: root
+          DB_USERNAME: root
+          DB_DATABASE: tests
+          DB_HOST: db
+          APP_ENV: local
+      db:
+        image: mysql:8
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: tests
+        healthcheck:
+            test: "mysqladmin -u root -proot ping"
+
+    ```
+
+    This will use the `docker-compose.yml` from `hosting/tests` and run
+    `docker-compose run php` and exetute the script inside the `php`-service.
+    This works very well for scenarios where your app need other services to
+    function, like in this case a mysql database. In contrast to the `docker-image`-
+    script-context no folders are mounted into the service. You need to set this up
+    via your docker-compose.yml
+
 
   * Add `md5`-twig-filter to scaffolder
 
