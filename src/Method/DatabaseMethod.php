@@ -2,17 +2,23 @@
 
 namespace Phabalicious\Method;
 
+use InvalidArgumentException;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\FailedShellCommandException;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use RuntimeException;
 
 abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterface
 {
     const DATABASE_CREDENTIALS = 'databaseCredentials';
+    const DROP_DATABASE = "dropDatabase";
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
@@ -31,8 +37,8 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
      * @param string $task
      *
      * @return bool
@@ -55,7 +61,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
     /**
      * @param array $config
-     * @param \Phabalicious\Validation\ValidationErrorBagInterface $errors
+     * @param ValidationErrorBagInterface $errors
      */
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
@@ -71,8 +77,8 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
      */
     public function backup(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -96,8 +102,8 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
      */
     public function getSQLDump(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -128,7 +134,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      *
-     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws FailedShellCommandException
      */
     public function restore(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -148,7 +154,8 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
                 $host_config,
                 $context,
                 $shell,
-                $host_config['backupFolder'] . '/' . $elem['file']
+                $host_config['backupFolder'] . '/' . $elem['file'],
+                true
             );
 
             if (!$result->succeeded()) {
@@ -162,18 +169,24 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
      */
     public function restoreSqlFromFile(HostConfig $host_config, TaskContextInterface $context)
     {
         $file = $context->get('source', false);
         if (!$file) {
-            throw new \InvalidArgumentException('Missing file parameter');
+            throw new InvalidArgumentException('Missing file parameter');
         }
         $shell = $this->getShell($host_config, $context);
 
-        $result = $this->importSqlFromFile($host_config, $context, $shell, $file);
+        $result = $this->importSqlFromFile(
+            $host_config,
+            $context,
+            $shell,
+            $file,
+            $context->get(self::DROP_DATABASE, true)
+        );
 
         $context->setResult('exitCode', $result->getExitCode());
     }
@@ -182,7 +195,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      *
-     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws FailedShellCommandException
      */
     public function copyFrom(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -213,7 +226,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
         $result = $shell->copyFileFrom($from_shell, $from_filename, $to_filename, $context, true);
         if (!$result) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf('Could not copy file from `%s` to `%s`', $from_filename, $to_filename)
             );
         }
@@ -225,7 +238,13 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
             $host_config->getConfigName()
         ));
 
-        $result = $this->importSqlFromFile($host_config, $context, $shell, $to_filename, true);
+        $result = $this->importSqlFromFile(
+            $host_config,
+            $context,
+            $shell,
+            $to_filename,
+            $context->get(self::DROP_DATABASE, true)
+        );
         if (!$result->succeeded()) {
             $result->throwException('Could not import DB from file `' . $to_filename . '`');
         }
@@ -242,7 +261,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
         if (!$current_stage = $context->get('currentStage', false)) {
-            throw new \InvalidArgumentException('Missing currentStage on context!');
+            throw new InvalidArgumentException('Missing currentStage on context!');
         }
         if ($current_stage === 'install') {
             $this->waitForDatabase($host_config, $context);
@@ -251,8 +270,8 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $config
+     * @param TaskContextInterface $context
      */
     public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
     {
@@ -260,14 +279,14 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
      * @param array $credentials
      *
      * @return mixed
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
+     * @throws ValidationFailedException
      */
     protected function requestCredentialsAndWorkingDir(
         HostConfig $host_config,
@@ -318,17 +337,40 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param HostConfig $host_config
+     * @param TaskContextInterface $context
      *
      * @return array
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws MethodNotFoundException
+     * @throws TaskNotFoundInMethodException
+     * @throws ValidationFailedException
      */
     protected function getDatabaseCredentials(HostConfig $host_config, TaskContextInterface $context): array
     {
         $data = !empty($host_config['database']) ? $host_config['database'] : [];
         return $this->requestCredentialsAndWorkingDir($host_config, $context, $data);
+    }
+
+    /**
+     * @throws TaskNotFoundInMethodException
+     * @throws MethodNotFoundException
+     * @throws ValidationFailedException
+     */
+    public function database(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $what = $context->get('what');
+        $data = $this->getDatabaseCredentials($host_config, $context);
+        $shell = $this->getShell($host_config, $context);
+
+        switch ($what) {
+            case 'install':
+                return $this->install($host_config, $context);
+                break;
+
+            case 'drop':
+                return $this->dropDatabase($host_config, $context, $shell, $data);
+                break;
+        }
+        throw new RuntimeException(sprintf("Unknown database command `%s`", $what));
     }
 }

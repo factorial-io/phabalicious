@@ -183,6 +183,44 @@ class MysqlMethodTest extends PhabTestCase
         $this->assertEquals(true, file_exists($export_file_name));
     }
 
+    /**
+     * @group docker
+     */
+    public function testDatabaseInstallDrop()
+    {
+        $this->context->set('what', 'install');
+        $result = $this->method->database($this->hostConfig, $this->context);
+        $this->assertEquals(0, $result->getExitCode());
+
+
+        $cmd = $this->getExecuteSQLCommand(true, "SHOW DATABASES");
+        $result = $this->shell->run(implode(' ', $cmd));
+        $this->assertEquals(0, $result->getExitCode());
+        $this->assertContains('test-phabalicious', $result->getOutput());
+
+        $cmd = $this->getExecuteSQLCommand(true, "USE test-phabalicious;");
+        $result = $this->shell->run(implode(' ', $cmd));
+
+        $cmd = $this->getExecuteSQLCommand(true, "CREATE TABLE test_table(title VARCHAR(100) NOT NULL);");
+        $result = $this->shell->run(implode(' ', $cmd));
+
+        $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
+        $result = $this->shell->run(implode(' ', $cmd));
+
+        $this->assertEquals(0, $result->getExitCode());
+        $this->assertContains('test_table', $result->getOutput());
+
+        $this->context->set('what', 'drop');
+        $result = $this->method->database($this->hostConfig, $this->context);
+        $this->assertEquals(0, $result->getExitCode());
+
+
+        $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
+        $result = $this->shell->run(implode(' ', $cmd));
+        $this->assertEquals(0, $result->getExitCode());
+        $this->assertEquals(0, count($result->getOutput()));
+    }
+
     public function providerSqlFiles()
     {
         return [

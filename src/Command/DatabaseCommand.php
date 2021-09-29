@@ -1,7 +1,8 @@
-<?php
+<?php /** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
@@ -10,28 +11,34 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Method\MethodFactory;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-class GetSqlDumpCommand extends BaseCommand
+class DatabaseCommand extends BaseCommand
 {
-
     protected function configure()
     {
-        $this
-            ->setName('get:sql-dump')
-            ->setDescription('Get a current dump of the database')
-            ->setHelp('Gets a dump of the database and copies it to your local computer');
-        $this->setAliases(['getSQLDump']);
         parent::configure();
+        $this
+            ->setName('db')
+            ->setAliases(['database'])
+            ->setDescription('Interact with a database')
+            ->setHelp('Run specific commands against the database');
+        $this->addArgument(
+            'what',
+            InputArgument::REQUIRED,
+            'The subcommand to execute on the database'
+        );
+
+        $this->setAliases(['getFile']);
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int
+     * @return int|null
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -48,31 +55,19 @@ class GetSqlDumpCommand extends BaseCommand
         }
 
         $context = $this->getContext();
-
-        $this->getMethods()->runTask('getSQLDump', $this->getHostConfig(), $context);
-        $to_copy = $context->getResult('files', []);
-
-        /** @var ShellProviderInterface $shell */
-        $shell = $context->get('shell', $this->getHostConfig()->shell());
-        $files = [];
-        foreach ($to_copy as $file) {
-            if ($shell->getFile(
-                $file,
-                getcwd() . '/' . basename($file),
-                $context
-            )) {
-                $files[] = basename($file);
-            }
-            $shell->run(sprintf('rm %s', $file));
+        $what = strtolower($input->getArgument('what'));
+        if (!in_array($what, ['drop', 'install'])) {
+            throw new \RuntimeException(sprintf('Unsupported database command: `%s`', $what));
         }
 
+        $context->set('what', $what);
 
-        if (count($files) > 0) {
-            $io = new SymfonyStyle($input, $output);
-            $io->title('Copied dumps to:');
-            $io->listing($files);
+        $this->getMethods()->runTask('database', $this->getHostConfig(), $context);
+
+        $return_code = $context->getResult('exitCode', 0);
+        if ($return_code === 0) {
+            $context->io()->success(sprintf('Database-command `%s` executed successfully!', $what));
         }
-
-        return 0;
+        return $return_code;
     }
 }
