@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use http\Exception\RuntimeException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\ShellProvider\SubShellProvider;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -30,9 +31,14 @@ class ScriptExecutionContext
 
     protected $contextData;
 
+    /**
+     * @var SubShellProvider
+     */
     protected $shell;
 
     protected $initialWorkingDir;
+
+    protected $scriptWorkingDir;
 
 
     public function __construct($working_dir, string $context_name, array $context_data)
@@ -86,6 +92,8 @@ class ScriptExecutionContext
 
     public function enter(ShellProviderInterface $shell): ShellProviderInterface
     {
+        $this->initialWorkingDir = $shell->getWorkingDir();
+
         switch ($this->currentContextName) {
             case self::DOCKER_COMPOSE_RUN:
                 $shell->cd($this->getArgument('rootFolder'));
@@ -96,7 +104,7 @@ class ScriptExecutionContext
                     $this->getArgument('service'),
                     $this->getArgument('shellExecutable', '/bin/sh')
                 ]);
-                $this->setInitialWorkingDir($this->getArgument('workingDir', '/app'));
+                $this->setScriptWorkingDir($this->getArgument('workingDir', '/app'));
 
                 break;
 
@@ -121,17 +129,17 @@ class ScriptExecutionContext
                     $this->getArgument('image'),
                     $this->getArgument('shellExecutable', '/bin/sh')
                 ]);
-                $this->setInitialWorkingDir('/app');
+                $this->setScriptWorkingDir('/app');
 
                 break;
 
             case self::KUBE_CTL:
                 $this->shell = $this->getArgument('kubectlShell');
-                $this->setInitialWorkingDir($this->getArgument('rootFolder'));
+                $this->setScriptWorkingDir($this->getArgument('rootFolder'));
                 break;
             default:
                 $this->shell = $shell;
-                $this->setInitialWorkingDir($this->workingDir);
+                $this->setScriptWorkingDir($this->workingDir);
                 break;
         }
 
@@ -145,7 +153,7 @@ class ScriptExecutionContext
         }
 
         if ($this->currentContextName == self::DOCKER_COMPOSE_RUN) {
-            $this->shell->cd($this->getArgument('rootFolder'));
+            $this->shell->cd($this->initialWorkingDir);
             $this->shell->run('docker-compose rm -s -v --force');
         }
     }
@@ -155,13 +163,13 @@ class ScriptExecutionContext
         return $this->shell;
     }
 
-    public function getInitialWorkingDir()
+    public function getScriptWorkingDir()
     {
-        return $this->initialWorkingDir;
+        return $this->scriptWorkingDir;
     }
 
-    protected function setInitialWorkingDir($working_dir)
+    protected function setScriptWorkingDir($working_dir)
     {
-        $this->initialWorkingDir = $working_dir;
+        $this->scriptWorkingDir = $working_dir;
     }
 }

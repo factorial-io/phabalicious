@@ -178,7 +178,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $shell = $execution_context->enter($shell);
         $shell->setOutput($bag->getContext()->getOutput());
 
-        $shell->pushWorkingDir($execution_context->getInitialWorkingDir());
+        $shell->pushWorkingDir($execution_context->getScriptWorkingDir());
         $shell->applyEnvironment($bag->getEnvironment());
 
         $command_result = $this->runCommands($bag->getCommands(), $bag);
