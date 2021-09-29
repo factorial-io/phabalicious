@@ -23,6 +23,7 @@ class DatabaseCommand extends BaseCommand
         parent::configure();
         $this
             ->setName('db')
+            ->setAliases(['database'])
             ->setDescription('Interact with a database')
             ->setHelp('Run specific commands against the database');
         $this->addArgument(
