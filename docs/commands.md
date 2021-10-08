@@ -418,7 +418,7 @@ As docker-container do not have any state, this command is used to copy any nece
 
 ### waitForServices
 
-This command will try to run `supervisorctl status` in the container and  waits until all services are running. This is useful in scripts to wait for any services that need some time to start up. Obviously this command depends on `supervisorctl`.
+This command will try to run `supervisorctl status` in the container and  waits until all services are running. This is useful in scripts to wait for any services that need some time to start up. This command depends on `supervisorctl`.
 
 
 ## start-remote-access

@@ -191,7 +191,7 @@ This will print all host configuration for the host `staging`.
 
 ### Configuration for the git-method
 
-* `gitRootFolder`  the folder, where the git-repository lies. Defaults to `rootFolder`
+* `gitRootFolder`  the folder, where the git-repository is located. Defaults to `rootFolder`
 * `branch` the name of the branch to use for deployments, they get usually checked out and pulled from origin.
 * `ignoreSubmodules` default is false, set to false, if you don't want to update a projects' submodule on deploy.
 * `gitOptions` a keyed list of options to apply to a git command. Currently only pull is supported. If your git-version does not support `--rebase` you can disable it via an empty array: `pull: []`
@@ -439,7 +439,7 @@ jira:
 
 ## mattermost
 
-Phabalicious can send notifications to a running Mattermost instance. You need to create an incoming web hook in your instance and pass this to your configuration. Here's an example
+Phabalicious can send notifications to a running Mattermost instance. You need to create an incoming webhook in your instance and pass this to your configuration. Here's an example
 
 ```yaml
 mattermost:
