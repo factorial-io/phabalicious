@@ -7,3 +7,4 @@ These blog-entries should help you getting started with phabalicious and its cor
 
 * [Introduction and architecture](architecture.md)
 * [How to use secrets in phabalicious](how-to-use-secrets.md)
+* [What's new in phabalicious 3.7](whats-new-in-phab-3-7.md)

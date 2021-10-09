@@ -36,12 +36,15 @@ class ListCommand extends BaseOptionsCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     *
      * @return int
-     * @throws BlueprintTemplateNotFoundException
-     * @throws FabfileNotFoundException
-     * @throws FabfileNotReadableException
-     * @throws MismatchedVersionException
-     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -58,13 +61,15 @@ class ListCommand extends BaseOptionsCommand
 
 
         $io = new SymfonyStyle($input, $output);
+        if ($description = $this->configuration->getSetting('description')) {
+            $io->title($this->configuration->getSetting('name'));
+            $io->block($description, null, 'fg=blue');
+            $io->writeln("");
+        }
         $io->title(sprintf(
             'Available configurations for %s',
             $this->configuration->getSetting('name', 'this project')
         ));
-        if ($description = $this->configuration->getSetting('description')) {
-            $io->block($description, null, 'fg=blue');
-        }
         if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
             $this->showDetails($io, $host_config_names);
         } else {

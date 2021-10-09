@@ -1,5 +1,12 @@
 name: Phabalicious
 
+description: |
+  A simple fabfile demonstrating how to build a release manually.
+
+  Create a release via
+
+  $ phab -cci script create-release
+
 scripts:
   install-locally:
     script:

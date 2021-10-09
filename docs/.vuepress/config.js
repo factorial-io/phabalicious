@@ -46,6 +46,7 @@ module.exports = {
         sidebarDepth: 3,
         children: [
             "/blog/architecture.html",
+            "/blog/whats-new-in-phab-3-7.html",
             "/blog/how-to-use-secrets.html"
         ],
       },
