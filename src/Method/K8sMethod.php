@@ -65,6 +65,14 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
+        if ($task == self::getName()) {
+            $command = explode(' ', $context->get('command'));
+            $subcommand = array_shift($command);
+
+            if (in_array($subcommand, ['logs', 'describe'])) {
+                return true;
+            }
+        }
         return parent::isRunningAppRequired($host_config, $context, $task) ||
             in_array($task, ['startRemoteAccess', 'shell']);
     }
