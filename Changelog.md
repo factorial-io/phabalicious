@@ -189,6 +189,8 @@
   * New command `artisan` and new method `laravel` for laravel-based projects. Just
     run e.g. `phab -cyourconfig artisan db:seed`
 
+  * Add support for global `artisanTasks`
+
   * Methods can declare dependencies to other methods, e.g. using the method `drush`
     will implicitely use method `mysql` if not stated differently in `needs`.
 

@@ -54,10 +54,33 @@ If you want to hide a host-config from `list:hosts` set the `hidden`-property to
 
 Phab introduces a new method for laravel-applications. Add `laravel` to the `needs`-section of your host-config and phab will take care of running needed artisan commands on `reset` or `install`. You can override the list of artisan-commands for each step, if necessary, have a look at the [documentation](../configuration)
 
+To migrate an existing fabfile to laravel, just add `laravel` to the lists of needs. If your app needs a database, add `mysql` or `sqlite` to the list of needs, too. The you should be able to use all database-related commands also with your laravel app. Phab will run the necessary artisan-tasks on deployments like migrations or cache-clear. You can override the list of `artisanTasks` when running `reset` or `install`.
+
+An example fabfile:
+
+```
+hosts:
+  local:
+    info:
+      description: A local laravel installation
+      publicUrl: http://localhost:8080
+    needs:
+      - sqlite
+      - laravel
+    branch: develop
+    rootFolder: /home/user/project/a-laravel-project
+    artisanTasks:
+      reset:
+        - config:cache
+        - migrate
+        - my-custom-artisan-command
+        - cache:clear
+```
+
 A new `artisan`-command allows the user to run an artisan-command with a specific host-config.
 
 ```shell
-phab -cmy-config artisab db:seed
+phab -clocal artisan db:seed
 ```
 
 ### New database-handling, add support for sqlite

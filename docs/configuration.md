@@ -250,8 +250,14 @@ This will print all host configuration for the host `staging`.
 
 * `laravelRootFolder` folder where the package.json is located, defaults to the (git-) root-folder.
 * `artisanTasks`:
-  * `reset`: (array) A list of aritsan tasks to execute for the `reset`-command Default is `[config:cache, migrate, cache:clear]`
-  * `install`: (array) A list of aritsan tasks to execute for the `install`-command Default is `[db:wipe --force, migrate, db:seed]`
+  * `reset`: (array) A list of aritsan tasks to execute for the `reset`-command. Default is
+    - `config:cache`
+    - `migrate`
+    - `cache:clear`
+  * `install`: (array) A list of aritsan tasks to execute for the `install`-command. Default is
+    - `db:wipe --force`
+    - `migrate`
+    - `db:seed`
 
 ### Configuration of the yarn-method
 
