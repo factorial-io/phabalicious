@@ -371,13 +371,18 @@ abstract class BaseCommand extends BaseOptionsCommand
 
             return 1;
         }
+
+        return 1;
     }
 
     private function handleSetOption($option_value)
     {
         $options = is_array($option_value) ? $option_value : explode(" ", $option_value);
         foreach ($options as $option) {
-            [$key_combined, $value] = explode("=", $option, 2);
+            [$key_combined, $value] = array_pad(explode("=", $option, 2), 2, false);
+            if (!$value) {
+                throw new \RuntimeException(sprintf("could not parse option `%s`!", implode(',', $option_value)));
+            }
             [$what, $key] = array_pad(explode(".", $key_combined, 2), 2, false);
             if (!in_array($what, ['host', 'dockerHost'])) {
                 $what = 'host';
