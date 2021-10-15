@@ -56,6 +56,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
                 'getSQLDump',
                 'copyFrom',
                 'copyFromPrepareSource',
+                'requestDatabaseCredentialsAndWorkingDir',
             ]);
     }
 
