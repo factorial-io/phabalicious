@@ -303,7 +303,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
         );
         $data = $cloned_context->getResult(self::DATABASE_CREDENTIALS, $credentials);
         $errors = new ValidationErrorBag();
-        $this->validateCredentials($data, $errors);
+        $this->validateCredentials($data, $errors, true);
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
         }
