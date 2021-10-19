@@ -97,7 +97,7 @@ class ScriptExecutionContext
         switch ($this->currentContextName) {
             case self::DOCKER_COMPOSE_RUN:
                 $shell->cd($this->getArgument('rootFolder'));
-                $shell->run('docker-compose pull && docker-compose build');
+                $shell->run('docker-compose pull && docker-compose build', false, true);
                 $this->shell = $shell->startSubShell([
                     'docker-compose',
                     'run',
@@ -110,7 +110,7 @@ class ScriptExecutionContext
 
             case self::DOCKER_IMAGE:
                 $shell->run(sprintf('docker pull %s', $this->getArgument('image')));
-                $this->shell = $shell->startSubShell([
+                $cmd = [
                     'docker',
                     'run',
                     '--rm',
@@ -126,9 +126,15 @@ class ScriptExecutionContext
                     ),
                     '-v',
                     sprintf('%s:/app', $this->workingDir),
-                    $this->getArgument('image'),
-                    $this->getArgument('shellExecutable', '/bin/sh')
-                ]);
+                ];
+                if (!is_null($entrypoint = $this->getArgument('entryPoint'))) {
+                    $cmd[] = sprintf('--entrypoint="%s"', $entrypoint);
+                }
+
+                $cmd[] = $this->getArgument('image');
+                $cmd[] = $this->getArgument('shellExecutable', '/bin/sh');
+
+                $this->shell = $shell->startSubShell($cmd);
                 $this->setScriptWorkingDir('/app');
 
                 break;

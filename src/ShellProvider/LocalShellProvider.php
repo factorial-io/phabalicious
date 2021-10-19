@@ -348,10 +348,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
     /**
      * @param string $command
+     * @param bool $include_result_identifier
      *
      * @return false|string
      */
-    protected function sendCommandToShell(string $command, $include_result_identifier = true)
+    protected function sendCommandToShell(string $command, bool $include_result_identifier = true)
     {
         $this->setup();
         $this->process->clearErrorOutput();
