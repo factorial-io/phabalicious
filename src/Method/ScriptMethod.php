@@ -181,10 +181,10 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $shell->pushWorkingDir($execution_context->getScriptWorkingDir());
         $shell->applyEnvironment($bag->getEnvironment());
 
-        $command_result = $this->runCommands($bag->getCommands(), $bag);
+        $command_result = $this->runCommands($shell, $bag->getCommands(), $bag);
 
         if (!empty($bag->getCleanupCommands())) {
-            $cleanup_result = $this->runCommands($bag->getCleanupCommands(), $bag);
+            $cleanup_result = $this->runCommands($shell, $bag->getCleanupCommands(), $bag);
             if ($cleanup_result->failed()) {
                 $this->logger->error(implode("\n", $cleanup_result->getOutput()));
             }
@@ -199,7 +199,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     /**
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
-    private function runCommands(array $commands, ScriptDataBag $bag): CommandResult
+    private function runCommands(ShellProviderInterface $shell, array $commands, ScriptDataBag $bag): CommandResult
     {
         $command_result = new CommandResult(0, []);
         foreach ($commands as $line) {
@@ -227,7 +227,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 );
             }
             if (!$callback_handled) {
-                $command_result = $bag->getShell()->run($line, false, false);
+                $command_result = $shell->run($line, false, false);
                 $bag->getContext()->setCommandResult($command_result);
 
                 if ($command_result->failed() && $this->getBreakOnFirstError()) {

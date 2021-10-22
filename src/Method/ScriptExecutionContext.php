@@ -143,6 +143,7 @@ class ScriptExecutionContext
                 $this->shell = $this->getArgument('kubectlShell');
                 $this->setScriptWorkingDir($this->getArgument('rootFolder'));
                 break;
+
             default:
                 $this->shell = $shell;
                 $this->setScriptWorkingDir($this->workingDir);
