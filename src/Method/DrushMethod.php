@@ -666,20 +666,27 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $shell->pushWorkingDir($host_config['siteFolder']);
             $result = $shell->run('drush --show-passwords --format=json ' . $sql_conf_cmd, true, false);
             $json = json_decode(implode("\n", $result->getOutput()), true);
+            $defaults = [
+                'mysql' => [
+                    'host' => 'localhost',
+                    'port' => '3306'
+                ],
+                'sqlite' => [],
+            ];
             $mapping = [
                 'mysql' => [
                     "database" => "name",
                     "username" => "user",
                     "password" => "pass",
                     "host" => "host",
-                    "port" => "port"
+                    "port" => "port",
                 ],
                 'sqlite' => [
                     "database" => "database",
                 ],
             ];
             foreach ($mapping[$json['driver']] as $key => $mapped) {
-                $data[$mapped] = $json[$key];
+                $data[$mapped] = $json[$key] ?: $defaults[$json['driver']][$key] ?? null;
             }
             $data['driver'] = $json['driver'];
         }
