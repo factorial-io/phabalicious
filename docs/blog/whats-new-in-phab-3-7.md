@@ -36,6 +36,9 @@ hosts:
     info:
       description: A local installation aimed for development
       publicUrl: https://localhost
+      category:
+        id: local
+        label: Local installations
    someDevInstance:
     info:
       description: |-
@@ -45,8 +48,11 @@ hosts:
         - https://web.example.com
         - https://bo.example.com
         - https://search.example.com
+      category:
+        id: develop
+        label: Dev installations
 ```
-Note, that `list:hosts` will show only the first `publicUrl`. But you can run `phab list:hosts -v` to get a more verbose output with all urls and descriptions.
+Note, that `list:hosts` will show only the first `publicUrl`. But you can run `phab list:hosts -v` to get a more verbose output with all urls and descriptions. The categories are used to group multiple configurations when they get printed.
 
 If you want to hide a host-config from `list:hosts` set the `hidden`-property to true.
 
