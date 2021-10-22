@@ -130,7 +130,6 @@ class DrushMethod extends BaseMethod implements MethodInterface
             ? 9
             : $configuration_service->getSetting('drushVersion', 8);
 
-        $config['sqlDumpCommand'] = 'sql-dump';
         $config['sanitizeOnReset'] = false;
         $config['supportsZippedBackups'] = true;
         $config['siteFolder'] = '/sites/default';

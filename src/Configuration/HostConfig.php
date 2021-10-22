@@ -16,11 +16,16 @@ class HostConfig implements \ArrayAccess
 
     private $publicUrls = false;
 
+    protected $category;
+
     public function __construct($data, ShellProviderInterface $shell, ConfigurationService $parent)
     {
         $this->configurationService = $parent;
         $this->data = $data;
         $this->shell = $shell;
+        $this->category = HostConfigurationCategory::getOrCreate(
+            $data['info']['category'] ?? ["id" => "unknown", "label" => "Unknown category"]
+        );
 
         $shell->setHostConfig($this);
     }
@@ -193,5 +198,10 @@ class HostConfig implements \ArrayAccess
         return $this->getMainPublicUrl()
             ? sprintf('%s [%s]', $this->getConfigName(), $this->getMainPublicUrl())
             : $this->getConfigName();
+    }
+
+    public function getCategory(): HostConfigurationCategory
+    {
+        return $this->category;
     }
 }
