@@ -104,6 +104,9 @@ hosts:
     info:
       description: An example of a configuration
       publicUrl: http://www.example.com
+      category:
+        id: 01-example
+        label: An example category
     rootFolder: /var/www/public
     gitRootFolder: /var/www
     siteFolder: /sites/default
@@ -137,6 +140,9 @@ This will print all host configuration for the host `staging`.
 * `info` additional human readable information for this config (supports replacemnt-patterns)
     * `description`: a human readable description outputted by `list:hosts -v`
     * `publicUrl`/`publicUrls`: One or many urls for this configuration, will be displayed to the user on certain occasions. Make sure, that the most important url is the first one
+    * `category`: A category to group the output of `list:hosts` -- can be a string or:
+      * `id`: the id of the category, used for sorting
+      * `label`: the label of the category
 * `type` defines the type of installation. Currently there are four types available:
     * `dev` for dev-installations, they won't backup the databases on deployment
     * `test` for test-installations, similar than `dev`, no backups on deployments

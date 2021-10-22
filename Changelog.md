@@ -149,6 +149,9 @@
         info:
           description: A local installation aimed for development
           publicUrl: https://localhost
+          category:
+            id: local
+            label: Local installations
        someDevInstance:
         info:
           description: |-
@@ -158,6 +161,9 @@
             - https://web.example.com
             - https://bo.example.com
             - https://search.example.com
+          category:
+            id: dev
+            label: Develop installations
     ```
 
     Note, that `list:hosts` will show only the first `publicUrl`. But you can run
@@ -171,7 +177,12 @@
     List of found host-configurations:
     ==================================
 
+    Local installations
+    -------------------
     * local  https://localhost
+
+    Develop installations
+    ---------------------
     * someDevInstance  https://web.example.com
     ```
 
