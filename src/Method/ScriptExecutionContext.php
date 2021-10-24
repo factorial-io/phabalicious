@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Method;
 
-use http\Exception\RuntimeException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\SubShellProvider;

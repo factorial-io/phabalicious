@@ -118,6 +118,10 @@ class K8sMethod extends BaseMethod implements MethodInterface
         if (!empty($config['kube'])) {
             $service = new ValidationService($config['kube'], $errors, 'kube config of ' . $config['configName']);
             $service->hasKey('kubeconfig', 'Path to a kubeconfig file.');
+            $service->hasKey(
+                'podSelector',
+                'A list of selectors which are used to select the current pod where phab is working against'
+            );
             $service->hasKey('projectFolder', 'Provide a folder-name where the yml files can be found.');
             $service->hasKey('deleteCommand', 'Provide a delte command which gets executed on deletion.');
             $service->hasKey('applyCommand', 'Provide a applyCommand which gets executed on apply.');
