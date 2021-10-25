@@ -308,6 +308,11 @@ class DrushMethod extends BaseMethod implements MethodInterface
         if ($host_config['drupalVersion'] >= 8) {
             $this->runDrush($shell, true, 'cr -y');
             $this->runDrush($shell, true, sprintf('state-set installation_type %s', $host_config['type']));
+            $this->runDrush($shell, true, sprintf('state-set phab_config_name "%s"', $host_config->getConfigName()));
+            $this->runDrush($shell, true, sprintf(
+                'state-set installation_name "%s"',
+                $context->getConfigurationService()->getSetting('name')
+            ));
         } else {
             $this->runDrush($shell, true, 'cc all -y');
         }
