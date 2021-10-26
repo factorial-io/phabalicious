@@ -28,3 +28,6 @@ services:
 
   Symfony\Component\Console\Input\InputInterface:
     alias: Symfony\Component\Console\Input\ArgvInput
+
+  Phabalicious\Configuration\ConfigurationService:
+    public: true
