@@ -86,6 +86,7 @@ class ScaffoldCommand extends ScaffoldBaseCommand
                         $this->getApplication()->getVersion(),
                         $paths,
                         'Phabalicious\Scaffolder\Transformers\DataTransformerInterface',
+                        'Phabalicious\\Scaffolder\\Transformers\\',
                         $this->getConfiguration()->getLogger()
                     ));
                 }

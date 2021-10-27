@@ -1,0 +1,13 @@
+name: custom plugins test
+
+plugins:
+  - src
+
+needs:
+  - custom
+
+
+hosts:
+  test:
+    customData:
+      foo: bar

@@ -152,7 +152,7 @@ class ListCommand extends BaseOptionsCommand
                 $categories[$host->getCategory()->getId()][] = $host;
             } catch (ValidationFailedException $exception) {
                 $error_category = HostConfigurationCategory::getOrCreate([
-                    'id' => 'XXX',
+                    'id' => 'zzz',
                     'label' => 'Configurations with validation errors'
                 ]);
                 $categories[$error_category->getId()][] = sprintf(

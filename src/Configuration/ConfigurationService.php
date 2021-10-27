@@ -308,7 +308,7 @@ class ConfigurationService
         return Utilities::mergeData($data, $override_data);
     }
 
-    private function applyDefaults(array $data, array $defaults, array $disallowed_keys = [])
+    private function applyDefaults(array $data, array $defaults, array $disallowed_keys = []): array
     {
         foreach ($defaults as $key => $value) {
             if (!isset($data[$key])) {
@@ -326,7 +326,7 @@ class ConfigurationService
      * @param array $data
      * @param array $lookup
      *
-     * @param bool $root_folder
+     * @param string|null $root_folder
      * @param array $stack
      * @param string $inherit_key
      *
@@ -337,10 +337,10 @@ class ConfigurationService
      */
     public function resolveInheritance(
         array $data,
-        $lookup,
-        $root_folder = false,
-        $stack = [],
-        $inherit_key = "inheritsFrom"
+        array $lookup,
+        ?string $root_folder = null,
+        array $stack = [],
+        string $inherit_key = "inheritsFrom"
     ): array {
         if (!isset($data[$inherit_key])) {
             return $data;
