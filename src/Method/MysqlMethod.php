@@ -10,6 +10,7 @@ use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 
@@ -141,18 +142,42 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     ):CommandResult {
         $this->logger->notice('Dropping all tables from database ...');
 
+        $shell->run('set -o pipefail');
+        $filename = Utilities::getTempFileName($host_config, 'drop-tables.sql');
+
         $cmd = array_merge(
-            $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true),
+            $this->getMysqlCommand(
+                $host_config,
+                $context,
+                'mysqlDump',
+                $data,
+                true,
+                ['--no-data', '--single-transaction']
+            ),
             [
-                "--no-data",
                 "|",
                 "#!grep ^DROP",
-                "|",
+                '>',
+                $filename
+            ]
+        );
+
+        $result = $shell->run(implode(' ', $cmd), true, true);
+
+        $cmd =array_merge(
+            [
+                'cat',
+                $filename,
+                '|'
             ],
             $this->getMysqlCommand($host_config, $context, 'mysql', $data, true)
         );
 
-        return $shell->run(implode(" ", $cmd), false, true);
+        $result = $shell->run(implode(" ", $cmd), false, true);
+        $shell->run(sprintf('rm "%s"', $filename));
+        $shell->run('set +o pipefail');
+
+        return $result;
     }
 
     /**
@@ -170,9 +195,11 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
 
         $context->io()->comment(sprintf('Dumping database of `%s` ...', $host_config->getConfigName()));
         $shell->pushWorkingDir($data['workingDir']);
+        $shell->run('set -o pipefail');
 
         $cmd = $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true);
         $cmd[] = "--add-drop-table";
+        $cmd[] = "--no-autocommit";
 
         foreach ($context->getConfigurationService()->getSetting('sqlSkipTables', []) as $table_name) {
             $cmd[] = sprintf("--ignore-table %s.%s", $data['name'], $table_name);
@@ -196,6 +223,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $cmd[] = $backup_file_name;
 
         $shell->run(implode(" ", $cmd), false, true);
+        $shell->run('set +o pipefail');
         $shell->popWorkingDir();
 
         return $backup_file_name;
@@ -297,7 +325,8 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         TaskContextInterface $context,
         string $command,
         array $data,
-        bool $include_database_arg
+        bool $include_database_arg,
+        $additional_args = []
     ): array {
         $cmd = [
             "#!" . strtolower($command),
@@ -322,6 +351,9 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
                 $data["port"] ?? "3306"
             ]
         );
+        foreach ($additional_args as $arg) {
+            $cmd[] = $arg;
+        }
         if ($include_database_arg) {
             $cmd[] = $data['name'];
         }

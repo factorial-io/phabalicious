@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -125,10 +126,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
 
     protected function getTempFileName($str): string
     {
-        return
-            $this->getHostConfig()->get('tmpFolder', '/tmp') . '/' .
-            bin2hex(random_bytes(8)) . '--' .
-            basename($str);
+        return Utilities::getTempFileName($this->getHostConfig(), $str);
     }
 
     /**
