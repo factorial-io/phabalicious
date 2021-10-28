@@ -12,6 +12,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
 class PluginDiscovery
@@ -90,14 +91,15 @@ class PluginDiscovery
 
                     $instance = new $class;
                     $result[$instance->getName()] = $instance;
-                    $logger->debug('Adding phabalicious plugin ' . $reflection->getName());
+                    $logger->notice('Adding phabalicious plugin ' . $reflection->getName());
                 }
             }
         }
     }
 
     public static function discoverFromFabfile(
-        ContainerInterface $container
+        ContainerInterface $container,
+        OutputInterface $output
     ) {
         $application = $container->get(Application::class);
         $logger = $container->get(Logger::class);
@@ -127,6 +129,10 @@ class PluginDiscovery
                 $methods = $config->getMethodFactory();
 
                 foreach ($result as $plugin) {
+                    $output->writeln(sprintf(
+                        "<fg=Blue>Registering found plugin <fg=yellow>%s</> ...</>",
+                        $plugin->getName()
+                    ));
                     foreach ($plugin->getMethods() as $class_name) {
                         $methods->addMethod(new $class_name($logger));
                     }

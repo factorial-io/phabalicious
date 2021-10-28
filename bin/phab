@@ -11,6 +11,7 @@ use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 set_time_limit(0);
@@ -70,6 +71,6 @@ if ($version[0] == '@') {
 $application->setVersion($version);
 $application->setName('phabalicious');
 $application->setDefaultCommand('list');
-PluginDiscovery::discoverFromFabfile($container);
+PluginDiscovery::discoverFromFabfile($container, $output);
 
 $application->run($input, $output);
