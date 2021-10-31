@@ -228,4 +228,19 @@ Two new twig filters will be available in phab 3.7:
 * the `secret`-function to retrieve and use a particular secret in a twig-file.
 
 
+### Extended plugin mechanism to add new `methods` or `commands`
+
+Phab 3.7 generalises the existing plugin mechanism for transformers (used by the scaffolder). Now you can extend phabalicious with custom `methods` and `commands`. Your custom plugin can use all public services provided by phabalicious like the `ConfigurationService`, or the `ShellProviders` etc.
+
+A plugin contains at least a php file implementing the `PluginInterface` and the `AvailableMethodsAndCommandsPluginInterface` interfaces. This class is initialized by phabalicious at startup to discover any custom `methods` or `commands`. To enable a custom plugin you need to declare the path where phab can find the php-files via
+
+```yaml
+plugins:
+  - path/to/first/plugin/src/folder
+  - path/to/second/plugin/src/folder
+```
+
+Only local file paths are allowed. You can find an example "hello world" example in `tests/assets/custom-plugin` folder. A more elaborated example can be found [here](https://github.com/factorial-io/phab-lagoon-plugin)
+
+
 
