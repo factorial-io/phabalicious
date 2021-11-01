@@ -240,7 +240,7 @@ plugins:
   - path/to/second/plugin/src/folder
 ```
 
-Only local file paths are allowed. You can find an example "hello world" example in `tests/assets/custom-plugin` folder. A more elaborated example can be found [here](https://github.com/factorial-io/phab-lagoon-plugin)
+Only local file paths are allowed. You can find an "hello world"-example in `tests/assets/custom-plugin` folder. A more elaborated example can be found [here](https://github.com/factorial-io/phab-lagoon-plugin)
 
 
 
