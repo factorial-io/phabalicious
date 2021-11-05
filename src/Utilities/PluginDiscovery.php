@@ -46,6 +46,8 @@ class PluginDiscovery
         $prefix,
         LoggerInterface $logger
     ) {
+        $application_version = Utilities::getNextStableVersion($application_version);
+
         if (!is_dir($path)) {
             $logger->warning(sprintf('PluginDiscovery: %s is not a directory, aborting...', $path));
             return;
@@ -173,6 +175,9 @@ class PluginDiscovery
                     foreach ($plugin->getCommands() as $class_name) {
                         $application->add(new $class_name($config, $methods));
                     }
+                }
+                if (count($result)) {
+                    $output->writeln("\n");
                 }
             }
         } catch (\Exception $e) {
