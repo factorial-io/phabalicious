@@ -74,11 +74,41 @@ class PluginDiscovery
 
             foreach ($diff as $class) {
                 $reflection = new \ReflectionClass($class);
-                if ($reflection->isInstantiable()
-                    && $reflection->implementsInterface('Phabalicious\Utilities\PluginInterface')
-                    && $reflection->implementsInterface($interface_to_implement)
+                $is_instantiable = $reflection->isInstantiable();
+                $implements_plugin_interface = $reflection
+                    ->implementsInterface('Phabalicious\Utilities\PluginInterface');
+                $implements_needed_interface = $reflection
+                    ->implementsInterface($interface_to_implement);
+
+                $logger->debug(sprintf(
+                    "%s is instantiable: %s",
+                    $class,
+                    $is_instantiable ? "YES" : "NO"
+                ));
+                $logger->debug(sprintf(
+                    "%s implements PluginInterface: %s",
+                    $class,
+                    $implements_plugin_interface ? "YES" : "NO"
+                ));
+                $logger->debug(sprintf(
+                    "%s implements implements %s: %s",
+                    $class,
+                    $interface_to_implement,
+                    $implements_needed_interface ? "YES" : "NO"
+                ));
+
+                if ($is_instantiable
+                    && $implements_plugin_interface
+                    && $implements_needed_interface
                 ) {
                     if (Comparator::greaterThan($class::requires(), $application_version)) {
+                        $logger->error(sprintf(
+                            'Plugin `%s` requires %s, phab version is %s!',
+                            $class,
+                            $class::requires(),
+                            $application_version
+                        ));
+
                         throw new MismatchedVersionException(
                             sprintf(
                                 'Could not use plugin from %s. %s is required, current app is %s',
@@ -116,6 +146,7 @@ class PluginDiscovery
                 /** @var \Phabalicious\Utilities\AvailableMethodsAndCommandsPluginInterface[] $result */
                 $result = [];
                 foreach ($plugins as $path) {
+                    $prev_count = count($result);
                     self::scanAndRegister(
                         $application->getVersion(),
                         $result,
@@ -124,6 +155,9 @@ class PluginDiscovery
                         'Phabalicious\\CustomPlugin\\',
                         $logger
                     );
+                    if (count($result) == $prev_count) {
+                        $logger->error(sprintf("No plugins found at `%s`", $path));
+                    }
                 }
                 $config = $container->get(ConfigurationService::class);
                 $methods = $config->getMethodFactory();

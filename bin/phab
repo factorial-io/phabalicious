@@ -12,6 +12,7 @@ use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 set_time_limit(0);
@@ -54,6 +55,7 @@ $container = $kernel->getContainer();
 
 /** @var \Symfony\Component\Console\Output\OutputInterface $output */
 $output = $container->get(ConsoleOutput::class);
+//$output->setVerbosity(OutputInterface::VERBOSITY_DEBUG);
 
 /** @var Application $application */
 $application = $container->get(Application::class);
