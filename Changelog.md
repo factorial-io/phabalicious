@@ -1,5 +1,252 @@
 # Changelog
 
+## 3.7.0
+
+### Breaking changes:
+
+  * phabalicious now requires PHP 7.2
+  * failing drush commands will now exit phab with an error code, instead of
+    continuing. This might break your deployments.  To switch back to the old
+    behaviour set `drushErrorHandling` to `lax`
+
+### New
+
+  * Introduction of script execution contexts. Scripts can now be executed in a
+    docker image of your choice, or inside an service of a docker-compose setup
+
+    For scripts using the `docker-image`-script-context
+
+    ```yaml
+    scripts:
+      build-frontend:
+        script:
+          - npm install -g gulp-cli
+          - npm install
+          - gulp run
+        finally:
+          - rm -rf node_modules
+        context: docker-image
+        image: node:12
+        user: node # Optional user, if not specified, the current uid:gid will be used
+    ```
+
+    The current folder is mounted to `/app` in the container, and the current user-
+    and group will be used inside the running container. If you need to persist any
+    files after the container got killed, make sure to copy/ move them into the
+    `/app`-folder.
+
+    The container will be removed after the script finishes. Before the script is
+    executed, phabalicious will pull the docker-image.
+
+    The `finally`-step will executed after the script, it allows to cleanup any
+    leftovers, regardless of the result of the script-execution (e.g. returned
+    early because of an error).
+
+    `script`-actions for scaffolders are supporting this too, e.g.
+
+    ```yaml
+    hosts:
+      scaffold:
+        actions:
+          - action: script
+            arguments:
+              context: docker-image
+              image: node:14
+              script:
+                - npm install -g gulp-cli
+                - npm install
+                - gulp run
+    ````
+
+    For scripts using the `docker-compose-run` script-context:
+
+    ```yaml
+    scripts:
+      test:backend:
+        script:
+          - composer install
+          - php artisan db:wipe --force
+          - php artisan migrate
+          - php artisan db:seed
+          - vendor/bin/phpunit
+        context: docker-compose-run
+        rootFolder: ./hosting/tests
+        service: php
+        workingDir: /app #working dir in the php service
+    ```
+
+    Corresponding `docker-compose.yml`:
+
+    ```yaml
+    version: '2.1'
+    services:
+      php:
+        depends_on:
+          db:
+            condition: service_healthy
+        build:
+          context: ../../
+          dockerfile: ./hosting/builder/Dockerfile
+
+        environment:
+          DB_PASSWORD: root
+          DB_USERNAME: root
+          DB_DATABASE: tests
+          DB_HOST: db
+          APP_ENV: local
+      db:
+        image: mysql:8
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: tests
+        healthcheck:
+            test: "mysqladmin -u root -proot ping"
+
+    ```
+
+    This will use the `docker-compose.yml` from `hosting/tests` and run
+    `docker-compose run php` and exetute the script inside the `php`-service.
+    This works very well for scenarios where your app need other services to
+    function, like in this case a mysql database. In contrast to the `docker-image`-
+    script-context no folders are mounted into the service. You need to set this up
+    via your docker-compose.yml
+
+
+  * Add `md5`-twig-filter to scaffolder
+
+    ```twig
+    aValue: "{{ "Hello world" | md5 }}"
+    ```
+    will be scaffolded to
+
+    ```yaml
+    aValue: "f0ef7081e1539ac00ef5b761b4fb01b3"
+    ```
+  * Add `secret`-twig-function to the scaffolder. It will return the value for a given secret.
+
+    ```twig
+    The mysql-password is {{ secret("mysql-password" }}
+    ```
+
+  * Host-configs can be hidden from `list:hosts` by setting `hidden` to `true`
+
+    ```yaml
+    hosts:
+      hiddenHost:
+        hidden: true # host config will not be shownn on `list:hsots`
+    ```
+
+  * Add a new `info`-section to `host`-configs and a project specific `description`. This allows the user to add a short
+    description and one or more urls which will be displayed on `phab list:hosts`
+
+    ```yaml
+    description: |-
+      A multiline global project description which will be outputted on
+      list:hosts
+
+    hosts:
+      local:
+        info:
+          description: A local installation aimed for development
+          publicUrl: https://localhost
+          category:
+            id: local
+            label: Local installations
+       someDevInstance:
+        info:
+          description: |-
+            A multiline string describing someDevInstance which has multiple public
+            urls
+          publicUrls:
+            - https://web.example.com
+            - https://bo.example.com
+            - https://search.example.com
+          category:
+            id: dev
+            label: Develop installations
+    ```
+
+    Note, that `list:hosts` will show only the first `publicUrl`. But you can run
+    `phab list:hosts -v` to get a more verbose output with all urls and descriptions
+
+    Example output:
+
+    ```shell
+    $ phab list:hosts
+
+    List of found host-configurations:
+    ==================================
+
+    Local installations
+    -------------------
+    * local  https://localhost
+
+    Develop installations
+    ---------------------
+    * someDevInstance  https://web.example.com
+    ```
+
+  * New methods for handling database tasks (importing or exporting a dump) added:
+
+      * `mysql`
+      * `sqlite`
+
+    The functionality was moved out from the `drush`-method and replaced by the new
+    methods.
+
+    Database credentials will be obtained automatically if not part of the cofiguration
+    e.g. from drush or environment-variables/ the .env-file for laravel-based projects
+
+  * New command `artisan` and new method `laravel` for laravel-based projects. Just
+    run e.g. `phab -cyourconfig artisan db:seed`
+
+  * Add support for global `artisanTasks`
+
+  * Methods can declare dependencies to other methods, e.g. using the method `drush`
+    will implicitely use method `mysql` if not stated differently in `needs`.
+
+  * Allow users to override rsync options via the `rsyncOptions` settings, e.g.
+
+      ```yaml
+      rsyncOptions:
+        - --delete
+      ```
+  * You can now scaffold your docker configuration before running any docker-related
+    command e.g. `docker` or `docker-compose`. That means you can scaffold the
+    corresponding `docker-compose.yml` or `docker-compose.override.yml` before running
+    a command against the config. An example:
+
+      ```yaml
+      hosts:
+        example:
+          docker:
+            scaffold:
+              assets:
+                - templates/docker-compose.yml
+                - templates/docker-compose.override.yml
+      ```
+
+    This will copy the two files in `templates` into the root-folder and apply any
+    configuration from the host `example` before copying it to the destination.
+
+    * new `db`-command with subcommands `install` and `drop`, allows you to create
+      or drop a database.
+    * option `--skip-drop-db` for `copy-from` and `restore:sql-from-file` to not
+      drop the table before running the import
+    * option `--skip-reset` for `copy-from` which will not run the reset-task after
+      the import.
+
+### Changed
+
+  * Refactor how script-callbacks are handled internally, use a more oo-style
+  * Moved all db related functinality out of `drush` into the methods `mysql`
+    and `sqlite`
+  * Tests do not depend on the current working directory anymore and clean up after themselves.
+  * Refactor script execution to allow lazy validated replacements
+  * Fix unresolved replacement patterns in DockerMethod
+  * Allow artisan tasks to be configured
+
+
 ## 3.6.16 / 2021-09-23
 
 ### Fixed:

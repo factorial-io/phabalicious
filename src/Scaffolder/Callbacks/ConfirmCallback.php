@@ -11,7 +11,7 @@ class ConfirmCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'confirm';
     }
@@ -19,7 +19,7 @@ class ConfirmCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function requires()
+    public static function requires(): string
     {
         return '3.5';
     }

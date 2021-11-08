@@ -59,7 +59,7 @@ You can even inherit from a blueprint configuration for a host-config. This host
 ```
 host:
   demo:
-    inheritsFromBlueprint:
+    inheritFromBlueprint:
       config: my-blueprint-config
       varian: the-variant
 ```

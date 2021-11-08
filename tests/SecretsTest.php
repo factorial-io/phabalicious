@@ -28,7 +28,7 @@ class SecretsTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/secret-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/secret-tests/fabfile.yaml');
 
         $this->application->add(new OutputCommand($configuration, $method_factory));
     }
@@ -113,6 +113,7 @@ class SecretsTest extends PhabTestCase
 
     /**
      * @group docker
+     * @group 1password
      */
     public function testSecretsFrom1Password()
     {

@@ -22,8 +22,6 @@ use Phabalicious\Validation\ValidationService;
 
 class K8sMethod extends BaseMethod implements MethodInterface
 {
-    const KUBECTL_SCRIPT_CONTEXT = 'kubectl';
-
     const AVAILABLE_SUB_COMMANDS = [
         'delete',
         'apply',
@@ -67,6 +65,14 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
+        if ($task == self::getName()) {
+            $command = explode(' ', $context->get('command'));
+            $subcommand = array_shift($command);
+
+            if (in_array($subcommand, ['logs', 'describe'])) {
+                return true;
+            }
+        }
         return parent::isRunningAppRequired($host_config, $context, $task) ||
             in_array($task, ['startRemoteAccess', 'shell']);
     }
@@ -81,7 +87,6 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $default['kube'] = Utilities::mergeData($global_settings, [
             'context' => false,
-            'kubeconfig' => false,
             'environment' => [],
             'scaffoldBeforeApply' => true,
             'applyBeforeDeploy' => true,
@@ -113,6 +118,10 @@ class K8sMethod extends BaseMethod implements MethodInterface
         if (!empty($config['kube'])) {
             $service = new ValidationService($config['kube'], $errors, 'kube config of ' . $config['configName']);
             $service->hasKey('kubeconfig', 'Path to a kubeconfig file.');
+            $service->hasKey(
+                'podSelector',
+                'A list of selectors which are used to select the current pod where phab is working against'
+            );
             $service->hasKey('projectFolder', 'Provide a folder-name where the yml files can be found.');
             $service->hasKey('deleteCommand', 'Provide a delte command which gets executed on deletion.');
             $service->hasKey('applyCommand', 'Provide a applyCommand which gets executed on apply.');
@@ -177,11 +186,14 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $config->setChild('kube', 'podForCli', $this->getPodNameFromSelector($config, $context));
             $config->setChild('kube', 'podForCliSet', true);
         }
-        $script_context = $context->get(ScriptMethod::SCRIPT_CONTEXT, 'host');
-        if ($task == 'runScript' && $script_context == self::KUBECTL_SCRIPT_CONTEXT) {
-            $context->set('rootFolder', $this->kubectlShell->getHostConfig()['rootFolder']);
+        $script_context = $context->get(ScriptMethod::SCRIPT_CONTEXT, ScriptExecutionContext::HOST);
+        if ($task == 'runScript' && $script_context == ScriptExecutionContext::KUBE_CTL) {
             $this->ensureShell($config, $context);
-            $context->setShell($this->kubectlShell);
+
+            $context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, [
+                'rootFolder' => $this->kubectlShell->getHostConfig()['rootFolder'],
+                'kubectlShell' => $this->kubectlShell,
+            ]);
         }
     }
 
@@ -542,6 +554,10 @@ class K8sMethod extends BaseMethod implements MethodInterface
         /** @var \Phabalicious\Method\ScriptMethod $script_method */
         $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod("script");
         $context->setShell($this->kubectlShell);
+        $context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, [
+            'kubectlShell' => $this->kubectlShell,
+            'rootFolder' => $project_folder
+        ]);
         $script_method->runScript($host_config, $context);
     }
 

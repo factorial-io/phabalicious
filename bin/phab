@@ -2,12 +2,17 @@
 <?php
 
 use Phabalicious\AppKernel;
+use Phabalicious\Command\SelfUpdateCommand;
 use Phabalicious\Utilities\Logger;
+use Phabalicious\Utilities\PluginDiscovery;
+use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 set_time_limit(0);
@@ -48,10 +53,9 @@ $kernel = new AppKernel($env, $debug);
 $kernel->boot();
 $container = $kernel->getContainer();
 
-/** @var Phabalicious\Utilities\Logger $logger */
-$logger = $container->get(Logger::class);
 /** @var \Symfony\Component\Console\Output\OutputInterface $output */
 $output = $container->get(ConsoleOutput::class);
+//$output->setVerbosity(OutputInterface::VERBOSITY_DEBUG);
 
 /** @var Application $application */
 $application = $container->get(Application::class);
@@ -59,14 +63,16 @@ $application = $container->get(Application::class);
 /** @var EventDispatcher $dispatcher */
 $dispatcher = $container->get(EventDispatcher::class);
 $application->setDispatcher($dispatcher);
-\Phabalicious\Command\SelfUpdateCommand::registerListener($dispatcher);
+SelfUpdateCommand::registerListener($dispatcher);
 
 $version = '@git_tag@';
 if ($version[0] == '@') {
-    $version = \Phabalicious\Utilities\Utilities::FALLBACK_VERSION;
+    $version = Utilities::FALLBACK_VERSION;
 }
 
 $application->setVersion($version);
 $application->setName('phabalicious');
 $application->setDefaultCommand('list');
+PluginDiscovery::discoverFromFabfile($container, $output);
+
 $application->run($input, $output);

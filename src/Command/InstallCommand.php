@@ -63,7 +63,7 @@ class InstallCommand extends BaseCommand
         if (!$this->hasForceOption($input)) {
             if (!$context->io()->confirm(sprintf(
                 'Install new database for configuration `%s`?',
-                $this->getHostConfig()['configName']
+                $this->getHostConfig()->getConfigName()
             ), false)) {
                 return 1;
             }
@@ -72,10 +72,11 @@ class InstallCommand extends BaseCommand
 
         $next_tasks = $input->getOption('skip-reset') ? [] : ['reset'];
 
-        $context->io()->comment('Installing new app for `' . $this->getHostConfig()['configName']. '`');
+        $context->io()->comment('Installing new app for `' . $this->getHostConfig()->getConfigName(). '`');
 
         try {
             $this->getMethods()->runTask('install', $this->getHostConfig(), $context, $next_tasks);
+            $context->io()->success(sprintf("%s installed successfully!", $this->getHostConfig()->getLabel()));
         } catch (EarlyTaskExitException $e) {
             return 1;
         }

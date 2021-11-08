@@ -15,11 +15,13 @@ use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\ScriptExecutionContext;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\Utilities;
 use Psr\Log\AbstractLogger;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -35,8 +37,6 @@ class ScriptMethodTest extends PhabTestCase
     /** @var TaskContext */
     private $context;
 
-    private $savedArguments;
-
     /**
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
@@ -47,7 +47,7 @@ class ScriptMethodTest extends PhabTestCase
     public function setUp()
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
-        $app = $this->getMockBuilder(\Symfony\Component\Console\Application::class)->getMock();
+        $app = $this->getMockBuilder(Application::class)->getMock();
         $this->method = new ScriptMethod($logger);
         $this->configurationService = new ConfigurationService($app, $logger);
 
@@ -55,7 +55,7 @@ class ScriptMethodTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $this->configurationService->readConfiguration($this->getcwd() . '/assets/script-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__ . '/assets/script-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
@@ -77,7 +77,7 @@ class ScriptMethodTest extends PhabTestCase
      */
     public function testRunScript()
     {
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo "hello"',
             'echo "world"',
             'echo "hello world"'
@@ -102,7 +102,7 @@ class ScriptMethodTest extends PhabTestCase
      */
     public function testExitOnExitCode()
     {
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             '(exit 42)',
             '(exit 0)'
         ]);
@@ -125,11 +125,11 @@ class ScriptMethodTest extends PhabTestCase
      */
     public function testIgnoreExitCode()
     {
-        $this->context->set('scriptData', [
-            'breakOnFirstError(0)',
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
+            'break_on_first_error(0)',
             '(exit 42)',
             '(exit 0)',
-            'breakOnFirstError(1)'
+            'break_on_first_error(1)'
         ]);
 
         $host_config = $this->configurationService->getHostConfig('hostA');
@@ -155,7 +155,7 @@ class ScriptMethodTest extends PhabTestCase
         $this->context->set('environment', [
             'TEST_VAR' => '42',
         ]);
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo $TEST_VAR',
         ]);
 
@@ -182,7 +182,7 @@ class ScriptMethodTest extends PhabTestCase
         $this->context->set('environment', [
             'TEST_VAR' => '%host.testEnvironmentVar%',
         ]);
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo "$TEST_VAR"',
         ]);
 
@@ -206,7 +206,7 @@ class ScriptMethodTest extends PhabTestCase
      */
     public function testExpandedEnvironmentVariablesFromHostConfig()
     {
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo "$ROOT_FOLDER"',
         ]);
 
@@ -216,7 +216,7 @@ class ScriptMethodTest extends PhabTestCase
 
         $this->assertNotNull($this->context->getCommandResult());
         $this->assertEquals(
-            [$this->getcwd() . '/assets/script-tests'],
+            [__DIR__ . '/assets/script-tests'],
             $this->context->getCommandResult()->getOutput()
         );
     }
@@ -226,11 +226,11 @@ class ScriptMethodTest extends PhabTestCase
     {
         $this->expectException(MissingScriptCallbackImplementation::class);
 
-        $this->context->set('callbacks', [
+        $this->context->set(ScriptMethod::SCRIPT_CALLBACKS, [
             'debug' => [$this, 'missingScriptDebugCallback'],
         ]);
 
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'debug(hello world)',
         ]);
 
@@ -240,11 +240,12 @@ class ScriptMethodTest extends PhabTestCase
 
     public function testParsingCallbackParameters()
     {
-        $this->context->set('callbacks', [
-            'debug' => [$this, 'saveArgumentsCallback'],
+        $callback = new DebugCallback(true);
+        $this->context->set(ScriptMethod::SCRIPT_CALLBACKS, [
+            $callback::getName() => $callback,
         ]);
 
-        $this->context->set('scriptData', [
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'debug(hello world)',
             'debug("hello world")',
             'debug("hello", "world")',
@@ -254,21 +255,19 @@ class ScriptMethodTest extends PhabTestCase
         $host_config = $this->configurationService->getHostConfig('hostA');
         $this->method->runScript($host_config, $this->context);
 
-        $this->assertEquals(["hello world"], $this->savedArguments[0]);
-        $this->assertEquals(["hello world"], $this->savedArguments[1]);
-        $this->assertEquals(["hello", "world"], $this->savedArguments[2]);
-        $this->assertEquals(["hello, world", "Foo, bar"], $this->savedArguments[3]);
-    }
 
-    public function saveArgumentsCallback($context, ...$args)
-    {
-        $this->savedArguments[] = $args;
+
+        $this->assertEquals(["hello world"], $callback->debugOutput[0]);
+        $this->assertEquals(["hello world"], $callback->debugOutput[1]);
+        $this->assertEquals(["hello", "world"], $callback->debugOutput[2]);
+        $this->assertEquals(["hello, world", "Foo, bar"], $callback->debugOutput[3]);
     }
 
     public function testTaskSpecificScripts()
     {
-        $this->context->set('callbacks', [
-            'debug' => [$this, 'scriptDebugCallback'],
+        $callback = new DebugCallback(false);
+        $this->context->set(ScriptMethod::SCRIPT_CALLBACKS, [
+            $callback::getName() => $callback,
         ]);
 
         $host_config = $this->configurationService->getHostConfig('hostA');
@@ -284,18 +283,9 @@ class ScriptMethodTest extends PhabTestCase
             'deploy on hostA',
             'deployFinished on dev',
             'deployFinished on hostA'
-        ], $this->context->get('debug'));
+        ], $callback->debugOutput);
     }
 
-    public function scriptDebugCallback(TaskContextInterface $context, $message)
-    {
-        $debug =  $context->get('debug');
-        if (empty($debug)) {
-            $debug = [];
-        }
-        $debug[] = $message;
-        $context->set('debug', $debug);
-    }
 
     public function testValidateReplacements()
     {
@@ -331,5 +321,46 @@ class ScriptMethodTest extends PhabTestCase
             "%here%%huhu%",
             "khjkhjkjhkjh",
         ]));
+    }
+
+    /**
+     * @group docker
+     */
+    public function testScriptRunInDockerContext()
+    {
+        $this->context->set(ScriptMethod::SCRIPT_CONTEXT, ScriptExecutionContext::DOCKER_IMAGE);
+        $this->context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, ['image' => 'busybox']);
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
+            'env',
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+
+        $this->method->runScript($host_config, $this->context);
+
+        $output = $this->context->getCommandResult()->getOutput();
+
+        $this->assertContains("PHAB_SUB_SHELL=1", $output);
+    }
+
+
+    public function testCleanupScriptSection()
+    {
+        $this->context->set(ScriptMethod::SCRIPT_DATA, [
+            '(exit 42)',
+        ]);
+        $this->context->set(ScriptMethod::SCRIPT_CLEANUP, [
+            'echo "$ROOT_FOLDER"'
+        ]);
+
+        $host_config = $this->configurationService->getHostConfig('hostA');
+
+        $this->method->runScript($host_config, $this->context);
+
+        $this->assertNotNull($this->context->getCommandResult());
+        $this->assertEquals(
+            [__DIR__ . '/assets/script-tests'],
+            $this->context->getCommandResult()->getOutput()
+        );
     }
 }

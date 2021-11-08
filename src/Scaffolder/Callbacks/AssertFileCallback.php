@@ -9,7 +9,7 @@ class AssertFileCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'assert_file';
     }
@@ -17,7 +17,7 @@ class AssertFileCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function requires()
+    public static function requires(): string
     {
         return '3.5.10';
     }
@@ -36,7 +36,7 @@ class AssertFileCallback implements CallbackInterface
         $error_message
     ) {
 
-        if (!file_exists($file_path)) {
+        if (!$context->getShell()->exists($file_path)) {
             throw new \RuntimeException(sprintf("%s does not exist! %s", $file_path, $error_message));
         }
     }

@@ -22,6 +22,18 @@ scripts:
       - "echo Value A: %arguments.valueA%"
       - "echo Value B: %arguments.valueB%"
 
+  testInsideDockerImage:
+    script:
+      - node --version
+    context: docker-image
+    image: node:12
+
+  envInsideDockerImage:
+    script:
+      - env
+    context: docker-image
+    image: busybox
+
 hosts:
   base:
     type: dev

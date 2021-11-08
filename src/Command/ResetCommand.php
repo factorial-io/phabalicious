@@ -45,6 +45,7 @@ class ResetCommand extends BaseCommand
 
         try {
             $this->getMethods()->runTask('reset', $this->getHostConfig(), $context);
+            $context->io()->success(sprintf("%s resetted successfully!", $this->getHostConfig()->getLabel()));
         } catch (EarlyTaskExitException $e) {
             return 1;
         }

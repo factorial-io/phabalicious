@@ -40,7 +40,7 @@ There are currently 3 internal commands. These commands control the flow inside 
 * `execute(task, subtask, arguments)` execute a phabalicious task. For example you can run a deployment from a script via `execute(deploy)` or stop a docker-container from a script via `execute(docker, stop)`
 * `fail_on_missing_directory(directory, message)` will print message `message` if the directory `directory` does not exist.
 * `log_message(severity, message)` Prints a message to the output, for more info have a look at the [scaffolder-documentation](/scaffolder).
-* `confirm(message)` Will prompt for a confimation from the user.
+* `confirm(message)` Will prompt for a confirmation from the user.
 
 ## Task-related scripts
 
@@ -89,9 +89,9 @@ phab -c<config> script test --arguments foo=bar
 
 will output `Hello bar`
 
-## Script contexts
+## Script execution contexts
 
-Sometimes it makes sense to run a script in a different context, e.g. not on the host-config, but for example in the context of the kubectl application or the docker host. You can override the context via
+Sometimes it makes sense to run a script in a different execution context, e.g. not on the host-config, but for example in the context of the kubectl application or the docker host. You can override the context via
 
 ```yaml
 scripts:
@@ -99,9 +99,30 @@ scripts:
     context: kubectl
     script:
       - kubectl apply -f whatever
+
+  test-in-docker-container:
+    context: docker-image
+    image: node:12
+    user: node
+    script:
+      - npm install
+      - npm run build
 ```
 
-The example above will run the script not in the context of the host, but in the context of the shell which also runs the kubectl command.
+These script execution-contexts are available
+
+ * `host`
+
+   this is the default context, running on the particular host.
+
+ * `kubectl`
+
+   the script will be executed in the same context, where kubectl commands are executed. Helpful for custom kubectl scripts. The example above will run the script not in the context of the host, but in the context of the shell which also runs the kubectl command.
+
+ * `docker-image`
+
+   the script will be executed in a docker-container created with the provided name of the docker-image to use. The current folder will be mounted as a volume inside the docker-container at `/app` and the script will be executed as the current user and group (if not a dedicated user is set via `user`). The container will be deleted afterwards, if you need to keep files persistent, make sure to move/ copy them to `/app`
+   The above example will install the node-based app and execute the `build`-command
 
 ## Questions
 
@@ -129,6 +150,23 @@ If the user provides command line arguments with the same name as the question k
 ```
 phab -cconfig script createRelease --arguments version=1.0.0
 ```
+
+## Cleaning up
+
+Phab supports special clean-up scripts which will be execeuted regardless of the return code of the executed script. You can use them to clean up after a script or to call certain function regardless of the outcome of the script. Here's an example"
+
+```yaml
+script:
+  runTests:
+    script:
+      - composer install
+      - vendor/bin/phpunit
+    finally:
+      - rm test-data
+      - rm -rf vendor
+```
+
+Regardless if `phpunit` succeeds or fails, the script lines in `finally` will be executed, and after that, phab will be terminated with the return code of the script run. Helpful in ci tasks, where you need to cleanup after yourself.
 
 ## Computed values
 

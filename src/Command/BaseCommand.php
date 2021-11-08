@@ -293,11 +293,11 @@ abstract class BaseCommand extends BaseOptionsCommand
 
         $base_path = getcwd();
 
-        $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig['configName']);
+        $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig->getConfigName());
         if (!$available_variants) {
             throw new \InvalidArgumentException(sprintf(
                 'Could not find variants for `%s` in `blueprints`',
-                $this->hostConfig['configName']
+                $this->hostConfig->getConfigName()
             ));
         }
 
@@ -371,13 +371,18 @@ abstract class BaseCommand extends BaseOptionsCommand
 
             return 1;
         }
+
+        return 1;
     }
 
     private function handleSetOption($option_value)
     {
         $options = is_array($option_value) ? $option_value : explode(" ", $option_value);
         foreach ($options as $option) {
-            [$key_combined, $value] = explode("=", $option, 2);
+            [$key_combined, $value] = array_pad(explode("=", $option, 2), 2, false);
+            if (!$value) {
+                throw new \RuntimeException(sprintf("could not parse option `%s`!", implode(',', $option_value)));
+            }
             [$what, $key] = array_pad(explode(".", $key_combined, 2), 2, false);
             if (!in_array($what, ['host', 'dockerHost'])) {
                 $what = 'host';

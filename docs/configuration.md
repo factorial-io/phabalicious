@@ -45,6 +45,11 @@ List here all needed methods for that type of project. Available methods are:
   * `platform` for deploying to platform.sh
   * `artifacts--ftp` to deploy to a ftp-server
   * `artifacts--git` to deploy an artifact to a git repository
+  * `yarn` to run yarn tasks when doing a deploy/reset
+  * `npm` to run npm tasks when doing a deploy/reset
+  * `mysql` to add support for a mysql database
+  * `sqlite` to add support for a sqlite database
+  * `laravel` for laravel-based applications
   * `k8s` to interact with an application hosted in a Kubernetes cluster
 
 **Example for drupal 7**
@@ -57,7 +62,7 @@ needs:
   - files
 ```
 
-**Example for drupal 8 composer based and dockerized**
+**Example for drupal 8/9 composer based and dockerized**
 
 ```yaml
 needs:
@@ -69,6 +74,17 @@ needs:
   - files
 ```
 
+**Example for a local installed laravel application with sqlite**
+
+```yaml
+needs:
+  - local
+  - git
+  - composer
+  - sqlite
+  - laravel
+  - files
+```
 
 ## requires
 
@@ -85,6 +101,12 @@ hosts:
     user: example_user
     port: 2233
     type: dev
+    info:
+      description: An example of a configuration
+      publicUrl: http://www.example.com
+      category:
+        id: 01-example
+        label: An example category
     rootFolder: /var/www/public
     gitRootFolder: /var/www
     siteFolder: /sites/default
@@ -113,7 +135,14 @@ phab --config=staging about
 This will print all host configuration for the host `staging`.
 
 ### General keys
-
+* `hidden` hide this configuration from `list:hosts`, but can still be used
+* `inheritOnly` this configuration is just for inheritance, it wont be validated, and hidden for `list:hosts`
+* `info` additional human readable information for this config (supports replacemnt-patterns)
+    * `description`: a human readable description outputted by `list:hosts -v`
+    * `publicUrl`/`publicUrls`: One or many urls for this configuration, will be displayed to the user on certain occasions. Make sure, that the most important url is the first one
+    * `category`: A category to group the output of `list:hosts` -- can be a string or:
+      * `id`: the id of the category, used for sorting
+      * `label`: the label of the category
 * `type` defines the type of installation. Currently there are four types available:
     * `dev` for dev-installations, they won't backup the databases on deployment
     * `test` for test-installations, similar than `dev`, no backups on deployments
@@ -132,7 +161,8 @@ This will print all host configuration for the host `staging`.
     * `local`: all commands are run locally
     * `ssh`: all commands are run via a ssh-shell
     * `docker-exec` all commands are run via docker-exec.
-    * `docker-exec-ver-ssh` all commands are run via docker-exec on a remote instance
+    * `docker-exec-over-ssh` all commands are run via docker-exec on a remote instance
+    * `kubectl` all commands are handled via kubectl inside a dedicated pod
 * `inheritFromBlueprint` this will apply the blueprint to the current configuration. This makes it easy to base the common configuration on a blueprint and just override some parts of it.
     * `config` this is the blueprint-configuration used as a base.
     * `variant` this is the variant to pass to the blueprint
@@ -167,7 +197,7 @@ This will print all host configuration for the host `staging`.
 
 ### Configuration for the git-method
 
-* `gitRootFolder`  the folder, where the git-repository lies. Defaults to `rootFolder`
+* `gitRootFolder`  the folder, where the git-repository is located. Defaults to `rootFolder`
 * `branch` the name of the branch to use for deployments, they get usually checked out and pulled from origin.
 * `ignoreSubmodules` default is false, set to false, if you don't want to update a projects' submodule on deploy.
 * `gitOptions` a keyed list of options to apply to a git command. Currently only pull is supported. If your git-version does not support `--rebase` you can disable it via an empty array: `pull: []`
@@ -190,13 +220,7 @@ This will print all host configuration for the host `staging`.
           - echo "do sth else"
 
 * `configBaseFolder`, where all the configurations are stored, it defaults to `../config` -- the folder to the actual configuration gets computed, e.g. with the above example it would be `../config/sync`
-* `forceConfigurationManagement` defaults to false. If set to true, phab will not try to autodetect if a config import is doable and force the config importsync `database` the database-credentials the `install`-tasks uses when installing a new installation.
-    * `name` the database name
-    * `host` the database host
-    * `user` the database user
-    * `pass` the password for the database user
-    * `prefix` the optional table-prefix to use
-    * `skipCreateDatabase` do not create a database when running the install task.
+* `forceConfigurationManagement` defaults to false. If set to true, phab will not try to autodetect if a config import is doable and force the config importsync
 * `adminUser`, default is `admin`, the name of the admin-user to set when running the reset-task on `dev`-instances
 * `adminPass`, default is empty, will be computed on request. You can get it via `phab -c<config> get:property adminPass` -- this can be overridden per host or globally.
 * `deploymentModule` name of the deployment-module the drush-method enables when doing a deploy
@@ -205,7 +229,41 @@ This will print all host configuration for the host `staging`.
 * `installOptions` default is `distribution: minimal, locale: en, options: ''`. You can change the distribution to install and/ or the locale.
 * `drupalVersion` set the drupal-version to use. If not set phabalicious is trying to guess it from the `needs`-configuration.
 * `drushVersion` set the used crush-version, default is `8`. Drush is not 100% backwards-compatible, for phabalicious needs to know its version.
+* `drushErrorHandling` defaults to `lax`. If set to `strict` phab will terminate with an error if it detects a failed drush-execution.
+
+### Configuration of the mysql-method
+
 * `supportsZippedBackups` default is true, set to false, when zipped backups are not supported
+* `database` the database-credentials the `install`-tasks uses when installing a new installation.
+    * `name` the database name
+    * `host` the database host
+    * `user` the database user
+    * `pass` the password for the database user
+    * `prefix` the optional table-prefix to use
+    * `skipCreateDatabase` do not create a database when running the install task.
+    * `driver`, which method should handle the database-interactions, `mysql` when using the `mysql` as a need.
+* `mysqlOptions`, `mysqlDumpOptions`, `mysqlAdminOptions`, arrays with cli-options for these commands to apply when running them.
+
+### Configuration of the sqlite-method
+
+* `supportsZippedBackups` default is true, set to false, when zipped backups are not supported
+* `database` the database-credentials the `install`-tasks uses when installing a new installation.
+    * `prefix` the optional table-prefix to use
+    * `skipCreateDatabase` do not create a database when running the install task.
+    * `driver`, which method should handle the database-interactions, `sqlite` when using the `sqlite` as a need.
+
+### Configuration of the laravel-method
+
+* `laravelRootFolder` folder where the package.json is located, defaults to the (git-) root-folder.
+* `artisanTasks`:
+  * `reset`: (array) A list of aritsan tasks to execute for the `reset`-command. Default is
+    - `config:cache`
+    - `migrate`
+    - `cache:clear`
+  * `install`: (array) A list of aritsan tasks to execute for the `install`-command. Default is
+    - `db:wipe --force`
+    - `migrate`
+    - `db:seed`
 
 ### Configuration of the yarn-method
 
@@ -236,6 +294,7 @@ This will print all host configuration for the host `staging`.
 * `target` contains the following options
   * `repository` the url of the target repository
   * `branch` the branch to use for commits
+  * `baseBranch` if phab needs to create a new branch on the target repository, which should be the branch to branch off from.
   * `useLocalRepository` if set to true, phab will use the current directory as a source for the artifact, if set to false, phab will create a new app in a temporary folder and use that as a artifact
   * `actions` a list of actions to perform. See detailed documentation for more info.
 
@@ -392,7 +451,7 @@ jira:
 
 ## mattermost
 
-Phabalicious can send notifications to a running Mattermost instance. You need to create an incoming web hook in your instance and pass this to your configuration. Here's an example
+Phabalicious can send notifications to a running Mattermost instance. You need to create an incoming webhook in your instance and pass this to your configuration. Here's an example
 
 ```yaml
 mattermost:
@@ -500,6 +559,7 @@ host:
 
 * `sqlSkipTables` a list of table-names drush should omit when doing a backup.
 * `configurationManagement` a list of configuration-labels to import on `reset`. This defaults to `['sync']` and may be overridden on a per-host basis. You can add command arguments to the the configuration label.
+* `rsyncOptions` additional options to pass to rsync when doing a copyFrom.
 
 Example:
 ```yaml
@@ -519,6 +579,8 @@ configurationManagement:
      - drush config-import -y staging
    dev:
      - drush config-import -y dev --partial
+rsyncOptions:
+  - --delete
 ```
 
 

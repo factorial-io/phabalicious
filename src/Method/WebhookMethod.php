@@ -6,10 +6,12 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Symfony\Component\Yaml\Yaml;
 
 class WebhookMethod extends BaseMethod implements MethodInterface
 {
@@ -73,6 +75,8 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      * @param HostConfig $config
      * @param string $task
      * @param TaskContextInterface $context
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function runTaskSpecificWebhooks(HostConfig $config, string $task, TaskContextInterface $context)
     {
@@ -93,12 +97,15 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             );
         }
     }
+
     /**
      * Run fallback webhooks.
      *
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -112,6 +119,8 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -125,6 +134,8 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      * @param string $task
      * @param HostConfig $config
      * @param TaskContextInterface $context
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
@@ -170,10 +181,18 @@ class WebhookMethod extends BaseMethod implements MethodInterface
 
         $webhook['url'] = Utilities::expandAndValidateString($webhook['url'], $replacements);
 
-        if (!empty($webhook['payload'])) {
-            $payload = $webhook['payload'];
+        foreach (['options', 'payload'] as $key) {
+            if (empty($webhook[$key])) {
+                continue;
+            }
+            $payload = $webhook[$key];
             $payload = Utilities::expandStrings($payload, $replacements);
             $payload = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($payload);
+            $webhook[$key] = $payload;
+        }
+
+        if (!empty($webhook['payload'])) {
+            $payload = $webhook['payload'];
 
             if ($webhook['method'] == 'get') {
                 $webhook['url'] .= '?' . http_build_query($payload);
@@ -189,6 +208,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             $webhook['method'],
             $webhook['format']
         ));
+        $this->logger->info('payload: ' . print_r($webhook['payload'], true));
         $this->logger->debug('guzzle options: ' . print_r($webhook['options'], true));
 
         $client = new Client();
@@ -207,7 +227,6 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         return $response;
     }
 
-
     /**
      * Implements alter hook script callbacks
      *
@@ -215,27 +234,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      */
     public function alterScriptCallbacks(CallbackOptions &$options)
     {
-        $options->addCallback('webhook', [$this, 'webhookScriptCallback']);
-    }
-
-    public function webhookScriptCallback(TaskContextInterface $context, $webhook_name, ...$args)
-    {
-        $cloned_context = clone $context;
-        if (!empty($args)) {
-            $named_args = Utilities::parseArguments($args);
-
-            $variables = $cloned_context->get('variables', []);
-            $variables['arguments'] = $named_args;
-            $cloned_context->set('variables', $variables);
-        }
-        $host_config = $context->get('host_config');
-        $result = $this->runWebhook($webhook_name, $host_config, $cloned_context);
-        $this->handleWebhookResult(
-            $cloned_context,
-            $result,
-            $webhook_name,
-            sprintf('Could not find webhook `%s`', $webhook_name)
-        );
+        $options->addCallback(new WebHookCallback($this));
     }
 
     /**
@@ -244,14 +243,23 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      * @param string $webhook_name
      * @param string $msg
      */
-    protected function handleWebhookResult(TaskContextInterface $context, $result, string $webhook_name, string $msg)
+    public function handleWebhookResult(TaskContextInterface $context, $result, string $webhook_name, string $msg)
     {
         if (!$result) {
             throw new \InvalidArgumentException($msg);
         } else {
             $result = (string)$result->getBody();
             if (!empty($result)) {
-                $context->io()->block($result, $webhook_name);
+                // Try to parse json.
+                $json = json_decode($result, true);
+                if (!is_null($json)) {
+                    $context->setResult($webhook_name, $json);
+                    $result = Yaml::dump($json, 4, 2);
+                } else {
+                    $context->setResult($webhook_name, $result);
+                }
+                $context->io()->title("[$webhook_name] result:");
+                $context->io()->writeln($result);
             }
         }
     }

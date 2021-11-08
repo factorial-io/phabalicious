@@ -139,11 +139,11 @@ class UtilitiesTest extends PhabTestCase
 
     public function testExtractCallback()
     {
-        list($callback, $args) = Utilities::extractCallback('execute(docker, run)');
+        [$callback, $args] = Utilities::extractCallback('execute(docker, run)');
         $this->assertEquals('execute', $callback);
         $this->assertEquals(['docker', 'run'], $args, '', 0.0, 10, true);
 
-        list($callback, $args) = Utilities::extractCallback('execute(deploy)');
+        [$callback, $args] = Utilities::extractCallback('execute(deploy)');
         $this->assertEquals('execute', $callback);
         $this->assertEquals(['deploy'], $args, '', 0.0, 10, true);
 
@@ -189,5 +189,18 @@ class UtilitiesTest extends PhabTestCase
         $this->assertEquals("3.6.0", Utilities::getNextStableVersion("3.6.0-beta.1"));
         $this->assertEquals("3.6.10", Utilities::getNextStableVersion("3.6.10-beta.5"));
         $this->assertEquals("3.7.10", Utilities::getNextStableVersion("3.7.10-alpha.5"));
+    }
+
+    public function testCleanupString()
+    {
+        $mappings = [
+            "1.0" => "1.0",
+            "whatever it takes/foo bar" => "whatever-it-takes-foo-bar",
+            "[äöü]" => "-äöü"
+        ];
+
+        foreach ($mappings as $input => $result) {
+            $this->assertEquals($result, Utilities::cleanupString($input));
+        }
     }
 }

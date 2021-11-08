@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Method\TaskContextInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
@@ -21,6 +22,11 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
         return self::PROVIDER_NAME;
     }
 
+    public function __construct(LoggerInterface $logger)
+    {
+        parent::__construct($logger);
+        $this->setFileOperationsHandler(new NoopFileOperations());
+    }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
@@ -116,5 +122,10 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
     public function terminate()
     {
         // Nothing to see here.
+    }
+
+    public function startSubShell(array $cmd): ShellProviderInterface
+    {
+        return $this;
     }
 }

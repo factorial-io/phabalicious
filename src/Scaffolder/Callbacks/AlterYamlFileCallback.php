@@ -12,7 +12,7 @@ class AlterYamlFileCallback extends BaseCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'alter_yaml_file';
     }
@@ -20,7 +20,7 @@ class AlterYamlFileCallback extends BaseCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function requires()
+    public static function requires(): string
     {
         return '3.4';
     }
@@ -42,11 +42,16 @@ class AlterYamlFileCallback extends BaseCallback implements CallbackInterface
             $context,
             $yaml_file_name,
             $data_key,
-            function ($file_name) {
-                return Yaml::parseFile($file_name);
+            function ($file_name) use ($context) {
+                $content = $context->getShell()->getFileContents($file_name, $context);
+                return Yaml::parse($content);
             },
-            function ($file_name, $data) {
-                file_put_contents($file_name, Yaml::dump($data, 10, 2));
+            function ($file_name, $data) use ($context) {
+                $context->getShell()->putFileContents(
+                    $file_name,
+                    Yaml::dump($data, 10, 2),
+                    $context
+                );
             }
         );
     }

@@ -64,9 +64,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
     public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
     {
         return [
-            $this->getRootFolderKey() => isset($host_config['gitRootFolder'])
-                ? $host_config['gitRootFolder']
-                : $host_config['rootFolder'],
+            $this->getRootFolderKey() => $host_config['gitRootFolder'] ?? $host_config['rootFolder'],
             $this->getRunContextKey() => self::HOST_CONTEXT,
         ];
     }
@@ -90,6 +88,12 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         }
     }
 
+    /**
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     */
     protected function runCommand(
         HostConfig $host_config,
         TaskContextInterface $context,
@@ -101,7 +105,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         if ($host_config[$this->getRunContextKey()] == self::DOCKER_HOST_CONTEXT) {
             /** @var DockerMethod $docker_method */
             $docker_method = $context->getConfigurationService()->getMethodFactory()->getMethod('docker');
-            $docker_config = DockerMethod::getDockerConfig($host_config, $context->getConfigurationService());
+            $docker_config = $docker_method->getDockerConfig($host_config, $context);
             $shell = $docker_config->shell();
             $shell->pushWorkingDir($docker_method->getProjectFolder($docker_config, $host_config));
             $shell->cd($host_config[$this->getRootFolderKey()]);
@@ -115,7 +119,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $shell->popWorkingDir();
     }
 
-    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
+    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command): string
     {
         return $command;
     }

@@ -138,7 +138,7 @@ class MethodFactory
         $fn_called = false;
 
         if (!$context->get('quiet')) {
-            $this->logger->debug('Running task ' . $task_name . ' on configuration ' . $configuration['configName']);
+            $this->logger->debug('Running task ' . $task_name . ' on configuration ' . $configuration->getConfigName());
         }
 
         foreach ($configuration['needs'] as $method_name) {
@@ -264,12 +264,31 @@ class MethodFactory
      * @param array $needs
      *
      * @return MethodInterface[]
+     * @throws \Phabalicious\Exception\MethodNotFoundException
      */
     public function getSubset(array $needs)
     {
         return array_map(function ($elem) {
             return $this->getMethod($elem);
         }, $needs);
+    }
+
+    /**
+     * @param array $needs
+     * @param $interface
+     *
+     * @return array|\Phabalicious\Method\MethodInterface[]
+     * @throws \Phabalicious\Exception\MethodNotFoundException*
+     */
+    public function getSubsetImplementing(array $needs, $interface): array
+    {
+        return array_filter(array_map(function ($elem) use ($interface) {
+            $method = $this->getMethod($elem);
+            if (is_a($method, $interface)) {
+                return $method;
+            }
+            return false;
+        }, $needs));
     }
 
     public function alter(array $needs, $func_name, AlterableDataInterface $data)

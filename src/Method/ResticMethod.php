@@ -288,7 +288,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         $options[] = Utilities::slugify(
             $context->getConfigurationService()->getSetting('name', 'unknown'),
             '-'
-        ) . '--' . $host_config['configName'];
+        ) . '--' . $host_config->getConfigName();
 
         return $options;
     }

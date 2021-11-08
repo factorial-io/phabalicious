@@ -213,6 +213,13 @@ This action comes handy when degugging the build process, as it will stop the ex
 - action: script
   arguments:
     name: compile:vue
+- action: script
+  arguments:
+    context: docker-image
+    image: node:12
+    script:
+        - npm install
+        - npm run build
 ```
 
 The `script`-action will run the script from the arguments section line by line. You can use the usual replacement patterns as for other scripts. Most helpful are:
@@ -223,6 +230,10 @@ The `script`-action will run the script from the arguments section line by line.
 | `%context.data.targetDir%` | The targetdir, where the app got copied to, which gets committed or synced |
 
 If `arguments` contains a name, then this named script will be executed. It should be available under the global `scripts`-section or on the hosts' scripts section.
+
+Since 3.7 phab supports executing a script in a different context. If you set `arguments.context` to `docker-image` the lines in `script` will be executed in a docker-container started from the named docker-image provided via the `image`-argument.
+
+Note, that the container will be removed after the script finishes. Also the current user and group will be used inside the container to reduce issues with permissions. The current host-directory is available at `/app` inside the container. If you want to keep files after the script finishes, make sure they are inside `/app`.
 
 ### message
 

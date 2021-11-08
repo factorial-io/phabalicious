@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.6.16';
+    const FALLBACK_VERSION = '3.7.0';
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
@@ -96,6 +96,7 @@ class Utilities
             'userFolder' => self::getUserFolder(),
             'cwd' => getcwd(),
             'fabfileLocation' => $config->getFabfileLocation(),
+            'fabfilePath' => $config->getFabfilePath(),
         ];
     }
 
@@ -177,11 +178,9 @@ class Utilities
             throw new UnknownReplacementPatternException($validated, array_keys($replacements));
         }
 
-        $commands = array_map(function ($r) {
+        return array_map(function ($r) {
             return str_replace('\%', '%', $r);
         }, $commands);
-
-        return $commands;
     }
 
     /**
@@ -381,8 +380,10 @@ class Utilities
         ];
         $identifier = strtr($identifier, $filter);
 
+
         $identifier = preg_replace(
-            '/[^\\x{002D}\\x{0030}-\\x{0039}\\x{0041}-\\x{005A}\\x{005F}\\x{0061}-\\x{007A}\\x{00A1}-\\x{FFFF}]/u',
+            '/[^\\x{002D}\\x{002E}}\\x{0030}-\\x{0039}\\x{0041}-' .
+            '\\x{005A}\\x{005F}\\x{0061}-\\x{007A}\\x{00A1}-\\x{FFFF}]/u',
             '',
             $identifier
         );
@@ -570,5 +571,18 @@ class Utilities
         }
 
         return $version;
+    }
+
+    public static function getTempNamePrefix($hostconfig): string
+    {
+        return 'phab-' . md5($hostconfig->getConfigName() . mt_rand());
+    }
+
+    public static function getTempFileName(HostConfig $host_config, $str): string
+    {
+        return
+            $host_config->get('tmpFolder', '/tmp') . '/' .
+            bin2hex(random_bytes(8)) . '--' .
+            basename($str);
     }
 }

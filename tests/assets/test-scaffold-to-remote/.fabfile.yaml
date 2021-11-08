@@ -1,0 +1,30 @@
+name: test scaffold to remote instances
+
+description: |-
+  A simple yamlfile for testing the scaffolder with a remote target
+  Adapt it to your needs and run it via
+
+  $ phab script scaffold-test -clocalhost
+
+  This should scaffold drupal 8 into /tmp/d9-scaffold via ssh
+
+
+needs:
+  - ssh
+  - script
+
+scripts:
+  scaffold-test:
+    - mkdir -p %host.rootFolder%/test-d8
+    - scaffold("https://config.factorial.io/scaffold/d8/d8.yml", "%host.rootFolder%/test-d8", "name=test-d8", "shortName=td8", "phpVersion=7.4")
+
+hosts:
+  localhost:
+    host: localhost
+    port: 22
+    user: stephan
+    rootFolder: /tmp
+  clients.factorial.io:
+    inheritsFrom: localhost
+    host: clients.factorial.io
+    rootFolder: /home/stephan

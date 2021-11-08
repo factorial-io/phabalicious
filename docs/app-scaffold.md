@@ -58,7 +58,7 @@ The following question-types are supported:
 
 ### `question`
 
-A regular question, with optional default, validation and/ or autocomplete values. If `hidden` is true then the user wont see his input, ideal for sensitive data like passwords.
+A regular question, with optional default, validation and/ or autocomplete values. If `hidden` is true then the user wont see their input, ideal for sensitive data like passwords.
 
 ```yaml
 key:
@@ -135,8 +135,8 @@ Phabalicious will provide the following replacement-patterns out of the box:
 You can add own variables via the `variables`-section. In the above example, the variable `composerProject` will be available in the `scaffold`-section via the pattern `%composerProject%`
 
 ## the `assets`-section
-You can have multiple assets-sections, `assets` is a default one.  It contains a list if template files which will be processed by twig and placed at a specific location. You'll have all variables available as twig-variables inside the template, to use them, just use `{{ theNameOfVariable }}` e.g. `{{ name }}`
-To add a new asset-section, just use a new root-level key (in the above example this would be `deploymentModuleAssets`
+You can have multiple assets-sections, `assets` is a default one.  It contains a list if template files which will be processed by twig and placed at a specific location. You'll have all variables available as twig-variables inside the template, to use them, use `{{ theNameOfVariable }}` e.g. `{{ name }}`
+To add a new asset-section, use a new root-level key (in the above example this would be `deploymentModuleAssets`
 
 The assets-paths must be relative to the yaml-file containing the scaffold-commands.
 

@@ -10,6 +10,7 @@ use Phabalicious\Utilities\SetAndRestoreObjProperty;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
@@ -31,6 +32,14 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     protected $shellEnvironmentVars = [];
 
     protected $preventTimeout = false;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        parent::__construct($logger);
+        if ($this->getName() == 'local') {
+            $this->setFileOperationsHandler(new LocalFileOperations());
+        }
+    }
 
     public function getName(): string
     {
@@ -164,7 +173,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                 ->resolveSecrets($environment);
         }
 
-        $this->applyEnvironment($environment);
+        $this->setupEnvironment($environment);
     }
 
     /**
@@ -196,25 +205,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         $scoped_capture_output = new SetAndRestoreObjProperty('captureOutput', $this, $capture_output);
 
-        $this->setup();
-        $this->process->clearErrorOutput();
-        $this->process->clearOutput();
-
-        $password_manager = $this->getHostConfig()->getConfigurationService()->getPasswordManager();
-        if ($password_manager) {
-            $command = $password_manager->resolveSecrets($command);
-        }
-
-        $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
-        if (substr($command, -1) == ';') {
-            $command = substr($command, 0, -1);
-        }
-        $this->logger->log($this->loglevel->get(), $command);
-
-
-        // Send to shell.
-        $input = $command . '; echo \n"' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL;
-        $this->input->write($input);
+        $command = $this->sendCommandToShell($command);
 
         // Get result.
         $result = '';
@@ -347,5 +338,45 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     {
         $this->process = $process;
         $this->input = $input;
+    }
+
+    public function startSubShell(array $cmd): ShellProviderInterface
+    {
+        $this->sendCommandToShell(implode(' ', $cmd), false);
+        return new SubShellProvider($this->logger, $this);
+    }
+
+    /**
+     * @param string $command
+     * @param bool $include_result_identifier
+     *
+     * @return false|string
+     */
+    protected function sendCommandToShell(string $command, bool $include_result_identifier = true)
+    {
+        $this->setup();
+        $this->process->clearErrorOutput();
+        $this->process->clearOutput();
+
+        $password_manager = $this->getHostConfig()
+            ->getConfigurationService()
+            ->getPasswordManager();
+        if ($password_manager) {
+            $command = $password_manager->resolveSecrets($command);
+        }
+
+        $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
+        if (substr($command, -1) == ';') {
+            $command = substr($command, 0, -1);
+        }
+        $this->logger->log($this->loglevel->get(), $command);
+
+        // Send to shell.
+        $input = $include_result_identifier
+            ? $command . '; echo \n"' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL
+            : $command . PHP_EOL;
+
+        $this->input->write($input);
+        return $command;
     }
 }

@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Artifact\Actions\ActionFactory;
+use Phabalicious\Artifact\Actions\ActionInterface;
 use Phabalicious\Artifact\Actions\Base\ConfirmAction;
 use Phabalicious\Artifact\Actions\Base\CopyAction;
 use Phabalicious\Artifact\Actions\Base\DeleteAction;
@@ -87,11 +88,11 @@ abstract class ArtifactsBaseMethod extends BaseMethod
             $install_dir = $host_config['gitRootFolder'];
             $stages = array_diff($stages, ['installCode']);
         } else {
-            $install_dir = $host_config['tmpFolder'] . '/' . $host_config['configName'] . '-' . $hash;
+            $install_dir = $host_config['tmpFolder'] . '/' . $host_config->getConfigName() . '-' . $hash;
         }
 
         $target_dir = $host_config['tmpFolder']
-            . '/' . $host_config['configName']
+            . '/' . $host_config->getConfigName()
             . '-target-' . $hash;
 
         $context->set('useLocalRepository', $use_local_repository);
@@ -231,9 +232,13 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         $actions = $host_config[self::PREFS_KEY]['actions'];
         ksort($actions);
 
-        foreach ($actions as $action_config) {
+        foreach ($actions as $step => $action_config) {
             $action = ActionFactory::get($this->getname(), $action_config['action']);
             $action->setArguments($action_config['arguments']);
+            $context
+                ->getConfigurationService()
+                ->getLogger()
+                ->info(sprintf('Running action `%s` at step `%s`...', $action_config['action'], $step));
             $action->run($host_config, $context);
         }
     }

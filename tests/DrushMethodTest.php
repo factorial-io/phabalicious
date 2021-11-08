@@ -3,13 +3,16 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Method\BaseMethod;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Tests\PhabTestCase;
 use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
+use Symfony\Component\Console\Application;
 
 class DrushMethodTest extends PhabTestCase
 {
@@ -22,15 +25,16 @@ class DrushMethodTest extends PhabTestCase
     public function setup()
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
-        $app = $this->getMockBuilder(\Symfony\Component\Console\Application::class)->getMock();
+        $app = $this->getMockBuilder(Application::class)->getMock();
         $this->method = new DrushMethod($logger);
         $this->configurationService = new ConfigurationService($app, $logger);
 
         $method_factory = new MethodFactory($this->configurationService, $logger);
         $method_factory->addMethod(new ScriptMethod($logger));
+        $method_factory->addMethod(new MysqlMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration($this->getcwd() . '/assets/drush-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__ . '/assets/drush-tests/fabfile.yaml');
     }
 
     public function testGetDefaultConfig()
@@ -91,7 +95,7 @@ class DrushMethodTest extends PhabTestCase
             'configName' => 'test'
         ];
         $errors = new ValidationErrorBag();
-        $result = $this->method->validateConfig($host_config, $errors);
+        $this->method->validateConfig($host_config, $errors);
 
         $this->assertEquals(1, count($errors->getWarnings()));
         $this->assertContains('drush7', $errors->getWarnings()['needs']);
@@ -122,5 +126,25 @@ class DrushMethodTest extends PhabTestCase
         $this->assertEquals('drush status', $configuration_management['staging'][0]);
         $this->assertArrayNotHasKey('sync', $configuration_management);
         $this->assertArrayNotHasKey('prod', $configuration_management);
+    }
+
+    public function testDrushUnneededMethodDependency()
+    {
+        $config = $this->configurationService->getHostConfig('method-dependency');
+
+        $this->assertEquals(
+            [],
+            $this->method->getMethodDependencies($this->configurationService->getMethodFactory(), $config->raw())
+        );
+    }
+
+    public function testDrushMethodDependency()
+    {
+        $this->assertEquals(
+            ['mysql'],
+            $this->method->getMethodDependencies($this->configurationService->getMethodFactory(), [
+                'needs' => ['drush']
+            ])
+        );
     }
 }

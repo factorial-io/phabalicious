@@ -13,7 +13,7 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'scaffold';
     }
@@ -21,7 +21,7 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function requires()
+    public static function requires(): string
     {
         return '3.6';
     }
@@ -56,10 +56,14 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
 
         $options = new Options();
         $options->setAllowOverride(true)
+            ->setShell($context->getShell())
             ->setUseCacheTokens(false);
 
         if ($existing_options = $context->get('options', false)) {
             /** @var Options $existing_options */
+            if ($existing_options->getShell()) {
+                $options->setShell($existing_options->getShell());
+            }
             $options->setDryRun($existing_options->isDryRun());
             $options->setDynamicOptions($existing_options->getDynamicOptions());
         }
@@ -73,6 +77,9 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
     {
         $result = [];
         foreach ($arguments as $arg) {
+            if (strpos($arg, "=") === false) {
+                throw new \RuntimeException(sprintf("Can't parse argument %s", $arg));
+            }
             [$key, $value] = explode("=", $arg, 2);
             $result[$key] = $value;
         }

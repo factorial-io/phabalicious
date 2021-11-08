@@ -33,7 +33,7 @@ class ScriptCommandTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/script-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/script-tests/fabfile.yaml');
 
         $this->application->add(new ScriptCommand($configuration, $method_factory));
     }
@@ -53,5 +53,40 @@ class ScriptCommandTest extends PhabTestCase
 
         $this->assertContains('Value A: a', $output);
         $this->assertContains('Value B: b', $output);
+    }
+
+    /**
+     * @group docker
+     */
+    public function testRunScriptInDockerImageContext()
+    {
+        $command = $this->application->find('script');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            '--config' => 'hostA',
+            'script' => 'testInsideDockerImage'
+        ));
+
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains('v12', $output);
+    }
+    /**
+     * @group docker
+     */
+    public function testRunScriptInDockerImageContext2()
+    {
+        $command = $this->application->find('script');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            '--config' => 'hostA',
+            'script' => 'envInsideDockerImage'
+        ));
+
+        $output = $commandTester->getDisplay();
+
+        $this->assertContains('PHAB_SUB_SHELL=1', $output);
     }
 }

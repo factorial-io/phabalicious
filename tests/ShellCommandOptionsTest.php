@@ -13,6 +13,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\Utilities;
@@ -40,13 +41,14 @@ class ShellCommandOptionsTest extends PhabTestCase
 
         $this->configuration = new ConfigurationService($this->application, $logger);
         $method_factory = new MethodFactory($this->configuration, $logger);
+        $method_factory->addMethod(new MysqlMethod($logger));
         $method_factory->addMethod(new DrushMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
 
         $this->application->add(new DrushCommand($this->configuration, $method_factory));
 
-        $this->configuration->readConfiguration($this->getcwd() . '/assets/shell-command-options-tests/fabfile.yaml');
+        $this->configuration->readConfiguration(__DIR__ . '/assets/shell-command-options-tests/fabfile.yaml');
 
         $this->shell = new LocalShellProvider($logger);
         $this->shell->setHostConfig($this->configuration->getHostConfig('local-shell'));
@@ -115,7 +117,7 @@ class ShellCommandOptionsTest extends PhabTestCase
             'command-arguments' => ['version'],
         ];
         if ($override_shell_provider_options) {
-            $filepath =$this->getcwd() . '/assets/shell-command-options-tests/testruns';
+            $filepath =__DIR__ . '/assets/shell-command-options-tests/testruns';
             $args['--set'] = sprintf('host.shellProviderOptions.1=%s', $filepath);
         }
 
@@ -128,6 +130,7 @@ class ShellCommandOptionsTest extends PhabTestCase
     private function startDocker()
     {
         $this->stopRunningDocker();
+        $this->shell->cd(__DIR__ . '/..');
         $this->shell->run(
             sprintf(
                 "docker run -d -p %d:22 --name test-shell-command-options factorial/drupal-docker:php-73",

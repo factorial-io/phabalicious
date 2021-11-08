@@ -34,6 +34,8 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function run(string $command, $capture_output = false, $throw_exception_on_error = false): CommandResult;
 
+    public function setupEnvironment(array $environment);
+
     public function applyEnvironment(array $environment);
 
     public function setOutput(OutputInterface $output);
@@ -98,4 +100,12 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
      * Terminates a running shell, so that it gets recreated with the next command.
      */
     public function terminate();
+
+    public function startSubShell(array $cmd): ShellProviderInterface;
+
+    public function getFileContents($filename, TaskContextInterface $context);
+
+    public function putFileContents($filename, $data, TaskContextInterface $context);
+
+    public function realPath($filename, TaskContextInterface $context);
 }

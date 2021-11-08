@@ -39,6 +39,11 @@ abstract class BaseMethod implements MethodInterface
         return false;
     }
 
+    public function getMethodDependencies(MethodFactory $factory, array $data): array
+    {
+        return [];
+    }
+
     public function validateConfig(array $config, ValidationErrorBagInterface $errors)
     {
     }
@@ -125,7 +130,7 @@ abstract class BaseMethod implements MethodInterface
         if ($command->getDefinition()->hasOption('secret') && $context->getInput()->hasOption('secret')) {
             $args['--secret'] = $context->getInput()->getOption('secret');
         }
-        $args['--config'] = $context->get('host_config')['configName'];
+        $args['--config'] = $context->get('host_config')->getConfigName();
         $input = new ArrayInput($args);
         return $command->run($input, $context->getOutput());
     }
@@ -170,11 +175,11 @@ abstract class BaseMethod implements MethodInterface
             return false;
         }
 
-        if ($tokens[0] != $host_config['configName']) {
+        if ($tokens[0] != $host_config->getConfigName()) {
             [$tokens[1], $tokens[0]] = $tokens;
         }
 
-        if ($tokens[0] != $host_config['configName']) {
+        if ($tokens[0] != $host_config->getConfigName()) {
             return false;
         }
 

@@ -153,6 +153,9 @@ class TaskContext implements TaskContextInterface
     public function mergeResults(TaskContextInterface $context)
     {
         $this->result = Utilities::mergeData($this->result, $context->getResults());
+        if ($context->getCommandResult()) {
+            $this->setCommandResult($context->getCommandResult());
+        }
     }
 
     public function addResult(string $key, array $rows)

@@ -19,9 +19,10 @@ Will display all available arguments and options for that given `<command>` and 
 
 ``` bash
 phab list:hosts
+phab list:hosts -v
 ```
 
-This command will list all your hosts defined in your `hosts`-section of your `fabfile.yaml`.
+This command will list all your hosts defined in your `hosts`-section of your `fabfile.yaml`. If you increase verbosity via `-v` phab will output the descriptions and list of public urls for every found configuration.
 
 ## list:blueprints
 
@@ -223,7 +224,7 @@ This will restore a backup-set. A backup-set consists typically of a database-du
 
 * `git` git will checkout the given hash encoded in the filename.
 * `files` all files will be restored. An existing files-folder will be renamed for safety reasons.
-* `drush` will import the database-dump.
+* `mysql`, `sqlite` will import the database-dump.
 * `restic` will restore the files and saved db dumps (You might need to run another restore to restore a sql-dump)
 
 ## get:backup
@@ -244,24 +245,27 @@ This command will copy a remote backup-set to your local computer into the curre
 
 ``` bash
 phab --config=<dest-config> copy-from <source-config> <what>
+phab --config=<dest-config> copy-from <source-config> <what> --skip-reset
+phab --config=<dest-config> copy-from <source-config> <what> --skip-drop-db
 ```
 
 This command will copy all files via rsync from `source-config` to `dest-config` and will dump the database from `source-config` and restore it to `dest-config` when `<what>` is omitted.
 
-After that the `reset`-command gets executed. This is the ideal command to copy a complete installation from one host to another.
+After that the `reset`-command gets executed (if `--skip-reset` is not specified). This is the ideal command to copy a complete installation from one host to another.
 
-You can limit what to copy by adding `db` or `files`  as arguments.
+You can limit what to copy by adding `db` or `files`  as arguments. `--skip-drop-db` will instrcut phab to not drop the db before the import.
 
 **Available methods**
 
 * `ssh` will create all necessary tunnels to access the hosts.
 * `files` will rsync all new and changed files from source to dest
-* `drush` will dump the database and restore it on the dest-host.
+* `mysql`, `sqlite` will dump the database and restore it on the dest-host.
 
 **Examples**
 
 * `phab -cmbb copy-from remote-host` will copy db and files from `remote-host` to `mbb`
 * `phab -cmbb copy-from remote-host db` will copy only the db  from `remote-host` to `mbb`
+* `phab -cmbb copy-from remote-host db --skip-reset --skip-drop-db` will copy only the db  from `remote-host` to `mbb`, without dropping the db and without running the reset task afterwards.
 * `phab -cmbb copy-from remote-host files` will copy only the files from `remote-host` to `mbb`
 
 
@@ -349,20 +353,23 @@ Get a current dump of the remote database and copy it to the local machine into 
 
 **Available methods**
 
-* currently only implemented for the `drush`-method
+* `mysql`
+* `sqlite`
 
 
 ## restore:sql-from-file
 
 ``` bash
 phab --config=<config> restore:sql-from-file <path-to-local-sql-dump>
+phab --config=<config> restore:sql-from-file <path-to-local-sql-dump> --skip-drop-db
 ```
 
-This command will copy the dump-file `path-to-local-sql-dump` to the remote machine and import it into the database.
+This command will copy the dump-file `path-to-local-sql-dump` to the remote machine, drop the database (if the `--skip-drop-db`-option is not passed) and import it into the database.
 
 **Available methods**
 
-* currently only implemented for the `drush`-method
+* `mysql`
+* `sqlite`
 
 
 ## script
@@ -411,7 +418,7 @@ As docker-container do not have any state, this command is used to copy any nece
 
 ### waitForServices
 
-This command will try to run `supervisorctl status` in the container and  waits until all services are running. This is useful in scripts to wait for any services that need some time to start up. Obviously this command depends on `supervisorctl`.
+This command will try to run `supervisorctl status` in the container and  waits until all services are running. This is useful in scripts to wait for any services that need some time to start up. This command depends on `supervisorctl`.
 
 
 ## start-remote-access
@@ -573,4 +580,23 @@ This will push all variables listed in `path/to/yaml.file` and set them on the r
 
 ## k8s
 
-Runs a command against a Kubernetes cluster. More info [here](/kubernetes.html)
+Runs a command against a kubernetes cluster. More info [here](/kubernetes.html)
+
+## artisan
+
+Runs a laravel artisan command
+
+```bash
+phab -chost artisan db:seed
+phab -chost artisan migrate
+```
+
+## db
+
+```bash
+phab -chost database install
+phab -chost database drop
+```
+
+This command allows you to run commands on the db, `install` will create a new database, `drop` will drop all tables.
+

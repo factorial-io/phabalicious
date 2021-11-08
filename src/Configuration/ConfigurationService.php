@@ -57,7 +57,7 @@ class ConfigurationService
     private $skipCache = false;
     private $disallowDeepMergeForKeys = [];
 
-    /** @var \Phabalicious\Utilities\PasswordManagerInterface */
+    /** @var PasswordManagerInterface */
     private $passwordManager = null;
 
     private $inheritanceBaseUrl = false;
@@ -308,7 +308,7 @@ class ConfigurationService
         return Utilities::mergeData($data, $override_data);
     }
 
-    private function applyDefaults(array $data, array $defaults, array $disallowed_keys = [])
+    private function applyDefaults(array $data, array $defaults, array $disallowed_keys = []): array
     {
         foreach ($defaults as $key => $value) {
             if (!isset($data[$key])) {
@@ -326,7 +326,7 @@ class ConfigurationService
      * @param array $data
      * @param array $lookup
      *
-     * @param bool $root_folder
+     * @param string|null $root_folder
      * @param array $stack
      * @param string $inherit_key
      *
@@ -337,10 +337,10 @@ class ConfigurationService
      */
     public function resolveInheritance(
         array $data,
-        $lookup,
-        $root_folder = false,
-        $stack = [],
-        $inherit_key = "inheritsFrom"
+        array $lookup,
+        ?string $root_folder = null,
+        array $stack = [],
+        string $inherit_key = "inheritsFrom"
     ): array {
         if (!isset($data[$inherit_key])) {
             return $data;
@@ -424,7 +424,7 @@ class ConfigurationService
         return Utilities::getProperty($this->settings, $key, $default_value);
     }
 
-    public function readHttpResource(string $resource):string
+    public function readHttpResource(string $resource)
     {
         $cid = 'resource:' . $resource;
         $contents = false;
@@ -622,6 +622,17 @@ class ConfigurationService
          * @var \Phabalicious\Method\MethodInterface $method
          */
         $used_methods = $this->methods->getSubset($data['needs']);
+
+        // Give the referenced methods a chance to declare dependencies to
+        // other methods.
+        $gathered_methods = [];
+        foreach ($used_methods as $method) {
+            $dependencies = $method->getMethodDependencies($this->getMethodFactory(), $data);
+            $gathered_methods = array_merge(array_values($gathered_methods), $dependencies, [$method->getName()]);
+        }
+        $data['needs'] = $gathered_methods;
+        $used_methods = $this->methods->getSubset($data['needs']);
+
         foreach ($used_methods as $method) {
             $data = $this->applyDefaults(
                 $data,
@@ -681,6 +692,16 @@ class ConfigurationService
                 $this->logger->warning('Found deprecated key in `' . $config_name .'`, `' . $key . '`: ' . $warning);
             }
         }
+
+        // Populate info if available:
+        if (isset($data['info'])) {
+            $replacements = Utilities::expandVariables([
+                'globals' => Utilities::getGlobalReplacements($this),
+                'host' => $data,
+            ]);
+            $data['info'] = Utilities::expandStrings($data['info'], $replacements);
+        }
+
 
         // Create host-config and return.
         $host_config = new HostConfig($data, $shell_provider, $this);
@@ -915,9 +936,9 @@ class ConfigurationService
     }
 
     /**
-     * @return \Phabalicious\Utilities\PasswordManagerInterface
+     * @return PasswordManagerInterface
      */
-    public function getPasswordManager(): PasswordManagerInterface
+    public function getPasswordManager(): ?PasswordManagerInterface
     {
         if (!$this->passwordManager) {
             $this->passwordManager = new PasswordManager();
@@ -926,7 +947,7 @@ class ConfigurationService
     }
 
     /**
-     * @param \Phabalicious\Utilities\PasswordManagerInterface $passwordManager
+     * @param PasswordManagerInterface $passwordManager
      *
      * @return ConfigurationService
      */
@@ -957,5 +978,10 @@ class ConfigurationService
     {
         $this->inheritanceBaseUrl = $inheritanceBaseUrl;
         return $this;
+    }
+
+    public function setSetting(string $key, $value)
+    {
+        $this->settings[$key] = $value;
     }
 }

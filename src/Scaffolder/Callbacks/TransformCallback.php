@@ -16,7 +16,7 @@ class TransformCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'transform';
     }
@@ -24,7 +24,7 @@ class TransformCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function requires()
+    public static function requires(): string
     {
         return '3.4';
     }
@@ -73,6 +73,7 @@ class TransformCallback implements CallbackInterface
 
         $context->io()->comment(sprintf('Transforming %s ...', $files_key));
 
+        $result = [];
         try {
             $result = $transformer->transform($context, [$files_key], $target_path);
         } catch (\Exception $e) {
@@ -82,13 +83,14 @@ class TransformCallback implements CallbackInterface
         }
 
         $context->io()->progressStart(count($result));
+        $shell = $context->getShell();
         foreach ($result as $file_name => $file_content) {
             $full_path =  $target_path . '/' . $file_name;
             $dir = dirname($full_path);
-            if (!is_dir($dir)) {
-                mkdir($dir, 0775, true);
+            if (!$shell->exists($dir)) {
+                $shell->run(sprintf('mkdir -p %s && chmod 0775 %s', $dir, $dir));
             }
-            if (false === file_put_contents($full_path, $file_content)) {
+            if (false === $shell->putFileContents($full_path, $file_content, $context)) {
                 throw new \RuntimeException(sprintf("Could not write to file `%s`", $full_path));
             }
             $context->io()->progressAdvance();

@@ -30,8 +30,11 @@ class DockerExecShellProviderTest extends PhabTestCase
     public function setup()
     {
         $this->config = $this->getMockBuilder(ConfigurationService::class)
+            ->setMethods(["getPasswordManager"])
             ->disableOriginalConstructor()
             ->getMock();
+        // Disable passwordmanager on mock config.
+        $this->config->method("getPasswordManager")->willReturn(null);
 
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 

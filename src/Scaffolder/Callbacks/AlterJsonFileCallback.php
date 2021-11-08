@@ -11,7 +11,7 @@ class AlterJsonFileCallback extends BaseCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'alter_json_file';
     }
@@ -19,7 +19,7 @@ class AlterJsonFileCallback extends BaseCallback implements CallbackInterface
     /**
      * @inheritDoc
      */
-    public static function requires()
+    public static function requires(): string
     {
         return '3.4';
     }
@@ -42,11 +42,16 @@ class AlterJsonFileCallback extends BaseCallback implements CallbackInterface
             $context,
             $json_file_name,
             $data_key,
-            function ($file_name) {
-                return json_decode(file_get_contents($file_name), true);
+            function ($file_name) use ($context) {
+                $content = $context->getShell()->getFileContents($file_name, $context);
+                return json_decode($content, true);
             },
-            function ($file_name, $data) {
-                file_put_contents($file_name, json_encode($data, JSON_PRETTY_PRINT));
+            function ($file_name, $data) use ($context) {
+                $context->getShell()->putFileContents(
+                    $file_name,
+                    json_encode($data, JSON_PRETTY_PRINT),
+                    $context
+                );
             }
         );
     }

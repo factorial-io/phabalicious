@@ -41,7 +41,7 @@ class DockerCommand extends BaseCommand
         if (($argumentName == 'docker') && ($context instanceof FishShellCompletionContext)) {
             $host_config = $context->getHostConfig();
             if ($host_config) {
-                $docker_config = $context->getDockerConfig($host_config['configName']);
+                $docker_config = $context->getDockerConfig($host_config->getConfigName());
                 return $docker_config ? array_keys($this->getAllTasks($docker_config)) : [];
             }
         }

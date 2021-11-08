@@ -104,7 +104,10 @@ class BlueprintConfiguration
                     $this->configuration->addHost($template->expand($variant));
                 } else {
                     $this->configuration->getLogger()->notice(
-                        'There\'s an existing config with that name, skipping creating one from blueprint'
+                        sprintf(
+                            'There\'s an existing config with the name `%s`, skipping creating one from blueprint',
+                            $host['configName']
+                        )
                     );
                 }
             }

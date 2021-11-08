@@ -33,7 +33,7 @@ class WebhookCommandTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/webhook-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/webhook-tests/fabfile.yaml');
 
         $this->application->add(new WebhookCommand($configuration, $method_factory));
         $this->application->add(new DeployCommand($configuration, $method_factory));
@@ -113,7 +113,9 @@ class WebhookCommandTest extends PhabTestCase
 
         $this->assertStringContainsString('[test2Get]', $output);
         $this->assertStringContainsString('[testArguments]', $output);
-        $this->assertStringContainsString('"args":{"q":"foo"}', $output);
+        $this->assertStringContainsString('args:', $output);
+        $this->assertStringContainsString('q: foo', $output);
+        $this->assertStringContainsString('user-agent: phabalicious', $output);
         $this->assertStringContainsString('factorial-screensaver', $output);
     }
 }

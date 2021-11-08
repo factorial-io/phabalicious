@@ -2,11 +2,15 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\ShellProviderNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -28,14 +32,14 @@ class GetSqlDumpCommand extends BaseCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -46,7 +50,7 @@ class GetSqlDumpCommand extends BaseCommand
         $context = $this->getContext();
 
         $this->getMethods()->runTask('getSQLDump', $this->getHostConfig(), $context);
-        $to_copy = $context->getResult('files');
+        $to_copy = $context->getResult('files', []);
 
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('shell', $this->getHostConfig()->shell());

@@ -14,11 +14,18 @@ class HostConfig implements \ArrayAccess
 
     private $configurationService;
 
+    private $publicUrls = false;
+
+    protected $category;
+
     public function __construct($data, ShellProviderInterface $shell, ConfigurationService $parent)
     {
         $this->configurationService = $parent;
         $this->data = $data;
         $this->shell = $shell;
+        $this->category = HostConfigurationCategory::getOrCreate(
+            $data['info']['category'] ?? ["id" => "unknown", "label" => "Unknown category"]
+        );
 
         $shell->setHostConfig($this);
     }
@@ -149,5 +156,52 @@ class HostConfig implements \ArrayAccess
     public function setData($data)
     {
         $this->data = $data;
+    }
+
+    public function getConfigName()
+    {
+        return $this->data['configName'];
+    }
+
+    public function getPublicUrls()
+    {
+        if ($this->publicUrls) {
+            return $this->publicUrls;
+        }
+        $urls = false;
+        foreach (['publicUrls', 'publicUrl'] as $key) {
+            if (!$urls) {
+                $urls = $this->data['info'][$key] ?? false;
+            }
+        }
+        if (!$urls) {
+            return [];
+        }
+        $this->publicUrls = is_array($urls) ? $urls : [ $urls ];
+
+        return $this->publicUrls;
+    }
+
+    public function getMainPublicUrl(): ?string
+    {
+        $urls = $this->getPublicUrls();
+        return $urls ? $urls[0] : false;
+    }
+
+    public function getDescription()
+    {
+        return $this->data['info']['description'] ?? '';
+    }
+
+    public function getLabel()
+    {
+        return $this->getMainPublicUrl()
+            ? sprintf('%s [%s]', $this->getConfigName(), $this->getMainPublicUrl())
+            : $this->getConfigName();
+    }
+
+    public function getCategory(): HostConfigurationCategory
+    {
+        return $this->category;
     }
 }

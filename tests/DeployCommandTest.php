@@ -9,7 +9,6 @@ use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\Utilities;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -19,10 +18,13 @@ class DeployCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    protected $debugOutput = [];
+    protected $callback;
 
     public function setup()
     {
+
+        $this->callback = new DebugCallback(false);
+
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
@@ -30,26 +32,23 @@ class DeployCommandTest extends PhabTestCase
         $configuration = new ConfigurationService($this->application, $logger);
         $method_factory = new MethodFactory($configuration, $logger);
         $method = new ScriptMethod($logger);
-        $method->setDefaultCallbacks([
-            'debug' => [ $this, 'scriptDebugCallback']
-        ]);
+        $method->setDefaultCallbacks([ $this->callback::getName() => $this->callback ]);
 
         $method_factory->addMethod($method);
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $configuration->readConfiguration($this->getcwd() . '/assets/script-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__ . '/assets/script-tests/fabfile.yaml');
 
         $this->application->add(new DeployCommand($configuration, $method_factory));
     }
 
     public function scriptDebugCallback(TaskContextInterface $context, $message)
     {
-        $this->debugOutput[] = $message;
     }
 
     public function testScriptOnlyDeployment()
     {
-        $this->debugOutput = [];
+        $this->callback->debugOutput = [];
         $command = $this->application->find('deploy');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
@@ -64,6 +63,6 @@ class DeployCommandTest extends PhabTestCase
             'deploy on hostA',
             'deployFinished on dev',
             'deployFinished on hostA'
-        ], $this->debugOutput);
+        ], $this->callback->debugOutput);
     }
 }

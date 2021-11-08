@@ -12,7 +12,7 @@ class ComposerMethod extends RunCommandBaseMethod implements MethodInterface
         return 'composer';
     }
 
-    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
+    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command): string
     {
         if (!in_array($host_config['type'], array('dev', 'test'))) {
             $command .= ' --no-dev --optimize-autoloader';
@@ -23,6 +23,11 @@ class ComposerMethod extends RunCommandBaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
+     *
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function resetPrepare(HostConfig $host_config, TaskContextInterface $context)
     {

@@ -2,11 +2,25 @@
 
 namespace Phabalicious\Command;
 
+use InvalidArgumentException;
+use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\EarlyTaskExitException;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\FabfileNotReadableException;
+use Phabalicious\Exception\MethodNotFoundException;
+use Phabalicious\Exception\MismatchedVersionException;
+use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\Exception\ShellProviderNotFoundException;
+use Phabalicious\Exception\TaskNotFoundInMethodException;
+use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\Method\DatabaseMethod;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Utilities\Utilities;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -30,6 +44,20 @@ class CopyFromCommand extends BaseCommand
             'What to to copy, allowed are `db` and `files`, if nothing is set, everything will be copied',
             ['files', 'db']
         );
+        $this->addOption(
+            'skip-reset',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Skip the reset-task after importind the db',
+            false
+        );
+        $this->addOption(
+            'skip-drop-db',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Skip dropping the db before running the import',
+            false
+        );
         $this->setAliases(['copyFrom']);
     }
 
@@ -51,16 +79,16 @@ class CopyFromCommand extends BaseCommand
      * @param OutputInterface $output
      *
      * @return int|null
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws MissingHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws TaskNotFoundInMethodException
+     * @throws ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -71,7 +99,7 @@ class CopyFromCommand extends BaseCommand
         $context = $this->getContext();
         $from = $this->configuration->getHostConfig($input->getArgument('from'));
         if (empty($from['supportsCopyFrom'])) {
-            throw new \InvalidArgumentException('Source config does not support copy-from!');
+            throw new InvalidArgumentException('Source config does not support copy-from!');
         }
 
         $context->set('from', $from);
@@ -79,9 +107,11 @@ class CopyFromCommand extends BaseCommand
             return trim(strtolower($elem));
         }, $input->getArgument('what')));
 
+        $next_tasks = Utilities::hasBoolOptionSet($input, 'skip-reset') ? [] : ['reset'];
+        $context->set(DatabaseMethod::DROP_DATABASE, !Utilities::hasBoolOptionSet($input, 'skip-drop-db'));
         try {
             $this->getMethods()->runTask('copyFromPrepareSource', $from, $context);
-            $this->getMethods()->runTask('copyFrom', $this->getHostConfig(), $context, ['reset']);
+            $this->getMethods()->runTask('copyFrom', $this->getHostConfig(), $context, $next_tasks);
         } catch (EarlyTaskExitException $e) {
             return 1;
         }

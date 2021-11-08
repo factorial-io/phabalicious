@@ -21,7 +21,7 @@ class YarnMethod extends RunCommandBaseMethod
         $service->hasKey('yarnBuildCommand', 'build command to run with yarn');
     }
 
-    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
+    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command): string
     {
         $production = !in_array($host_config['type'], array('dev', 'test'));
         $command .= ' --no-interaction  --silent';
