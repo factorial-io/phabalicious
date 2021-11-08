@@ -158,7 +158,7 @@ class PluginDiscovery
                         $logger
                     );
                     if (count($result) == $prev_count) {
-                        $logger->error(sprintf("No plugins found at `%s`", $path));
+                        $output->writeln(sprintf("<fg=yellow>Could not load plugins from `%s`...</>", $path));
                     }
                 }
                 $config = $container->get(ConfigurationService::class);
