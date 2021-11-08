@@ -317,7 +317,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $this->runDrush($shell, true, 'cc all -y');
         }
         if ($host_config['drushVersion'] >= 10) {
-            $this->runDrush($shell, true, 'deploy:hook');
+            $this->runDrush($shell, true, 'deploy:hook -y');
         }
     }
 
