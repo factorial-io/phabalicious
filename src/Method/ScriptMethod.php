@@ -176,6 +176,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         );
 
         $shell = $execution_context->enter($shell);
+        $prev_shell = $bag->getContext()->getShell();
+        $bag->getContext()->setShell($shell);
         $shell->setOutput($bag->getContext()->getOutput());
 
         $shell->pushWorkingDir($execution_context->getScriptWorkingDir());
@@ -192,6 +194,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
         $shell->popWorkingDir();
         $execution_context->exit();
+        $bag->getContext()->setShell($prev_shell);
 
         return $command_result;
     }
