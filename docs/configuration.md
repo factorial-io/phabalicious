@@ -173,6 +173,7 @@ This will print all host configuration for the host `staging`.
     - source.factorial.io:2222
   ```
   They can be overridden on a per host-basis.
+* `protectedProperties` a list of properties which wont be affected by a override.yaml file. See [local overrides](local-overrides.md)
 
 ### Configuration for the local-method
 
