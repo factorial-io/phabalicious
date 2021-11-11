@@ -303,9 +303,27 @@ class ConfigurationService
         return $this->fabfileLocation;
     }
 
-    public function mergeData(array $data, array $override_data): array
-    {
-        return Utilities::mergeData($data, $override_data);
+    public function mergeData(
+        array $data,
+        array $override_data,
+        $protected_properties_key = 'protectedProperties'
+    ): array {
+        $properties_to_restore = [];
+        if ($protected_properties = $data[$protected_properties_key] ?? false) {
+            if (!is_array($protected_properties)) {
+                $protected_properties = [ $protected_properties ];
+            }
+            foreach ($protected_properties as $prop) {
+                $properties_to_restore[$prop] = Utilities::getProperty($data, $prop);
+            }
+        }
+
+        $data = Utilities::mergeData($data, $override_data);
+
+        foreach ($properties_to_restore as $prop => $value) {
+            Utilities::setProperty($data, $prop, $value);
+        }
+        return $data;
     }
 
     private function applyDefaults(array $data, array $defaults, array $disallowed_keys = []): array

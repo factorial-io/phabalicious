@@ -43,3 +43,13 @@ dockerNetRcFile: /home/user/.netrc
 Another possibility is to place a socalled override file side by side to the original ymal-file. Name it the same as the original file, and add `.override` before the file extension, e.g. `fabfile.yml` becomes `fabfile.override.yml`.
 
 The data of the override will be merged with the data of the original file. No inheritance or other advanced features are supported.
+
+## Prevent overriding of certain values
+
+3.7.1 supports a new property on the root level of the fabfile called `protectedProperties`. These properties will be prevented for being overridden:
+
+```yaml
+protectedOverrides:
+  - dockerHosts.mbb.environment
+```
+If your override-file wants to override `dockerHosts > mbb > environment` phab will prevent this and restore the original value as in the fabfile.
