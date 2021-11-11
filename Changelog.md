@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.7.1 / 2021-11-11
+
+  * Add support for protected properties which wont be overridden by override-files.
+
 ## 3.7.0
 
 ### Breaking changes:
