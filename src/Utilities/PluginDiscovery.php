@@ -141,6 +141,7 @@ class PluginDiscovery
         $config->setOffline(true);
         try {
             $config->readConfiguration(getcwd());
+            $base_path = $config->getFabfilePath();
             if ($plugins = $config->getSetting('plugins', false)) {
                 if (!is_array($plugins)) {
                     $plugins = [ $plugins ];
@@ -148,6 +149,7 @@ class PluginDiscovery
                 /** @var \Phabalicious\Utilities\AvailableMethodsAndCommandsPluginInterface[] $result */
                 $result = [];
                 foreach ($plugins as $path) {
+                    $path = $base_path . DIRECTORY_SEPARATOR . $path;
                     $prev_count = count($result);
                     self::scanAndRegister(
                         $application->getVersion(),
