@@ -100,7 +100,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
 
         $o = $host_config['database'] ?? false;
         if ($o && empty($host_config['database']['skipCreateDatabase'])) {
-            $this->logger->info('Creating database ...');
+            $context->io()->comment(sprintf('Creating database for `%s` if needed...', $host_config->getConfigName()));
 
             $cmd = sprintf(
                 "CREATE DATABASE IF NOT EXISTS `%s`; " .
