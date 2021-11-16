@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DatabaseDropCommand extends DatabaseSubCommand
 {
 
-    public function getSubcommandInfo()
+    public function getSubcommandInfo(): array
     {
         return [
             'subcommand' => 'drop',

@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DatabaseInstallCommand extends DatabaseSubCommand
 {
 
-    public function getSubcommandInfo()
+    public function getSubcommandInfo(): array
     {
         return [
             'subcommand' => 'install',

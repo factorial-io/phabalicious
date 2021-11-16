@@ -107,4 +107,6 @@ interface DatabaseMethodInterface
      * @return string
      */
     public static function createCredentialsUrlForDrupal(array $database): string;
+
+    public function getShellCommand(HostConfig $host_config, TaskContextInterface $context): array;
 }

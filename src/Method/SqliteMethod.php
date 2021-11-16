@@ -214,4 +214,13 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
             $o['database']
         );
     }
+
+    public function getShellCommand(HostConfig $host_config, TaskContextInterface $context): array
+    {
+        $data = $this->getDatabaseCredentials($host_config, $context);
+        return [
+            "#!sqlite3",
+            $data["database"],
+        ];
+    }
 }

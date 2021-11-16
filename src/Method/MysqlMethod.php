@@ -360,4 +360,10 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
 
         return $cmd;
     }
+
+    public function getShellCommand(HostConfig $host_config, TaskContextInterface $context): array
+    {
+        $data = $this->getDatabaseCredentials($host_config, $context);
+        return $this->getMysqlCommand($host_config, $context, 'mysql', $data, true, []);
+    }
 }

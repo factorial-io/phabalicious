@@ -4,5 +4,5 @@ namespace Phabalicious\Command;
 
 interface DatabaseSubCommandInterface
 {
-    public function getSubcommandInfo();
+    public function getSubcommandInfo(): array;
 }

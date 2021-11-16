@@ -47,6 +47,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     {
         return parent::isRunningAppRequired($host_config, $context, $task) ||
             in_array($task, [
+                'databaseShellPrepare',
                 'backup',
                 'restore',
                 'install',
@@ -379,6 +380,16 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
             case 'drop':
                 return $this->dropDatabase($host_config, $context, $shell, $data);
                 break;
+
+            case 'shell':
+            case 'shell-command':
+                $command = $this->getShellCommand($host_config, $context);
+                foreach ($command as $ndx => $cmd) {
+                    $command[$ndx] = $shell->expandCommand($cmd);
+                }
+                $command = $context->getPasswordManager()->resolveSecrets($command);
+                $context->setResult('shell-command', $command);
+                return true;
         }
         throw new RuntimeException(sprintf("Unknown database command `%s`", $what));
     }
