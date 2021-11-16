@@ -372,6 +372,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
         switch ($what) {
             case 'install':
+                $this->waitForDatabase($host_config, $context);
                 return $this->install($host_config, $context);
                 break;
 

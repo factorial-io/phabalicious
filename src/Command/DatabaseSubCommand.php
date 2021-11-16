@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
 
 namespace Phabalicious\Command;
 
@@ -10,30 +10,26 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DatabaseCommand extends BaseCommand
+abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubCommandInterface
 {
     protected function configure()
     {
         parent::configure();
+        $info = $this->getSubcommandInfo();
         $this
-            ->setName('db')
-            ->setAliases(['database'])
-            ->setDescription('Interact with a database')
-            ->setHelp('Run specific commands against the database');
-        $this->addArgument(
-            'what',
-            InputArgument::REQUIRED,
-            'The subcommand to execute on the database'
-        );
+            ->setName('db:' . $info['subcommand'])
+            ->setAliases(['database:' . $info['subcommand']])
+            ->setDescription($info['description'])
+            ->setHelp($info['help']);
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     *
      * @return int|null
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
@@ -51,18 +47,16 @@ class DatabaseCommand extends BaseCommand
         }
 
         $context = $this->getContext();
-        $what = strtolower($input->getArgument('what'));
-        if (!in_array($what, ['drop', 'install'])) {
-            throw new \RuntimeException(sprintf('Unsupported database command: `%s`', $what));
-        }
-
+        $what = strtolower($this->getSubcommandInfo()['subcommand']);
         $context->set('what', $what);
 
-        $this->getMethods()->runTask('database', $this->getHostConfig(), $context);
+        $this->getMethods()
+            ->runTask('database', $this->getHostConfig(), $context);
 
         $return_code = $context->getResult('exitCode', 0);
         if ($return_code === 0) {
-            $context->io()->success(sprintf('Database-command `%s` executed successfully!', $what));
+            $context->io()
+                ->success(sprintf('Database-command `%s` executed successfully!', $what));
         }
         return $return_code;
     }
