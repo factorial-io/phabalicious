@@ -10,9 +10,14 @@ dockerHosts:
 
 hosts:
   mbb:
+    docker:
+      useNfs: {{ (platform == 'mac') ? "true" : "false" }}
     xdebug:
       remote_host: {{ remote_host }}
     blueprint:
       xdebug:
         remote_host: {{ remote_host }}
+      docker:
+        useNfs: {{ (platform == 'mac') ? "true" : "false" }}
+
 
