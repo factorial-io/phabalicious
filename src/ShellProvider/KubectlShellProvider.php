@@ -156,8 +156,11 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
      */
     public function getPutFileCommand(string $source, string $dest): array
     {
+        if ($this->hostConfig->getProperty('kube.useRsync')) {
+            return $this->getRsyncFileCommand($source, 'rsync:' . $dest);
+        }
         $command = $this->getKubeCmd();
-        $command[] = 'exec';
+        $command[] = 'cp';
         $command[] = trim($source);
         $command[] = $this->hostConfig['kube']['podForCli'] . ':' . trim($dest);
 
@@ -172,6 +175,19 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
     public function getGetFileCommand(string $source, string $dest): array
     {
 
+        if ($this->hostConfig->getProperty('kube.useRsync')) {
+            return $this->getRsyncFileCommand('rsync:' . $source, $dest);
+        }
+        $command = $this->getKubeCmd();
+        $command[] = 'cp';
+        $command[] = $this->hostConfig['kube']['podForCli'] . ':' . trim($source);
+        $command[] = trim($dest);
+
+        return $command;
+    }
+
+    protected function getRsyncFileCommand(string $source, string $dest): array
+    {
         $kubectl_command = $this->getKubeCmd();
         $kubectl_command[] = 'exec';
         $kubectl_command[] = $this->hostConfig['kube']['podForCli'];
@@ -184,7 +200,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         $command[] = '--blocking-io';
         $command[] = '--rsync-path=';
         $command[] = sprintf('--rsh=%s', implode(' ', $kubectl_command));
-        $command[] = sprintf('rsync:%s', trim($source));
+        $command[] = trim($source);
         $command[] = trim($dest);
 
         return $command;
