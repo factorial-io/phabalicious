@@ -53,7 +53,10 @@ class GetPropertyCommand extends BaseCommand
 
         $format = strtolower($input->getOption('format') ?: 'plain');
         if (!in_array($format, ['plain', 'json', 'yaml'])) {
-            throw new \RuntimeException(sprintf('Unknown value `%s` for format-option, only `plain`, `json` or `yaml` are supported!', $format));
+            throw new \RuntimeException(sprintf(
+                'Unknown value `%s` for format-option, only `plain`, `json` or `yaml` are supported!',
+                $format
+            ));
         }
 
         $property = $input->getArgument('property');
