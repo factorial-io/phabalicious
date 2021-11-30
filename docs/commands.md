@@ -52,9 +52,11 @@ This command will print the computed configuration from a blueprint as yams. You
 
 ``` bash
 phab --config=<your-config> get:property <name-of-property>
+phab --config=<your-config> get:property <name-of-property> --format json
+phab --config=<your-config> get:property <name-of-property> --format yaml
 ```
 
-This will print the property-value to the console. Suitable if you want to use phabalicious from within other scripts.
+This will print the property-value to the console. Suitable if you want to use phabalicious from within other scripts. You can use the `format`-option to get the results formatted in a specific way so its easier to reuse and parse the values.
 
 **Examples**
 
