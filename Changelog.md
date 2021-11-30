@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.7.2 / 2021-11-30
+
+### Fixes:
+
+  * Resolve secrets for `get:property` and add options to get output as yaml or json
+  * Introduce useNfs for multibasebox scaffolder
+  * Install db before running copy-from
+  * Plugin discovery works when phab is started from a subfolder. Fixes #207
+
 ## 3.7.1 / 2021-11-11
 
   * Add support for protected properties which wont be overridden by override-files.
