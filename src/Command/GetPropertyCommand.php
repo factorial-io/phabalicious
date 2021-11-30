@@ -5,7 +5,9 @@ namespace Phabalicious\Command;
 use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class GetPropertyCommand extends BaseCommand
 {
@@ -23,6 +25,12 @@ class GetPropertyCommand extends BaseCommand
                 'property',
                 InputArgument::REQUIRED,
                 'The name of the property to get. Use dot-syntax to get sub-properties'
+            )
+            ->addOption(
+                'format',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The format the found value should be used for output'
             );
     }
 
@@ -43,6 +51,11 @@ class GetPropertyCommand extends BaseCommand
             return $result;
         }
 
+        $format = strtolower($input->getOption('format') ?: 'plain');
+        if (!in_array($format, ['plain', 'json', 'yaml'])) {
+            throw new \RuntimeException(sprintf('Unknown value `%s` for format-option, only `plain`, `json` or `yaml` are supported!', $format));
+        }
+
         $property = $input->getArgument('property');
         $value = Utilities::getProperty(
             $this->getHostConfig(),
@@ -53,10 +66,21 @@ class GetPropertyCommand extends BaseCommand
             $output->writeln('<error>Could not get property `' . $property . '`!</error>');
             return 1;
         }
-        if (is_array($value)) {
-            $output->writeln(json_encode($value, JSON_PRETTY_PRINT));
-        } else {
-            $output->writeln($value);
+        $value = $this->getConfiguration()->getPasswordManager()->resolveSecrets($value);
+
+        switch ($format) {
+            case 'json':
+                $output->writeln(json_encode($value, JSON_PRETTY_PRINT));
+                break;
+            case 'yaml':
+                $output->writeln(Yaml::dump($value, 5, 2));
+                break;
+            default:
+                if (is_array($value)) {
+                    $output->writeln(json_encode($value, JSON_PRETTY_PRINT));
+                } else {
+                    $output->writeln($value);
+                }
         }
         return 0;
     }
