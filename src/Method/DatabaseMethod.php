@@ -195,6 +195,11 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
     public function copyFromPrepareSource(HostConfig $host_config, TaskContextInterface $context)
     {
+        $what = $context->get('what');
+        if (!in_array('db', $what)) {
+            return;
+        }
+
         // Make sure, there is a db to copy into.
         $this->waitForDatabase($host_config, $context);
         $this->install($host_config, $context);
