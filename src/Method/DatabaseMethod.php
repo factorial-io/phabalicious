@@ -47,6 +47,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     {
         return parent::isRunningAppRequired($host_config, $context, $task) ||
             in_array($task, [
+                'databaseShellPrepare',
                 'backup',
                 'restore',
                 'install',
@@ -194,6 +195,11 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
     public function copyFromPrepareSource(HostConfig $host_config, TaskContextInterface $context)
     {
+        $what = $context->get('what');
+        if (!in_array('db', $what)) {
+            return;
+        }
+
         // Make sure, there is a db to copy into.
         $this->waitForDatabase($host_config, $context);
         $this->install($host_config, $context);
@@ -355,8 +361,14 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
      */
     protected function getDatabaseCredentials(HostConfig $host_config, TaskContextInterface $context): array
     {
+        static $cache = [];
+        $key = $host_config->getConfigName();
+        if (isset($cache[$key])) {
+            return $cache[$key];
+        }
         $data = !empty($host_config['database']) ? $host_config['database'] : [];
-        return $this->requestCredentialsAndWorkingDir($host_config, $context, $data);
+        $cache[$key] = $this->requestCredentialsAndWorkingDir($host_config, $context, $data);
+        return $cache[$key];
     }
 
     /**
@@ -372,12 +384,23 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
         switch ($what) {
             case 'install':
+                $this->waitForDatabase($host_config, $context);
                 return $this->install($host_config, $context);
                 break;
 
             case 'drop':
                 return $this->dropDatabase($host_config, $context, $shell, $data);
                 break;
+
+            case 'shell':
+            case 'shell-command':
+                $command = $this->getShellCommand($host_config, $context);
+                foreach ($command as $ndx => $cmd) {
+                    $command[$ndx] = $shell->expandCommand($cmd);
+                }
+                $command = $context->getPasswordManager()->resolveSecrets($command);
+                $context->setResult('shell-command', $command);
+                return true;
         }
         throw new RuntimeException(sprintf("Unknown database command `%s`", $what));
     }
