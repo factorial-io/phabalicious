@@ -344,5 +344,4 @@ class PasswordManager implements PasswordManagerInterface
     {
         $this->passwords[$secret_name] = $value;
     }
-
 }

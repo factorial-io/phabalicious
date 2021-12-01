@@ -246,4 +246,45 @@ class ScaffoldTest extends PhabTestCase
 
         $this->runTestTwigExtensions($shell, $context, '/app');
     }
+
+    public function testScaffoldLocalFiles()
+    {
+        $scaffolder = new Scaffolder($this->configuration);
+        $context = $this->createContext();
+        $options = new Options();
+        $options->setAllowOverride(true)
+            ->setUseCacheTokens(false);
+
+        $result = $scaffolder->scaffold(
+            __DIR__ . '/assets/scaffolder-test/scaffold-files.yml',
+            $this->getTmpDir(),
+            $context,
+            [
+                'name' => 'test-scaffold-files',
+            ],
+            $options
+        );
+
+        $this->assertEquals(0, $result->getExitCode());
+
+        $source_dir = __DIR__ . '/assets/scaffolder-test/files/';
+        $target_dir = $this->getTmpDir() . '/test-scaffold-files/';
+        for ($i = 1; $i < 4; $i++) {
+            $filename = sprintf('test_%d.txt', $i);
+            $this->assertEquals(
+                file_get_contents($source_dir . $filename),
+                file_get_contents($target_dir . $filename)
+            );
+        }
+
+        $source_dir = __DIR__ . '/assets/scaffolder-test/binary/';
+        $target_dir = $this->getTmpDir() . '/test-scaffold-files/';
+        for ($i = 1; $i < 4; $i++) {
+            $filename = sprintf('test_%d.bin', $i);
+            $this->assertEquals(
+                file_get_contents($source_dir . $filename),
+                file_get_contents($target_dir . $filename)
+            );
+        }
+    }
 }
