@@ -344,12 +344,14 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             [
                 "-u",
                 $data['user'],
-                sprintf("-p'%s'", $data['pass']),
                 "-h",
                 $data["host"],
                 "--port",
                 $data["port"] ?? "3306"
-            ]
+            ],
+            !empty($data['pass'])
+                ? [ sprintf("-p'%s'", $data['pass'])]
+                : []
         );
         foreach ($additional_args as $arg) {
             $cmd[] = $arg;

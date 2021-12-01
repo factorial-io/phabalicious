@@ -356,8 +356,14 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
      */
     protected function getDatabaseCredentials(HostConfig $host_config, TaskContextInterface $context): array
     {
+        static $cache = [];
+        $key = $host_config->getConfigName();
+        if (isset($cache[$key])) {
+            return $cache[$key];
+        }
         $data = !empty($host_config['database']) ? $host_config['database'] : [];
-        return $this->requestCredentialsAndWorkingDir($host_config, $context, $data);
+        $cache[$key] = $this->requestCredentialsAndWorkingDir($host_config, $context, $data);
+        return $cache[$key];
     }
 
     /**

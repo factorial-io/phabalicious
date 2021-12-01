@@ -121,4 +121,9 @@ class PlatformMethod extends BaseMethod
         $context->getOutput()->writeln('Wait 20 seconds for remote instance...');
         sleep(20);
     }
+
+    public function requestDatabaseCredentialsAndWorkingDir(HostConfig $host_config, TaskContextInterface  $context)
+    {
+        $this->drushMethod->requestDatabaseCredentialsAndWorkingDir($host_config, $context);
+    }
 }
