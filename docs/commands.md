@@ -591,12 +591,33 @@ phab -chost artisan db:seed
 phab -chost artisan migrate
 ```
 
-## db
+## db:install
 
 ```bash
-phab -chost database install
-phab -chost database drop
+phab -chost db:install
 ```
 
-This command allows you to run commands on the db, `install` will create a new database, `drop` will drop all tables.
+This command will install a new database.
+
+## db:drop
+
+```bash
+phab -chost db:install
+```
+
+This command will drop all tables in a database.
+
+## db:shell
+
+```bash
+phab -chost db:shell
+```
+
+This command will connect the user to a running database client (e.g. mysql) so the user can run interactive commands against the db.
+
+```bash
+phab -chost db:shell:command
+```
+
+This command will print the shell commands necessary to run so that the user can connect to the db client directly.
 
