@@ -34,7 +34,7 @@ class Options extends CallbackOptions
     /** @var array */
     protected $definition = null;
 
-    protected $twigLoaderBase = null;
+    protected $rootPath = null;
 
     public function getAllowOverride(): bool
     {
@@ -262,9 +262,9 @@ class Options extends CallbackOptions
         return $this;
     }
 
-    public function getTwigLoaderBase(): ?string
+    public function getRootPath(): ?string
     {
-        return $this->twigLoaderBase;
+        return $this->rootPath;
     }
 
     /**
@@ -272,9 +272,9 @@ class Options extends CallbackOptions
      *
      * @return Options
      */
-    public function setTwigLoaderBase($twigLoaderBase)
+    public function setRootPath($root_path)
     {
-        $this->twigLoaderBase = $twigLoaderBase;
+        $this->rootPath = $root_path;
         return $this;
     }
 }

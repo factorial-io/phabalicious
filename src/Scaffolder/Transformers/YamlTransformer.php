@@ -25,7 +25,7 @@ abstract class YamlTransformer implements DataTransformerInterface
         if ($context->getShell()->getName() !== LocalShellProvider::PROVIDER_NAME) {
             throw new \RuntimeException('YamlTransformer can only work with local shells!');
         }
-        $base = $context->get('loaderBase');
+        $base = $context->get('rootPath');
         foreach ($files as $file) {
             $filename = $base . '/' . $file;
             if (is_dir($filename)) {

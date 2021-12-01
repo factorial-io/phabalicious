@@ -96,7 +96,7 @@ class GitMethodTest extends PhabTestCase
         $this->assertFalse($this->method->isWorkingcopyClean($host_config, $this->context));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $host_config = $this->configurationService->getHostConfig('hostA');
         $this->cleanupRepo($host_config);

@@ -1,0 +1,18 @@
+requires: 3.0
+
+questions: []
+assets:
+    - files/test_1.txt
+    - files/test_2.txt
+    - files/test_3.txt
+
+binaryAssets:
+    - binary/test_1.bin
+    - binary/test_2.bin
+    - binary/test_3.bin
+
+scaffold:
+  - mkdir -p %rootFolder%
+  - set_directory(%rootFolder%)
+  - copy_assets(%rootFolder%, assets)
+  - copy_assets(%rootFolder%, binaryAssets, txt)
