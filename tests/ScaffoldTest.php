@@ -8,6 +8,7 @@
 
 namespace Phabalicious\Tests;
 
+use Defuse\Crypto\Crypto;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\LocalMethod;
@@ -30,6 +31,9 @@ use Symfony\Component\Yaml\Yaml;
 
 class ScaffoldTest extends PhabTestCase
 {
+
+    const PASSWORD = 'my-secret-#21';
+
     /** @var Application */
     protected $application;
 
@@ -41,7 +45,7 @@ class ScaffoldTest extends PhabTestCase
      */
     private $logger;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
@@ -51,6 +55,11 @@ class ScaffoldTest extends PhabTestCase
         $method_factory = new MethodFactory($this->configuration, $logger);
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
+
+        $this->configuration->setSetting('secrets', [
+            'test-encryption' => ['question' => "whats the password"],
+        ]);
+        $this->configuration->getPasswordManager()->setSecret('test-encryption', self::PASSWORD);
     }
 
     private function createContext()
@@ -210,6 +219,9 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals('A-test-string-to-be-slugified', $json['slug']);
         $this->assertEquals('db42607fd51c90a4d9c49130f1fe98a8', $json['md5']);
+        $decrypted = Crypto::decryptWithPassword($json['encrypted'], self::PASSWORD);
+        $this->assertEquals($decrypted, 'hello world');
+        $this->assertEquals('hello world', $json['decrypted']);
     }
 
     public function testLocalTwigExtension()

@@ -108,6 +108,7 @@ class CopyAssetsCallback implements CallbackInterface
                 $converted = $this->twig->render($file_name, $tokens);
             }
 
+
             if ($limitedForTwigExtension) {
                 $file_name = str_replace($limitedForTwigExtension, '', $file_name);
             }

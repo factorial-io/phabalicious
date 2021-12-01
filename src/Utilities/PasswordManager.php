@@ -3,13 +3,11 @@
 
 namespace Phabalicious\Utilities;
 
-use Dotenv\Dotenv;
+use Defuse\Crypto\Crypto;
 use GuzzleHttp\Client;
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\UnknownSecretException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Utilities\Questions\Question;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Yaml\Yaml;
@@ -329,4 +327,22 @@ class PasswordManager implements PasswordManagerInterface
         );
         return false;
     }
+
+    public function encrypt($data, $secret_name)
+    {
+        $secret = $this->getSecret($secret_name, $binary = false);
+        return Crypto::encryptWithPassword($data, $secret, $binary);
+    }
+
+    public function decrypt($data, $secret_name)
+    {
+        $secret = $this->getSecret($secret_name);
+        return Crypto::decryptWithPassword($data, $secret);
+    }
+
+    public function setSecret($secret_name, $value)
+    {
+        $this->passwords[$secret_name] = $value;
+    }
+
 }

@@ -18,6 +18,7 @@ use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
+use Phabalicious\Scaffolder\TwigExtensions\EncryptExtension;
 use Phabalicious\Scaffolder\TwigExtensions\GetSecretExtension;
 use Phabalicious\Scaffolder\TwigExtensions\Md5Extension;
 use Phabalicious\ShellProvider\CommandResult;
@@ -258,6 +259,7 @@ class Scaffolder
         $this->twig->addExtension(new StringExtension());
         $this->twig->addExtension(new Md5Extension());
         $this->twig->addExtension(new GetSecretExtension($this->configuration->getPasswordManager()));
+        $this->twig->addExtension(new EncryptExtension($this->configuration->getPasswordManager()));
 
         $options
             ->addCallback(new CopyAssetsCallback($this->configuration, $this->twig))
