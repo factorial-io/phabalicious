@@ -27,6 +27,12 @@ class GetPropertyCommand extends BaseCommand
                 'The name of the property to get. Use dot-syntax to get sub-properties'
             )
             ->addOption(
+                'output',
+                'o',
+                InputOption::VALUE_OPTIONAL,
+                'The name of the file to store the output to.'
+            )
+            ->addOption(
                 'format',
                 null,
                 InputOption::VALUE_OPTIONAL,
@@ -71,19 +77,25 @@ class GetPropertyCommand extends BaseCommand
         }
         $value = $this->getConfiguration()->getPasswordManager()->resolveSecrets($value);
 
+        $result = '';
         switch ($format) {
             case 'json':
-                $output->writeln(json_encode($value, JSON_PRETTY_PRINT));
+                $result = json_encode($value, JSON_PRETTY_PRINT);
                 break;
             case 'yaml':
-                $output->writeln(Yaml::dump($value, 5, 2));
+                $result = Yaml::dump($value, 5, 2);
                 break;
             default:
                 if (is_array($value)) {
-                    $output->writeln(json_encode($value, JSON_PRETTY_PRINT));
+                    $result = json_encode($value, JSON_PRETTY_PRINT);
                 } else {
-                    $output->writeln($value);
+                    $result = $value;
                 }
+        }
+        if ($output_file_name = $input->getOption('output')) {
+            file_put_contents($output_file_name, $result);
+        } else {
+            $output->writeln($result);
         }
         return 0;
     }
