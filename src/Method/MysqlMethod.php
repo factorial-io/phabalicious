@@ -283,7 +283,8 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell
     ): CommandResult {
-        $cmd = $this->getMysqlCommand($host_config, $context, 'mysqlAdmin', $host_config['database'], false);
+        $credentials = $this->getDatabaseCredentials($host_config, $context);
+        $cmd = $this->getMysqlCommand($host_config, $context, 'mysqlAdmin', $credentials, false);
         $cmd[] = 'ping';
         return $shell->run(implode(' ', $cmd), true, false);
     }
