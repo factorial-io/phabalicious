@@ -13,6 +13,7 @@ use Phabalicious\Scaffolder\Callbacks\AssertNonZeroCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertZeroCallback;
 use Phabalicious\Scaffolder\Callbacks\CallbackInterface;
 use Phabalicious\Scaffolder\Callbacks\ConfirmCallback;
+use Phabalicious\Scaffolder\Callbacks\GetFileFrom1Password;
 use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
 use Phabalicious\Scaffolder\Callbacks\ScaffoldCallback;
 use Phabalicious\Scaffolder\Callbacks\SetDirectoryCallback;
@@ -33,6 +34,7 @@ class CallbackOptions implements AlterableDataInterface
             ->addCallback(new SetDirectoryCallBack())
             ->addCallback(new AlterYamlFileCallback())
             ->addCallback(new AlterJsonFileCallback())
+            ->addCallback(new GetFileFrom1Password())
             ->addCallback(new ScaffoldCallback());
 
         return $this;

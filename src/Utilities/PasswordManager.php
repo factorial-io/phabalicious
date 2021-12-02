@@ -257,7 +257,7 @@ class PasswordManager implements PasswordManagerInterface
         }
     }
 
-    private function getSecretFrom1PasswordConnect($vault_id, $item_id, $token_id, $secret_name)
+    private function get1PasswordConnectResponse($token_id, $url)
     {
 
         $configuration_service = $this->getContext()->getConfigurationService();
@@ -277,26 +277,37 @@ class PasswordManager implements PasswordManagerInterface
                 throw new ValidationFailedException($errors);
             }
 
-            try {
-                $url = $onepassword_connect['endpoint'] . "/v1/vaults/$vault_id/items/$item_id";
-                $configuration_service->getLogger()->debug(
-                    sprintf("Querying %s for secret `%s` ...", $url, $secret_name)
-                );
+            $url = $onepassword_connect['endpoint'] . $url;
+            $configuration_service->getLogger()->debug(
+                sprintf("Querying %s ...", $url)
+            );
 
-                $client = new Client();
-                $response = $client->get($url, [
-                    'headers' => [
-                        'Authorization' => 'Bearer ' . $onepassword_connect['token']
-                    ]
-                ]);
+            $client = new Client();
+            $response = $client->get($url, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $onepassword_connect['token']
+                ]
+            ]);
+
+            return $response;
+        }
+        return false;
+    }
+
+    private function getSecretFrom1PasswordConnect($vault_id, $item_id, $token_id, $secret_name)
+    {
+
+        try {
+            $response = $this->get1PasswordConnectResponse($token_id, "/v1/vaults/$vault_id/items/$item_id");
+            if ($response) {
                 return $this->extractSecretFrom1PasswordPayload((string) $response->getBody(), false);
-            } catch (\Exception $exception) {
-                throw new \RuntimeException(
-                    sprintf("Could not get secret `%s` from 1password-connect", $secret_name),
-                    0,
-                    $exception
-                );
             }
+        } catch (\Exception $exception) {
+            throw new \RuntimeException(
+                sprintf("Could not get secret `%s` from 1password-connect", $secret_name),
+                0,
+                $exception
+            );
         }
 
         return false;
@@ -343,5 +354,16 @@ class PasswordManager implements PasswordManagerInterface
     public function setSecret($secret_name, $value)
     {
         $this->passwords[$secret_name] = $value;
+    }
+
+    public function getFileContentsFrom1Password($token_id, $vault_id, $item_id)
+    {
+        try {
+            $response = $this->get1PasswordConnectResponse($token_id, "/v1/vaults/$vault_id/items/$item_id/files");
+            $json = json_decode((string) $response->getBody());
+        } catch (\Exception $e) {
+
+        }
+        return false;
     }
 }
