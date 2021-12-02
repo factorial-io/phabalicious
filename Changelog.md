@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.7.3 / 2021-12-02
+
+### Fixes:
+
+  * Get credentials before trying to wait for the database
+  * Add output-option to `get:property`-command to save the output to a file
+
 ## 3.7.2 / 2021-11-30
 
 ### Fixes:
@@ -10,6 +17,8 @@
   * Plugin discovery works when phab is started from a subfolder. Fixes #207
 
 ## 3.7.1 / 2021-11-11
+
+### Fixes:
 
   * Add support for protected properties which wont be overridden by override-files.
 
