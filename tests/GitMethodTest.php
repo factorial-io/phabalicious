@@ -32,7 +32,7 @@ class GitMethodTest extends PhabTestCase
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    public function setUp()
+    public function setUp(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $app = $this->getMockBuilder(\Symfony\Component\Console\Application::class)->getMock();

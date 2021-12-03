@@ -22,7 +22,7 @@ class DrushMethodTest extends PhabTestCase
     /** @var ConfigurationService */
     private $configurationService;
 
-    public function setup()
+    public function setup(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $app = $this->getMockBuilder(Application::class)->getMock();
@@ -98,8 +98,8 @@ class DrushMethodTest extends PhabTestCase
         $this->method->validateConfig($host_config, $errors);
 
         $this->assertEquals(1, count($errors->getWarnings()));
-        $this->assertContains('drush7', $errors->getWarnings()['needs']);
-        $this->assertContains('deprecated', $errors->getWarnings()['needs']);
+        $this->assertStringContainsString('drush7', $errors->getWarnings()['needs']);
+        $this->assertStringContainsString('deprecated', $errors->getWarnings()['needs']);
     }
 
     public function testGetHostConfig()

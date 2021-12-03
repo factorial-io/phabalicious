@@ -32,7 +32,7 @@ class ShellCommandOptionsTest extends PhabTestCase
 
     protected $shell;
 
-    public function setup()
+    public function setup():void
     {
 
         $this->application = new Application();

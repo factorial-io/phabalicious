@@ -95,8 +95,8 @@ class AppScaffoldCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('Project: Test', $output);
-        $this->assertContains('Shortname: tst', $output);
+        $this->assertStringContainsString('Project: Test', $output);
+        $this->assertStringContainsString('Shortname: tst', $output);
     }
 
     public function testScaffoldSubfolder()
@@ -183,9 +183,9 @@ class AppScaffoldCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('Project: Test', $output);
+        $this->assertStringContainsString('Project: Test', $output);
         // Here the exception should happen.
-        $this->assertNotContains('Shortname: tst', $output);
+        $this->assertStringNotContainsString('Shortname: tst', $output);
     }
 
     /**

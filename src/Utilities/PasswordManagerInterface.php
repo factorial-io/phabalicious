@@ -23,5 +23,5 @@ interface PasswordManagerInterface
 
     public function setSecret($secret_name, $value);
 
-    public function getFileContentsFrom1Password($token_id, $vault_id, $item_id);
+    public function getFileContentFrom1Password($token_id, $vault_id, $item_id);
 }

@@ -30,7 +30,7 @@ class SshShellProviderTest extends PhabTestCase
      */
     private $context;
 
-    public function setUp()
+    public function setup(): void
     {
         $this->config = $this->getMockBuilder(ConfigurationService::class)
             ->disableOriginalConstructor()

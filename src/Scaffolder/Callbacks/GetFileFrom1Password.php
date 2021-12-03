@@ -2,10 +2,7 @@
 
 namespace Phabalicious\Scaffolder\Callbacks;
 
-use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Utilities\Utilities;
-use Symfony\Component\Yaml\Yaml;
 
 class GetFileFrom1Password extends BaseCallback implements CallbackInterface
 {
@@ -46,6 +43,15 @@ class GetFileFrom1Password extends BaseCallback implements CallbackInterface
         $item_id,
         $target_file_name
     ) {
-        $contents = $context->getPasswordManager()->getFileContentsFrom1Password($token_id, $vault_id, $item_id);
+        $content = $context->getPasswordManager()->getFileContentFrom1Password(
+            $token_id,
+            $vault_id,
+            $item_id
+        );
+        if (!$content) {
+            throw new \RuntimeException("Could not retrieve file from 1password!");
+        }
+
+        $context->getShell()->putFileContents($target_file_name, $content, $context);
     }
 }

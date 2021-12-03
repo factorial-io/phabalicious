@@ -36,7 +36,7 @@ class PhabTestCase extends TestCase
     protected function checkFileContent($filename, $needle)
     {
         $haystack = file_get_contents($filename);
-        $this->assertContains($needle, $haystack);
+        $this->assertStringContainsString($needle, $haystack);
     }
 
 

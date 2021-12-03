@@ -26,7 +26,7 @@ class WebhookTest extends PhabTestCase
     private $context;
 
 
-    public function setUp()
+    public function setup(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $app = $this->getMockBuilder(\Symfony\Component\Console\Application::class)->getMock();

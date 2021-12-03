@@ -15,7 +15,7 @@ class SshMethodTest extends PhabTestCase
      */
     private $method;
 
-    public function setUp()
+    public function setup(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $this->method = new SshMethod($logger);

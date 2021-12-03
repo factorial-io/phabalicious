@@ -15,7 +15,6 @@ use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
-use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Symfony\Component\Yaml\Yaml;
 

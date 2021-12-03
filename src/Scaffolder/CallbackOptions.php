@@ -4,7 +4,6 @@
 namespace Phabalicious\Scaffolder;
 
 use Phabalicious\Method\AlterableDataInterface;
-use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Scaffolder\Callbacks\AlterJsonFileCallback;
 use Phabalicious\Scaffolder\Callbacks\AlterYamlFileCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertContainsCallback;
@@ -13,6 +12,8 @@ use Phabalicious\Scaffolder\Callbacks\AssertNonZeroCallback;
 use Phabalicious\Scaffolder\Callbacks\AssertZeroCallback;
 use Phabalicious\Scaffolder\Callbacks\CallbackInterface;
 use Phabalicious\Scaffolder\Callbacks\ConfirmCallback;
+use Phabalicious\Scaffolder\Callbacks\DecryptFilesCallback;
+use Phabalicious\Scaffolder\Callbacks\EncryptFilesCallback;
 use Phabalicious\Scaffolder\Callbacks\GetFileFrom1Password;
 use Phabalicious\Scaffolder\Callbacks\LogMessageCallback;
 use Phabalicious\Scaffolder\Callbacks\ScaffoldCallback;
@@ -35,6 +36,8 @@ class CallbackOptions implements AlterableDataInterface
             ->addCallback(new AlterYamlFileCallback())
             ->addCallback(new AlterJsonFileCallback())
             ->addCallback(new GetFileFrom1Password())
+            ->addCallback(new EncryptFilesCallback())
+            ->addCallback(new DecryptFilesCallback())
             ->addCallback(new ScaffoldCallback());
 
         return $this;

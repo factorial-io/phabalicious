@@ -765,7 +765,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         $options = new Options();
         $options
-            ->setTwigLoaderBase($context->getConfigurationService()->getFabfilePath())
+            ->setRootPath($context->getConfigurationService()->getFabfilePath())
             ->setShell($shell)
             ->setQuiet(true)
             ->setSkipSubfolder(true)

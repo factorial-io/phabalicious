@@ -22,7 +22,7 @@ class ScriptCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion('3.0.0');
@@ -51,8 +51,8 @@ class ScriptCommandTest extends PhabTestCase
 
         $output = $commandTester->getDisplay();
 
-        $this->assertContains('Value A: a', $output);
-        $this->assertContains('Value B: b', $output);
+        $this->assertStringContainsString('Value A: a', $output);
+        $this->assertStringContainsString('Value B: b', $output);
     }
 
     /**
@@ -70,7 +70,7 @@ class ScriptCommandTest extends PhabTestCase
 
         $output = $commandTester->getDisplay();
 
-        $this->assertContains('v12', $output);
+        $this->assertStringContainsString('v12', $output);
     }
     /**
      * @group docker
@@ -87,6 +87,6 @@ class ScriptCommandTest extends PhabTestCase
 
         $output = $commandTester->getDisplay();
 
-        $this->assertContains('PHAB_SUB_SHELL=1', $output);
+        $this->assertStringContainsString('PHAB_SUB_SHELL=1', $output);
     }
 }

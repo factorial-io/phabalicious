@@ -18,7 +18,7 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
@@ -58,7 +58,7 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
         ));
 
         $output = $commandTester->getDisplay();
-        $this->assertContains('Happy hacking!', $output);
+        $this->assertStringContainsString('Happy hacking!', $output);
 
         $this->checkFileContent($target_folder . '/multibasebox/fabfile.local.yaml', 'runLocally: true');
         return $target_folder;
@@ -78,7 +78,7 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
         ));
 
         $output = $commandTester->getDisplay();
-        $this->assertContains('Happy hacking!', $output);
+        $this->assertStringContainsString('Happy hacking!', $output);
 
         $this->checkFileContent($target_folder . '/multibasebox/fabfile.local.yaml', 'runLocally: true');
     }

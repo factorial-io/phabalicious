@@ -36,7 +36,7 @@ class DecryptAssetsCallback extends CopyAssetsBaseCallback
     {
 
         if (count($arguments) !== 4) {
-            throw new \RuntimeException('decrypt needs exactly three arguments: '
+            throw new \RuntimeException('decrypt_asserts needs exactly 4 arguments: '
                 . 'targetFolder, dataKey, secretName, twigExtension');
         }
 

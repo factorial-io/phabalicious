@@ -19,7 +19,7 @@ class ArtifactBasedDeploymentTest extends PhabTestCase
 
     protected $logger;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
