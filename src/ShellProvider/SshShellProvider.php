@@ -358,9 +358,12 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             '-o PasswordAuthentication=no ' .
             '-o StrictHostKeyChecking=no ' .
             '-o UserKnownHostsFile=/dev/null ' .
+            '%s ' .
             '-p %s',
+            implode(' ', $from_host_config->get('shellProviderOptions', [])),
             $from_host_config['port']
         );
+
 
         return [
             sprintf('-e "%s"', $ssh_options),
