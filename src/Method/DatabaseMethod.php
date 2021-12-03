@@ -47,7 +47,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     {
         return parent::isRunningAppRequired($host_config, $context, $task) ||
             in_array($task, [
-                'databaseShellPrepare',
+                'database',
                 'backup',
                 'restore',
                 'install',
