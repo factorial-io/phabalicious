@@ -28,7 +28,6 @@ class DatabaseShellCommand extends DatabaseSubCommand
         $context = $this->getContext();
         $context->set('what', 'shell');
 
-        $this->getMethods()->runTask('databaseShellPrepare', $this->getHostConfig(), $context);
         $this->getMethods()->runTask('database', $this->getHostConfig(), $context);
 
         // Allow methods to override the used shellProvider:

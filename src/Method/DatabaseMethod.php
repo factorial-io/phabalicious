@@ -47,7 +47,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
     {
         return parent::isRunningAppRequired($host_config, $context, $task) ||
             in_array($task, [
-                'databaseShellPrepare',
+                'database',
                 'backup',
                 'restore',
                 'install',
@@ -200,9 +200,8 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
             return;
         }
 
-        // Make sure, there is a db to copy into.
+        // Make sure, there is a db to copy from.
         $this->waitForDatabase($host_config, $context);
-        $this->install($host_config, $context);
     }
 
     /**
@@ -217,6 +216,9 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
         if (!in_array('db', $what)) {
             return;
         }
+        // Make sure, there is a db to copy into.
+        $this->waitForDatabase($host_config, $context);
+        $this->install($host_config, $context);
 
         /** @var HostConfig $from_config */
         /** @var ShellProviderInterface $shell */
@@ -335,11 +337,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
             if ($result->succeeded()) {
                 return true;
             }
-            $this->logger->info(sprintf(
-                'Wait another 5 secs for database at %s@%s',
-                $host_config['database']['host'],
-                $host_config['database']['user']
-            ));
+            $this->logger->info('Wait another 5 secs for database ...');
 
             sleep(5);
             $tries++;
