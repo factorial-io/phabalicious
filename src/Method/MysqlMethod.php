@@ -191,38 +191,49 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         ShellProviderInterface $shell,
         string $backup_file_name
     ): string {
+        $has_zipped_ext = pathinfo($backup_file_name, PATHINFO_EXTENSION) == 'gz';
+        $zipped_backup = $host_config[self::SUPPORTS_ZIPPED_BACKUPS] || $has_zipped_ext;
+        if ($zipped_backup && $has_zipped_ext) {
+            $backup_file_name = substr($backup_file_name, 0, strrpos($backup_file_name, '.'));
+        }
+
         $data = $this->getDatabaseCredentials($host_config, $context);
 
         $context->io()->comment(sprintf('Dumping database of `%s` ...', $host_config->getConfigName()));
         $shell->pushWorkingDir($data['workingDir']);
         $shell->run('set -o pipefail');
 
-        $cmd = $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true);
-        $cmd[] = "--add-drop-table";
-        $cmd[] = "--no-autocommit";
+        $get_structure_cmd = $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true);
+        $get_structure_cmd[] = "--add-drop-table";
+        $get_structure_cmd[] = "--no-autocommit";
+        $get_structure_cmd[] = "--no-data";
+        $get_structure_cmd[] = ">";
+        $get_structure_cmd[] = $backup_file_name;
+
+        $get_data_cmd = $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true);
+        $get_data_cmd[] = "--no-autocommit";
+        $get_data_cmd[] = "--no-create-info";
 
         foreach ($context->getConfigurationService()->getSetting('sqlSkipTables', []) as $table_name) {
-            $cmd[] = sprintf("--ignore-table %s.%s", $data['name'], $table_name);
+            $get_data_cmd[] = sprintf("--ignore-table %s.%s", $data['name'], $table_name);
         }
+        $get_data_cmd[] = ">>";
+        $get_data_cmd[] = $backup_file_name;
 
         if (!$shell->exists(dirname($backup_file_name))) {
             $shell->run(sprintf('mkdir -p %s', dirname($backup_file_name)));
         }
-        $has_zipped_ext = pathinfo($backup_file_name, PATHINFO_EXTENSION) == 'gz';
-        $zipped_backup = $host_config[self::SUPPORTS_ZIPPED_BACKUPS] || $has_zipped_ext;
 
-        if ($zipped_backup) {
-            if (!$has_zipped_ext) {
-                $backup_file_name .= ".gz";
-            }
-            $cmd[] = "| #!gzip";
-        }
         $shell->run(sprintf('rm -f %s', escapeshellarg($backup_file_name)));
 
-        $cmd[] = ">";
-        $cmd[] = $backup_file_name;
 
-        $shell->run(implode(" ", $cmd), false, true);
+        $shell->run(implode(" ", $get_structure_cmd), false, true);
+        $shell->run(implode(" ", $get_data_cmd), false, true);
+
+        if ($zipped_backup) {
+            $shell->run(sprintf('#!gzip %s', $backup_file_name));
+            $backup_file_name .= '.gz';
+        }
         $shell->run('set +o pipefail');
         $shell->popWorkingDir();
 
@@ -345,12 +356,14 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             [
                 "-u",
                 $data['user'],
-                sprintf("-p'%s'", $data['pass']),
                 "-h",
                 $data["host"],
                 "--port",
                 $data["port"] ?? "3306"
-            ]
+            ],
+            !empty($data['pass'])
+                ? [ sprintf("-p'%s'", $data['pass'])]
+                : []
         );
         foreach ($additional_args as $arg) {
             $cmd[] = $arg;
@@ -360,5 +373,11 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         }
 
         return $cmd;
+    }
+
+    public function getShellCommand(HostConfig $host_config, TaskContextInterface $context): array
+    {
+        $data = $this->getDatabaseCredentials($host_config, $context);
+        return $this->getMysqlCommand($host_config, $context, 'mysql', $data, true, []);
     }
 }

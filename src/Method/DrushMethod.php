@@ -690,7 +690,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 ],
             ];
             foreach ($mapping[$json['driver']] as $key => $mapped) {
-                $data[$mapped] = $json[$key] ?: $defaults[$json['driver']][$key] ?? null;
+                $data[$mapped] = $json[$key] ?: $defaults[$json['driver']][$key] ?? '';
             }
             $data['driver'] = $json['driver'];
         }
