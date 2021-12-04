@@ -294,6 +294,8 @@ class Scaffolder
         $io->comment('Start scaffolding script ...');
         $script->runScript($host_config, $context);
 
+        exec(sprintf('rm -rf "%s"', $twig_root_path));
+
         /** @var CommandResult $result */
         $result = $context->getResult('commandResult', new CommandResult(0, []));
         if ($result && $result->failed()) {

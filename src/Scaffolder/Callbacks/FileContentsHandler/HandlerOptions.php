@@ -124,7 +124,7 @@ class HandlerOptions
     }
 
     /**
-     * @param mixed $twigRootPath
+     * @param mixed $root_path
      *
      * @return HandlerOptions
      */
