@@ -85,9 +85,6 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
                 $converted = $handler->handleContents($file_name, $converted, $handler_options);
             }
 
-            if ($ext = $handler_options->getApplyTwigToFileExtension()) {
-                $file_name = str_replace($ext, '', $file_name);
-            }
 
             $file_name = strtr($file_name, $handler_options->getReplacements());
             $file_name = $this->getTargetFileName($file_name, $handler_options->ignoreSubfolders());
@@ -130,8 +127,13 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
         return $file_name;
     }
 
-    public function addNewFileContentsHandler(FileContentsHandlerInterface $handler)
+    protected function addNewFileContentsHandler(FileContentsHandlerInterface $handler)
     {
         $this->fileContentsHandler[] = $handler;
+    }
+
+    protected function clearFileContentsHandlers()
+    {
+        $this->fileContentsHandler = [];
     }
 }

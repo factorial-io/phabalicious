@@ -1,0 +1,21 @@
+requires: 3.0
+
+questions: []
+secrets:
+  my-secret:
+    question: What is the secret
+assets:
+    - files/test_1.txt.enc
+    - files/test_2.txt.enc
+    - files/test_3.txt.enc
+
+binaryAssets:
+    - binary/test_1.bin.enc
+    - binary/test_2.bin.enc
+    - binary/test_3.bin.enc
+
+scaffold:
+  - mkdir -p %rootFolder%
+  - set_directory(%rootFolder%)
+  - decrypt_assets(%rootFolder%, assets, my-secret, xxx)
+  - decrypt_assets(%rootFolder%, binaryAssets, my-secret, xxx)

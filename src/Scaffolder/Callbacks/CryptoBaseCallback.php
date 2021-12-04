@@ -27,7 +27,8 @@ abstract class CryptoBaseCallback extends BaseCallback
 
     protected function iterateOverFiles(TaskContextInterface $context, $input)
     {
-        $files = FilesMethod::getRemoteFiles($context->getShell(), dirname($input), [$input]);
+        $files = FilesMethod::getRemoteFiles($context->getShell(), dirname($input), [basename($input)]);
+        $context->io()->progressStart(count($files));
         $context->getConfigurationService()->getLogger()->info(sprintf(
             "%s: Found %d files to work on...",
             $this->getName(),
@@ -39,7 +40,9 @@ abstract class CryptoBaseCallback extends BaseCallback
                 $this->getName(),
                 $file
             ));
-            yield $file;
+            $context->io()->progressAdvance();
+            yield dirname($input) . '/' . $file;
         }
+        $context->io()->progressFinish();
     }
 }

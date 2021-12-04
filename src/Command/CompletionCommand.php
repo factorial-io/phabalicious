@@ -30,7 +30,7 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
         parent::__construct();
         $this->configuration = $configuration;
     }
-    
+
     protected function configureCompletion(CompletionHandler $handler)
     {
         $handler->addHandler(
@@ -97,7 +97,7 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
             } if ($argument) {
                 $return = $command->completeArgumentValues($argument, $context);
             }
-            if (is_array($return)) {
+            if (is_array($return) && !empty($return)) {
                 $output->writeln(implode("\n", $return));
                 return 0;
             }

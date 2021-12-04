@@ -20,13 +20,17 @@ class TwigFileContentsHandler extends BaseFileContentsHandler
         $this->twig = $twig;
     }
 
-    public function handleContents(string $file_name, string $content, HandlerOptions $options): string
+    public function handleContents(string &$file_name, string $content, HandlerOptions $options): string
     {
         $ext = $options->getApplyTwigToFileExtension();
         if (!$ext || ('.' . pathinfo($file_name, PATHINFO_EXTENSION) === $ext)) {
             $this->createTempFile($file_name, $content, $options);
             $content = $this->twig->render($file_name, $options->getTokens());
             $this->cleanup();
+        }
+
+        if ($ext = $options->getApplyTwigToFileExtension()) {
+            $file_name = str_replace($ext, '', $file_name);
         }
 
         return $content;

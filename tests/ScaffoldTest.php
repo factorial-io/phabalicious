@@ -267,22 +267,54 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
 
-        $source_dir = __DIR__ . '/assets/scaffolder-test/files/';
-        $target_dir = $this->getTmpDir() . '/test-scaffold-files/';
+        $this->compareScaffoldedFiles(
+            __DIR__ . '/assets/scaffolder-test',
+            $this->getTmpDir() . '/test-scaffold-files/'
+        );
+    }
+
+    public function testScaffoldLocalEncryptedFiles()
+    {
+        $scaffolder = new Scaffolder($this->configuration);
+        $context = $this->createContext();
+        $options = new Options();
+        $options->setAllowOverride(true)
+            ->setUseCacheTokens(false);
+
+        $context->getPasswordManager()->setSecret('my-secret', 'my-secret');
+        $result = $scaffolder->scaffold(
+            __DIR__ . '/assets/scaffolder-test/scaffold-encrypted-files.yml',
+            $this->getTmpDir(),
+            $context,
+            [
+                'name' => 'test-scaffold-encrypted-files',
+            ],
+            $options
+        );
+
+        $this->assertEquals(0, $result->getExitCode());
+
+        $this->compareScaffoldedFiles(
+            __DIR__ . '/assets/scaffolder-test',
+            $this->getTmpDir() . '/test-scaffold-encrypted-files/'
+        );
+    }
+
+    private function compareScaffoldedFiles($source_dir, $target_dir)
+    {
+
         for ($i = 1; $i < 4; $i++) {
             $filename = sprintf('test_%d.txt', $i);
             $this->assertEquals(
-                file_get_contents($source_dir . $filename),
+                file_get_contents($source_dir . '/files/' . $filename),
                 file_get_contents($target_dir . $filename)
             );
         }
 
-        $source_dir = __DIR__ . '/assets/scaffolder-test/binary/';
-        $target_dir = $this->getTmpDir() . '/test-scaffold-files/';
         for ($i = 1; $i < 4; $i++) {
             $filename = sprintf('test_%d.bin', $i);
             $this->assertEquals(
-                file_get_contents($source_dir . $filename),
+                file_get_contents($source_dir . '/binary/' . $filename),
                 file_get_contents($target_dir . $filename)
             );
         }

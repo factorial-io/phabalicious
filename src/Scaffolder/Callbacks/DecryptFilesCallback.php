@@ -4,6 +4,7 @@ namespace Phabalicious\Scaffolder\Callbacks;
 
 use Defuse\Crypto\Crypto;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Scaffolder\Callbacks\FileContentsHandler\DecryptFileContentsHandler;
 
 class DecryptFilesCallback extends CryptoBaseCallback
 {
@@ -44,10 +45,7 @@ class DecryptFilesCallback extends CryptoBaseCallback
     {
         $content = $context->getShell()->getFileContents($input, $context);
 
-        $first_line = strstr($content, "\n", true);
-        $content = str_replace("\n", "", strstr($content, "\n", false));
-
-        $decrypted = Crypto::decryptWithPassword($content, $secret);
+        $decrypted = DecryptFileContentsHandler::decryptFileContent($content, $secret);
 
         $target_file_name = $output_dir . '/' . str_replace('.enc', '', basename($input));
 

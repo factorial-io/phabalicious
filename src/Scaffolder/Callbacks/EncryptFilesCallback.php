@@ -35,7 +35,6 @@ class EncryptFilesCallback extends CryptoBaseCallback
             throw new \RuntimeException('Could not find secret `%s`!', $arguments[2]);
         }
 
-
         foreach ($this->iterateOverFiles($context, $arguments[0]) as $file) {
             $this->encryptFileTo($context, $file, $arguments[1], $secret);
         }

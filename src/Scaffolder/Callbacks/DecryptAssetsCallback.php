@@ -42,6 +42,7 @@ class DecryptAssetsCallback extends CopyAssetsBaseCallback
 
         $secret = $this->configuration->getPasswordManager()->getPasswordFor($arguments[2]);
 
+        $this->clearFileContentsHandlers();
         $this->addNewFileContentsHandler(new DecryptFileContentsHandler($secret));
         $this->addNewFileContentsHandler(new TwigFileContentsHandler($this->twig));
 
