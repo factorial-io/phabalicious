@@ -60,13 +60,9 @@ class SshShellProviderTest extends PhabTestCase
     {
         $errors = new ValidationErrorBag();
         $this->shellProvider->validateConfig([], $errors);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
             ['host', 'port', 'rootFolder', 'rootFolder', 'shellExecutable','user'],
-            $errors->getKeysWithErrors(),
-            '',
-            0.0,
-            10,
-            true
+            $errors->getKeysWithErrors()
         );
     }
 

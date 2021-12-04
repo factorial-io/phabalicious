@@ -48,5 +48,21 @@ class DecryptFilesCallback extends CryptoBaseCallback
         $content = str_replace("\n", "", strstr($content, "\n", false));
 
         $decrypted = Crypto::decryptWithPassword($content, $secret);
+
+        $target_file_name = $output_dir . '/' . str_replace('.enc', '', basename($input));
+
+        $context->getConfigurationService()->getLogger()->info(sprintf(
+            "%s: Writing decrypted data to %s",
+            $this->getName(),
+            $target_file_name
+        ));
+
+        $context->getShell()->run(sprintf('mkdir -p "%s"', dirname($target_file_name)));
+
+        $context->getShell()->putFileContents(
+            $target_file_name,
+            $decrypted,
+            $context
+        );
     }
 }

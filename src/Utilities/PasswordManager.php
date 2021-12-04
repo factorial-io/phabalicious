@@ -178,6 +178,9 @@ class PasswordManager implements PasswordManagerInterface
         ));
 
         $args = $this->getContext()->getInput()->getOption('secret');
+        if (!is_array($args)) {
+            $args = [ $args ];
+        }
         foreach ($args as $p) {
             [$key, $value] = explode('=', $p);
             if ($key == $secret) {

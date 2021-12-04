@@ -89,4 +89,40 @@ class ScriptCommandTest extends PhabTestCase
 
         $this->assertStringContainsString('PHAB_SUB_SHELL=1', $output);
     }
+
+    public function testEncryptDecryptCallback()
+    {
+        $command = $this->application->find('script');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            '--config' => 'crypto',
+            'script' => 'testEncryption',
+            '--secret' => ['test-secret=very-secure-1234']
+
+        ));
+
+        // Decrypt again.
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            '--config' => 'crypto',
+            'script' => 'testDecryption',
+            '--secret' => ['test-secret=very-secure-1234']
+
+        ));
+        $this->assertEquals(0, $commandTester->getStatusCode());
+
+        $root_dir = __DIR__ . '/assets/script-tests/crypto';
+        $files = [
+            'test.md',
+            'test-jpg.jpg'
+        ];
+        foreach ($files as $filename) {
+            $source = file_get_contents($root_dir . '/source/' . $filename);
+            $decrypted = file_get_contents($root_dir . '/decrypted/' . $filename);
+
+            $this->assertEquals($decrypted, $source);
+        }
+    }
 }

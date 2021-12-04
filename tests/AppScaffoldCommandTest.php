@@ -158,12 +158,10 @@ class AppScaffoldCommandTest extends PhabTestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Scaffolding failed with exit-code 42
-     */
     public function testErrorWhileScaffolding()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Scaffolding failed with exit-code 42");
         $root = $this->getTmpDir();
         $target_folder = $root . '/tmp/tst-test';
         if (!is_dir($target_folder)) {

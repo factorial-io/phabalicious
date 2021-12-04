@@ -4,6 +4,7 @@ namespace Phabalicious\Scaffolder\Callbacks;
 
 use Defuse\Crypto\Crypto;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Utilities\Utilities;
 
 class EncryptFilesCallback extends CryptoBaseCallback
 {
@@ -45,6 +46,12 @@ class EncryptFilesCallback extends CryptoBaseCallback
         $content = $context->getShell()->getFileContents($input, $context);
 
         $encrypted = Crypto::encryptWithPassword($content, $secret);
+        $encrypted = sprintf(
+            "\$phabalicious;%s;\n%s",
+            Utilities::FALLBACK_VERSION,
+            wordwrap($encrypted, 80, "\n", true)
+        );
+
         $target_file_name = $output_dir . '/' . basename($input) . '.enc';
         $context->getConfigurationService()->getLogger()->info(sprintf(
             "%s: Writing encrypted data to %s",
@@ -52,7 +59,7 @@ class EncryptFilesCallback extends CryptoBaseCallback
             $target_file_name
         ));
 
-        $context->getSHell()->run(sprintf('mkdir -p "%s"', dirname($target_file_name)));
+        $context->getShell()->run(sprintf('mkdir -p "%s"', dirname($target_file_name)));
 
         $context->getShell()->putFileContents(
             $target_file_name,
