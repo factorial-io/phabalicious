@@ -8,6 +8,9 @@
     "composer/semver": {
         "version": "1.4.2"
     },
+    "consolidation/self-update": {
+        "version": "2.0.1"
+    },
     "dealerdirect/phpcodesniffer-composer-installer": {
         "version": "v0.7.1"
     },
