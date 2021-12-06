@@ -199,7 +199,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
         if (!in_array('db', $what)) {
             return;
         }
-
+      
         // Make sure, there is a db to copy from.
         $this->waitForDatabase($host_config, $context);
     }
