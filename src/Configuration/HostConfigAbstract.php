@@ -161,4 +161,3 @@ abstract class HostConfigAbstract implements \ArrayAccess
         return $this->category;
     }
 }
-
