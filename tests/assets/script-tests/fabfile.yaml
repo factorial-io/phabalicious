@@ -1,5 +1,8 @@
 name: script-tests
 
+secrets:
+  test-secret:
+    question: The test-secret
 
 common:
   deployPrepare:
@@ -34,6 +37,19 @@ scripts:
     context: docker-image
     image: busybox
 
+  testEncryption:
+    defaults:
+      source: "%host.rootFolder%/crypto/source/*"
+      target: "%host.rootFolder%/crypto/encrypted/"
+    script:
+      - encrypt_files(%arguments.source%, %arguments.target%, test-secret)
+  testDecryption:
+    defaults:
+      source: "%host.rootFolder%/crypto/encrypted/*"
+      target: "%host.rootFolder%/crypto/decrypted/"
+    script:
+      - decrypt_files(%arguments.source%, %arguments.target%, test-secret)
+
 hosts:
   base:
     type: dev
@@ -58,3 +74,7 @@ hosts:
       - debug(deploy on hostA)
     deployFinished:
       - debug(deployFinished on hostA)
+
+  crypto:
+    type: dev
+    needs: local

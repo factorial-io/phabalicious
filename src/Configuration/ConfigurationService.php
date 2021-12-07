@@ -628,6 +628,9 @@ class ConfigurationService
         if (empty($data['needs'])) {
             $data['needs'] = $this->getSetting('needs', []);
         }
+        if (!is_array($data['needs'])) {
+            $data['needs'] = [ $data['needs'] ];
+        }
 
         if (!$this->getSetting('disableScripts', false)) {
             if (!in_array('script', $data['needs'])) {

@@ -17,7 +17,10 @@ use Phabalicious\Exception\YamlParseException;
 use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Scaffolder\Callbacks\CopyAssetsBaseCallback;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
+use Phabalicious\Scaffolder\Callbacks\DecryptAssetsCallback;
+use Phabalicious\Scaffolder\TwigExtensions\EncryptExtension;
 use Phabalicious\Scaffolder\TwigExtensions\GetSecretExtension;
 use Phabalicious\Scaffolder\TwigExtensions\Md5Extension;
 use Phabalicious\ShellProvider\CommandResult;
@@ -89,17 +92,15 @@ class Scaffolder
         }
 
         $is_remote = false;
-        $base_path = $twig_loader_base = $options->getTwigLoaderBase();
+        $root_path = $options->getRootPath();
         if (!$data = $options->getScaffoldDefinition()) {
-            $base_path = dirname($url);
+            $root_path = dirname($url);
             try {
                 if (substr($url, 0, 4) !== 'http') {
                     $data = Yaml::parseFile($url);
-                    $twig_loader_base = dirname($url);
                 } else {
                     $data = $this->configuration->readHttpResource($url);
                     $data = Yaml::parse($data);
-                    $twig_loader_base = '/tmp';
                     $is_remote = true;
                 }
             } catch (ParseException $e) {
@@ -135,7 +136,7 @@ class Scaffolder
             unset($data['secrets']);
         }
 
-        $data['base_path'] = $base_path;
+        $data['base_path'] = $root_path;
         if (!empty($data['baseUrl']) && empty($options->getBaseUrl())) {
             $options->setBaseUrl($data['baseUrl']);
         }
@@ -158,7 +159,7 @@ class Scaffolder
             }
         }
 
-        $data = $this->configuration->resolveInheritance($data, [], $base_path);
+        $data = $this->configuration->resolveInheritance($data, [], $root_path);
         if (!empty($data['plugins']) && $options->getPluginRegistrationCallback()) {
             $options->getPluginRegistrationCallback()($data['plugins']);
         }
@@ -250,17 +251,23 @@ class Scaffolder
 
         $context->set('scaffoldData', $data);
         $context->set('tokens', $tokens);
-        $context->set('loaderBase', $twig_loader_base);
+        $context->set('rootPath', $root_path);
+
+        $twig_root_path = '/tmp/phab-twig-' . bin2hex(random_bytes(8));
+        $context->set('twigRootPath', $twig_root_path);
+        mkdir($twig_root_path, 0777, true);
 
         // Setup twig
-        $loader = new FilesystemLoader($twig_loader_base);
+        $loader = new FilesystemLoader($twig_root_path);
         $this->twig = new Environment($loader, array( ));
         $this->twig->addExtension(new StringExtension());
         $this->twig->addExtension(new Md5Extension());
         $this->twig->addExtension(new GetSecretExtension($this->configuration->getPasswordManager()));
+        $this->twig->addExtension(new EncryptExtension($this->configuration->getPasswordManager()));
 
         $options
             ->addCallback(new CopyAssetsCallback($this->configuration, $this->twig))
+            ->addCallback(new DecryptAssetsCallback($this->configuration, $this->twig))
             ->addCallback(new WebHookCallback())
             ->addDefaultCallbacks();
 
@@ -286,6 +293,8 @@ class Scaffolder
 
         $io->comment('Start scaffolding script ...');
         $script->runScript($host_config, $context);
+
+        exec(sprintf('rm -rf "%s"', $twig_root_path));
 
         /** @var CommandResult $result */
         $result = $context->getResult('commandResult', new CommandResult(0, []));

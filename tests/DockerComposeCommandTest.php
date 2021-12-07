@@ -17,7 +17,7 @@ class DockerComposeCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion('3.0.0');
@@ -49,7 +49,7 @@ class DockerComposeCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('Hello from Docker!', $output);
+        $this->assertStringContainsString('Hello from Docker!', $output);
     }
 
     /**
@@ -67,6 +67,6 @@ class DockerComposeCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('VHOST: OUR_VHOST_VAR', $output);
+        $this->assertStringContainsString('VHOST: OUR_VHOST_VAR', $output);
     }
 }

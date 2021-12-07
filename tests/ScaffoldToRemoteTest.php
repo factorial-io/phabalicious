@@ -21,7 +21,7 @@ class ScaffoldToRemoteTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);

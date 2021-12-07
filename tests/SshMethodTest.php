@@ -15,7 +15,7 @@ class SshMethodTest extends PhabTestCase
      */
     private $method;
 
-    public function setUp()
+    public function setup(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $this->method = new SshMethod($logger);
@@ -44,14 +44,10 @@ class SshMethodTest extends PhabTestCase
             'host' => 'localhost',
             'configName' => 'test'
         ], $errors);
-        $this->assertEquals($errors->hasErrors(), true);
-        $this->assertEquals(
+        $this->assertEquals(true, $errors->hasErrors());
+        $this->assertEqualsCanonicalizing(
             ['user', 'port', 'rootFolder', 'rootFolder', 'shellExecutable'],
-            $errors->getKeysWithErrors(),
-            '',
-            0.0,
-            10,
-            true
+            $errors->getKeysWithErrors()
         );
     }
 
@@ -64,14 +60,10 @@ class SshMethodTest extends PhabTestCase
             'configName' => 'test',
             'rootFolder' => '/some/rootFolder/'
         ], $errors);
-        $this->assertEquals($errors->hasErrors(), true);
-        $this->assertEquals(
+        $this->assertEquals(true, $errors->hasErrors());
+        $this->assertEqualsCanonicalizing(
             ['user', 'port', 'rootFolder', 'shellExecutable'],
-            $errors->getKeysWithErrors(),
-            '',
-            0.0,
-            10,
-            true
+            $errors->getKeysWithErrors()
         );
     }
 
@@ -92,13 +84,9 @@ class SshMethodTest extends PhabTestCase
             ],
         ], $errors);
         $this->assertEquals(true, $errors->hasErrors());
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
             ['bridgePort', 'destPort', 'destHost', 'localPort'],
-            $errors->getKeysWithErrors(),
-            '',
-            0.0,
-            10,
-            true
+            $errors->getKeysWithErrors()
         );
     }
 

@@ -11,7 +11,7 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
+use Phabalicious\Scaffolder\Callbacks\CopyAssetsBaseCallback;
 use Phabalicious\Scaffolder\Options;
 use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ScopedLogLevel\ScopedErrorLogLevel;
@@ -765,7 +765,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         $options = new Options();
         $options
-            ->setTwigLoaderBase($context->getConfigurationService()->getFabfilePath())
+            ->setRootPath($context->getConfigurationService()->getFabfilePath())
             ->setShell($shell)
             ->setQuiet(true)
             ->setSkipSubfolder(true)
@@ -773,7 +773,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             ->setUseCacheTokens(false)
             ->setScaffoldDefinition($scaffold_definition);
 
-        $context->set('scaffoldStrategy', CopyAssetsCallback::IGNORE_SUBFOLDERS_STRATEGY);
+        $context->set('scaffoldStrategy', CopyAssetsBaseCallback::IGNORE_SUBFOLDERS_STRATEGY);
         $scaffolder = new Scaffolder($context->getConfigurationService());
 
         $scaffolder->scaffold(

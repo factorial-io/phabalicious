@@ -33,7 +33,7 @@ class ScriptActionTest extends TestCase
      */
     private $context;
 
-    public function setUp()
+    public function setup(): void
     {
         $app = $this->getMockBuilder(Application::class)
             ->getMock();
@@ -139,7 +139,7 @@ class ScriptActionTest extends TestCase
         $action->run($this->hostConfig, $this->context);
         $output = $this->context->getCommandResult()->getOutput();
 
-        $this->assertContains("PHAB_SUB_SHELL=1", $output);
+        $this->assertStringContainsString("PHAB_SUB_SHELL=1", $output);
     }
 
     /**
@@ -158,7 +158,7 @@ class ScriptActionTest extends TestCase
         $action->run($this->hostConfig, $this->context);
         $output = $this->context->getCommandResult()->getOutput();
 
-        $this->assertContains("v14.", $output[0]);
+        $this->assertStringContainsString("v14.", $output[0]);
     }
 
     /**
@@ -193,7 +193,7 @@ class ScriptActionTest extends TestCase
         $action->run($this->hostConfig, $context);
         $output = $context->getCommandResult()->getOutput();
 
-        $this->assertContains("Tasks for /app/gulpfile.js", $output[0]);
+        $this->assertStringContainsString("Tasks for /app/gulpfile.js", $output[0]);
 
         exec(sprintf('rm -rf "%s/bin" "%s/lib" "%s/node_modules', $dir, $dir, $dir));
     }

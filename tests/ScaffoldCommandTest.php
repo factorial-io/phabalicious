@@ -20,7 +20,7 @@ class ScaffoldCommandTest extends PhabTestCase
     /** @var ConfigurationService  */
     protected $configuration;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);

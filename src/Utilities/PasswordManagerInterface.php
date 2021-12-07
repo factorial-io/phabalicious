@@ -16,4 +16,12 @@ interface PasswordManagerInterface
     public function getPasswordFor(string $key);
 
     public function resolveSecrets($data);
+
+    public function encrypt($data, $secret_name);
+
+    public function decrypt($data, $secret_name);
+
+    public function setSecret($secret_name, $value);
+
+    public function getFileContentFrom1Password($token_id, $vault_id, $item_id);
 }

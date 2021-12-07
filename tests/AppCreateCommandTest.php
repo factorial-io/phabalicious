@@ -19,7 +19,7 @@ class AppCreateCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
@@ -54,9 +54,9 @@ class AppCreateCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertNotContains('Could not validate', $output);
-        $this->assertContains('XX Spin up XX', $output);
-        $this->assertContains('XX Install XX', $output);
+        $this->assertStringNotContainsString('Could not validate', $output);
+        $this->assertStringContainsString('XX Spin up XX', $output);
+        $this->assertStringContainsString('XX Install XX', $output);
     }
 
     public function testAppCreateWithPrepare()
@@ -75,9 +75,9 @@ class AppCreateCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertNotContains('Could not validate', $output);
-        $this->assertContains('XX Spin up XX', $output);
-        $this->assertContains('XX prepareDestination XX', $output);
-        $this->assertContains('XX Install XX', $output);
+        $this->assertStringNotContainsString('Could not validate', $output);
+        $this->assertStringContainsString('XX Spin up XX', $output);
+        $this->assertStringContainsString('XX prepareDestination XX', $output);
+        $this->assertStringContainsString('XX Install XX', $output);
     }
 }

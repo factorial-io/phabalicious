@@ -44,7 +44,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws MismatchedVersionException
      * @throws ValidationFailedException
      */
-    public function setUp()
+    public function setUp(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $app = $this->getMockBuilder(Application::class)->getMock();
@@ -340,7 +340,7 @@ class ScriptMethodTest extends PhabTestCase
 
         $output = $this->context->getCommandResult()->getOutput();
 
-        $this->assertContains("PHAB_SUB_SHELL=1", $output);
+        $this->assertStringContainsString("PHAB_SUB_SHELL=1", $output);
     }
 
 

@@ -81,9 +81,8 @@ class TaskContext implements TaskContextInterface
     public function setConfigurationService(?ConfigurationService $service)
     {
         $this->configurationService = $service;
-        if ($this->configurationService) {
-            $this->configurationService->getPasswordManager()
-                ->setContext($this);
+        if ($this->configurationService && $this->configurationService->getPasswordManager()) {
+            $this->configurationService->getPasswordManager()->setContext($this);
         }
     }
 

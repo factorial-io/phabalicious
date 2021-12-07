@@ -30,7 +30,7 @@ class SshShellProviderTest extends PhabTestCase
      */
     private $context;
 
-    public function setUp()
+    public function setup(): void
     {
         $this->config = $this->getMockBuilder(ConfigurationService::class)
             ->disableOriginalConstructor()
@@ -60,13 +60,9 @@ class SshShellProviderTest extends PhabTestCase
     {
         $errors = new ValidationErrorBag();
         $this->shellProvider->validateConfig([], $errors);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
             ['host', 'port', 'rootFolder', 'rootFolder', 'shellExecutable','user'],
-            $errors->getKeysWithErrors(),
-            '',
-            0.0,
-            10,
-            true
+            $errors->getKeysWithErrors()
         );
     }
 

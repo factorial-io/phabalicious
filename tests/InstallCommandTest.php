@@ -16,7 +16,7 @@ class InstallCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion('3.0.0');
@@ -44,7 +44,7 @@ class InstallCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('Installing new app', $output);
+        $this->assertStringContainsString('Installing new app', $output);
     }
 
     public function testSupportsInstallsOnStage()
@@ -59,6 +59,6 @@ class InstallCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('Installing new app', $output);
+        $this->assertStringContainsString('Installing new app', $output);
     }
 }

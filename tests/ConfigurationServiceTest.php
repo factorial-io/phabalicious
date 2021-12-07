@@ -26,7 +26,7 @@ class ConfigurationServiceTest extends PhabTestCase
     /** @var TestableLogger */
     private $logger;
 
-    public function setUp()
+    public function setUp(): void
     {
         $application = $this->getMockBuilder(Application::class)
             ->setMethods(['getVersion'])

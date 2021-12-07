@@ -21,7 +21,7 @@ class GetPropertyCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion('3.0.0');
@@ -48,7 +48,7 @@ class GetPropertyCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('getproperty-test-host.a', $output);
+        $this->assertStringContainsString('getproperty-test-host.a', $output);
     }
     public function testGetNestedProperty()
     {
@@ -62,7 +62,7 @@ class GetPropertyCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('sub1.sub2.sub3-value', $output);
+        $this->assertStringContainsString('sub1.sub2.sub3-value', $output);
     }
 
     public function testGetPropertyOverridden()
@@ -80,7 +80,7 @@ class GetPropertyCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('overridden-host.a', $output);
+        $this->assertStringContainsString('overridden-host.a', $output);
     }
 
     public function testGetNestedPropertyOverridden()
@@ -98,7 +98,7 @@ class GetPropertyCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('sub1.sub2.sub3-overridden', $output);
+        $this->assertStringContainsString('sub1.sub2.sub3-overridden', $output);
     }
 
     public function testInvalidNestedPropertyOverridden()
@@ -130,7 +130,7 @@ class GetPropertyCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('getproperty-test-host.b', $output);
+        $this->assertStringContainsString('getproperty-test-host.b', $output);
     }
 
     public function testGetPropertyFromBluePrint()
@@ -147,6 +147,6 @@ class GetPropertyCommandTest extends PhabTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('getproperty-test-valuefromblueprint', $output);
+        $this->assertStringContainsString('getproperty-test-valuefromblueprint', $output);
     }
 }

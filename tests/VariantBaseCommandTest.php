@@ -22,7 +22,7 @@ class VariantBaseCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion('3.0.0');
@@ -81,13 +81,13 @@ class VariantBaseCommandTest extends PhabTestCase
         ));
 
         $output = $commandTester->getDisplay();
-        $this->assertContains('--blueprint a', $output);
-        $this->assertContains('--blueprint b', $output);
-        $this->assertContains('--blueprint c', $output);
+        $this->assertStringContainsString('--blueprint a', $output);
+        $this->assertStringContainsString('--blueprint b', $output);
+        $this->assertStringContainsString('--blueprint c', $output);
 
-        $this->assertContains('XX-test-a-XX', $output);
-        $this->assertContains('XX-test-b-XX', $output);
-        $this->assertContains('XX-test-c-XX', $output);
+        $this->assertStringContainsString('XX-test-a-XX', $output);
+        $this->assertStringContainsString('XX-test-b-XX', $output);
+        $this->assertStringContainsString('XX-test-c-XX', $output);
     }
 
     /**

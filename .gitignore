@@ -13,3 +13,6 @@ tests/test-alter/
 tests/test-scaffold-callback/
 tests/test-scaffold-twig
 .obsidian
+tests/assets/script-tests/crypto/decrypted
+tests/assets/script-tests/crypto/encrypted
+.phpunit.result.cache

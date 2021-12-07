@@ -1,4 +1,6 @@
 {
     "slug":"{{ slugInput | slug }}",
-    "md5": "{{ md5Input | md5 }}"
+    "md5": "{{ md5Input | md5 }}",
+    "encrypted": "{{ 'hello world' | encrypt('test-encryption') }}",
+    "decrypted": "{{ 'def502004a4e0ed05d9d84ff8366623ed6764694897afd587e4c896dd1d5c9d0e5ca1aba79a116115e868553dfb3cb59da5853d099ee23fa84cd49106ba1ba65eca5f101754eab691f5bf99e10c5ae514d5cbd004ab52ae752bdea2afd9333' | decrypt('test-encryption') }}"
 }

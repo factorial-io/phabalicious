@@ -26,7 +26,7 @@ class LocalShellProviderTest extends PhabTestCase
      */
     private $context;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->config = $this->getMockBuilder(ConfigurationService::class)
             ->disableOriginalConstructor()
@@ -101,9 +101,9 @@ class LocalShellProviderTest extends PhabTestCase
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->succeeded());
-        $this->assertContains('two.txt', $output);
-        $this->assertContains('three.txt', $output);
-        $this->assertNotContains(LocalShellProvider::RESULT_IDENTIFIER, $output);
+        $this->assertStringContainsString('two.txt', $output);
+        $this->assertStringContainsString('three.txt', $output);
+        $this->assertStringNotContainsString(LocalShellProvider::RESULT_IDENTIFIER, $output);
 
         $result = $this->shellProvider
             ->run('pwd');
@@ -128,7 +128,7 @@ class LocalShellProviderTest extends PhabTestCase
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->failed());
-        $this->assertNotContains(LocalShellProvider::RESULT_IDENTIFIER, $output);
+        $this->assertStringNotContainsString(LocalShellProvider::RESULT_IDENTIFIER, $output);
     }
 
     public function testHostEnvironment()
@@ -154,22 +154,22 @@ class LocalShellProviderTest extends PhabTestCase
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->succeeded());
-        $this->assertNotContains(LocalShellProvider::RESULT_IDENTIFIER, $output);
-        $this->assertContains('variable_a', $output);
+        $this->assertStringNotContainsString(LocalShellProvider::RESULT_IDENTIFIER, $output);
+        $this->assertStringContainsString('variable_a', $output);
 
         $result = $this->shellProvider
             ->cd($test_dir)
             ->run('echo "XX${VAR_B}XX"', true, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
-        $this->assertContains('XXvariable_bXX', $output);
+        $this->assertStringContainsString('XXvariable_bXX', $output);
 
         $result = $this->shellProvider
             ->cd($test_dir)
             ->run('echo "XX${VAR_C}XX"', true, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
-        $this->assertContains('XXvariable_cXX', $output);
+        $this->assertStringContainsString('XXvariable_cXX', $output);
     }
 
     public function testFileGetContents()

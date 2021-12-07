@@ -90,10 +90,12 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         if ($optionName == 'skip-cache') {
             return ['1', '0'];
         }
+        return [];
     }
 
     public function completeArgumentValues($argumentName, CompletionContext $context)
     {
+        return [];
     }
 
     /**
@@ -122,12 +124,12 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
      *
      * @return ConfigurationService
      */
-    public function getConfiguration()
+    public function getConfiguration(): ConfigurationService
     {
         return $this->configuration;
     }
 
-    protected function getMethods()
+    protected function getMethods(): MethodFactory
     {
         return $this->methods;
     }

@@ -3,20 +3,22 @@
 
 namespace Phabalicious\Utilities;
 
-use Dotenv\Dotenv;
+use Defuse\Crypto\Crypto;
 use GuzzleHttp\Client;
-use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Exception\UnknownSecretException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Utilities\Questions\Question;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Yaml\Yaml;
 
 class PasswordManager implements PasswordManagerInterface
 {
 
+    /** @var TaskContextInterface  */
     private $context;
 
     private $passwords;
@@ -137,6 +139,13 @@ class PasswordManager implements PasswordManagerInterface
 
         $secret_data = $secrets[$secret];
 
+        $this->passwords[$secret] = $this->getSecretImpl($configuration_service, $secret, $secret_data);
+        return $this->passwords[$secret];
+    }
+
+    private function getSecretImpl(ConfigurationService $configuration_service, $secret, $secret_data)
+    {
+
         $env_name = !empty($secret_data['env'])
             ? $secret_data['env']
             : str_replace('.', '_', Utilities::toUpperSnakeCase($secret));
@@ -154,7 +163,7 @@ class PasswordManager implements PasswordManagerInterface
         static $envvars = [];
         $env_file = $configuration_service->getFabfilePath() . '/.env';
         if (empty($envvars) && file_exists($env_file)) {
-            $dotenv = new \Symfony\Component\Dotenv\Dotenv();
+            $dotenv = new Dotenv();
             $contents = file_get_contents($env_file);
             $envvars = $dotenv->parse($contents);
         }
@@ -169,6 +178,9 @@ class PasswordManager implements PasswordManagerInterface
         ));
 
         $args = $this->getContext()->getInput()->getOption('secret');
+        if (!is_array($args)) {
+            $args = [ $args ];
+        }
         foreach ($args as $p) {
             [$key, $value] = explode('=', $p);
             if ($key == $secret) {
@@ -237,11 +249,10 @@ class PasswordManager implements PasswordManagerInterface
             ));
         }
 
-        $this->passwords[$secret] = $pw;
         return $pw;
     }
 
-    private function getSecretFrom1PasswordCli($item_id)
+    private function exec1PasswordCli($cmd)
     {
         $op_file_path = getenv('PHAB_OP_FILE_PATH') ?: '/usr/local/bin/op';
         if (!$op_file_path || !file_exists($op_file_path)) {
@@ -250,18 +261,31 @@ class PasswordManager implements PasswordManagerInterface
 
         $output = [];
         $result_code = 0;
-        $result = exec(sprintf("%s get item %s", $op_file_path, $item_id), $output, $result_code);
-        if ($result_code == 0) {
-            $payload = implode("\n", $output);
-            return $this->extractSecretFrom1PasswordPayload($payload, true);
-        } else {
-            throw new \RuntimeException("1Password returned an error, are you logged in?");
-        }
+        $cmd = sprintf("%s %s", $op_file_path, $cmd);
+        $this->context->getConfigurationService()->getLogger()->info(sprintf("Running 1password cli with `%s`", $cmd));
+        $result = exec($cmd, $output, $result_code);
+        return new CommandResult($result_code, $output);
     }
 
-    private function getSecretFrom1PasswordConnect($vault_id, $item_id, $token_id, $secret_name)
+    private function getSecretFrom1PasswordCli($item_id)
     {
+        $result = $this->exec1PasswordCli(sprintf("get item %s", $item_id));
 
+        if ($result->succeeded()) {
+            $payload = implode("\n", $result->getOutput());
+            return $this->extractSecretFrom1PasswordPayload($payload, true);
+        }
+
+        $result->throwException("1Password returned an error, are you logged in?");
+    }
+
+    private function getFileFrom1PasswordCli($item_id, $target_file_dir)
+    {
+        return $this->exec1PasswordCli(sprintf('get document %s > %s', $item_id, $target_file_dir));
+    }
+
+    private function get1PasswordConnectResponse($token_id, $url)
+    {
         $configuration_service = $this->getContext()->getConfigurationService();
         $onepassword_connect = $configuration_service->getSetting("onePassword.$token_id", []);
         if ($token = getenv("PHAB_OP_JWT_TOKEN__" . Utilities::toUpperSnakeCase($token_id))) {
@@ -279,26 +303,36 @@ class PasswordManager implements PasswordManagerInterface
                 throw new ValidationFailedException($errors);
             }
 
-            try {
-                $url = $onepassword_connect['endpoint'] . "/v1/vaults/$vault_id/items/$item_id";
-                $configuration_service->getLogger()->debug(
-                    sprintf("Querying %s for secret `%s` ...", $url, $secret_name)
-                );
+            $url = $onepassword_connect['endpoint'] . $url;
+            $configuration_service->getLogger()->debug(
+                sprintf("Querying %s ...", $url)
+            );
 
-                $client = new Client();
-                $response = $client->get($url, [
-                    'headers' => [
-                        'Authorization' => 'Bearer ' . $onepassword_connect['token']
-                    ]
-                ]);
+            $client = new Client();
+            $response = $client->get($url, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $onepassword_connect['token']
+                ]
+            ]);
+
+            return $response;
+        }
+        return false;
+    }
+
+    private function getSecretFrom1PasswordConnect($vault_id, $item_id, $token_id, $secret_name)
+    {
+        try {
+            $response = $this->get1PasswordConnectResponse($token_id, "/v1/vaults/$vault_id/items/$item_id");
+            if ($response) {
                 return $this->extractSecretFrom1PasswordPayload((string) $response->getBody(), false);
-            } catch (\Exception $exception) {
-                throw new \RuntimeException(
-                    sprintf("Could not get secret `%s` from 1password-connect", $secret_name),
-                    0,
-                    $exception
-                );
             }
+        } catch (\Exception $exception) {
+            throw new \RuntimeException(
+                sprintf("Could not get secret `%s` from 1password-connect: %s", $secret_name, $exception->getMessage()),
+                0,
+                $exception
+            );
         }
 
         return false;
@@ -328,5 +362,42 @@ class PasswordManager implements PasswordManagerInterface
             "Could not get password from 1password!\n" . $payload
         );
         return false;
+    }
+
+    public function encrypt($data, $secret_name)
+    {
+        $secret = $this->getSecret($secret_name, $binary = false);
+        return Crypto::encryptWithPassword($data, $secret, $binary);
+    }
+
+    public function decrypt($data, $secret_name)
+    {
+        $secret = $this->getSecret($secret_name);
+        return Crypto::decryptWithPassword($data, $secret);
+    }
+
+    public function setSecret($secret_name, $value)
+    {
+        $this->passwords[$secret_name] = $value;
+    }
+
+    public function getFileContentFrom1Password($token_id, $vault_id, $item_id)
+    {
+        $content = false;
+        if (!empty($vault_id)) {
+            try {
+                $response = $this->get1PasswordConnectResponse($token_id, "/v1/vaults/$vault_id/items/$item_id/files");
+                $json = json_decode((string)$response->getBody());
+            } catch (\Exception $e) {
+            }
+        }
+        if (!$content) {
+            $tmp_file = tempnam('/tmp', 'phab-tmp');
+            $this->exec1PasswordCli(sprintf('get document %s > "%s"', $item_id, $tmp_file));
+            $content = file_get_contents($tmp_file);
+            @unlink($tmp_file);
+        }
+
+        return $content;
     }
 }

@@ -145,7 +145,7 @@ abstract class BaseMethod implements MethodInterface
         return $context->get('shell', $host_config->shell());
     }
 
-    protected function getRemoteFiles(ShellProviderInterface $shell, string $folder, array $patterns)
+    public static function getRemoteFiles(ShellProviderInterface $shell, string $folder, array $patterns)
     {
         $pwd = $shell->getWorkingDir();
         $shell->cd($folder);
