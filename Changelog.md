@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.7.4 / 2021-12-08
+
+### Fixes:
+  * When getting a dump from a database mimic the behavior of drush, get the full
+    structure but ignore data from certain tables (defined in `sqlSkipTables`)
+  * When copying files do not interact with the database
+
+### New:
+ * New `db`-subcommands:
+   * `db:install` will install a new database
+   * `db:drop` will drop all tables in the database
+   * `db:shell` will run a database cli to work directly with the DB (similar to `drush sql-cli`)
+   * `db:shell:command` will print out the command necessary to run a the db cli
+
+
+
 ## 3.7.3 / 2021-12-02
 
 ### Fixes:
