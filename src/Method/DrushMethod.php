@@ -241,22 +241,6 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $this->runDrush($shell, true, 'sql-sanitize -y');
         }
 
-        if ($host_config->isType(HostType::DEV)) {
-            $admin_user = $host_config['adminUser'];
-            $admin_pass = $host_config['adminPass'];
-
-            if ($context->get('withPasswordReset', true)) {
-                if ($host_config['drushVersion'] >= 9) {
-                    $command = sprintf('user:password %s "%s"', $admin_user, $admin_pass);
-                } else {
-                    $command = sprintf('user-password %s --password="%s"', $admin_user, $admin_pass);
-                }
-                $this->runDrush($shell, true, $command);
-            }
-
-            $shell->run(sprintf('chmod -R 777 %s', $host_config['filesFolder']));
-        }
-
         if ($deployment_module = $context->getConfigurationService()->getSetting('deploymentModule')) {
             $this->runDrush($shell, false, 'en -y %s', $deployment_module);
         }
@@ -318,6 +302,23 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
         if ($host_config['drushVersion'] >= 10) {
             $this->runDrush($shell, true, 'deploy:hook -y');
+        }
+
+        // Set admin password for dev-instances.
+        if ($host_config->isType(HostType::DEV)) {
+            $admin_user = $host_config['adminUser'];
+            $admin_pass = $host_config['adminPass'];
+
+            if ($context->get('withPasswordReset', true)) {
+                if ($host_config['drushVersion'] >= 9) {
+                    $command = sprintf('user:password %s "%s"', $admin_user, $admin_pass);
+                } else {
+                    $command = sprintf('user-password %s --password="%s"', $admin_user, $admin_pass);
+                }
+                $this->runDrush($shell, true, $command);
+            }
+
+            $shell->run(sprintf('chmod -R 777 %s', $host_config['filesFolder']));
         }
     }
 
