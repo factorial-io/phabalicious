@@ -174,7 +174,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         );
 
         $result = $shell->run(implode(" ", $cmd), false, true);
-        $shell->run(sprintf('rm "%s"', $filename));
+        $shell->run(sprintf('rm %s', $filename));
         $shell->run('set +o pipefail');
 
         return $result;
@@ -224,7 +224,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             $shell->run(sprintf('mkdir -p %s', dirname($backup_file_name)));
         }
 
-        $shell->run(sprintf('rm -f %s', escapeshellarg($backup_file_name)));
+        $shell->run(sprintf('rm -f %s', $backup_file_name));
 
 
         $shell->run(implode(" ", $get_structure_cmd), false, true);
