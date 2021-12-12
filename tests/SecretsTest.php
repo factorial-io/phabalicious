@@ -3,6 +3,7 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Command\OutputCommand;
+use Phabalicious\Command\ScriptCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
@@ -30,6 +31,7 @@ class SecretsTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__ . '/assets/secret-tests/fabfile.yaml');
 
+        $this->application->add(new ScriptCommand($configuration, $method_factory));
         $this->application->add(new OutputCommand($configuration, $method_factory));
     }
 
@@ -146,5 +148,25 @@ class SecretsTest extends PhabTestCase
         ));
 
         $output = $commandTester->getDisplay();
+    }
+
+    /**
+     * @group docker
+     * @group 1password
+     */
+    public function testGetFileFrom1Password()
+    {
+
+        $command = $this->application->find('script');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command' => $command->getName(),
+            'script' => 'test',
+            '--config' => 'testGetFileFrom1Password',
+        ));
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Hello world', $output);
+        $this->assertStringContainsString('Please do not delete it', $output);
     }
 }

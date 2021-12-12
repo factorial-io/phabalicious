@@ -54,3 +54,14 @@ hosts:
         password: "%secret.mysql-password%"
         password_combined: "123--%secret.mysql-password%--321"
         multiple_secrets: "--%secret.mysql-password%--%secret.smtp-password%--"
+
+  testGetFileFrom1Password:
+    rootFolder: .
+    needs:
+      - local
+      - script
+    scripts:
+      test:
+        - get_file_from_1password(factorial, bkiebi7i6gkh4cjonj4uys24xe,md4eou4pevfnjc7xyvio3pj5ku, %host.rootFolder%/test1p.txt)
+        - cat %host.rootFolder%/test1p.txt
+        - rm %host.rootFolder%/test1p.txt

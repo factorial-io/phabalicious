@@ -388,7 +388,16 @@ class PasswordManager implements PasswordManagerInterface
             try {
                 $response = $this->get1PasswordConnectResponse($token_id, "/v1/vaults/$vault_id/items/$item_id/files");
                 $json = json_decode((string)$response->getBody());
+                if (!empty($json[0]->content_path)) {
+                    $response = $this->get1PasswordConnectResponse($token_id, $json[0]->content_path);
+                    $content = (string)$response->getBody();
+                }
             } catch (\Exception $e) {
+                $this
+                    ->getContext()
+                    ->getConfigurationService()
+                    ->getLogger()
+                    ->warning($e->getMessage());
             }
         }
         if (!$content) {
