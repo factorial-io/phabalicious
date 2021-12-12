@@ -72,6 +72,7 @@ class CopyFromCommand extends BaseCommand
                 'files'
             ];
         }
+        return [];
     }
 
     /**
@@ -103,11 +104,15 @@ class CopyFromCommand extends BaseCommand
         }
 
         $context->set('from', $from);
-        $context->set('what', array_map(function ($elem) {
+        $what = array_map(function ($elem) {
             return trim(strtolower($elem));
-        }, $input->getArgument('what')));
+        }, $input->getArgument('what'));
 
-        $next_tasks = Utilities::hasBoolOptionSet($input, 'skip-reset') ? [] : ['reset'];
+        $context->set('what', $what);
+        $next_tasks = !in_array('db', $what) || Utilities::hasBoolOptionSet($input, 'skip-reset')
+            ? []
+            : ['reset'];
+
         $context->set(DatabaseMethod::DROP_DATABASE, !Utilities::hasBoolOptionSet($input, 'skip-drop-db'));
         try {
             $this->getMethods()->runTask('copyFromPrepareSource', $from, $context);
