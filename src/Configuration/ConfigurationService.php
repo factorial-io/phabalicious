@@ -15,6 +15,7 @@ use Phabalicious\Exception\YamlParseException;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\ShellProviderFactory;
+use Phabalicious\Utilities\Logger;
 use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Utilities\PasswordManagerInterface;
 use Phabalicious\Utilities\Utilities;
@@ -962,7 +963,7 @@ class ConfigurationService
     public function getPasswordManager(): ?PasswordManagerInterface
     {
         if (!$this->passwordManager) {
-            $this->passwordManager = new PasswordManager();
+            $this->setPasswordManager(new PasswordManager());
         }
         return $this->passwordManager;
     }
@@ -975,6 +976,9 @@ class ConfigurationService
     public function setPasswordManager(PasswordManagerInterface $passwordManager): ConfigurationService
     {
         $this->passwordManager = $passwordManager;
+        if ($this->logger instanceof Logger) {
+            $this->logger->setPasswordManager($passwordManager);
+        }
         return $this;
     }
 

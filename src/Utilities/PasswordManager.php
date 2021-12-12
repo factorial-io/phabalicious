@@ -400,4 +400,13 @@ class PasswordManager implements PasswordManagerInterface
 
         return $content;
     }
+
+    public function obfuscateSecrets(string $message): string
+    {
+        $replacements = [];
+        foreach ($this->passwords as $password) {
+            $replacements[$password] = str_repeat('*', 10);
+        }
+        return strtr($message, $replacements);
+    }
 }

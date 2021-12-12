@@ -20,6 +20,11 @@ class Logger extends ConsoleLogger
     private $io;
     private $output;
 
+    /**
+     * @var \Phabalicious\Utilities\PasswordManagerInterface
+     */
+    protected $passwordManager;
+
     private $verbosityLevelMap = array(
         LogLevel::EMERGENCY => OutputInterface::VERBOSITY_NORMAL,
         LogLevel::ALERT => OutputInterface::VERBOSITY_NORMAL,
@@ -82,6 +87,9 @@ class Logger extends ConsoleLogger
         if ($this->output->getVerbosity() < $this->verbosityLevelMap[$level]) {
             return;
         }
+        if ($this->passwordManager) {
+            $message = $this->passwordManager->obfuscateSecrets($message);
+        }
         if ($level == LogLevel::WARNING) {
             $this->io->block($message, 'Warning', 'fg=black;bg=yellow', '   ', true);
         } elseif ($level == LogLevel::ERROR) {
@@ -89,5 +97,16 @@ class Logger extends ConsoleLogger
         } else {
             parent::log($level, $message, $context);
         }
+    }
+
+    /**
+     * @param mixed $passwordManager
+     *
+     * @return Logger
+     */
+    public function setPasswordManager(PasswordManagerInterface $passwordManager)
+    {
+        $this->passwordManager = $passwordManager;
+        return $this;
     }
 }
