@@ -1,5 +1,43 @@
 # Changelog
 
+## 3.8.0
+
+### Changed:
+
+* Minimum PHP requirement: 7.3
+
+### New:
+
+* Added script- and scaffold-callbacks for encryption and decryption using `defuse/php-encryption`
+
+  You can encrypt files in a script with
+
+  ```yaml
+  secrets:
+    name-of-secret:
+      question: What is the password
+
+  scripts:
+    encryt:
+      - encrypt_files(path/to/files/or/folders/to/encrypt/*.ext, path/to/folder/to/store/encrypted/files, name-of-secret)
+    decryt:
+      - decrypt_files(path/to/files/or/folders/to/decrypt/*.enc, path/to/folder/to/store/decrypted/files, name-of-secret)
+  ```
+
+  The scaffolder has a new callback called `decrypt_assets` which works the same as `copy_assets` but with a preliminary decryption step
+
+  ```yaml
+  scaffold:
+    - decrypt_assets(targetFolder, dataKey, secretName, twigExtension)
+  ```
+
+* Added new callbacks for getting a file from 1password-cli / -connect
+* Obfuscate passwords in log-outputs
+
+### Fixed
+
+* Do not run reset when only running copy-from files (Fixes Do not run reset after phab copy-from <xxx> files #181)
+
 ## 3.7.4 / 2021-12-08
 
 ### Fixes:
@@ -13,7 +51,6 @@
    * `db:drop` will drop all tables in the database
    * `db:shell` will run a database cli to work directly with the DB (similar to `drush sql-cli`)
    * `db:shell:command` will print out the command necessary to run a the db cli
-
 
 
 ## 3.7.3 / 2021-12-02

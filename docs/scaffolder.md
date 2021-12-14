@@ -47,6 +47,7 @@ scaffold:
 
 * `log_message` to print a message with a severity
 * `copy_assets` to copy assets and apply replacement patterns
+* `decrypt_assets` to decrypt and copy assets and apply replacement patterns
 * `alter_json_file` which will alter an existing json file and change some data
 * `alter_yaml_file` which will alter an existing yaml file and change some data
 * `assert_file` throws an exception if the file does not exist
@@ -54,6 +55,8 @@ scaffold:
 * `assert_non_zero` will stop the execution if the argument is zero
 * `assert_contains` will stop the execution if the argument does nt contain given string
 * `set_directory` sets the working directory  to the argument
+* `encrypt_files` encrypt a bunch of files with a password and store them in a different directory
+* `decrypt_files` decrypt a bunch of files with a password and store the encrypted content in a different directory
 
 ### List of commands which needs one or more plugin implementations
 
@@ -89,6 +92,16 @@ copy_assets(<targetFolder>, <assetsKey=assets>, <fileExtensionForTwigParsing>)
 ```
 
 Phabalicious will load the asset-file, apply the replacement-patterns to the file-name ([see](app-scaffold.md) the `deploymentAssetsfor` an example) and parse the content via twig. The result will be stored inside the `<targetFolder>`. If `<fileExtensionForTwigParsing>` is set, then only files with that extension will be handled by twig.
+
+### `decrypt_assets`
+
+`decrypt_assets` can be used in the scaffold-section to decrypt and copy assets into a specific location. The syntax is
+
+```
+decrypt_assets(<targetFolder>, <assetsKey=assets>, <secretName>, <fileExtensionForTwigParsing>)
+```
+
+Phabalicious will load the asset-file, decrypt it and apply the replacement-patterns to the file-name ([see](app-scaffold.md) the `deploymentAssetsfor` an example) and parse the content via twig. The result will be stored inside the `<targetFolder>`. If `<fileExtensionForTwigParsing>` is set, then only files with that extension will be handled by twig.
 
 ### `log_message(severity, message)`
 
@@ -241,6 +254,30 @@ scaffold:
 * `<targetPath>` the target directory where the resulting files should be saved to.
 
 
+## `encrypt_files`
+
+This internal command will encrypt a given set of files, encrypt their contents and write it to a target folder.
+
+```yaml
+scaffold:
+  - encrypt_files(path/to/files/or/folders/to/encrypt/*.ext, path/to/folder/to/store/encrypted/files, name-of-secret)
+```
+
+It gets the password from the secret and use it for encryption. The encrypted files are stored in the target folder with the new extension `.enc`.
+
+## `decrypt_files`
+
+This internal command will decrypt a given set of files, decrypt their contents and write it to a target folder.
+
+```yaml
+scaffold:
+  - decrypt_files(path/to/files/or/folders/to/decrypt/*.enc, path/to/folder/to/store/decrypted/files, name-of-secret)
+```
+
+It gets the password from the secret and use it for descryption. The decrypted files are stored in the target folder, the extension `.enc` will be removed if necessary.
+
+
+
 ## Twig extensions
 
 `copy_assets` will use twig to replace any configuration values inside the files with their values. You can use all functions and filters, available with twig.
@@ -249,3 +286,5 @@ Additionally these filters are available:
 
 * `md5` e.g. `{{ "hello world" | md5 }}` will result in `f0ef7081e1539ac00ef5b761b4fb01b3`
 * `slug` e.g. `{{ "a string with ümlauts" }}` will result in `a-string-with-umlauts`
+* `decrypt` e.g. `{{ "def50200e2013402c4c4440412f94d68044078577b07d67d32d59e5befb2870335de767120081a3be2dc03ddc9781b1e61a7b8ba39f25f7dad88c5be653526a17b6c2dc35ed53397da12d84c327b0f05fb7ac66600fa057b72c5084684aeea" | decrypt('my-secret-name') }} will result in a decrypted string.
+* `encrypt` e.g. `{{ "hello world" | encrypt('my-secret-name') }} will result in an encrypted string.
