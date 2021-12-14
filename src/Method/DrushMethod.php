@@ -668,8 +668,19 @@ class DrushMethod extends BaseMethod implements MethodInterface
             /** @var ShellProviderInterface $shell */
             $shell = $context->get('shell', $host_config->shell());
             $shell->pushWorkingDir($host_config['siteFolder']);
-            $result = $shell->run('drush --show-passwords --format=json ' . $sql_conf_cmd, true, false);
-            $json = json_decode(implode("\n", $result->getOutput()), true);
+            $result = $shell->run('#!drush --show-passwords --format=json ' . $sql_conf_cmd, true, false);
+            if ($result->failed()) {
+                $result->throwException('Could not get database credentials from drush');
+            }
+            $payload = implode("\n", $result->getOutput());
+            $json = json_decode($payload, true);
+            if (json_last_error()) {
+                throw new \RuntimeException(sprintf(
+                    "Could not parse drush's database credentials: `%s`:\n%s",
+                    json_last_error_msg(),
+                    $payload
+                ));
+            }
             $defaults = [
                 'mysql' => [
                     'host' => 'localhost',
