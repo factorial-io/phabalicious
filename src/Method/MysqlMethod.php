@@ -72,9 +72,15 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             $config['database']['host'] = 'localhost';
         }
         foreach ([
-            'mysqlAdmin' => [],
-            'mysqlDump' => [],
-            'mysql' => []
+            'mysqlAdmin' => [
+                '--no-defaults'
+            ],
+            'mysqlDump' => [
+                '--no-defaults'
+            ],
+            'mysql' => [
+                '--no-defaults'
+            ],
         ] as $key => $defaults) {
             $option_name = $key . 'Options';
             if (!isset($host_config[$option_name])) {
