@@ -80,7 +80,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             ],
             'mysql' => [
                 '--no-defaults'
-            ]
+            ],
         ] as $key => $defaults) {
             $option_name = $key . 'Options';
             if (!isset($host_config[$option_name])) {
@@ -212,12 +212,18 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $get_structure_cmd = $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true);
         $get_structure_cmd[] = "--add-drop-table";
         $get_structure_cmd[] = "--no-autocommit";
+        $get_structure_cmd[] = "--single-transaction";
+        $get_structure_cmd[] = "--opt";
+        $get_structure_cmd[] = "-Q";
         $get_structure_cmd[] = "--no-data";
         $get_structure_cmd[] = ">";
         $get_structure_cmd[] = $backup_file_name;
 
         $get_data_cmd = $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true);
         $get_data_cmd[] = "--no-autocommit";
+        $get_data_cmd[] = "--single-transaction";
+        $get_data_cmd[] = "--opt";
+        $get_data_cmd[] = "-Q";
         $get_data_cmd[] = "--no-create-info";
 
         foreach ($context->getConfigurationService()->getSetting('sqlSkipTables', []) as $table_name) {
