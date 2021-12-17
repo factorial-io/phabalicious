@@ -46,7 +46,7 @@ class CommandResult
      * @param string $message
      * @throws FailedShellCommandException
      */
-    public function throwException($message)
+    public function throwException(string $message)
     {
         throw new FailedShellCommandException(
             $message . "\n" . implode("\n", $this->getOutput())
