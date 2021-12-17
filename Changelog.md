@@ -1,13 +1,25 @@
 # Changelog
 
+## 3.7.5 / 2021-12-17
+
+### Fixes:
+
+  * Use `--no-defaults` for mysql commands
+  * Use same mysql dump options as drush
+  * Add error handling when drush tries to get the db credentials
+  * Fix problems with tilde in file path in mysql method
+  * Reset admin password after drupal is deployed completely (Fixes #211)
+
 ## 3.7.4 / 2021-12-08
 
 ### Fixes:
+
   * When getting a dump from a database mimic the behavior of drush, get the full
     structure but ignore data from certain tables (defined in `sqlSkipTables`)
   * When copying files do not interact with the database
 
 ### New:
+
  * New `db`-subcommands:
    * `db:install` will install a new database
    * `db:drop` will drop all tables in the database
