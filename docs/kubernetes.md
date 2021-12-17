@@ -61,6 +61,7 @@ hosts:
       deleteCommand: 'delete -k .'
       deployments:
         - '%host.kube.parameters.name%'
+      useRsync: false
 ```
 
 | Property | Description | Example |
@@ -80,6 +81,8 @@ hosts:
 | `kube.applyCommand` | What command to run to apply the definition files to the cluster | `apply -k .` |
 | `kube.deleteCommand` | What command to run to delete the app from the cluster | `delete -k .` |
 | `kube.deployments` | An array of deployment names to check if the deployment is finished | `- %host.kube.parameters.name%` |
+| `kube.useRsync` | If the target pod has rsync installed you can set this to true, then `rsync` will be used to transfer files between your host and the pod instead of `kubectl` | `- %host.kube.parameters.name%` |
+
 
 
 
