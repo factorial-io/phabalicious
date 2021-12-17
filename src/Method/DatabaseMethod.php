@@ -109,7 +109,10 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
      */
     public function getSQLDump(HostConfig $host_config, TaskContextInterface $context)
     {
-        $filename = $host_config['tmpFolder'] . '/' . $host_config->getConfigName() . '.' . date('YmdHms') . '.sql';
+        $filename = $host_config['tmpFolder'] . '/'
+            . $host_config->getConfigName() . '.'
+            . date('Y-m-d-H-m-s')
+            . '.sql';
         $shell = $this->getShell($host_config, $context);
         $filename = $this->exportSqlToFile($host_config, $context, $shell, $filename);
 
@@ -199,7 +202,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
         if (!in_array('db', $what)) {
             return;
         }
-      
+
         // Make sure, there is a db to copy from.
         $this->waitForDatabase($host_config, $context);
     }

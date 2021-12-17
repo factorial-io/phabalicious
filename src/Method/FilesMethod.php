@@ -241,7 +241,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
                 $filename = $host_config['tmpFolder'] .
                     '/' . $host_config->getConfigName() .
                     '.' . $key . '.'
-                    . date('YmdHms') . '.tgz';
+                    . date('Y-m-d-H-m-s') . '.tgz';
                 $filename = $this->tarFiles($context, $shell, [$host_config[$name]], $filename, $key);
 
                 if ($filename) {
