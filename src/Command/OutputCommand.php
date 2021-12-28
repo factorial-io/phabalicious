@@ -64,8 +64,12 @@ class OutputCommand extends BaseCommand
         $blueprint = $input->getOption('blueprint');
         $what = strtolower($input->getOption('what'));
 
-        if (!in_array($what, ['blueprint', 'host', 'docker', 'global'])) {
-            throw new \InvalidArgumentException('Unknown option for `what`');
+        $available_options = ['blueprint', 'host', 'docker', 'global'];
+        if (!in_array($what, $available_options)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Unknown option for `what`. Allwoed values are %s',
+                '`' . implode('`, `', $available_options)  . '`'
+            ));
         }
 
         $this->readConfiguration($input);
@@ -94,7 +98,15 @@ class OutputCommand extends BaseCommand
             ];
             $title = 'Output of host-configuration `' . $config . '`';
         } elseif ($what == 'docker') {
-            $data = $this->getConfiguration()->getDockerConfig($config)->raw();
+            try {
+                $data = $this->getConfiguration()
+                    ->getDockerConfig($config)
+                    ->raw();
+            } catch (\Exception $e) {
+                $host_config = $this->getConfiguration()->getHostConfig($config);
+                $config = $host_config['docker']['configuration'];
+                $data = $this->getConfiguration()->getDockerConfig($config)->raw();
+            }
             $data = [ $config => $data];
             $title = 'Output of docker-configuration `' . $config . '`';
         } elseif ($what == 'global') {
