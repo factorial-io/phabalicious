@@ -17,7 +17,7 @@ One central place to store all project relevant configuration as part of the pro
 
 The project-configuration is composable and tinkerable from multiple, even remote sources. Here's a schema describing the inheritance-mechanism from phabalicious:
 
-![A schema describing the inheritance rules o phabalicious](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/nq78j33wis4ru592j3nb.png)
+![A schema describing the inheritance rules o phabalicious](./introduction-01.jpg)
 
 It describes the whole inheritance schema available with phabalicious. You can inject global configuration available somewhere on a remote server, parts overridden from configuration-files from your local and merged with the actual project-configuration in your fabfile.yaml.
 
@@ -26,11 +26,11 @@ Methods know how to deal with certain aspects of your application, e.g. how to i
 
 Here's an example for a typical Drupal application:
 
-![A schema describing a typical Drupal installation](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/87wlohycww8i5rgsye5h.png)
+![A schema describing a typical Drupal installation](./introduction-02.jpg)
 
 On the other hand, a vuejs application might look like this:
 
-![A schema describing a vuejs application](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/mmecbvqecaiepkvgsmya.png)
+![A schema describing a vuejs application](./introduction-03.jpg)
 
 ### Shells
 Shells can interact with a multitude of environments: local or remote servers, even behind jump hosts, dockerized or kubernetized apps. As long as phabalicious can create a shell to your application it can interact with it.
@@ -63,3 +63,18 @@ phabalicious 3.7.5
 ```
 
 Congratulations! Phab is installed and working! (If not please have a look at the [system requirements](https://docs.phab.io/installation.html))
+
+## A simple vue-based example
+
+Let's start with a simple example using a vue hello-world project. First of all we need to create the vue project. Let's assume you are still in the `phab-demonstration` folder:
+
+```shell
+vue create hello-world
+cd hello-world
+```
+
+vue should have scaffolded a new project into the folder `hello-world`.
+
+Let's start with a simple host-config and a script:
+
+
