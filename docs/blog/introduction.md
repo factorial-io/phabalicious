@@ -77,4 +77,128 @@ vue should have scaffolded a new project into the folder `hello-world`.
 
 Let's start with a simple host-config and a script:
 
+```yaml
+name: Vue hello world example
 
+needs:
+  - git
+  - yarn
+
+host:
+  local:
+    rootFolder: .
+    yarnBuildCommand: build
+
+```
+Running `../phab list:hosts` should list the your config. One of the often used commands is `reset`, which will make sure, that your local app respects the latest changes from your code and configuration. Usually you run the `reset`-command after you switched to a new branch or pulled new code into you local installation.
+
+
+![Running the reset command](./introduction-04.svg)
+
+As we can see in the screen-recording phab will build the yarn application when executing the `reset`-command. It's because of our `needs`-declaration in the fabfile.yaml
+
+Let's add a new script for our custom needs:
+
+```yaml
+name: Vue hello world example
+
+needs:
+    - git
+    - yarn
+scripts:
+  serve:
+      - "#!yarn serve"
+host:
+    local:
+        rootFolder: .
+        yarnBuildCommand: build
+
+
+```
+Now lets try this out:
+
+![Running a script command](./introduction-05.svg)
+
+Let's add docker into the mix. Let's create a new configuration, which will build a dockerfile from our hello-world example and run it. Here's the adapted fabfile.yaml, notice the new host-configuration and a list of docker-tasks:
+
+```yaml
+name: Vue hello world example
+
+needs:
+  - git
+  - yarn
+
+scripts:
+  serve:
+    - "#!yarn serve"
+
+dockerHosts:
+  dockerized:
+    runLocally: true
+    rootFolder: .
+    # tasks contains a list of docker subtasks, basically small scripts which can consume configuration
+    # from the current host and be executed via phab docker <task>
+    tasks:
+      stop:
+        - docker stop %host.docker.name% || true > /dev/null
+      rm:
+        - execute(docker, stop)
+        - docker rm %host.docker.name% || true > /dev/null
+      build:
+        - docker build -t vue-hello-world .
+      run:
+        - execute(docker, build)
+        - execute(docker, rm)
+        - docker run -d -p 8080:8080 --name vue-hello-world vue-hello-world
+
+hosts:
+  local:
+    rootFolder: .
+    yarnBuildCommand: build
+
+  dockerized:
+    inheritsFrom: local
+    shellProvider: docker-exec
+    needs:
+      - git
+      - yarn
+      - docker
+    docker:
+      configuration: dockerized
+      name: vue-hello-world
+      projectFolder: .
+```
+
+This is our dockerfile:
+
+```
+FROM node:14
+ADD . /app
+WORKDIR /app
+RUN yarn install
+CMD yarn serve
+```
+
+So, let's try this out:
+
+![Running a docker command](./introduction-06.svg)
+
+Let's recap what is happening behinde the scene:
+1. `phab docker run` will execute the script snippet from the fabfile section `dockerHosts.dockerized`. The script itself execeutes another phab command, namely `docker build` which will trigger the compilation of the docker-image
+2. the second line `execute(docker, rm)` will execute the docker task `rm`, which will stop and remove any pending docker container.
+3. After that the docker container will be started.
+4. Now you should be able to get the output of the app from http://localhost:8080
+
+Now, let's get into the container and inspect the app:
+
+![Opening a shell into the container](./introduction-07.svg)
+
+ ### Summary
+
+This short intro showed you some of the key concepts of phabalicious:
+
+- Modular `methods` to adapt the configuration to the needs of your application (in our short example namely `yarn` and `docker`)
+- How scripts and the replacement-patterns work together to use host-specific configuration in scripts
+- How we can interact with our application with the `shell`-command
+
+Hopefully this gave you a rough idea what phabalicious is capable of. Jump into the documentation to find out more, there is also a more theoretical blog-post about the [architecture of phabalicious](/architecture.md). Or wait for the next episode where we try to add a fabfile to an existing drupal project.
