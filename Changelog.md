@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.6 / 2022-01-18
+
+### Fixes:
+
+  * Show warnings always
+
 ## 3.7.5 / 2021-12-17
 
 ### Fixes:
