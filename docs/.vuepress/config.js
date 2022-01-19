@@ -45,6 +45,7 @@ module.exports = {
         collapsable: false,
         sidebarDepth: 3,
         children: [
+            "/blog/introduction.html",
             "/blog/architecture.html",
             "/blog/whats-new-in-phab-3-7.html",
             "/blog/how-to-use-secrets.html"

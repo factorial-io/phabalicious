@@ -38,6 +38,12 @@
 
 * Do not run reset when only running copy-from files (Fixes Do not run reset after phab copy-from <xxx> files #181)
 
+## 3.7.6 / 2022-01-18
+
+### Fixes:
+
+  * Show warnings always
+
 ## 3.7.5 / 2021-12-17
 
 ### Fixes:

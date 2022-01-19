@@ -52,7 +52,7 @@ final class EnsureKnownHosts
                     $h
                 ), true);
                 if ($result->failed()) {
-                    $config->getLogger()->warning(sprintf('Could not add host %s to known_hosts', $host));
+                    $config->getLogger()->notice(sprintf('Could not add host %s to known_hosts', $host));
                 }
             }
         }
