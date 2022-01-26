@@ -48,4 +48,9 @@ class ValidationErrorBag implements ValidationErrorBagInterface
             $this->addWarning($key, $message);
         }
     }
+
+    public function hasWarnings(): bool
+    {
+        return !empty($this->warnings);
+    }
 }

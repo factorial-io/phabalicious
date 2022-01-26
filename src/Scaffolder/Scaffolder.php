@@ -160,6 +160,9 @@ class Scaffolder
         }
 
         $data = $this->configuration->resolveInheritance($data, [], $root_path);
+        $this->configuration->reportDeprecations($root_path);
+
+
         if (!empty($data['plugins']) && $options->getPluginRegistrationCallback()) {
             $options->getPluginRegistrationCallback()($data['plugins']);
         }

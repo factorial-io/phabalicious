@@ -68,6 +68,11 @@ class ConfigurationService
    */
     protected $strictRemoteHandling = false;
 
+    /**
+     * @var ValidationErrorBag
+     */
+    protected $deprecationMessages = null;
+
     public function __construct(Application $application, LoggerInterface $logger)
     {
         $this->application = $application;
@@ -185,6 +190,8 @@ class ConfigurationService
         $this->disallowDeepMergeForKeys = $disallow_deep_merge_for_keys;
 
         $this->settings = $this->resolveInheritance($data, $data);
+        $this->reportDeprecations($fabfile);
+
         $this->hosts = $this->getSetting('hosts', []);
         $this->dockerHosts = $this->getSetting('dockerHosts', []);
 
@@ -361,6 +368,9 @@ class ConfigurationService
         array $stack = [],
         string $inherit_key = "inheritsFrom"
     ): array {
+        if (empty($stack)) {
+            $this->deprecationMessages = new ValidationErrorBag();
+        }
         if (!isset($data[$inherit_key])) {
             return $data;
         }
@@ -416,17 +426,17 @@ class ConfigurationService
                 ));
             }
             if (!empty($add_data['deprecated'])) {
-                $this->logger->warning(sprintf(
-                    'Inherited data from `%s` is deprecated: %s',
+                $this->deprecationMessages->addWarning(
                     $resource,
-                    $add_data['deprecated']
-                ));
+                    sprintf('Inherited data from `%s` is deprecated: %s', $resource, $add_data['deprecated'])
+                );
                 unset($add_data['deprecated']);
             }
             if ($add_data) {
                 if (isset($add_data[$inherit_key])) {
                     $stack[] = $resource;
                     $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder, $stack);
+                    array_pop($stack);
                 }
 
                 // Clear inheritOnly from to be merged data, so it does not bleed into final data.
@@ -608,6 +618,8 @@ class ConfigurationService
     private function validateHostConfig($config_name, $data)
     {
         $data = $this->resolveInheritance($data, $this->hosts);
+        $this->reportDeprecations(sprintf('hosts.%s', $config_name));
+
         $type = isset($data['type']) ? $data['type'] : false;
         $type = HostType::convertLegacyTypes($type);
         if (!empty($type)) {
@@ -757,6 +769,8 @@ class ConfigurationService
 
         $data = $this->dockerHosts[$config_name];
         $data = $this->resolveInheritance($data, $this->dockerHosts);
+        $this->reportDeprecations(sprintf('dockerHosts.%s', $config_name));
+
         $data = $this->applyDefaults($data, [
             'tmpFolder' => '/tmp',
         ]);
@@ -1008,5 +1022,22 @@ class ConfigurationService
     public function setSetting(string $key, $value)
     {
         $this->settings[$key] = $value;
+    }
+
+
+    public function reportDeprecations(string $source): bool
+    {
+        if (!$this->deprecationMessages || !$this->deprecationMessages->hasWarnings()) {
+            return false;
+        }
+        $messages = [];
+        $messages[] = sprintf('`%s` contains inherited, but deprecated configuration!', $source);
+        $messages[] = "";
+        foreach ($this->deprecationMessages->getWarnings() as $msg) {
+            $messages[] = $msg;
+        }
+        $this->logger->warning(implode("\n", $messages));
+
+        return true;
     }
 }
