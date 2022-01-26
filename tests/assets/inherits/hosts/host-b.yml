@@ -1,3 +1,3 @@
 host: host-b
 user: user-b
-inheritsFrom: ./hosts/host-c.yml
+inheritsFrom: ./host-c.yml
