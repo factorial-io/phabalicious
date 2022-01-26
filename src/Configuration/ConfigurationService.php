@@ -347,6 +347,52 @@ class ConfigurationService
     }
 
     /**
+     * Resolve relative includes to absolute paths/urls.
+     *
+     * @param array $data
+     * @param  $base_url
+     * @param string $file
+     * @param string $inherit_key
+     *
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     */
+    public function resolveRelativeInheritanceRefs(
+        array &$data,
+        $base_url,
+        string $parent,
+        string $inherit_key = "inheritsFrom"
+    ) {
+        if (substr($base_url, -1) !== '/') {
+            $base_url .= '/';
+        }
+        if (substr($parent, -1) !== '/') {
+            $parent .= '/';
+        }
+        foreach ($data as $key => &$val) {
+            if (is_string($key) && $key == $inherit_key) {
+                if (!is_array($val)) {
+                    $val = [$val];
+                }
+                foreach ($val as &$item) {
+                    if ($item[0] === '@') {
+                        if (!$base_url) {
+                            throw new FabfileNotReadableException(
+                                "No base url provided, can't resolve relative references!"
+                            );
+                        }
+
+                        $item = Utilities::resolveRelativePaths($base_url . '.' . substr($item, 1));
+                    } elseif ($item[0] === '.') {
+                        $item = Utilities::resolveRelativePaths($parent . $item);
+                    }
+                }
+            } elseif (is_array($val)) {
+                $this->resolveRelativeInheritanceRefs($val, $base_url, $parent, $inherit_key);
+            }
+        }
+    }
+
+    /**
      * Resolve inheritance for given data.
      *
      * @param array $data
@@ -378,6 +424,9 @@ class ConfigurationService
             $root_folder = $this->getFabfilePath();
         }
 
+        $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getInheritanceBaseUrl();
+        $this->resolveRelativeInheritanceRefs($data, $baseUrl, $root_folder);
+
         $inheritsFrom = $data[$inherit_key];
         if (!is_array($inheritsFrom)) {
             $inheritsFrom = [ $inheritsFrom ];
@@ -386,14 +435,6 @@ class ConfigurationService
 
         foreach (array_reverse($inheritsFrom) as $resource) {
             if ($resource[0] == "@") {
-                $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getInheritanceBaseUrl();
-                if (!$baseUrl) {
-                    throw new FabfileNotReadableException(
-                        "No base url provided, can't resolve relative references!"
-                    );
-                }
-
-                $resource = $baseUrl . substr($resource, 1);
             }
 
             if (in_array($resource, $stack)) {
@@ -409,15 +450,21 @@ class ConfigurationService
             } elseif (strpos($resource, 'http') !== false) {
                 $add_data = Yaml::parse($this->readHttpResource($resource));
                 if ($add_data) {
+                    $this->resolveRelativeInheritanceRefs($add_data, $baseUrl, dirname($resource));
                     $this->checkRequires($add_data, $resource);
                 }
             } elseif (file_exists($resource)) {
                 $add_data = $this->readFile($resource);
                 if ($add_data) {
+                    $this->resolveRelativeInheritanceRefs($add_data, $baseUrl, dirname($resource));
                     $this->checkRequires($add_data, $resource);
                 }
             } elseif (file_exists($root_folder . '/' . $resource)) {
                 $add_data = $this->readFile($root_folder . '/' . $resource);
+                if ($add_data) {
+                    $this->resolveRelativeInheritanceRefs($add_data, $baseUrl, $root_folder);
+                    $this->checkRequires($add_data, $resource);
+                }
             } else {
                 throw new FabfileNotReadableException(sprintf(
                     "Could not resolve inheritance from `inheritsFrom: %s`! \n\nPossible values: %s",

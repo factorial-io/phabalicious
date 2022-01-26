@@ -585,4 +585,64 @@ class Utilities
             bin2hex(random_bytes(8)) . '--' .
             basename($str);
     }
+
+    public static function resolveRelativePaths(string $url): string
+    {
+        $result = parse_url($url);
+        $filename = $result['path'];
+        $path = [];
+        $parts = explode('/', $filename);
+        $root = '';
+        if (empty($result['host']) && !empty($parts[0]) && $parts[0][0] == '.') {
+            $root = $parts[0];
+            array_shift($parts);
+        }
+
+        foreach ($parts as $part) {
+            if ($part === '.' || $part === '') {
+                continue;
+            }
+
+            if ($part !== '..') {
+                array_push($path, $part);
+            } elseif (count($path) > 0) {
+                array_pop($path);
+            } else {
+                throw new \Exception('Climbing above the root is not permitted.');
+            }
+        }
+
+        array_unshift($path, $root);
+
+        $result['path'] = join('/', $path);
+
+        return self::buildUrl($result);
+    }
+
+    public static function buildUrl($components)
+    {
+        $url = '';
+        if (!empty($components['scheme'])) {
+            $url .= $components['scheme'] . '://';
+        }
+        if (!empty($components['username']) && !empty($components['password'])) {
+            $url .= $components['username'] . ':' . $components['password'] . '@';
+        }
+        if (!empty($components['scheme'])) {
+            $url .= $components['host'];
+        }
+        if (!empty($components['port'])) {
+            $url .= ':' . $components['port'];
+        }
+        if (!empty($components['path'])) {
+            $url .= $components['path'];
+        }
+        if (!empty($components['query'])) {
+            $url .= '?' . http_build_query($components['query']);
+        }
+        if (!empty($components['fragment'])) {
+            $url .= '#' . $components['fragment'];
+        }
+        return $url;
+    }
 }

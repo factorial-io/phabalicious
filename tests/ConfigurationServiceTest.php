@@ -215,4 +215,55 @@ class ConfigurationServiceTest extends PhabTestCase
 
         $config = $this->config->getHostConfig("test");
     }
+
+    public function testResolveInheritanceRefs()
+    {
+        $data = [
+            'inheritsFrom' => './one.yml',
+            'foo' => [
+                'inheritsFrom' => '../../two.yml',
+            ],
+            'bar' => [
+                'inheritsFrom' => '@/three.yml'
+            ],
+        ];
+
+        $this->config->resolveRelativeInheritanceRefs($data, 'https://example.com', 'https://two.example.com/foo/bar');
+
+        $this->assertEquals('https://two.example.com/foo/bar/one.yml', $data['inheritsFrom'][0]);
+        $this->assertEquals('https://two.example.com/two.yml', $data['foo']['inheritsFrom'][0]);
+        $this->assertEquals('https://example.com/three.yml', $data['bar']['inheritsFrom'][0]);
+
+        $data = [
+            'inheritsFrom' => './one.yml',
+            'foo' => [
+                'inheritsFrom' => '../../two.yml',
+            ],
+            'bar' => [
+                'inheritsFrom' => '@/three.yml'
+            ],
+        ];
+
+        $this->config->resolveRelativeInheritanceRefs($data, '/home/somewhere/else', '/home/foo/bar');
+
+        $this->assertEquals('/home/foo/bar/one.yml', $data['inheritsFrom'][0]);
+        $this->assertEquals('/home/two.yml', $data['foo']['inheritsFrom'][0]);
+        $this->assertEquals('/home/somewhere/else/three.yml', $data['bar']['inheritsFrom'][0]);
+
+        $data = [
+            'inheritsFrom' => './one.yml',
+            'foo' => [
+                'inheritsFrom' => '../../two.yml',
+            ],
+            'bar' => [
+                'inheritsFrom' => '@/three.yml'
+            ],
+        ];
+
+        $this->config->resolveRelativeInheritanceRefs($data, '..//somewhere/else', '../config/public');
+
+        $this->assertEquals('../config/public/one.yml', $data['inheritsFrom'][0]);
+        $this->assertEquals('../two.yml', $data['foo']['inheritsFrom'][0]);
+        $this->assertEquals('../somewhere/else/three.yml', $data['bar']['inheritsFrom'][0]);
+    }
 }
