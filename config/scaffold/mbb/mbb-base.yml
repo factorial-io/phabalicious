@@ -1,10 +1,11 @@
 questions:
   platform:
-    question: "What platform are you working on (mac|linux)"
+    question: "What platform are you working on (mac-intel|mac-arm|linux)"
     type: choices
-    default: mac
+    default: mac-intel
     choices:
-      - mac
+      - mac-intel
+      - mac-arm
       - linux
   branch:
     question: "What branch should I use to checkout?"

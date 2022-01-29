@@ -49,7 +49,9 @@ class WorkspaceUpdateCommand extends ScaffoldBaseCommand
 
         $name = basename($root_folder);
         $root_folder = dirname($root_folder);
-        $this->scaffold($url, $root_folder, $context, ['name' => $name], new Options());
+        $options = new Options();
+        $options->setUseCacheTokens(false);
+        $this->scaffold($url, $root_folder, $context, ['name' => $name], $options);
         return 0;
     }
 

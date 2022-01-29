@@ -58,7 +58,9 @@ class WorkspaceCreateCommand extends ScaffoldBaseCommand
         $url  = $this->scaffolder->getLocalScaffoldFile('mbb/mbb.yml');
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
 
-        $result = $this->scaffold($url, $root_folder, $context, [], new Options());
+        $options = new Options();
+        $options->setUseCacheTokens(false);
+        $result = $this->scaffold($url, $root_folder, $context, [], $options);
         return $result->getExitCode();
     }
 }

@@ -1,9 +1,10 @@
 {% set remote_host = platform == 'mac' ? 'docker.for.mac.localhost' : '172.17.0.1' %}
+{% set is_mac = platform == 'mac-intel' or platform == 'mac-arm' %}
 dockerHosts:
   mbb:
     runLocally: true
     rootFolder: {{ rootFolder }}/projects
-{% if platform == 'mac' %}
+{% if is_mac %}
     environment:
       COMPOSE_FILE: "docker-compose.yml:docker-compose-mbb.yml:../../docker-compose-nfs.yml"
 {% endif %}
@@ -11,13 +12,15 @@ dockerHosts:
 hosts:
   mbb:
     docker:
-      useNfs: {{ (platform == 'mac') ? "true" : "false" }}
+      useNfs: {{ (is_mac) ? "true" : "false" }}
+      useArm: {{ (platform == 'mac-arm') ? "true" : "false" }}
     xdebug:
       remote_host: {{ remote_host }}
     blueprint:
       xdebug:
         remote_host: {{ remote_host }}
       docker:
-        useNfs: {{ (platform == 'mac') ? "true" : "false" }}
+        useNfs: {{ (is_mac) ? "true" : "false" }}
+        useArm: {{ (platform == 'mac-arm') ? "true" : "false" }}
 
 
