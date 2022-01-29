@@ -43,6 +43,7 @@ class InstallFromCommand extends BaseCommand
                 'files'
             ];
         }
+        return [];
     }
 
     /**

@@ -2,13 +2,14 @@
 
 namespace Phabalicious\Configuration;
 
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\BaseMethod;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 
 abstract class HostConfigAbstract implements \ArrayAccess
 {
-    /** @var array */
+    /** @var \Phabalicious\Configuration\Storage\Node */
     protected $data;
 
     /** @var \Phabalicious\ShellProvider\ShellProviderInterface  */
@@ -25,7 +26,7 @@ abstract class HostConfigAbstract implements \ArrayAccess
     public function __construct($data, ShellProviderInterface $shell, ConfigurationService $parent)
     {
         $this->configurationService = $parent;
-        $this->data = $data;
+        $this->data = $data instanceof Node ? $data : new Node($data, 'unknown');
         $this->shell = $shell;
         $this->category = HostConfigurationCategory::getOrCreate(
             $data['info']['category'] ?? ["id" => "unknown", "label" => "Unknown category"]
@@ -44,9 +45,14 @@ abstract class HostConfigAbstract implements \ArrayAccess
         return $this->configurationService;
     }
 
-    public function raw(): array
+    public function getData() : Node
     {
         return $this->data;
+    }
+
+    public function asArray(): array
+    {
+        return $this->getData()->asArray();
     }
 
     /**
@@ -101,12 +107,12 @@ abstract class HostConfigAbstract implements \ArrayAccess
 
     public function setProperty(string $key, string $value)
     {
-        Utilities::setProperty($this->data, $key, $value);
+        $this->data->setProperty($key, $value);
     }
 
     public function getProperty(string $property, $default = null)
     {
-        return Utilities::getProperty($this->data, $property, $default);
+        return $this->data->getProperty($property, $default);
     }
 
     public function setData($data)

@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Exception;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Exception\ValidationFailedException;
@@ -40,9 +41,9 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     /**
      * @return string[][]
      */
-    public function getGlobalSettings(): array
+    public function getGlobalSettings(): Node
     {
-        return [
+        return new Node([
             'executables' => [
                 'mysql' => 'mysql',
                 'grep' => 'grep',
@@ -52,7 +53,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
                 'gzip' => 'gzip',
                 'cat' => 'cat',
             ],
-        ];
+        ], $this->getName() . ' global settings');
     }
 
     public function getKeysForDisallowingDeepMerge(): array
@@ -64,9 +65,11 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         ];
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $config = parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
+
+        $config = [];
 
         if (isset($host_config['database'])) {
             $config['database']['host'] = 'localhost';
@@ -88,7 +91,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             }
         }
 
-        return $config;
+        return $parent->merge(new Node($config, $this->getName() . ' defaults'));
     }
 
     /**

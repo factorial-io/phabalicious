@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Configuration;
 
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -19,17 +20,19 @@ class BlueprintTemplate
     /** @var ConfigurationService  */
     private $configuration;
 
+    protected $name;
+
     /**
      * BlueprintTemplate constructor.
      *
+     * @param $name
      * @param ConfigurationService $service
-     * @param array $data
-     * @param array $parent
-     *
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @param \Phabalicious\Configuration\Storage\Node $data
+     * @param \Phabalicious\Configuration\Storage\Node $parent
      */
-    public function __construct(ConfigurationService $service, array $data, array $parent)
+    public function __construct($name, ConfigurationService $service, Node $data, Node $parent)
     {
+        $this->name = $name;
         $this->configuration = $service;
         $this->template = $data;
         $this->parent = $parent;
@@ -43,8 +46,8 @@ class BlueprintTemplate
         $identifier_wo_prefix = basename($identifier);
 
         $replacements = Utilities::expandVariables([
-            'template' => $this->template,
-            'parent' => $this->parent
+            'template' => $this->template->getValue(),
+            'parent' => $this->parent->getValue()
         ]);
 
         $replacements['%identifier%'] = $identifier;
@@ -61,7 +64,10 @@ class BlueprintTemplate
         $replacements['%project-key%'] = Utilities::slugify($project_key);
         $replacements['%fabfilePath%'] = $this->configuration->getFabfilePath();
 
-        return Utilities::expandStrings($this->template, $replacements);
+        return new Node(
+            Utilities::expandStrings($this->template->getValue(), $replacements),
+            sprintf('blueprint %s expanded from %s', $this->name, $identifier)
+        );
     }
 
     public function getTemplate()

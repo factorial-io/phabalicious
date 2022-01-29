@@ -90,11 +90,11 @@ class OutputCommand extends BaseCommand
                 $data = $this->getConfiguration()->getHostConfig($config);
             }
             $data = [
-                $data['configName'] => $data->raw(),
+                $data['configName'] => $data->asArray(),
             ];
             $title = 'Output of host-configuration `' . $config . '`';
         } elseif ($what == 'docker') {
-            $data = $this->getConfiguration()->getDockerConfig($config)->raw();
+            $data = $this->getConfiguration()->getDockerConfig($config)->asArray();
             $data = [ $config => $data];
             $title = 'Output of docker-configuration `' . $config . '`';
         } elseif ($what == 'global') {

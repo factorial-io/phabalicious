@@ -3,6 +3,7 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\LaravelMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\MysqlMethod;
@@ -42,7 +43,7 @@ class LaravelMethodTest extends PhabTestCase
                 'reset' => ['mycustomresettask']
             ],
         ];
-        $result = $this->method->getDefaultConfig($this->configurationService, $host_config);
+        $result = $this->method->getDefaultConfig($this->configurationService, new Node($host_config, 'code'));
 
         $this->assertArrayHasKey('reset', $result['artisanTasks']);
         $this->assertArrayHasKey('install', $result['artisanTasks']);

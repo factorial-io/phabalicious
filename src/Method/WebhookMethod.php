@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Utilities\Utilities;
@@ -28,9 +29,10 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         return $method_name == $this->getName();
     }
 
-    public function getGlobalSettings(): array
+    public function getGlobalSettings(): Node
     {
-        $settings = parent::getGlobalSettings();
+        $parent = parent::getGlobalSettings();
+        $settings = [];
         $settings['webhooks'] = [
             'defaults' => [
                 'format' => RequestOptions::JSON,
@@ -43,11 +45,11 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             ]
         ];
 
-        return $settings;
+        return $parent->merge(new Node($settings, $this->getName() . ' global settings'));
     }
 
 
-    public function validateGlobalSettings(array $settings, ValidationErrorBagInterface $errors)
+    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors)
     {
         parent::validateGlobalSettings($settings, $errors);
         if (!is_array($settings['webhooks'])) {

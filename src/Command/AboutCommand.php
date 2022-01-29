@@ -42,10 +42,10 @@ class AboutCommand extends BaseCommand
         }
 
         $output->writeln('<options=bold>Configuration of ' . $this->getHostConfig()->getConfigName() . '</>');
-        $this->write($output, $this->getHostConfig()->raw());
+        $this->write($output, $this->getHostConfig()->asArray());
         if ($this->getDockerConfig()) {
             $output->writeln('<options=bold>Docker configuration:</>');
-            $this->write($output, $this->getDockerConfig()->raw(), 2);
+            $this->write($output, $this->getDockerConfig()->asArray(), 2);
         }
 
         $context = $this->getContext();

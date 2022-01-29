@@ -8,6 +8,7 @@ use Composer\Semver\Comparator;
 use InvalidArgumentException;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MismatchedVersionException;
@@ -97,10 +98,10 @@ class Scaffolder
             $root_path = dirname($url);
             try {
                 if (substr($url, 0, 4) !== 'http') {
-                    $data = Yaml::parseFile($url);
+                    $data = new Node(Yaml::parseFile($url), $url);
                 } else {
                     $data = $this->configuration->readHttpResource($url);
-                    $data = Yaml::parse($data);
+                    $data = new Node(Yaml::parse($data), $url);
                     $is_remote = true;
                 }
             } catch (ParseException $e) {
@@ -116,9 +117,10 @@ class Scaffolder
         $context->setIo($io);
 
         // Allow implementation to override parts of the data.
-        $data = Utilities::mergeData($context->get('dataOverrides', []), $data);
+        $overrides = new Node($context->get('dataOverrides', []), 'overrides');
+        $data = $overrides->merge($data);
 
-        if ($data && isset($data['requires'])) {
+        if ($data->has('requires')) {
             $required_version = $data['requires'];
             if (Comparator::greaterThan($required_version, $options->getCompabilityVersion())) {
                 throw new MismatchedVersionException(
@@ -145,7 +147,10 @@ class Scaffolder
             $this->configuration->setInheritanceBaseUrl($options->getBaseUrl());
         }
 
-        if (!empty($data['inheritsFrom'])) {
+
+        // TODO: Disabled for now as this is handled now in configuration service.
+
+        if (0 && !empty($data['inheritsFrom'])) {
             if (!is_array($data['inheritsFrom'])) {
                 $data['inheritsFrom'] = [$data['inheritsFrom']];
             }
@@ -159,7 +164,9 @@ class Scaffolder
             }
         }
 
-        $data = $this->configuration->resolveInheritance($data, [], $root_path);
+        $this->configuration->resolveRelativeInheritanceRefs($data, $options->getBaseUrl(), $root_path);
+
+        $data = $this->configuration->resolveInheritance($data, new Node([], 'scaffolder defaults'), $root_path);
         $this->configuration->reportDeprecations($root_path);
 
 
@@ -252,7 +259,7 @@ class Scaffolder
         $context->set('variables', $tokens);
         $context->set('options', $options);
 
-        $context->set('scaffoldData', $data);
+        $context->set('scaffoldData', $data->asArray());
         $context->set('tokens', $tokens);
         $context->set('rootPath', $root_path);
 

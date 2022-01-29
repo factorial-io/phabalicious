@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Utilities\Utilities;
@@ -23,9 +24,9 @@ class ResticMethod extends BaseMethod implements MethodInterface
         return $method_name == $this->getName();
     }
 
-    public function getGlobalSettings(): array
+    public function getGlobalSettings(): Node
     {
-        return [
+        return new Node([
             'executables' => [
                 'restic' => 'restic',
                 'curl' => 'curl',
@@ -40,21 +41,22 @@ class ResticMethod extends BaseMethod implements MethodInterface
                 'downloadUrl' =>
                     'https://github.com/restic/restic/releases/download/v0.12.0/restic_0.12.0_linux_amd64.bz2',
             ],
-        ];
+        ], $this->getName() . ' global settings');
     }
 
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $config = parent::getDefaultConfig($configuration_service, $host_config);
-        $config = Utilities::mergeData([
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
+        $config = [
             'fileBackupStrategy' => 'restic',
             'restic' => $configuration_service->getSetting('restic')
-            ], $config);
-        return $config;
+            ];
+
+        return $parent->merge(new Node($config, $this->getName() . ' defaults'));
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
 

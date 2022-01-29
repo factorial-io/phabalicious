@@ -3,6 +3,7 @@
 namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -17,16 +18,17 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
         return self::PROVIDER_NAME;
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $result = parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
+        $result = [];
         $result['dockerExecutable'] = 'docker';
         $result['shellExecutable'] = '/bin/bash';
 
-        return $result;
+        return $parent->merge(new Node($result, $this->getName() . ' defaults'));
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
 

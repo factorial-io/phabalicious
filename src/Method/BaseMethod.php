@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\TunnelHelper\TunnelHelperFactory;
 use Phabalicious\Utilities\AppDefaultStages;
@@ -39,12 +40,12 @@ abstract class BaseMethod implements MethodInterface
         return false;
     }
 
-    public function getMethodDependencies(MethodFactory $factory, array $data): array
+    public function getMethodDependencies(MethodFactory $factory, \ArrayAccess $data): array
     {
         return [];
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
     }
 
@@ -53,21 +54,21 @@ abstract class BaseMethod implements MethodInterface
         return [];
     }
 
-    public function getGlobalSettings(): array
+    public function getGlobalSettings(): Node
     {
-        return [];
+        return new Node([], $this->getName() . ' global settings');
     }
 
-    public function validateGlobalSettings(array $settings, ValidationErrorBagInterface $errors)
+    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors)
     {
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        return [];
+        return new Node([], $this->getName() . ' defaults');
     }
 
-    public function alterConfig(ConfigurationService $configuration_service, array &$data)
+    public function alterConfig(ConfigurationService $configuration_service, Node $data)
     {
         // Intentionally left blank.
     }

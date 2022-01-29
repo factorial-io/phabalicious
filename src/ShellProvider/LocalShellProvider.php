@@ -4,6 +4,7 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\SetAndRestoreObjProperty;
@@ -59,16 +60,17 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->shellEnvironmentVars = $vars;
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $result = parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
+        $result = [];
         $result['shellExecutable'] = $configuration_service->getSetting('shellExecutable', '/bin/bash');
         $result['shellProviderExecutable'] = $configuration_service->getSetting('shellProviderExecutable', '/bin/bash');
 
-        return $result;
+        return $parent->merge(new Node($result, $this->getName() . ' defaults'));
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
 
@@ -162,7 +164,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
             $variables = [
                 'settings' => $this->hostConfig->getConfigurationService()->getAllSettings(),
-                'host' => $this->hostConfig->raw(),
+                'host' => $this->hostConfig->asArray(),
             ];
             $replacements = Utilities::expandVariables($variables);
             $environment = Utilities::expandStrings($environment, $replacements);

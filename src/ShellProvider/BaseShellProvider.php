@@ -4,6 +4,7 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ScopedLogLevel\LogLevelStack;
 use Phabalicious\ScopedLogLevel\LoglevelStackInterface;
@@ -72,14 +73,14 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $this->errorLogLevel;
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        return [
+        return new Node([
             'rootFolder' => $configuration_service->getFabfilePath(),
-        ];
+        ], $this->getName() . ' defaults');
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         $validator = new ValidationService($config, $errors, 'host-config');
         $validator->hasKey('rootFolder', 'Missing rootFolder, should point to the root of your application');

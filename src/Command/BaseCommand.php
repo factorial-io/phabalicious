@@ -103,11 +103,11 @@ abstract class BaseCommand extends BaseOptionsCommand
         if ($optionName == 'set' && $context instanceof FishShellCompletionContext) {
             $dotted = [];
             if ($host_config = $context->getHostConfig()) {
-                Utilities::pushKeysAsDotNotation($host_config->raw(), $dotted, ['host']);
+                Utilities::pushKeysAsDotNotation($host_config->asArray(), $dotted, ['host']);
 
                 $docker_config_name = $host_config['docker']['configuration'] ?? false;
                 if ($docker_config_name && $docker_config = $context->getDockerConfig($docker_config_name)) {
-                    Utilities::pushKeysAsDotNotation($docker_config->raw(), $dotted, ['docker']);
+                    Utilities::pushKeysAsDotNotation($docker_config->asArray(), $dotted, ['docker']);
                 }
             }
             return $dotted;

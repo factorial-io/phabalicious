@@ -266,7 +266,7 @@ class MethodFactory
      * @return MethodInterface[]
      * @throws \Phabalicious\Exception\MethodNotFoundException
      */
-    public function getSubset(array $needs)
+    public function getSubset(Array $needs): array
     {
         return array_map(function ($elem) {
             return $this->getMethod($elem);

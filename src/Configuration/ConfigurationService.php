@@ -3,6 +3,7 @@
 namespace Phabalicious\Configuration;
 
 use Composer\Semver\Comparator;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
@@ -47,6 +48,7 @@ class ConfigurationService
 
     private $dockerHosts;
     private $hosts;
+    /** @var Node */
     private $settings;
 
     /** @var array */
@@ -75,6 +77,7 @@ class ConfigurationService
 
     public function __construct(Application $application, LoggerInterface $logger)
     {
+        $this->settings = new Node([], 'defaults');
         $this->application = $application;
         $this->logger = $logger;
     }
@@ -109,7 +112,7 @@ class ConfigurationService
      */
     public function readConfiguration(string $path, string $override = ''): bool
     {
-        if (!empty($this->settings)) {
+        if (!$this->settings->isEmpty()) {
             return true;
         }
 
@@ -117,7 +120,7 @@ class ConfigurationService
             'fabfile.yml',
             '.fabfile.yml',
             'fabfile.yaml',
-            '.fabfile.yaml'
+            '.fabfile.yaml',
         ], $path);
 
         if (!$fabfile || !file_exists($fabfile)) {
@@ -147,7 +150,7 @@ class ConfigurationService
         }
         if ($local_override_file) {
             $override_data = $this->readFile($local_override_file);
-            $data = $this->mergeData($data, $override_data);
+            $data = $data->merge($override_data);
         }
 
 
@@ -158,7 +161,7 @@ class ConfigurationService
 
         $disallow_deep_merge_for_keys = ['needs'];
 
-        $data = $this->applyDefaults($data, $defaults, $disallow_deep_merge_for_keys);
+        $data = $this->applyDefaults($data, new Node($defaults, 'global defaults'), $disallow_deep_merge_for_keys);
 
         /**
          * @var \Phabalicious\Method\MethodInterface $method
@@ -192,8 +195,8 @@ class ConfigurationService
         $this->settings = $this->resolveInheritance($data, $data);
         $this->reportDeprecations($fabfile);
 
-        $this->hosts = $this->getSetting('hosts', []);
-        $this->dockerHosts = $this->getSetting('dockerHosts', []);
+        $this->hosts = $this->settings->get('hosts', []);
+        $this->dockerHosts = $this->settings->get('dockerHosts', []);
 
         $this->blueprints = new BlueprintConfiguration($this);
         if (!empty($data['blueprints'])) {
@@ -227,14 +230,14 @@ class ConfigurationService
     /**
      * Check requires of data.
      *
-     * @param array $data
+     * @param Node $data
      * @param $file
      * @throws MismatchedVersionException
      */
-    protected function checkRequires(array $data, $file)
+    protected function checkRequires(Node $data, $file)
     {
 
-        if ($data && isset($data['requires'])) {
+        if ($data->has('requires')) {
             $required_version = $data['requires'];
             // Alpha or beta versions act like released versions for requires.
             $app_version = Utilities::getNextStableVersion($this->application->getVersion());
@@ -267,7 +270,7 @@ class ConfigurationService
 
         $this->logger->info(sprintf('Read data from `%s`', $file));
         try {
-            $data = Yaml::parseFile($file);
+            $data = Node::parseYamlFile($file);
         } catch (\Exception $e) {
             throw new YamlParseException("Could not parse file `$file`", 0, $e);
         }
@@ -276,7 +279,7 @@ class ConfigurationService
         $this->logger->debug(sprintf('Trying to read data from override `%s`', $override_file));
 
         if (file_exists($override_file)) {
-            $data = Utilities::mergeData($data, Yaml::parseFile($override_file));
+            $data->merge(Node::parseYamlFile($override_file));
         }
         $env_file = dirname($file) . '/.env';
         if (file_exists($env_file)) {
@@ -285,7 +288,8 @@ class ConfigurationService
             $contents = file_get_contents($env_file);
             $envvars = $dotenv->parse($contents);
             if (is_array($envvars)) {
-                $data['environment'] = Utilities::mergeData($envvars, $data['environment'] ?? []);
+                $environment = $data->getOrCreate('environment', []);
+                $environment->merge(new Node($envvars, $env_file));
             }
         }
 
@@ -312,10 +316,10 @@ class ConfigurationService
     }
 
     public function mergeData(
-        array $data,
-        array $override_data,
+        Node $data,
+        Node $override_data,
         $protected_properties_key = 'protectedProperties'
-    ): array {
+    ): Node {
         $properties_to_restore = [];
         if ($protected_properties = $data[$protected_properties_key] ?? false) {
             if (!is_array($protected_properties)) {
@@ -326,21 +330,21 @@ class ConfigurationService
             }
         }
 
-        $data = Utilities::mergeData($data, $override_data);
+        $data = Node::mergeData($data, $override_data);
 
         foreach ($properties_to_restore as $prop => $value) {
-            Utilities::setProperty($data, $prop, $value);
+            $data->setProperty($prop, $value);
         }
         return $data;
     }
 
-    private function applyDefaults(array $data, array $defaults, array $disallowed_keys = []): array
+    private function applyDefaults(Node $data, Node $defaults, array $disallowed_keys = []): Node
     {
         foreach ($defaults as $key => $value) {
             if (!isset($data[$key])) {
                 $data[$key] = $value;
-            } elseif (is_array($data[$key]) && !in_array($key, $disallowed_keys)) {
-                $data[$key] = $this->mergeData($defaults[$key], $data[$key]);
+            } elseif ($data->get($key)->isArray() && !in_array($key, $disallowed_keys)) {
+                $data[$key] = $this->mergeData($defaults->get($key), $data->get($key));
             }
         }
         return $data;
@@ -349,15 +353,15 @@ class ConfigurationService
     /**
      * Resolve relative includes to absolute paths/urls.
      *
-     * @param array $data
+     * @param \Phabalicious\Configuration\Storage\Node $data
      * @param  $base_url
-     * @param string $file
+     * @param string $parent
      * @param string $inherit_key
      *
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      */
     public function resolveRelativeInheritanceRefs(
-        array &$data,
+        Node $data,
         $base_url,
         string $parent,
         string $inherit_key = "inheritsFrom"
@@ -368,26 +372,25 @@ class ConfigurationService
         if (substr($parent, -1) !== '/') {
             $parent .= '/';
         }
-        foreach ($data as $key => &$val) {
-            if (is_string($key) && $key == $inherit_key) {
-                if (!is_array($val)) {
-                    $val = [$val];
-                }
-                foreach ($val as &$item) {
-                    if ($item[0] === '@') {
-                        if (!$base_url) {
-                            throw new FabfileNotReadableException(
-                                "No base url provided, can't resolve relative references!"
-                            );
-                        }
-
-                        $item = Utilities::resolveRelativePaths($base_url . '.' . substr($item, 1));
-                    } elseif ($item[0] === '.') {
-                        $item = Utilities::resolveRelativePaths($parent . $item);
+        /** @var Node $node */
+        foreach ($data->findNodes($inherit_key) as $node) {
+            if (!$node->isArray()) {
+                $node->wrapIntoArray();
+            }
+            foreach ($node as $child) {
+                $item = $child->getValue();
+                if ($item[0] === '@') {
+                    if (!$base_url) {
+                        throw new FabfileNotReadableException(
+                            "No base url provided, can't resolve relative references!"
+                        );
                     }
+
+                    $item = Utilities::resolveRelativePaths($base_url . '.' . substr($item, 1));
+                } elseif ($item[0] === '.') {
+                    $item = Utilities::resolveRelativePaths($parent . $item);
                 }
-            } elseif (is_array($val)) {
-                $this->resolveRelativeInheritanceRefs($val, $base_url, $parent, $inherit_key);
+                $child->setValue($item);
             }
         }
     }
@@ -408,18 +411,19 @@ class ConfigurationService
      * @throws \Phabalicious\Exception\MismatchedVersionException
      */
     public function resolveInheritance(
-        array $data,
-        array $lookup,
+        Node $data,
+        Node $lookup,
         ?string $root_folder = null,
         array $stack = [],
         string $inherit_key = "inheritsFrom"
-    ): array {
+    ): Node {
         if (empty($stack)) {
             $this->deprecationMessages = new ValidationErrorBag();
         }
-        if (!isset($data[$inherit_key])) {
+        if (!$data->has($inherit_key)) {
             return $data;
         }
+
         if (!$root_folder) {
             $root_folder = $this->getFabfilePath();
         }
@@ -427,16 +431,11 @@ class ConfigurationService
         $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getInheritanceBaseUrl();
         $this->resolveRelativeInheritanceRefs($data, $baseUrl, $root_folder);
 
-        $inheritsFrom = $data[$inherit_key];
-        if (!is_array($inheritsFrom)) {
-            $inheritsFrom = [ $inheritsFrom ];
-        }
+        $inheritsFrom = $data->get($inherit_key);
+
         unset($data[$inherit_key]);
 
-        foreach (array_reverse($inheritsFrom) as $resource) {
-            if ($resource[0] == "@") {
-            }
-
+        foreach ($inheritsFrom->iterateBackwardsOverValues() as $resource) {
             if (in_array($resource, $stack)) {
                 throw new \InvalidArgumentException(sprintf(
                     "Possible recursion in inheritsFrom detected! `%s `in [%s]",
@@ -445,11 +444,12 @@ class ConfigurationService
                 ));
             }
             $add_data = false;
-            if (isset($lookup[$resource])) {
-                $add_data = $lookup[$resource];
+            if ($lookup->has($resource)) {
+                $add_data = $lookup->get($resource);
             } elseif (strpos($resource, 'http') !== false) {
-                $add_data = Yaml::parse($this->readHttpResource($resource));
-                if ($add_data) {
+                $content = $this->readHttpResource($resource);
+                if ($content) {
+                    $add_data = new Node(Yaml::parse($content), $resource);
                     $this->resolveRelativeInheritanceRefs($add_data, $baseUrl, dirname($resource));
                     $this->checkRequires($add_data, $resource);
                 }
@@ -472,7 +472,7 @@ class ConfigurationService
                     '`' . implode('`, `', array_keys($lookup)) . '`'
                 ));
             }
-            if (!empty($add_data['deprecated'])) {
+            if ($add_data && $add_data->has('deprecated')) {
                 $this->deprecationMessages->addWarning(
                     $resource,
                     sprintf('Inherited data from `%s` is deprecated: %s', $resource, $add_data['deprecated'])
@@ -480,7 +480,7 @@ class ConfigurationService
                 unset($add_data['deprecated']);
             }
             if ($add_data) {
-                if (isset($add_data[$inherit_key])) {
+                if ($add_data->get($inherit_key)) {
                     $stack[] = $resource;
                     $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder, $stack);
                     array_pop($stack);
@@ -488,7 +488,7 @@ class ConfigurationService
 
                 // Clear inheritOnly from to be merged data, so it does not bleed into final data.
                 unset($add_data['inheritOnly']);
-                $data = $this->mergeData($add_data, $data);
+                $data = $add_data->merge($data);
             }
         }
 
@@ -497,7 +497,7 @@ class ConfigurationService
 
     public function getSetting(string $key, $default_value = null)
     {
-        return Utilities::getProperty($this->settings, $key, $default_value);
+        return $this->settings ? $this->settings->getProperty($key, $default_value) : $default_value;
     }
 
     public function readHttpResource(string $resource)
@@ -542,9 +542,9 @@ class ConfigurationService
                     'http' => [
                         'method' => 'GET',
                         'header' => [
-                            'User-Agent: phabalicious  (factorial-io/phabalicious)' . ' (PHP)'
-                        ]
-                    ]
+                            'User-Agent: phabalicious  (factorial-io/phabalicious)' . ' (PHP)',
+                        ],
+                    ],
                 ];
 
                 $context = stream_context_create($opts);
@@ -603,7 +603,7 @@ class ConfigurationService
             throw new MissingHostConfigException('Could not find host configuration for ' . $config_name);
         }
 
-        $data = $this->hosts[$config_name];
+        $data = $this->hosts->get($config_name);
 
         if (isset($data['inheritFromBlueprint'])) {
             $data = $this->inheritFromBlueprint($config_name, $data);
@@ -662,7 +662,7 @@ class ConfigurationService
    * @throws ValidationFailedException
    * @throws FabfileNotReadableException
    */
-    private function validateHostConfig($config_name, $data)
+    private function validateHostConfig($config_name, Node $data)
     {
         $data = $this->resolveInheritance($data, $this->hosts);
         $this->reportDeprecations(sprintf('hosts.%s', $config_name));
@@ -685,24 +685,24 @@ class ConfigurationService
             'rootFolder' => $this->getFabfilePath(),
         ];
 
-        if (empty($data['needs'])) {
-            $data['needs'] = $this->getSetting('needs', []);
+        if (!$data->has('needs')) {
+            $data->set('needs', Node::clone($this->settings->get('needs', [])));
         }
-        if (!is_array($data['needs'])) {
-            $data['needs'] = [ $data['needs'] ];
+        if (!$data->get('needs')->isArray()) {
+            $data->get('needs')->transformtoArray();
         }
 
         if (!$this->getSetting('disableScripts', false)) {
-            if (!in_array('script', $data['needs'])) {
-                $data['needs'][] = 'script';
+            if (!$data->get('needs')->has('script')) {
+                $data->get('needs')->push('script');
             }
         }
 
-        $data = $this->applyDefaults($data, $defaults, $this->disallowDeepMergeForKeys);
+        $data = $this->applyDefaults($data, new Node($defaults, 'host defaults'), $this->disallowDeepMergeForKeys);
         /**
          * @var \Phabalicious\Method\MethodInterface $method
          */
-        $used_methods = $this->methods->getSubset($data['needs']);
+        $used_methods = $this->methods->getSubset($data->get('needs')->asArray());
 
         // Give the referenced methods a chance to declare dependencies to
         // other methods.
@@ -814,13 +814,13 @@ class ConfigurationService
             throw new MissingDockerHostConfigException('Could not find docker host configuration for ' . $config_name);
         }
 
-        $data = $this->dockerHosts[$config_name];
+        $data = $this->dockerHosts->get($config_name);
         $data = $this->resolveInheritance($data, $this->dockerHosts);
         $this->reportDeprecations(sprintf('dockerHosts.%s', $config_name));
 
-        $data = $this->applyDefaults($data, [
+        $data = $this->applyDefaults($data, new Node([
             'tmpFolder' => '/tmp',
-        ]);
+        ], 'docker defaults'));
         if (!empty($data['inheritOnly'])) {
             return $data;
         }
@@ -833,7 +833,7 @@ class ConfigurationService
         if (!$shell_provider) {
             $errors->addError('shellProvider', 'Unhandled shell-provider: `' . $data['shellProvider'] . '`');
         } else {
-            $data = Utilities::mergeData($shell_provider->getDefaultConfig($this, $data), $data);
+            $data = Node::mergeData($shell_provider->getDefaultConfig($this, $data), $data);
             $shell_provider->validateConfig($data, $errors);
         }
         if ($errors->hasErrors()) {
@@ -847,7 +847,7 @@ class ConfigurationService
 
     public function getAllSettings($without = ['hosts', 'dockerHosts'])
     {
-        $copy = $this->settings;
+        $copy = $this->settings->asArray();
         foreach ($without as $key) {
             unset($copy[$key]);
         }
@@ -874,7 +874,7 @@ class ConfigurationService
         return $this->blueprints;
     }
 
-    private function validateDockerConfig(array $data, $config_name)
+    private function validateDockerConfig(Node $data, $config_name)
     {
         $data['configName'] = 'dockerHosts.' . $config_name;
 
@@ -952,7 +952,7 @@ class ConfigurationService
         );
         unset($data['inheritFromBlueprint']);
 
-        $data = $this->mergeData($add_data->raw(), $data);
+        $data = $this->mergeData($add_data->asArray(), $data);
         $data['configName'] = $config_name;
 
         return $data;
@@ -1068,7 +1068,10 @@ class ConfigurationService
 
     public function setSetting(string $key, $value)
     {
-        $this->settings[$key] = $value;
+        $this->settings->set(
+            $key,
+            $value instanceof Node ? $value : new Node($value, 'code')
+        );
     }
 
 

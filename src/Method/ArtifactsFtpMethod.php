@@ -6,6 +6,7 @@ use Phabalicious\Artifact\Actions\ActionFactory;
 use Phabalicious\Artifact\Actions\Ftp\ExcludeAction;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
@@ -40,9 +41,9 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         return in_array($method_name, array('ftp-sync', $this->getName()));
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $return = parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
         $return['tmpFolder'] = '/tmp';
         $return['executables'] = [
             'lftp' => 'lftp',
@@ -79,14 +80,14 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
             ],
         ];
 
-        return $return;
+        return $parent->merge(new Node($return, $this->getName() . ' defaults'));
     }
 
     /**
      * @param array $config
      * @param ValidationErrorBagInterface $errors
      */
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
 

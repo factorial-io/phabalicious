@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -40,14 +41,14 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         return "{$this->getConfigPrefix()}RunContext";
     }
 
-    public function getGlobalSettings(): array
+    public function getGlobalSettings(): Node
     {
         $executable = $this->getExecutableName();
-        return [
+        return new Node([
             'executables' => [
                 $executable => $executable,
             ],
-        ];
+        ], $this->getName() . ' global settings');
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
@@ -61,15 +62,15 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         return $host_config[$this->getRunContextKey()] === self::HOST_CONTEXT;
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        return [
+        return new Node([
             $this->getRootFolderKey() => $host_config['gitRootFolder'] ?? $host_config['rootFolder'],
             $this->getRunContextKey() => self::HOST_CONTEXT,
-        ];
+        ], $this->getName() . ' defaults');
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         $validation = new ValidationService($config, $errors, 'host-config');
         $args = $this->getRootFolderKey();

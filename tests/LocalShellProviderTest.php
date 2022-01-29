@@ -5,6 +5,7 @@ namespace Phabalicious\Tests;
 use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\PasswordManager;
@@ -48,34 +49,28 @@ class LocalShellProviderTest extends PhabTestCase
 
     public function testGetDefaultConfig()
     {
-        $this->assertArrayHasKey('rootFolder', $this->shellProvider->getDefaultConfig($this->config, []));
+        $config = $this->shellProvider->getDefaultConfig($this->config, new Node([], ''));
+        $this->assertArrayHasKey('rootFolder', $config);
     }
 
     public function testValidateConfig()
     {
         $errors = new ValidationErrorBag();
-        $this->shellProvider->validateConfig([], $errors);
+        $this->shellProvider->validateConfig(new Node([], ''), $errors);
         $this->assertEquals(
             ['rootFolder', 'rootFolder', 'shellExecutable'],
             $errors->getKeysWithErrors(),
-            '',
-            0.0,
-            10,
-            true
         );
     }
 
     public function testValidateConfigRootFolder()
     {
         $errors = new ValidationErrorBag();
-        $this->shellProvider->validateConfig(['rootFolder' => '/var/www/', 'shellExecutable' => '/bin/bash'], $errors);
+        $config = new Node(['rootFolder' => '/var/www/', 'shellExecutable' => '/bin/bash'], '');
+        $this->shellProvider->validateConfig($config, $errors);
         $this->assertEquals(
             ['rootFolder'],
             $errors->getKeysWithErrors(),
-            '',
-            0.0,
-            10,
-            true
         );
     }
 

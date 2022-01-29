@@ -8,6 +8,7 @@
 
 namespace Phabalicious\Tests;
 
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\ArgumentParsingException;
 use Phabalicious\Utilities\Utilities;
 use PHPUnit\Framework\TestCase;
@@ -61,6 +62,72 @@ class UtilitiesTest extends PhabTestCase
                 ['a' => [1, 2]],
                 ['a' => ['db' => 1]]
             )
+        );
+
+        $this->assertEquals(
+            [
+                'a' => false
+            ],
+            Utilities::mergeData(
+                ['a' => ['a' => 1, 'b' => 2]],
+                ['a' => false]
+            )
+        );
+
+        $this->assertEquals(
+            [
+                'a' => ['a' => 1, 'b' => 2],
+            ],
+            Utilities::mergeData(
+                ['a' => false],
+                ['a' => ['a' => 1, 'b' => 2]]
+            )
+        );
+    }
+    public function testNodeMergeData()
+    {
+        $a = new Node([
+            'a' => 1,
+            'b' => 2,
+            'y' => ['a' => '1', 'b' => '2'],
+            'z' => [1, 2, 3]
+        ], "a");
+
+        $b = new Node([
+            'b' => 3,
+            'c' => 4,
+            'y' => false,
+            'z' => [4, 5, 6]
+        ], 'b');
+
+        $this->assertEquals([
+            'a' => 1,
+            'b' => 3,
+            'c' => 4,
+            'y' => false,
+            'z' => [4, 5, 6]
+        ], Node::mergeData($a, $b)->asArray());
+
+        $this->assertEquals([
+            'a' => 1,
+            'b' => 2,
+            'c' => 4,
+            'y' => ['a' => '1', 'b' => '2'],
+            'z' => [1, 2, 3]
+        ], Node::mergeData($b, $a)->asArray());
+
+        $this->assertEquals(
+            [
+                'a' => [
+                    0 => 1,
+                    1 => 2,
+                    'db' => 1
+                ],
+            ],
+            Node::mergeData(
+                new Node(['a' => [1, 2]], 'a'),
+                new Node(['a' => ['db' => 1]], 'b'),
+            )->asArray()
         );
 
         $this->assertEquals(

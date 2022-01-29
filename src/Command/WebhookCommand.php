@@ -46,7 +46,7 @@ class WebhookCommand extends BaseCommand
             $scripts = $this->getConfiguration()->getSetting('webhooks', []);
             return array_keys($scripts);
         }
-        parent::completeArgumentValues($argumentName, $context);
+        return parent::completeArgumentValues($argumentName, $context);
     }
 
     /**

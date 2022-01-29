@@ -65,7 +65,6 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
         }
 
         foreach ($handler_options->get($data_key) as $file_name) {
-            $tmp_target_file = false;
             if ($handler_options->isRemote()) {
                 $url = $handler_options->get('base_path') . '/' . $file_name;
                 $tmpl = $this->configuration->readHttpResource($url);
