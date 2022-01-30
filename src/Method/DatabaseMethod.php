@@ -35,7 +35,7 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
 
         $config['supportsZippedBackups'] = true;
 
-        return $parent->merge(new Node($config, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
     }
 
     /**

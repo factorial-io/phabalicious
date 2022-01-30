@@ -778,7 +778,7 @@ class ConfigurationService
         if (isset($data['info'])) {
             $replacements = Utilities::expandVariables([
                 'globals' => Utilities::getGlobalReplacements($this),
-                'host' => $data,
+                'host' => $data->asArray(),
             ]);
             $data['info'] = Utilities::expandStrings($data['info'], $replacements);
         }

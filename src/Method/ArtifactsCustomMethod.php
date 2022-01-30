@@ -44,7 +44,7 @@ class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterfa
             'useLocalRepository' => false,
         ];
 
-        return $parent->merge(new Node($return, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
     }
 
     /**

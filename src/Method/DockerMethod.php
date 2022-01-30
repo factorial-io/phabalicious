@@ -69,7 +69,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         } else {
             $config['docker']['scaffold'] = false;
         }
-        return $parent->merge(new Node($config, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
@@ -112,7 +112,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
     public function alterConfig(ConfigurationService $configuration_service, Node $data)
     {
         if (!empty($data['docker']['service'])) {
-            unset($data['docker']['name']);
+            $data->get('docker')->unset('name');
         }
     }
 

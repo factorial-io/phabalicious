@@ -32,7 +32,7 @@ class SshMethod extends BaseMethod implements MethodInterface
     {
         return new Node([
             'shellProvider' => SshShellProvider::PROVIDER_NAME,
-        ], $this->getName() . ' defaults');
+        ], $this->getName() . ' method defaults');
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

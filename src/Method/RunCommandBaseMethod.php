@@ -67,7 +67,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         return new Node([
             $this->getRootFolderKey() => $host_config['gitRootFolder'] ?? $host_config['rootFolder'],
             $this->getRunContextKey() => self::HOST_CONTEXT,
-        ], $this->getName() . ' defaults');
+        ], $this->getName() . ' method defaults');
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

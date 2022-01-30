@@ -101,7 +101,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
 
         $return['deployMethod'] = 'git-sync';
 
-        return $parent->merge(new Node($return, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
     }
 
     /**

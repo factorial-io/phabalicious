@@ -29,7 +29,7 @@ abstract class BaseNotifyMethod extends BaseMethod implements MethodInterface, N
             $result['notifyOn'] = ['deploy'];
         }
 
-        return $parent->merge(new Node($result, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($result, $this->getName() . ' method defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

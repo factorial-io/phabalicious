@@ -47,7 +47,7 @@ class GitMethod extends BaseMethod implements MethodInterface
             'gitRootFolder' => $host_config['rootFolder'] ?? null,
             'ignoreSubmodules' => false,
             'gitOptions' => $configuration_service->getSetting('gitOptions', []),
-        ], $this->getName() . ' defaults');
+        ], $this->getName() . ' method defaults');
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

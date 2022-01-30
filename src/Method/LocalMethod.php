@@ -33,7 +33,7 @@ class LocalMethod extends BaseMethod implements MethodInterface
             $result['needs'] = ['local'];
         }
 
-        return new Node($result, $this->getName() . ' defaults');
+        return new Node($result, $this->getName() . ' method defaults');
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

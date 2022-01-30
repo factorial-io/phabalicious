@@ -39,7 +39,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
             'service_name=%host.kube.serviceName%',
         ];
 
-        return $parent->merge(new Node($result, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

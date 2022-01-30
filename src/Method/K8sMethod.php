@@ -109,7 +109,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
             ],
         ]);
 
-        return $parent->merge(new Node($default, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($default, $this->getName() . ' method defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

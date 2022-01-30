@@ -31,7 +31,7 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        return new Node([], $this->getName() . ' defaults');
+        return new Node([], $this->getName() . ' shellprovider defaults');
     }
 
 

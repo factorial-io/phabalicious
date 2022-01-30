@@ -65,7 +65,7 @@ abstract class BaseMethod implements MethodInterface
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        return new Node([], $this->getName() . ' defaults');
+        return new Node([], $this->getName() . ' method defaults');
     }
 
     public function alterConfig(ConfigurationService $configuration_service, Node $data)

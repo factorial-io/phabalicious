@@ -53,7 +53,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
             'restic' => $configuration_service->getSetting('restic')
             ];
 
-        return $parent->merge(new Node($config, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

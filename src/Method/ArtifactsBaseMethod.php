@@ -48,7 +48,7 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         $return = [];
         $return[self::PREFS_KEY]['useLocalRepository'] = false;
 
-        return $parent->merge(new Node($return, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

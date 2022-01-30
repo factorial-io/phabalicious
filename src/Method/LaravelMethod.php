@@ -50,7 +50,7 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
                 $host_config['artisanTasks'][$key] ?? $configuration_service->getSetting("artisanTasks.$key", []);
         }
 
-        return $parent->merge(new Node($config, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool

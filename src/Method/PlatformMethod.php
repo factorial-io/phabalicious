@@ -40,7 +40,7 @@ class PlatformMethod extends BaseMethod
         $config['executables']['platform'] = '~/.platformsh/bin/platform';
         $config['platformRemote'] = 'platform';
 
-        return $parent->merge(new Node($config, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool

@@ -77,7 +77,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         $result = [];
         $result['dockerExecutable'] = 'docker';
 
-        return $parent->merge(new Node($result, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

@@ -141,7 +141,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $config['forceConfigurationManagement'] = false;
         $config['drushErrorHandling'] = self::STRICT_ERROR_HANDLING;
 
-        return $parent->merge(new Node($config, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

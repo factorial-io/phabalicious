@@ -4,6 +4,7 @@ namespace Phabalicious\Command;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -37,19 +38,52 @@ class AboutCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $context = $this->createContext($input, $output);
+
         if ($result = parent::execute($input, $output)) {
             return $result;
         }
 
-        $output->writeln('<options=bold>Configuration of ' . $this->getHostConfig()->getConfigName() . '</>');
-        $this->write($output, $this->getHostConfig()->asArray());
+        $header = ['Key', 'Value'];
+        $verbose = $output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL;
+        if ($verbose) {
+            $header[] = 'Inherited from';
+        }
+
+        $context->io()->title('Configuration of ' . $this->getHostConfig()->getConfigName());
+        $rows = [];
+        $this->getRows($rows, $this->getHostConfig()->getData(), $verbose);
+        $context->io()->table($header, $rows);
+
+
         if ($this->getDockerConfig()) {
-            $output->writeln('<options=bold>Docker configuration:</>');
-            $this->write($output, $this->getDockerConfig()->asArray(), 2);
+            $context->io()->title('Docker-configuration of ' . $this->getHostConfig()->getConfigName());
+            $rows = [];
+            $this->getRows($rows, $this->getDockerConfig()->getData(), $verbose);
+            $context->io()->table($header, $rows);
         }
 
         $context = $this->getContext();
         $this->getMethods()->runTask('about', $this->getHostConfig(), $context);
+    }
+
+    private function getRows(&$rows, Node $node, $verbose, $stack = [])
+    {
+        foreach ($node as $key => $value) {
+            $stack[] = $key;
+            $row = [
+               str_pad(' ', 2 * count($stack)) . implode('.', $stack),
+               $value->isArray() ? '' : $value->getValue()
+            ];
+            if ($verbose) {
+                $row[] = $value->getSource()->getSource();
+            }
+            $rows[] = $row;
+            if ($value->isArray()) {
+                $this->getRows($rows, $value, $verbose, $stack);
+            }
+            array_pop($stack);
+        }
     }
 
     private function write(OutputInterface $output, array $data, int $level = 0)

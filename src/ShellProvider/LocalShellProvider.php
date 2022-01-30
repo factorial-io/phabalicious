@@ -67,7 +67,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $result['shellExecutable'] = $configuration_service->getSetting('shellExecutable', '/bin/bash');
         $result['shellProviderExecutable'] = $configuration_service->getSetting('shellProviderExecutable', '/bin/bash');
 
-        return $parent->merge(new Node($result, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

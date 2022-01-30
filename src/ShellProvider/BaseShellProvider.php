@@ -77,7 +77,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     {
         return new Node([
             'rootFolder' => $configuration_service->getFabfilePath(),
-        ], $this->getName() . ' defaults');
+        ], $this->getName() . ' shellprovider defaults');
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

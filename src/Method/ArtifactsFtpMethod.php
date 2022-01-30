@@ -80,7 +80,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
             ],
         ];
 
-        return $parent->merge(new Node($return, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
     }
 
     /**

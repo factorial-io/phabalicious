@@ -50,7 +50,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     {
         return new Node([
             'rootFolder' => $configuration_service->getFabfilePath(),
-        ], $this->getName() . ' defaults');
+        ], $this->getName() . ' method defaults');
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)

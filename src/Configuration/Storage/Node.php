@@ -253,4 +253,9 @@ class Node implements \IteratorAggregate, \ArrayAccess
     {
         return empty($this->value);
     }
+
+    public function unset(string $key)
+    {
+        unset($this->value[$key]);
+    }
 }

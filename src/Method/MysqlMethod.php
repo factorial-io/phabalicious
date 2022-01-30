@@ -91,7 +91,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             }
         }
 
-        return $parent->merge(new Node($config, $this->getName() . ' defaults'));
+        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
     }
 
     /**
