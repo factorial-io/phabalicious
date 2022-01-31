@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContext;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -53,14 +54,20 @@ class AboutCommand extends BaseCommand
         $context->io()->title('Configuration of ' . $this->getHostConfig()->getConfigName());
         $rows = [];
         $this->getRows($rows, $this->getHostConfig()->getData(), $verbose);
-        $context->io()->table($header, $rows);
+        $table = $this->getTable($output, $header, $verbose);
+
+        $this->getRows($rows, $this->getHostConfig()->getData(), $verbose);
+        $table->setRows($rows);
+        $table->render();
 
 
         if ($this->getDockerConfig()) {
             $context->io()->title('Docker-configuration of ' . $this->getHostConfig()->getConfigName());
             $rows = [];
             $this->getRows($rows, $this->getDockerConfig()->getData(), $verbose);
-            $context->io()->table($header, $rows);
+            $table = $this->getTable($output, $header, $verbose);
+            $table->setRows($rows);
+            $table->render();
         }
 
         $context = $this->getContext();
@@ -84,6 +91,27 @@ class AboutCommand extends BaseCommand
             }
             array_pop($stack);
         }
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param array $header
+     * @param bool $verbose
+     *
+     * @return \Symfony\Component\Console\Helper\Table
+     */
+    protected function getTable(OutputInterface $output, array $header, bool $verbose): Table
+    {
+        $table = new Table($output);
+        $table->setHeaders($header);
+
+        $col_width = 40 * ($verbose + 2);
+        $table->setColumnMaxWidth(0, $col_width);
+        $table->setColumnMaxWidth(1, $col_width);
+        if ($verbose) {
+            $table->setColumnMaxWidth(2, $col_width);
+        }
+        return $table;
     }
 
     private function write(OutputInterface $output, array $data, int $level = 0)
