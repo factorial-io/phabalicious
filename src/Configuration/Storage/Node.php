@@ -108,6 +108,28 @@ class Node implements \IteratorAggregate, \ArrayAccess
         return $this;
     }
 
+    public function baseOntop($base)
+    {
+        $left = $base;
+        $right = $this;
+
+        foreach ($left as $key => $value) {
+            // If the value is not present in right, add it:
+            if (!$right->has($key)) {
+                $right->set($key, $value);
+            } else {
+                // right has the value, check if an array
+                if ($right->get($key)->isArray()) {
+                    $right->get($key)->baseOntop($value);
+                } else {
+                    // Right has a value, which we keep.
+                }
+            }
+        }
+
+        return $this;
+    }
+
 
     public function getOrCreate(string $key, $default)
     {
@@ -160,16 +182,16 @@ class Node implements \IteratorAggregate, \ArrayAccess
         unset($this->value[$offset]);
     }
 
-    public function findNodes(string $needle): \Generator
+    public function findNodes(string $needle, $max_levels): \Generator
     {
-        if (!$this->isArray()) {
+        if (!$this->isArray() || $max_levels < 0) {
             return;
         }
         foreach ($this->value as $key => $node) {
             if ($key === $needle) {
                 yield $key => $node;
             } elseif ($node->isArray()) {
-                yield from $node->findNodes($needle);
+                yield from $node->findNodes($needle, $max_levels - 1);
             }
         }
     }
@@ -257,5 +279,21 @@ class Node implements \IteratorAggregate, \ArrayAccess
     public function unset(string $key)
     {
         unset($this->value[$key]);
+    }
+
+    public function expandReplacements(array &$replacements, array $ignore_keys)
+    {
+        if (!$this->isArray()) {
+            if (is_string($this->value)) {
+                $this->value = Utilities::expandString($this->value, $replacements);
+            }
+            return;
+        }
+        foreach ($this->value as $key => $value) {
+            if (in_array($key, $ignore_keys, true)) {
+                continue;
+            }
+            $value->expandReplacements($replacements, $ignore_keys);
+        }
     }
 }
