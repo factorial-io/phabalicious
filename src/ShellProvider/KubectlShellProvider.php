@@ -64,7 +64,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         return parent::createShellProcess($command, $options);
     }
 
-    public static function getKubectlCmd(array $config, $kubectl_cmd = '#!kubectl', $exclude = [])
+    public static function getKubectlCmd(Node $config, $kubectl_cmd = '#!kubectl', $exclude = [])
     {
         $cmd = [ $kubectl_cmd ];
         if (!empty($config['kubectlOptions'])) {
@@ -87,7 +87,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
     }
     protected function getKubeCmd()
     {
-        return self::getKubectlCmd($this->getHostConfig()->asArray(), 'kubectl');
+        return self::getKubectlCmd($this->getHostConfig()->getData(), 'kubectl');
     }
 
     public function getShellCommand(array $program_to_call, ShellOptions $options): array

@@ -157,6 +157,8 @@ class ConfigurationService
         $defaults = [
             'needs' => ['git', 'ssh', 'drush7', 'files'],
             'common' => [],
+            'hosts' => [],
+            'dockerHosts' => [],
         ];
 
         $disallow_deep_merge_for_keys = ['needs'];
@@ -366,14 +368,14 @@ class ConfigurationService
         string $parent,
         string $inherit_key = "inheritsFrom"
     ) {
-        if (substr($base_url, -1) !== '/') {
+        if ($base_url && substr($base_url, -1) !== '/') {
             $base_url .= '/';
         }
         if (substr($parent, -1) !== '/') {
             $parent .= '/';
         }
         /** @var Node $node */
-        foreach ($data->findNodes($inherit_key) as $node) {
+        foreach ($data->findNodes($inherit_key, 1) as $node) {
             if (!$node->isArray()) {
                 $node->wrapIntoArray();
             }
@@ -398,14 +400,14 @@ class ConfigurationService
     /**
      * Resolve inheritance for given data.
      *
-     * @param array $data
-     * @param array $lookup
+     * @param \Phabalicious\Configuration\Storage\Node $data
+     * @param \Phabalicious\Configuration\Storage\Node $lookup
      *
      * @param string|null $root_folder
      * @param array $stack
      * @param string $inherit_key
      *
-     * @return array
+     * @return \Phabalicious\Configuration\Storage\Node
      *
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
@@ -467,9 +469,9 @@ class ConfigurationService
                 }
             } else {
                 throw new FabfileNotReadableException(sprintf(
-                    "Could not resolve inheritance from `inheritsFrom: %s`! \n\nPossible values: %s",
+                    "Could not resolve inheritance from `inheritsFrom: %s`! \n\nPossible values:\n%s",
                     $resource,
-                    '`' . implode('`, `', array_keys($lookup)) . '`'
+                    '- ' . implode("\n- ", array_keys($lookup->asArray()))
                 ));
             }
             if ($add_data && $add_data->has('deprecated')) {
@@ -480,7 +482,7 @@ class ConfigurationService
                 unset($add_data['deprecated']);
             }
             if ($add_data) {
-                if ($add_data->get($inherit_key)) {
+                if ($add_data->has($inherit_key)) {
                     $stack[] = $resource;
                     $add_data = $this->resolveInheritance($add_data, $lookup, $root_folder, $stack);
                     array_pop($stack);
@@ -488,7 +490,7 @@ class ConfigurationService
 
                 // Clear inheritOnly from to be merged data, so it does not bleed into final data.
                 unset($add_data['inheritOnly']);
-                $data = $add_data->merge($data);
+                $data = $data->baseOnTop($add_data);
             }
         }
 
@@ -603,7 +605,7 @@ class ConfigurationService
             throw new MissingHostConfigException('Could not find host configuration for ' . $config_name);
         }
 
-        $data = $this->hosts->get($config_name);
+        $data = Node::clone($this->hosts->get($config_name));
 
         if (isset($data['inheritFromBlueprint'])) {
             $data = $this->inheritFromBlueprint($config_name, $data);
@@ -814,7 +816,7 @@ class ConfigurationService
             throw new MissingDockerHostConfigException('Could not find docker host configuration for ' . $config_name);
         }
 
-        $data = $this->dockerHosts->get($config_name);
+        $data = Node::clone($this->dockerHosts->get($config_name));
         $data = $this->resolveInheritance($data, $this->dockerHosts);
         $this->reportDeprecations(sprintf('dockerHosts.%s', $config_name));
 

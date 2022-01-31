@@ -149,10 +149,10 @@ class K8sMethod extends BaseMethod implements MethodInterface
         $replacements = Utilities::expandVariables([
             'globals' => Utilities::getGlobalReplacements($configuration_service),
             'settings' => $configuration_service->getAllSettings(),
-            'host' => $data,
+            'host' => $data->asArray(),
         ]);
 
-        $data = Utilities::expandStrings($data, $replacements, ['podSelector', 'deployments']);
+        $data->expandReplacements($replacements, ['podSelector', 'deployments']);
 
         $data['kubectlOptionsCombined'] = trim(implode(
             ' ',
@@ -169,7 +169,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
      */
     protected function expandCmd(HostConfig $config, $arg = '', $exclude = [])
     {
-        $cmd = implode(' ', KubectlShellProvider::getKubectlCmd($config->asArray(), '#!kubectl', $exclude));
+        $cmd = implode(' ', KubectlShellProvider::getKubectlCmd($config->getData(), '#!kubectl', $exclude));
         return $cmd . ' ' . $arg;
     }
 
