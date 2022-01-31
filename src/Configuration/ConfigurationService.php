@@ -1092,4 +1092,9 @@ class ConfigurationService
 
         return true;
     }
+
+    public function getData(): Node
+    {
+        return $this->settings;
+    }
 }

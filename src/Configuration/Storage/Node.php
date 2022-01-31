@@ -296,4 +296,16 @@ class Node implements \IteratorAggregate, \ArrayAccess
             $value->expandReplacements($replacements, $ignore_keys);
         }
     }
+
+    public function visit($stack = []): \Generator
+    {
+        yield new VisitorData($stack, $this);
+        if ($this->isArray()) {
+            foreach ($this->value as $key => $value) {
+                $stack[] = $key;
+                yield from $value->visit($stack);
+                array_pop($stack);
+            }
+        }
+    }
 }
