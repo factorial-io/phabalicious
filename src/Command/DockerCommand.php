@@ -72,6 +72,21 @@ class DockerCommand extends BaseCommand
         $docker_config = $this->getDockerConfig();
         $context->set('docker_config', $docker_config);
 
+        if (!$docker_config) {
+            $docker_config_name = $this->getHostConfig()->getData()->getProperty(('docker.configuration'), false);
+            $msg = $docker_config_name
+                ? sprintf(
+                    'Host-configuration `%s` has no docker configuration named `%s`!',
+                    $this->getHostConfig()->getConfigName(),
+                    $docker_config_name
+                )
+                : sprintf(
+                    'Host-configuration `%s` has no docker-configuration!',
+                    $this->getHostConfig()->getConfigName()
+                );
+            throw new \RuntimeException($msg);
+        }
+
 
         $tasks = $input->getArgument('docker');
         if (!is_array($tasks)) {
