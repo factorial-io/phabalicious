@@ -450,7 +450,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         // Install drupal, this can be skipped if install from configuration is
         // possible.
-        if (!$context->get(self::SKIP_CONFIGURATION_IMPORT, false) &&$context->getResult(self::CONFIGURATION_USED)) {
+        if (!$context->get(self::SKIP_CONFIGURATION_IMPORT, false) && $context->getResult(self::CONFIGURATION_USED)) {
             $this->logger->info('Found existing and used config, installing from it ...');
 
             $install_options[] = '--existing-config';
