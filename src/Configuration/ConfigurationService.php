@@ -379,7 +379,7 @@ class ConfigurationService
         /** @var Node $node */
         foreach ($data->findNodes($inherit_key, 1) as $node) {
             if (!$node->isArray()) {
-                $node->wrapIntoArray();
+                $node->ensureArray();
             }
             foreach ($node as $child) {
                 $item = $child->getValue();
@@ -699,9 +699,7 @@ class ConfigurationService
         if (!$data->has('needs')) {
             $data->set('needs', Node::clone($this->settings->get('needs', [])));
         }
-        if (!$data->get('needs')->isArray()) {
-            $data->get('needs')->transformToArray();
-        }
+        $data->get('needs')->ensureArray();
 
         if (!$this->getSetting('disableScripts', false)) {
             if (!$data->get('needs')->has('script')) {

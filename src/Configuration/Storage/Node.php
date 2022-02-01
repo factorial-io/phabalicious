@@ -278,17 +278,12 @@ class Node implements \IteratorAggregate, \ArrayAccess
         $node->setValue($new_value);
     }
 
-    public function wrapIntoArray()
-    {
-        $this->value = [ new Node($this->value, $this->source) ];
-    }
-
     public function push($value)
     {
         $this->value[] = $value instanceof Node ? $value : new Node($value, $this->source);
     }
 
-    public function transformToArray()
+    public function ensureArray()
     {
         if (!$this->isArray()) {
             $this->value = [ new Node($this->value, $this->source)];
