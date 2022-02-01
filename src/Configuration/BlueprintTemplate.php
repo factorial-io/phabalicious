@@ -76,12 +76,12 @@ class BlueprintTemplate
     }
 
     /**
-     * @param array $templates
+     * @param \Phabalicious\Configuration\Storage\Node $templates
      *
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      */
-    public function resolveInheritance(array $templates)
+    public function resolveInheritance(Node $templates)
     {
         if (isset($this->template['blueprintInheritsFrom'])) {
             $this->template = $this->configuration->resolveInheritance(

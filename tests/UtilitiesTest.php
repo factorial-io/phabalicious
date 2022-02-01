@@ -9,6 +9,7 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\Configuration\Storage\Store;
 use Phabalicious\Exception\ArgumentParsingException;
 use Phabalicious\Utilities\Utilities;
 use PHPUnit\Framework\TestCase;
@@ -149,6 +150,90 @@ class UtilitiesTest extends PhabTestCase
                 ['a' => ['a' => 1, 'b' => 2]]
             )
         );
+    }
+
+    public function testProtectedProperties()
+    {
+        $a = new Node([
+            "protected" => [
+                "foo.bar",
+                "foo.foobar",
+                "bar.two"
+            ],
+            "foo" => [
+                "bar" => "I am protected",
+                "baz" => "I will be overridden",
+                "foobar" => "I am also protected",
+            ],
+            "bar" => [
+                "one" => 1,
+                "two" => 2,
+            ]
+        ], 'a');
+
+
+        $b = new Node([
+            "foo" => [
+                "bar" => "Does not matter",
+                "baz" => "I am overridden",
+                "foobar" => "Does not matter either",
+            ],
+            "bar" => [
+                "one" => 11,
+                "two" => 22,
+            ]
+        ], "b");
+
+        $result = Node::mergeData($a, $b);
+
+        $this->assertEquals('Does not matter', $result->getProperty('foo.bar'));
+        $this->assertEquals('I am overridden', $result->getProperty('foo.baz'));
+        $this->assertEquals('Does not matter either', $result->getProperty('foo.foobar'));
+        $this->assertEquals(11, $result->getProperty('bar.one'));
+        $this->assertEquals(22, $result->getProperty('bar.two'));
+
+        Store::setProtectedProperties($a, 'protected');
+
+        $result = Node::mergeData($a, $b);
+
+        $this->assertEquals('I am protected', $result->getProperty('foo.bar'));
+        $this->assertEquals('I am overridden', $result->getProperty('foo.baz'));
+        $this->assertEquals('I am also protected', $result->getProperty('foo.foobar'));
+        $this->assertEquals(11, $result->getProperty('bar.one'));
+        $this->assertEquals(2, $result->getProperty('bar.two'));
+
+        Store::resetProtectedProperties();
+    }
+
+    public function testNodeBaseOntop()
+    {
+        $a = new Node([
+            'a' => [0, 1],
+            'b' => [
+                'a' => 'foo',
+                'b' => 'bar',
+                'c' => 'foobar',
+            ],
+            'c' => [0, 1],
+        ], 'config');
+
+        $b = new Node([
+            'a' => 0,
+            'b' => [
+                'd' => 'foobarbaz'
+            ],
+            'c' => ['a' => 'bla', 'b' => 'blubb'],
+
+        ], 'base');
+
+        $c = $a->baseonTop($b);
+
+        $this->assertEquals([0,1], $c['a']); // non associative arrays may not be merged.
+        $this->assertEquals('foo', $c['b']['a']);
+        $this->assertEquals('bar', $c['b']['b']);
+        $this->assertEquals('foobar', $c['b']['c']);
+        $this->assertEquals('foobarbaz', $c['b']['d']);
+        $this->assertEquals('1', $c['c']['1']);
     }
 
     public function testExpandCommands()

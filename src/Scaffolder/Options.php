@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Scaffolder;
 
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 
@@ -246,7 +247,7 @@ class Options extends CallbackOptions
     /**
      * @return null|array
      */
-    public function getScaffoldDefinition(): ?array
+    public function getScaffoldDefinition(): ?Node
     {
         return $this->definition;
     }
@@ -256,7 +257,7 @@ class Options extends CallbackOptions
      *
      * @return Options
      */
-    public function setScaffoldDefinition(array $definition): Options
+    public function setScaffoldDefinition(Node $definition): Options
     {
         $this->definition = $definition;
         return $this;

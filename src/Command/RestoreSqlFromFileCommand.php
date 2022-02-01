@@ -78,10 +78,12 @@ class RestoreSqlFromFileCommand extends BaseCommand
             date('YmdHis') . '.' .
             basename($file);
 
+        $context->io()->comment(sprintf('Copying dump to `%s` ...', $dest));
         $shell->putFile($file, $dest, $context);
         $context->set('source', $dest);
         $context->set(DatabaseMethod::DROP_DATABASE, !Utilities::hasBoolOptionSet($input, 'skip-drop-db'));
 
+        $context->io()->comment(sprintf('Restoring from `%s` ...', $dest));
         $this->getMethods()->runTask('restoreSqlFromFile', $host_config, $context);
 
         $shell->run(sprintf('rm %s', $dest));

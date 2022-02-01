@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Configuration;
 
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -51,7 +52,7 @@ class BlueprintConfiguration
                     );
             }
         }
-        $inheritance_data = [];
+        $inheritance_data = new Node([], '');
         foreach ($this->templates as $ndx => $template) {
             $inheritance_data[$ndx] = $template->getTemplate();
         }

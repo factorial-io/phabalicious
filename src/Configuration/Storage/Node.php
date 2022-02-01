@@ -58,7 +58,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
      *
      * @return Node
      */
-    public function setValue($value)
+    public function setValue($value): Node
     {
         $this->value = $value;
         return $this;
@@ -69,23 +69,33 @@ class Node implements \IteratorAggregate, \ArrayAccess
      *
      * @return Node
      */
-    public function setSource($source)
+    public function setSource($source): Node
     {
         $this->source = $source;
         return $this;
     }
 
-    public function isArray()
+    public function isArray(): bool
     {
         return is_array($this->value);
     }
 
-    private function isAssocArray()
+    private function isAssocArray(): bool
     {
         return Utilities::isAssocArray($this->value);
     }
 
-    public function merge(Node $overrides)
+    public function merge(Node $overrides): Node
+    {
+        $saved = Store::saveProtectedProperties($this);
+        $result = $this->mergeImpl($overrides);
+        if (!empty($saved)) {
+            Store::restoreProtectedProperties($result, $saved);
+        }
+        return $result;
+    }
+
+    protected function mergeImpl(Node $overrides): Node
     {
         if (!$this->isArray() || !$overrides->isArray()) {
             $this->value = $overrides->value;
@@ -95,12 +105,12 @@ class Node implements \IteratorAggregate, \ArrayAccess
             foreach ($overrides as $key => $override) {
                 if ($override->isAssocArray() && $this->isAssocArray()) {
                     if ($this->has($key)) {
-                        $this->value[$key]->merge($override);
+                        $this->get($key)->mergeImpl($override);
                     } else {
-                        $this->value[$key] = $override;
+                        $this->set($key, $override);
                     }
                 } else {
-                    $this->value[$key] = $override;
+                    $this->set($key, $override);
                 }
             }
         }
@@ -108,7 +118,17 @@ class Node implements \IteratorAggregate, \ArrayAccess
         return $this;
     }
 
-    public function baseOntop($base)
+    public function baseonTop(Node $overrides): Node
+    {
+        $saved = Store::saveProtectedProperties($this);
+        $result = $this->baseOntopImpl($overrides);
+        if (!empty($saved)) {
+            Store::restoreProtectedProperties($result, $saved);
+        }
+        return $result;
+    }
+
+    protected function baseOntopImpl($base): Node
     {
         $left = $base;
         $right = $this;
@@ -118,12 +138,11 @@ class Node implements \IteratorAggregate, \ArrayAccess
             if (!$right->has($key)) {
                 $right->set($key, $value);
             } else {
-                // right has the value, check if an array
-                if ($right->get($key)->isArray()) {
-                    $right->get($key)->baseOntop($value);
-                } else {
-                    // Right has a value, which we keep.
+                // Right has the value, check if an associative array
+                if ($right->get($key)->isAssocArray()) {
+                    $right->get($key)->baseOntopImpl($value);
                 }
+                // Otherwise skip it, as we do not merge plain arrays.
             }
         }
 
@@ -131,40 +150,44 @@ class Node implements \IteratorAggregate, \ArrayAccess
     }
 
 
-    public function getOrCreate(string $key, $default)
+    public function getOrCreate(string $key, $default): Node
     {
-        if (!isset($this->value[$key])) {
-            $this->value[$key] = new Node($default, $this->getSource());
+        if (!$this->has($key)) {
+            $this->set($key, new Node($default, $this->getSource()));
         }
-        return $this->value[$key];
+        return $this->get($key);
     }
 
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->value);
     }
 
-    public function has($key)
+    public function has($key): bool
     {
         return isset($this->value[$key]);
     }
 
-    public function get($key, $default = null)
+    public function get($key, $default = null): ?Node
     {
-        return $this->value[$key] ?? new Node($default, $this->source);
+        if (isset($this->value[$key])) {
+            return $this->value[$key];
+        }
+
+        return is_null($default) ? null : new Node($default, $this->source);
     }
 
-    public function set(string $key, Node $value)
+    public function set(string $key, Node $value): void
     {
         $this->value[$key] = $value;
     }
 
     public function offsetGet($offset)
     {
-        return $this->value[$offset]->getValue();
+        return $this->get($offset)->getValue();
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->has($offset);
     }
@@ -174,7 +197,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
         if (!$value instanceof Node) {
             $value = new Node($value, $this->getSource());
         }
-        $this->value[$offset] = $value;
+        $this->set($offset, $value);
     }
 
     public function offsetUnset($offset)
@@ -227,30 +250,31 @@ class Node implements \IteratorAggregate, \ArrayAccess
         return clone ($node);
     }
 
-    public function getProperty(string $dotted_key, $default_value = null)
+    public function find(string $dotted_key): ?Node
     {
         $keys = explode('.', $dotted_key);
         $node = $this;
         foreach ($keys as $key) {
             if (!$node->has($key)) {
-                return $default_value;
+                return null;
             }
             $node = $node->get($key);
         }
-        return $node->getValue();
+        return $node;
+    }
+
+    public function getProperty(string $dotted_key, $default_value = null)
+    {
+        $node = $this->find($dotted_key);
+        return  $node ? $node->getValue() ?? $default_value : $default_value;
     }
 
     public function setProperty(string $dotted_key, $new_value)
     {
-        $keys = explode('.', $dotted_key);
-        $node = $this;
-        foreach ($keys as $key) {
-            if (!$node->has($key)) {
-                throw new \InvalidArgumentException(sprintf("Could not find key %s in data!", $dotted_key));
-            }
-            $node = $node->get($key);
+        $node = $this->find($dotted_key);
+        if (!$node) {
+            throw new \InvalidArgumentException(sprintf("Could not find key %s in data!", $dotted_key));
         }
-
         $node->setValue($new_value);
     }
 
@@ -264,19 +288,19 @@ class Node implements \IteratorAggregate, \ArrayAccess
         $this->value[] = $value instanceof Node ? $value : new Node($value, $this->source);
     }
 
-    public function transformtoArray()
+    public function transformToArray()
     {
         if (!$this->isArray()) {
             $this->value = [ new Node($this->value, $this->source)];
         }
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->value);
     }
 
-    public function unset(string $key)
+    public function unset(string $key): void
     {
         unset($this->value[$key]);
     }

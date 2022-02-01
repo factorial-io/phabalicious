@@ -102,7 +102,8 @@ abstract class HostConfigAbstract implements \ArrayAccess
 
     public function setChild(string $parent, string $child, $value)
     {
-        $this->data[$parent][$child] = $value;
+        $node = $this->data->get($parent);
+        $node->set($child, new Node($value, $node->getSource()));
     }
 
     public function setProperty(string $key, string $value)

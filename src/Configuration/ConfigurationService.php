@@ -4,6 +4,7 @@ namespace Phabalicious\Configuration;
 
 use Composer\Semver\Comparator;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\Configuration\Storage\Store;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
@@ -140,6 +141,7 @@ class ConfigurationService
         $this->fabfileLocation = realpath($fabfile);
 
         $data = $this->resolveInheritance($data, $data);
+        Store::setProtectedProperties($data, 'protectedProperties');
 
         $local_override_file = $this->findFabfilePath(['fabfile.local.yaml', 'fabfile.local.yml']);
         if (!$local_override_file) {
@@ -346,7 +348,7 @@ class ConfigurationService
             if (!isset($data[$key])) {
                 $data[$key] = $value;
             } elseif ($data->get($key)->isArray() && !in_array($key, $disallowed_keys)) {
-                $data[$key] = $this->mergeData($defaults->get($key), $data->get($key));
+                $data[$key] = $data->get($key)->baseOntop($defaults->get($key));
             }
         }
         return $data;
@@ -691,7 +693,7 @@ class ConfigurationService
             $data->set('needs', Node::clone($this->settings->get('needs', [])));
         }
         if (!$data->get('needs')->isArray()) {
-            $data->get('needs')->transformtoArray();
+            $data->get('needs')->transformToArray();
         }
 
         if (!$this->getSetting('disableScripts', false)) {
@@ -764,7 +766,7 @@ class ConfigurationService
 
         // Validate data against shell-provider.
 
-        $data = $this->mergeData($shell_provider->getDefaultConfig($this, $data), $data);
+        $data = $data->baseOntop($shell_provider->getDefaultConfig($this, $data));
         $shell_provider->validateConfig($data, $validation_errors);
 
         if ($validation_errors->hasErrors()) {
@@ -937,7 +939,7 @@ class ConfigurationService
      * @throws ShellProviderNotFoundException
      * @throws ValidationFailedException
      */
-    protected function inheritFromBlueprint(string $config_name, $data): array
+    protected function inheritFromBlueprint(string $config_name, Node $data): array
     {
         $errors = new ValidationErrorBag();
         $validation = new ValidationService($data['inheritFromBlueprint'], $errors, 'inheritFromBlueprint');
@@ -954,7 +956,7 @@ class ConfigurationService
         );
         unset($data['inheritFromBlueprint']);
 
-        $data = $this->mergeData($add_data->asArray(), $data);
+        $data = $data->baseOntop($add_data);
         $data['configName'] = $config_name;
 
         return $data;

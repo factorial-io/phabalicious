@@ -750,7 +750,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
         $scaffolder_did_run[$host_config->getConfigName()] = true;
 
-        $scaffold_definition = $host_config['docker']['scaffold'];
+        $scaffold_definition = $host_config->getData()->get('docker')->get('scaffold');
         if (!$scaffold_definition) {
             throw new \RuntimeException(sprintf(
                 'Configuration `%s` does not support scaffolded docker configuration',
