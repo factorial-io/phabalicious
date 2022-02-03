@@ -383,16 +383,23 @@ class ConfigurationService
             }
             foreach ($node as $child) {
                 $item = $child->getValue();
-                if ($item[0] === '@') {
+
+                // Skip urls and absolute paths:
+                if ($item[0] === '/' || ((substr($item, 0, 4) == 'http') && strpos($item, '://') !== false)) {
+                    continue;
+                }
+                $file_ext = pathinfo($item, PATHINFO_EXTENSION);
+                if ($item[0] === '.') {
+                    $item = Utilities::resolveRelativePaths($parent . $item);
+                } elseif ($item[0] === '@') {
                     if (!$base_url) {
                         throw new FabfileNotReadableException(
                             "No base url provided, can't resolve relative references!"
                         );
                     }
-
                     $item = Utilities::resolveRelativePaths($base_url . '.' . substr($item, 1));
-                } elseif ($item[0] === '.') {
-                    $item = Utilities::resolveRelativePaths($parent . $item);
+                } elseif (in_array($file_ext, ['yml', 'yaml'], true)) {
+                    $item = Utilities::resolveRelativePaths($parent . './' . $item);
                 }
                 $child->setValue($item);
             }
