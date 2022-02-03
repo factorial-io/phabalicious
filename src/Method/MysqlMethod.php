@@ -338,11 +338,12 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     public static function createCredentialsUrlForDrupal(array $o): string
     {
         return sprintf(
-            '%s://%s:%s@%s/%s',
+            '%s://%s:%s@%s:%s/%s',
             $o['driver'] ?? self::METHOD_NAME,
             $o['user'],
             $o['pass'],
             $o['host'],
+            $o['port'] ?? '3306',
             $o['name']
         );
     }
