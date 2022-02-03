@@ -16,8 +16,7 @@ class InstallFromSqlFileCommand extends BaseCommand
         parent::configure();
         $this
             ->setName('install:from-sql-file')
-            ->setDescription('Install an instance from an existing sql file')
-            ->setHelp('Runs all tasks necessary to install an instance from a sql-dump');
+            ->setDescription('Install an instance from an existing sql file');
         $this->addArgument(
             'file',
             InputArgument::REQUIRED,
@@ -30,6 +29,20 @@ class InstallFromSqlFileCommand extends BaseCommand
             'Skip dropping the db before running the import',
             false
         );
+        $this->setHelp('
+This command will install an application from a local sql-file, by running the
+three standalone commands <info>install</info>, <info>restore:from-sql-file</info>
+and <info>reset</info>. It will skip any configuration-import while running
+install to speed things up.
+
+Passing the option <info>skip-drop-db</info> will keep the existing DB intact,
+but this might result in problems while importing the SQL-file, so use with
+care.
+
+Examples:
+<info>phab install:from-sql-file my/sql.tgz --config mbb</info>
+
+        ');
     }
 
     /**
