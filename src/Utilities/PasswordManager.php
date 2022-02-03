@@ -256,7 +256,7 @@ class PasswordManager implements PasswordManagerInterface
     {
         $op_file_path = getenv('PHAB_OP_FILE_PATH') ?: '/usr/local/bin/op';
         if (!$op_file_path || !file_exists($op_file_path)) {
-            return false;
+            return new CommandResult(1, ['COuld not find 1password binary.']);
         }
 
         $output = [];
@@ -271,7 +271,7 @@ class PasswordManager implements PasswordManagerInterface
     {
         $result = $this->exec1PasswordCli(sprintf("get item %s", $item_id));
 
-        if ($result->succeeded()) {
+        if ($result && $result->succeeded()) {
             $payload = implode("\n", $result->getOutput());
             return $this->extractSecretFrom1PasswordPayload($payload, true);
         }
@@ -338,6 +338,24 @@ class PasswordManager implements PasswordManagerInterface
         return false;
     }
 
+    private function extractFieldsHelper($fields)
+    {
+
+        foreach ($fields as $field) {
+            if (!empty($field->designation) && $field->designation === 'password') {
+                return $field->value;
+            }
+            if (!empty($field->purpose) && $field->purpose === 'PASSWORD') {
+                return $field->value;
+            }
+            // Support for field in sections.
+            if (!empty($field->n) && $field->n === 'password') {
+                return $field->v;
+            }
+        }
+        return false;
+    }
+
     private function extractSecretFrom1PasswordPayload($payload, $cli)
     {
         $json = json_decode($payload);
@@ -347,17 +365,17 @@ class PasswordManager implements PasswordManagerInterface
         if (!empty($json->password)) {
             return $json->password;
         }
-        if (!empty($json->fields)) {
-            $fields = $json->fields;
-            foreach ($fields as $field) {
-                if (!empty($field->designation) && $field->designation == 'password') {
-                    return $field->value;
-                }
-                if (!empty($field->purpose) && $field->purpose == 'PASSWORD') {
-                    return $field->value;
+        if (!empty($json->sections)) {
+            foreach ($json->sections as $section) {
+                if ($result = $this->extractFieldsHelper($section->fields)) {
+                    return $result;
                 }
             }
         }
+        if (!empty($json->fields)) {
+            return $this->extractFieldsHelper($json->fields);
+        }
+
         $this->getContext()->getConfigurationService()->getLogger()->warning(
             "Could not get password from 1password!\n" . $payload
         );
