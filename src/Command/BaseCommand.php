@@ -98,7 +98,7 @@ abstract class BaseCommand extends BaseOptionsCommand
             } catch (\Exception $e) {
                 return [];
             }
-            return array_keys($config->getAllHostConfigs());
+            return $config->getAllHostConfigs()->getKeys();
         }
         if ($optionName == 'set' && $context instanceof FishShellCompletionContext) {
             $dotted = [];

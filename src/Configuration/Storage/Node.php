@@ -332,4 +332,12 @@ class Node implements \IteratorAggregate, \ArrayAccess
             }
         }
     }
+
+    public function getKeys()
+    {
+        if ($this->isArray()) {
+            return array_keys($this->value);
+        }
+        return [];
+    }
 }
