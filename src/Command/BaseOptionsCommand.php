@@ -184,7 +184,7 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
      */
     protected function createContext(InputInterface $input, OutputInterface $output, $default_arguments = [])
     {
-        $context =  $this->context ? $this->context : new TaskContext($this, $input, $output);
+        $context =  $this->context ?: new TaskContext($this, $input, $output);
         $arguments = $this->parseScriptArguments($default_arguments, $input->getOption('arguments'));
         $context->set('variables', $arguments);
         $context->set('deployArguments', $arguments);
@@ -201,5 +201,10 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
     {
         assert($this->context);
         return $this->context;
+    }
+
+    protected function setContext(TaskContextInterface $context)
+    {
+        $this->context = $context;
     }
 }

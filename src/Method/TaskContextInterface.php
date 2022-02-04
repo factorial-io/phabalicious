@@ -64,6 +64,8 @@ interface TaskContextInterface
 
     public function setShell(ShellProviderInterface $shell);
 
+    public function mergeData(TaskContextInterface $context);
+
     public function mergeResults(TaskContextInterface $context);
 
     public function askQuestion(string $string);

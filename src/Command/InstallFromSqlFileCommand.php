@@ -83,7 +83,8 @@ Examples:
                 '--skip-reset' => '1',
             ],
             $input,
-            $output
+            $output,
+            $context
         )) {
             return $result;
         }
@@ -95,7 +96,8 @@ Examples:
                 '--skip-drop-db' => $input->getOption('skip-drop-db'),
             ],
             $input,
-            $output
+            $output,
+            $context
         )) {
             return $result;
         }
@@ -105,7 +107,8 @@ Examples:
                 'reset',
                 [],
                 $input,
-                $output
+                $output,
+                $context
             );
         }
         return $result;
