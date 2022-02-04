@@ -83,13 +83,13 @@ class RestoreSqlFromFileCommand extends BaseCommand
         $context->set('source', $dest);
         $context->set(DatabaseMethod::DROP_DATABASE, !Utilities::hasBoolOptionSet($input, 'skip-drop-db'));
 
-        $context->io()->comment(sprintf('Restoring from `%s` ...', $dest));
+        $context->io()->comment(sprintf('Restoring `%s` from `%s` ...', $host_config->getConfigName(), $dest));
         $this->getMethods()->runTask('restoreSqlFromFile', $host_config, $context);
 
         $shell->run(sprintf('rm %s', $dest));
         $exitCode = $context->getResult('exitCode', 0);
         if ($exitCode == 0) {
-            $output->writeln('<info>SQL dump imported successfully</info>');
+            $context->io()->success('SQL dump imported successfully!');
         }
 
         return $exitCode;

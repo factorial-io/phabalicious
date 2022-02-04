@@ -24,6 +24,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
     const CONFIGURATION_EXISTS = 'configurationExists';
     const CONFIGURATION_USED = 'configurationUsed';
+    const SKIP_CONFIGURATION_IMPORT = 'skipConfigurationImport';
     const SKIP_NEXT_CONFIGURATION_IMPORT = 'skipNextConfigurationImport';
     const SETTINGS_FILE_EXISTS = 'settingsFileExists';
 
@@ -230,6 +231,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
      * @throws MissingScriptCallbackImplementation
      * @throws UnknownReplacementPatternException
      * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function reset(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -446,9 +448,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $install_options[] = sprintf('--db-url=%s', $db_url);
         }
 
-        // Install drupal, this can be skipped if install from configuration is
-        // possible.
-        if ($context->getResult(self::CONFIGURATION_USED)) {
+        // Install drupal from an existing configuration, if necessary.
+        if (!$context->get(self::SKIP_CONFIGURATION_IMPORT, false) && $context->getResult(self::CONFIGURATION_USED)) {
             $this->logger->info('Found existing and used config, installing from it ...');
 
             $install_options[] = '--existing-config';

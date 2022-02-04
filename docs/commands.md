@@ -185,7 +185,23 @@ This command will install a new installation (see the `install`-command) and aft
 **See also:**
 
 * install
+* install:from-sql-file
 * copyFrom
+
+## install:from-sql-file
+
+``` bash
+phab --config=<your-config> install:from-sql-file <sql-file-path>
+phab --config=<your-config> install:from-sql-file <sql-file-path> --skip-drop-db
+```
+This command will install an application from a local sql-file, by running the three standalone commands `install`, `restore:from-sql-file` and `reset`. It will skip any configuration-import while running install to speed things up.
+
+Passing the option `--skip-drop-db` will keep the existing DB intact, but this might result in problems while importing the SQL-file, so use with care.
+
+**See also:**
+
+* install
+* install:from
 
 ## backup
 
