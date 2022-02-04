@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Command;
 
+use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use Composer\Semver\VersionParser;
 use Phabalicious\Configuration\ConfigurationService;
@@ -17,7 +18,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
     /**
      * @var \Phabalicious\Configuration\ConfigurationService
      */
-    private ConfigurationService $configuration;
+    private $configuration;
 
     public function __construct(ConfigurationService $configuration, $name = null)
     {
@@ -77,7 +78,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
 
             [$latest,] = $this->getLatestReleaseFromGithub($preview);
 
-            $update_available = ($latest && !Semver::satisfies($latest, $this->currentVersion));
+            $update_available = ($latest && Comparator::greaterThan($latest, $this->currentVersion));
             $this->configuration->getLogger()->debug(sprintf(
                 'Version-Check: current: %s, latest on remote: %s, check for preview: %s, update available: %s',
                 $version,
@@ -115,6 +116,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
             if ($output->isDecorated()
                 && !$output->isQuiet()
                 && !$event->getCommand()->isHidden()
+                && !$event->getCommand()->getName() !== 'self:update'
                 && !$command->getConfiguration()->isOffline()
                 && !$input->hasParameterOption(['--offline'])
                 && !$input->hasParameterOption(['--no-interaction'])
