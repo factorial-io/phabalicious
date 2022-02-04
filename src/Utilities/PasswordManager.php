@@ -21,7 +21,7 @@ class PasswordManager implements PasswordManagerInterface
     /** @var TaskContextInterface  */
     private $context;
 
-    private $passwords;
+    private $passwords = [];
 
     private $questionFactory = null;
 
