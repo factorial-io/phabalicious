@@ -3,7 +3,6 @@
 namespace Phabalicious\Command;
 
 use Phabalicious\Method\DrushMethod;
-use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -29,6 +28,14 @@ class InstallFromSqlFileCommand extends BaseCommand
             'Skip dropping the db before running the import',
             false
         );
+        $this->addOption(
+            'skip-reset',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Skip the reset-task if set to true',
+            false
+        );
+
         $this->setHelp('
 This command will install an application from a local sql-file, by running the
 three standalone commands <info>install</info>, <info>restore:from-sql-file</info>
@@ -38,6 +45,9 @@ install to speed things up.
 Passing the option <info>skip-drop-db</info> will keep the existing DB intact,
 but this might result in problems while importing the SQL-file, so use with
 care.
+
+Passing the <info>skip-reset</info> option will keep the app in the state
+derived from the sql dump, without running the reset-task.
 
 Examples:
 <info>phab install:from-sql-file my/sql.tgz --config mbb</info>
@@ -63,7 +73,8 @@ Examples:
             return $result;
         }
         $context = $this->getContext();
-        // We are not interested in a config import when using drupal.
+        // We are not interested in a config import during install
+        // when using drupal, as we are running `reset` as a last step.
         $context->set(DrushMethod::SKIP_CONFIGURATION_IMPORT, true);
 
         if ($result = $this->runCommand(
@@ -89,11 +100,14 @@ Examples:
             return $result;
         }
 
-        return $this->runCommand(
-            'reset',
-            [],
-            $input,
-            $output
-        );
+        if (!$input->getOption('skip-reset')) {
+            return $this->runCommand(
+                'reset',
+                [],
+                $input,
+                $output
+            );
+        }
+        return $result;
     }
 }

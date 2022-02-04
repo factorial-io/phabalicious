@@ -448,8 +448,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             $install_options[] = sprintf('--db-url=%s', $db_url);
         }
 
-        // Install drupal, this can be skipped if install from configuration is
-        // possible.
+        // Install drupal from an existing configuration, if necessary.
         if (!$context->get(self::SKIP_CONFIGURATION_IMPORT, false) && $context->getResult(self::CONFIGURATION_USED)) {
             $this->logger->info('Found existing and used config, installing from it ...');
 

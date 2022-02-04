@@ -282,7 +282,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             $this->dropDatabase($host_config, $context, $shell, $data);
         }
 
-        $this->logger->notice(sprintf('Restoring db from %s ...', $file));
+        $this->logger->info(sprintf('Restoring db from %s ...', $file));
 
         $cmd = $this->getMysqlCommand($host_config, $context, 'mysql', $data, true);
 
