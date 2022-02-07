@@ -44,8 +44,6 @@ class ListCommand extends BaseOptionsCommand
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
