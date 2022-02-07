@@ -54,7 +54,7 @@ class ListCommand extends BaseOptionsCommand
 
         $host_config_names = array_keys(
             array_filter(
-                $this->configuration->getAllHostConfigs(),
+                $this->configuration->getAllHostConfigs()->getValue(),
                 function ($host_config) {
                     return empty($host_config['hidden']) && empty($host_config['inheritOnly']);
                 }

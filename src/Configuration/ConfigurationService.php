@@ -863,7 +863,7 @@ class ConfigurationService
         return $copy;
     }
 
-    public function getAllHostConfigs()
+    public function getAllHostConfigs(): Node
     {
         return $this->hosts;
     }
