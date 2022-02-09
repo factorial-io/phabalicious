@@ -367,7 +367,7 @@ class PasswordManager implements PasswordManagerInterface
         }
         if (!empty($json->sections)) {
             foreach ($json->sections as $section) {
-                if ($result = $this->extractFieldsHelper($section->fields)) {
+                if (isset($secton->fields) && $result = $this->extractFieldsHelper($section->fields)) {
                     return $result;
                 }
             }
