@@ -10,7 +10,6 @@ use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
-use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsBaseCallback;
 use Phabalicious\Scaffolder\Options;
@@ -43,7 +42,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
         $parent = parent::getDefaultConfig($configuration_service, $host_config);
-        $config = [];
+        $config = [
+            'docker' => $configuration_service->getSetting('docker', []),
+        ];
         $config['executables']['supervisorctl'] = 'supervisorctl';
         $config['executables']['docker-compose'] = 'docker-compose';
         $config['executables']['docker'] = 'docker';
@@ -58,14 +59,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
         ) {
             $config['sshTunnel']['destHostFromDockerContainer'] = $host_config['docker']['name'];
         }
-        if (!empty($host_config['docker']['scaffold'])) {
-            $config['docker']['scaffold'] = [
+        if (!empty($host_config['docker']['scaffold']) || !empty($config['docker']['scaffold'])) {
+            $config['docker']['scaffold'] = Utilities::mergeData([
                 'scaffold'  => [
                     'copy_assets(%rootFolder%)'
                 ],
                 'questions' => [],
                 'successMessage' => 'Scaffolded files for docker successfully!',
-            ];
+            ], $config['docker']['scaffold'] ?? []);
         } else {
             $config['docker']['scaffold'] = false;
         }
@@ -196,7 +197,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
 
         $docker_config = $this->getDockerConfig($host_config, $context);
-        $tasks = $docker_config['tasks'];
+        $tasks = $docker_config->get('tasks', []);
 
         if ($silent && empty($tasks[$task])) {
             return;
@@ -563,12 +564,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws FailedShellCommandException
-     * @throws MethodNotFoundException
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws MissingScriptCallbackImplementation
-     * @throws ValidationFailedException
+     *
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -578,12 +581,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws FailedShellCommandException
-     * @throws MethodNotFoundException
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws MissingScriptCallbackImplementation
-     * @throws ValidationFailedException
+     *
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function appDestroy(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -593,12 +598,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws FailedShellCommandException
-     * @throws MethodNotFoundException
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws MissingScriptCallbackImplementation
-     * @throws ValidationFailedException
+     *
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function runAppSpecificTask(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -618,11 +625,12 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     /**
      * @param HostConfig $host_config
-     * @param ConfigurationService $config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     *
      * @return string
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function getDockerContainerName(HostConfig $host_config, TaskContextInterface $context): string
     {
