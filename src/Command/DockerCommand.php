@@ -118,14 +118,13 @@ class DockerCommand extends BaseCommand
      */
     private function getAllTasks(HostConfig $docker_config)
     {
-        $tasks = $docker_config['tasks'];
+        $tasks = $docker_config->get('tasks', []);
         /** @var DockerMethod $method */
         $method = $this->getConfiguration()->getMethodFactory()->getMethod('docker');
-        $tasks = Utilities::mergeData($tasks, array_combine(
+        return Utilities::mergeData($tasks, array_combine(
             $method->getInternalTasks(),
             $method->getInternalTasks()
         ));
-        return $tasks;
     }
 
     private function printAvailableTasks(InputInterface $input, OutputInterface $output, $tasks)
