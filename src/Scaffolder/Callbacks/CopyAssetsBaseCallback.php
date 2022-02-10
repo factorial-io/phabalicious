@@ -75,7 +75,15 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
                     ));
                 }
             } else {
-                $tmpl = file_get_contents($handler_options->getBasePath() . '/' .$file_name);
+                $source_file_name = $handler_options->getBasePath() . '/' .$file_name;
+                $tmpl = @file_get_contents($source_file_name);
+                if ($tmpl === false) {
+                    throw new \RuntimeException(sprintf(
+                        "Could not access %s!\n\n%s",
+                        $source_file_name,
+                        error_get_last()['message']
+                    ));
+                }
             }
 
             /** @var FileContentsHandlerInterface $handler */
