@@ -383,12 +383,14 @@ class ConfigurationService
                 if ($item[0] === '/' || ((substr($item, 0, 4) == 'http') && strpos($item, '://') !== false)) {
                     continue;
                 }
+
+                $parent = dirname($child->getSource()->getSource());
+                if (substr($parent, -1) !== '/') {
+                    $parent .= '/';
+                }
                 $file_ext = pathinfo($item, PATHINFO_EXTENSION);
+
                 if ($item[0] === '.') {
-                    $parent = dirname($child->getSource()->getSource());
-                    if (substr($parent, -1) !== '/') {
-                        $parent .= '/';
-                    }
                     $item = Utilities::resolveRelativePaths($parent . $item);
                 } elseif ($item[0] === '@') {
                     if (!$base_url) {
