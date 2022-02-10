@@ -31,6 +31,8 @@ class Store extends Node
         foreach (self::$protectedProperties as $key) {
             if ($node = $data->find($key)) {
                 $result[$key] = Node::clone($node);
+            } else {
+                $result[$key] = new Node(null, "protected property");
             }
         }
         return $result;
