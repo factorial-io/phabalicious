@@ -227,12 +227,11 @@ class ConfigurationServiceTest extends PhabTestCase
             'bar' => [
                 'inheritsFrom' => '@/three.yml'
             ],
-        ], 'foo bar');
+        ], 'https://two.example.com/foo/bar/index.yml');
 
         $this->config->resolveRelativeInheritanceRefs(
             $data,
             'https://example.com',
-            'https://two.example.com/foo/bar'
         );
 
         $this->assertEquals('https://two.example.com/foo/bar/one.yml', $data->getProperty('inheritsFrom.0'));
@@ -247,12 +246,11 @@ class ConfigurationServiceTest extends PhabTestCase
             'bar' => [
                 'inheritsFrom' => '@/three.yml'
             ],
-        ], 'foo bar');
+        ], '/home/foo/bar/index.yml');
 
         $this->config->resolveRelativeInheritanceRefs(
             $data,
             '/home/somewhere/else',
-            '/home/foo/bar'
         );
 
         $this->assertEquals('/home/foo/bar/one.yml', $data->getProperty('inheritsFrom.0'));
@@ -267,12 +265,11 @@ class ConfigurationServiceTest extends PhabTestCase
             'bar' => [
                 'inheritsFrom' => '@/three.yml'
             ],
-        ], 'foo bar');
+        ], '../config/public/index.yml');
 
         $this->config->resolveRelativeInheritanceRefs(
             $data,
             '..//somewhere/else',
-            '../config/public'
         );
 
         $this->assertEquals('../config/public/one.yml', $data->getProperty('inheritsFrom.0'));

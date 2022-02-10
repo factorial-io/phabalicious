@@ -164,7 +164,7 @@ class Scaffolder
             }
         }
 
-        $this->configuration->resolveRelativeInheritanceRefs($data, $options->getBaseUrl(), $root_path);
+        $this->configuration->resolveRelativeInheritanceRefs($data, $options->getBaseUrl());
 
         $data = $this->configuration->resolveInheritance($data, new Node([], 'scaffolder defaults'), $root_path);
         $this->configuration->reportDeprecations($root_path);

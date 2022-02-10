@@ -155,6 +155,7 @@ class ConfigurationService
             $data = $data->merge($override_data);
         }
 
+        Store::resetProtectedProperties();
 
         $defaults = [
             'needs' => ['git', 'ssh', 'drush7', 'files'],
@@ -359,22 +360,16 @@ class ConfigurationService
      *
      * @param \Phabalicious\Configuration\Storage\Node $data
      * @param  $base_url
-     * @param string $parent
-     * @param string $inherit_key
      *
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      */
     public function resolveRelativeInheritanceRefs(
         Node $data,
         $base_url,
-        string $parent,
         string $inherit_key = "inheritsFrom"
     ) {
         if ($base_url && substr($base_url, -1) !== '/') {
             $base_url .= '/';
-        }
-        if (substr($parent, -1) !== '/') {
-            $parent .= '/';
         }
         /** @var Node $node */
         foreach ($data->findNodes($inherit_key, 1) as $node) {
@@ -390,6 +385,10 @@ class ConfigurationService
                 }
                 $file_ext = pathinfo($item, PATHINFO_EXTENSION);
                 if ($item[0] === '.') {
+                    $parent = dirname($child->getSource()->getSource());
+                    if (substr($parent, -1) !== '/') {
+                        $parent .= '/';
+                    }
                     $item = Utilities::resolveRelativePaths($parent . $item);
                 } elseif ($item[0] === '@') {
                     if (!$base_url) {
@@ -440,7 +439,7 @@ class ConfigurationService
         }
 
         $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getInheritanceBaseUrl();
-        $this->resolveRelativeInheritanceRefs($data, $baseUrl, $root_folder);
+        $this->resolveRelativeInheritanceRefs($data, $baseUrl);
 
         $inheritsFrom = $data->get($inherit_key);
 
@@ -461,19 +460,19 @@ class ConfigurationService
                 $content = $this->readHttpResource($resource);
                 if ($content) {
                     $add_data = new Node(Yaml::parse($content), $resource);
-                    $this->resolveRelativeInheritanceRefs($add_data, $baseUrl, dirname($resource));
+                    $this->resolveRelativeInheritanceRefs($add_data, $baseUrl);
                     $this->checkRequires($add_data, $resource);
                 }
             } elseif (file_exists($resource)) {
                 $add_data = $this->readFile($resource);
                 if ($add_data) {
-                    $this->resolveRelativeInheritanceRefs($add_data, $baseUrl, dirname($resource));
+                    $this->resolveRelativeInheritanceRefs($add_data, $baseUrl);
                     $this->checkRequires($add_data, $resource);
                 }
             } elseif (file_exists($root_folder . '/' . $resource)) {
                 $add_data = $this->readFile($root_folder . '/' . $resource);
                 if ($add_data) {
-                    $this->resolveRelativeInheritanceRefs($add_data, $baseUrl, $root_folder);
+                    $this->resolveRelativeInheritanceRefs($add_data, $baseUrl);
                     $this->checkRequires($add_data, $resource);
                 }
             } else {
