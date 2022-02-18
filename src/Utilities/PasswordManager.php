@@ -348,6 +348,9 @@ class PasswordManager implements PasswordManagerInterface
             if (!empty($field->purpose) && $field->purpose === 'PASSWORD') {
                 return $field->value;
             }
+            if (!empty($field->id) && $field->id == 'password') {
+                return $field->value;
+            }
             // Support for field in sections.
             if (!empty($field->n) && $field->n === 'password') {
                 return $field->v;
