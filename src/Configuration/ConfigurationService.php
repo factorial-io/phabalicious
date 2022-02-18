@@ -945,7 +945,7 @@ class ConfigurationService
      * @throws ShellProviderNotFoundException
      * @throws ValidationFailedException
      */
-    protected function inheritFromBlueprint(string $config_name, Node $data): array
+    protected function inheritFromBlueprint(string $config_name, Node $data): Node
     {
         $errors = new ValidationErrorBag();
         $validation = new ValidationService($data['inheritFromBlueprint'], $errors, 'inheritFromBlueprint');
@@ -962,7 +962,7 @@ class ConfigurationService
         );
         unset($data['inheritFromBlueprint']);
 
-        $data = $data->baseOntop($add_data);
+        $data = $data->baseOntop($add_data->getData());
         $data['configName'] = $config_name;
 
         return $data;
