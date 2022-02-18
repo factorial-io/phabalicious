@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\ShellProvider\ShellProviderFactory;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -21,21 +22,21 @@ class LocalMethod extends BaseMethod implements MethodInterface
         return $method_name == 'local';
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
         $result = [
             'rootFolder' => $configuration_service->getFabfilePath(),
             'shellProvider' => LocalShellProvider::PROVIDER_NAME,
         ];
 
-        if (!empty($host_config['runLocally'])) {
+        if (!$host_config->has('runLocally')) {
             $result['needs'] = ['local'];
         }
 
-        return $result;
+        return new Node($result, $this->getName() . ' method defaults');
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         $validation = new ValidationService($config, $errors, 'host-config');
         $validation->checkForValidFolderName('rootFolder');

@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
@@ -27,15 +28,14 @@ class SshMethod extends BaseMethod implements MethodInterface
         return $method_name === 'ssh';
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        // Implementation found in SShSellProvider.
-        return [
+        return new Node([
             'shellProvider' => SshShellProvider::PROVIDER_NAME,
-        ];
+        ], $this->getName() . ' method defaults');
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         // Implementation found in SShSellProvider.
     }

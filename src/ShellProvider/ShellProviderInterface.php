@@ -4,6 +4,7 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ScopedLogLevel\LogLevelStackGetterInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -14,9 +15,9 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 {
     public function getName(): string;
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array;
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node;
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors);
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors);
 
     public function setHostConfig(HostConfig $config);
 

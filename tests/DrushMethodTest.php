@@ -3,6 +3,7 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\BaseMethod;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\MethodFactory;
@@ -46,7 +47,7 @@ class DrushMethodTest extends PhabTestCase
                 'pass' => 'drupal',
             ],
         ];
-        $result = $this->method->getDefaultConfig($this->configurationService, $host_config);
+        $result = $this->method->getDefaultConfig($this->configurationService, new Node($host_config, 'code'));
 
         $this->assertEquals(8, $result['drupalVersion']);
         $this->assertEquals(8, $result['drushVersion']);
@@ -60,7 +61,7 @@ class DrushMethodTest extends PhabTestCase
         $host_config = [
             'needs' => ['drush7'],
         ];
-        $result = $this->method->getDefaultConfig($this->configurationService, $host_config);
+        $result = $this->method->getDefaultConfig($this->configurationService, new Node($host_config, 'code'));
 
         $this->assertEquals(7, $result['drupalVersion']);
         $this->assertEquals(8, $result['drushVersion']);
@@ -71,7 +72,7 @@ class DrushMethodTest extends PhabTestCase
         $host_config = [
             'needs' => ['drush8'],
         ];
-        $result = $this->method->getDefaultConfig($this->configurationService, $host_config);
+        $result = $this->method->getDefaultConfig($this->configurationService, new Node($host_config, 'code'));
 
         $this->assertEquals(8, $result['drupalVersion']);
         $this->assertEquals(8, $result['drushVersion']);
@@ -82,7 +83,7 @@ class DrushMethodTest extends PhabTestCase
         $host_config = [
             'needs' => ['drush9'],
         ];
-        $result = $this->method->getDefaultConfig($this->configurationService, $host_config);
+        $result = $this->method->getDefaultConfig($this->configurationService, new Node($host_config, 'code'));
 
         $this->assertEquals(8, $result['drupalVersion']);
         $this->assertEquals(9, $result['drushVersion']);
@@ -95,7 +96,7 @@ class DrushMethodTest extends PhabTestCase
             'configName' => 'test'
         ];
         $errors = new ValidationErrorBag();
-        $this->method->validateConfig($host_config, $errors);
+        $this->method->validateConfig(new Node($host_config, ''), $errors);
 
         $this->assertEquals(1, count($errors->getWarnings()));
         $this->assertStringContainsString('drush7', $errors->getWarnings()['needs']);
@@ -134,7 +135,7 @@ class DrushMethodTest extends PhabTestCase
 
         $this->assertEquals(
             [],
-            $this->method->getMethodDependencies($this->configurationService->getMethodFactory(), $config->raw())
+            $this->method->getMethodDependencies($this->configurationService->getMethodFactory(), $config->getData())
         );
     }
 
@@ -142,9 +143,9 @@ class DrushMethodTest extends PhabTestCase
     {
         $this->assertEquals(
             ['mysql'],
-            $this->method->getMethodDependencies($this->configurationService->getMethodFactory(), [
+            $this->method->getMethodDependencies($this->configurationService->getMethodFactory(), new Node([
                 'needs' => ['drush']
-            ])
+            ], ''))
         );
     }
 }

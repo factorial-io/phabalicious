@@ -6,6 +6,7 @@ use Phabalicious\Artifact\Actions\ActionFactory;
 use Phabalicious\Artifact\Actions\Ftp\ExcludeAction;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
@@ -33,23 +34,24 @@ class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterfa
         return $method_name === $this->getName();
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $return = parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
+        $return = [];
         $return['tmpFolder'] = '/tmp';
         $return['deployMethod'] = $this->getName();
         $return[self::PREFS_KEY] = [
             'useLocalRepository' => false,
         ];
 
-        return $return;
+        return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
     }
 
     /**
      * @param array $config
      * @param ValidationErrorBagInterface $errors
      */
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
         $validation = new ValidationService($config[self::PREFS_KEY], $errors, "artifact settings");

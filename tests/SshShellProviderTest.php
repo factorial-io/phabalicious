@@ -5,6 +5,7 @@ namespace Phabalicious\Tests;
 use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\ShellProvider\SshShellProvider;
@@ -52,14 +53,14 @@ class SshShellProviderTest extends PhabTestCase
 
     public function testGetDefaultConfig()
     {
-        $this->assertArrayHasKey('port', $this->shellProvider->getDefaultConfig($this->config, []));
-        $this->assertArrayHasKey('rootFolder', $this->shellProvider->getDefaultConfig($this->config, []));
+        $this->assertArrayHasKey('port', $this->shellProvider->getDefaultConfig($this->config, new Node([], '')));
+        $this->assertArrayHasKey('rootFolder', $this->shellProvider->getDefaultConfig($this->config, new Node([], '')));
     }
 
     public function testValidateConfig()
     {
         $errors = new ValidationErrorBag();
-        $this->shellProvider->validateConfig([], $errors);
+        $this->shellProvider->validateConfig(new Node([], ''), $errors);
         $this->assertEqualsCanonicalizing(
             ['host', 'port', 'rootFolder', 'rootFolder', 'shellExecutable','user'],
             $errors->getKeysWithErrors()
@@ -69,13 +70,13 @@ class SshShellProviderTest extends PhabTestCase
     public function testValidateConfigRootFolder()
     {
         $errors = new ValidationErrorBag();
-        $this->shellProvider->validateConfig([
+        $this->shellProvider->validateConfig(new Node([
             'rootFolder' => '/var/www/',
             'shellExecutable' => '/bin/bash',
             'host' => 'localhost',
             'user' => 'foobar',
             'port' => '1234',
-        ], $errors);
+        ], ''), $errors);
         $this->assertEquals(
             ['rootFolder'],
             $errors->getKeysWithErrors(),

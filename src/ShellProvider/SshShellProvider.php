@@ -4,6 +4,7 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\SshTunnelFailedException;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\TunnelHelper\SshTunnelHelper;
@@ -27,9 +28,10 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         return self::PROVIDER_NAME;
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $result =  parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
+        $result = [];
         $result['shellProviderExecutable'] = '/usr/bin/ssh';
         $result['shellProviderOptions'] = [
             '-o',
@@ -59,10 +61,10 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             }
         }
 
-        return $result;
+        return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
 
@@ -80,7 +82,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
 
         if (!empty($config['sshTunnel'])) {
             $tunnel_validation = new ValidationService(
-                $config['sshTunnel'],
+                $config->get('sshTunnel'),
                 $errors,
                 sprintf('sshTunnel-config: `%s`', $config['configName'])
             );

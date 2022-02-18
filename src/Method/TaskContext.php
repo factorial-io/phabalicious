@@ -6,7 +6,6 @@ use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
-use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,8 +30,6 @@ class TaskContext implements TaskContextInterface
     private $commandResult;
 
     private $shell;
-
-    private $passwordManager;
 
     private $io;
 
@@ -60,7 +57,7 @@ class TaskContext implements TaskContextInterface
 
     public function get(string $key, $default = null)
     {
-         return isset($this->data[$key]) ? $this->data[$key] : $default;
+         return $this->data[$key] ?? $default;
     }
 
     public function getData(): array
@@ -141,12 +138,17 @@ class TaskContext implements TaskContextInterface
 
     public function getResult($key, $default = null)
     {
-        return isset($this->result[$key]) ? $this->result[$key] : $default;
+        return $this->result[$key] ?? $default;
     }
 
     public function getResults(): array
     {
         return $this->result;
+    }
+
+    public function mergeData(TaskContextInterface $context)
+    {
+        $this->data = Utilities::mergeData($this->data, $context->getData());
     }
 
     public function mergeResults(TaskContextInterface $context)

@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\Callbacks\BreakOnFirstError;
 use Phabalicious\Method\Callbacks\ExecuteCallback;
 use Phabalicious\Method\Callbacks\FailOnMissingDirectory;
@@ -45,14 +46,14 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         return $method_name == 'script';
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        return [
+        return new Node([
             'rootFolder' => $configuration_service->getFabfilePath(),
-        ];
+        ], $this->getName() . ' method defaults');
     }
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         $service = new ValidationService($config, $errors, 'host-config');
         $service->hasKey('rootFolder', 'The root-folder of your configuration.');

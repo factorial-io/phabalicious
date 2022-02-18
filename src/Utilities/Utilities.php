@@ -211,7 +211,7 @@ class Utilities
                 'data' => $context->getData(),
                 'results' => $context->getResults(),
             ],
-            'host' => $host_config->raw(),
+            'host' => $host_config->asArray(),
             'settings' => $context->getConfigurationService()
                 ->getAllSettings(['hosts', 'dockerHosts']),
         ]);
@@ -220,7 +220,7 @@ class Utilities
                 ->getConfigurationService()
                 ->getDockerConfig($host_config['docker']['configuration']);
             if ($docker_config) {
-                $variables['dockerHost'] = $docker_config->raw();
+                $variables['dockerHost'] = $docker_config->asArray();
             }
         }
 

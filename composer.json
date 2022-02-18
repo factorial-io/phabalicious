@@ -66,6 +66,11 @@
     "config": {
         "platform": {
             "php": "7.3.31"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpro/grumphp-shim": true,
+            "symfony/flex": true
         }
     },
     "extra": {

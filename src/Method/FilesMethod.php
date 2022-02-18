@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 
@@ -25,9 +26,11 @@ class FilesMethod extends BaseMethod implements MethodInterface
         return $method_name === 'files';
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $return = parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
+
+        $return = [];
         $return['tmpFolder'] = '/tmp';
         $return['executables'] = [
             'tar' => 'tar',
@@ -35,7 +38,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
             'chmod' => 'chmod',
         ];
 
-        return $return;
+        return $parent->merge(new Node($return, $this->getName() . ' defautls'));
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool

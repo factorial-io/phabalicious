@@ -65,7 +65,6 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
         }
 
         foreach ($handler_options->get($data_key) as $file_name) {
-            $tmp_target_file = false;
             if ($handler_options->isRemote()) {
                 $url = $handler_options->get('base_path') . '/' . $file_name;
                 $tmpl = $this->configuration->readHttpResource($url);
@@ -76,7 +75,15 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
                     ));
                 }
             } else {
-                $tmpl = file_get_contents($handler_options->getBasePath() . '/' .$file_name);
+                $source_file_name = $handler_options->getBasePath() . '/' .$file_name;
+                $tmpl = @file_get_contents($source_file_name);
+                if ($tmpl === false) {
+                    throw new \RuntimeException(sprintf(
+                        "Could not access %s!\n\n%s",
+                        $source_file_name,
+                        error_get_last()['message']
+                    ));
+                }
             }
 
             /** @var FileContentsHandlerInterface $handler */

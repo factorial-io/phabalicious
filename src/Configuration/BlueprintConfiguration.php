@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Configuration;
 
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -21,6 +22,7 @@ class BlueprintConfiguration
         $this->configuration = $service;
         if ($data = $this->configuration->getSetting('blueprint', false)) {
             $this->templates['default'] = new BlueprintTemplate(
+                'default',
                 $this->configuration,
                 $data,
                 $this->configuration->getAllSettings()
@@ -31,16 +33,26 @@ class BlueprintConfiguration
             $data = $this->configuration->getDockerConfig($key);
             if (!empty($data['blueprint'])) {
                 $this->templates['docker:'  . $key] =
-                    new BlueprintTemplate($this->configuration, $data['blueprint'], $data->raw());
+                    new BlueprintTemplate(
+                        'docker:key',
+                        $this->configuration,
+                        $data->getData()->get('blueprint'),
+                        $data->getData()
+                    );
             }
         }
         foreach ($this->configuration->getAllHostConfigs() as $key => $data) {
             if (!empty($data['blueprint'])) {
                 $this->templates['host:'  . $key] =
-                    new BlueprintTemplate($this->configuration, $data['blueprint'], $data);
+                    new BlueprintTemplate(
+                        'host:' . $key,
+                        $this->configuration,
+                        $data->get('blueprint'),
+                        $data
+                    );
             }
         }
-        $inheritance_data = [];
+        $inheritance_data = new Node([], '');
         foreach ($this->templates as $ndx => $template) {
             $inheritance_data[$ndx] = $template->getTemplate();
         }

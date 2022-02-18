@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Psr\Log\LoggerInterface;
 
@@ -32,14 +33,14 @@ class PlatformMethod extends BaseMethod
         return $method_name == $this->getName();
     }
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $result = parent::getDefaultConfig($configuration_service, $host_config);
-        $result['executables']['platform'] = '~/.platformsh/bin/platform';
-        $result['platformRemote'] = 'platform';
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
+        $config = [];
+        $config['executables']['platform'] = '~/.platformsh/bin/platform';
+        $config['platformRemote'] = 'platform';
 
-
-        return $result;
+        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool

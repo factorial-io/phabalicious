@@ -12,6 +12,7 @@ use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Exception\MissingHostConfigException;
+use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
 use Phabalicious\ShellProvider\ShellOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
@@ -98,16 +99,16 @@ abstract class BaseCommand extends BaseOptionsCommand
             } catch (\Exception $e) {
                 return [];
             }
-            return array_keys($config->getAllHostConfigs());
+            return $config->getAllHostConfigs()->getKeys();
         }
         if ($optionName == 'set' && $context instanceof FishShellCompletionContext) {
             $dotted = [];
             if ($host_config = $context->getHostConfig()) {
-                Utilities::pushKeysAsDotNotation($host_config->raw(), $dotted, ['host']);
+                Utilities::pushKeysAsDotNotation($host_config->asArray(), $dotted, ['host']);
 
                 $docker_config_name = $host_config['docker']['configuration'] ?? false;
                 if ($docker_config_name && $docker_config = $context->getDockerConfig($docker_config_name)) {
-                    Utilities::pushKeysAsDotNotation($docker_config->raw(), $dotted, ['docker']);
+                    Utilities::pushKeysAsDotNotation($docker_config->asArray(), $dotted, ['docker']);
                 }
             }
             return $dotted;
@@ -189,9 +190,15 @@ abstract class BaseCommand extends BaseOptionsCommand
         return $this->dockerConfig;
     }
 
-    public function runCommand(string $command, array $args, InputInterface $original_input, OutputInterface $output)
-    {
+    public function runCommand(
+        string $command,
+        array $args,
+        InputInterface $original_input,
+        OutputInterface $output,
+        TaskContextInterface $context_to_pass = null
+    ) {
         $cmd = $this->getApplication()->find($command);
+
 
         $args['command'] = $command;
 
@@ -207,6 +214,11 @@ abstract class BaseCommand extends BaseOptionsCommand
             }
         };
         $input = new ArrayInput($args);
+
+        // Pass the data of the existing context down the lane.
+        if ($context_to_pass && $cmd instanceof BaseCommand) {
+            $cmd->setContext(clone $context_to_pass);
+        }
         return $cmd->run($input, $output);
     }
 

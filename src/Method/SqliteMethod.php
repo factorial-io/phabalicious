@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -31,18 +32,18 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
     }
 
     /**
-     * @return \string[][]
+     * @return Node
      */
-    public function getGlobalSettings(): array
+    public function getGlobalSettings(): Node
     {
-        return [
+        return new Node([
             'executables' => [
                 'sqlite3' => 'sqlite3',
                 'gunzip' => 'gunzip',
                 'gzip' => 'gzip',
                 'cat' => 'cat',
             ],
-        ];
+        ], $this->getName() . ' global settings');
     }
 
 

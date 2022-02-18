@@ -94,18 +94,18 @@ class OutputCommand extends BaseCommand
                 $data = $this->getConfiguration()->getHostConfig($config);
             }
             $data = [
-                $data['configName'] => $data->raw(),
+                $data['configName'] => $data->asArray(),
             ];
             $title = 'Output of host-configuration `' . $config . '`';
         } elseif ($what == 'docker') {
             try {
                 $data = $this->getConfiguration()
                     ->getDockerConfig($config)
-                    ->raw();
+                    ->asArray();
             } catch (\Exception $e) {
                 $host_config = $this->getConfiguration()->getHostConfig($config);
                 $config = $host_config['docker']['configuration'];
-                $data = $this->getConfiguration()->getDockerConfig($config)->raw();
+                $data = $this->getConfiguration()->getDockerConfig($config)->asArray();
             }
             $data = [ $config => $data];
             $title = 'Output of docker-configuration `' . $config . '`';

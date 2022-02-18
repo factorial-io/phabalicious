@@ -7,6 +7,7 @@ use Phabalicious\Artifact\Actions\ActionFactory;
 use Phabalicious\Artifact\Actions\Git\ExcludeAction;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
@@ -58,28 +59,31 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
     /**
      * Get global settings
      */
-    public function getGlobalSettings(): array
+    public function getGlobalSettings(): Node
     {
-        $defaults = parent::getGlobalSettings();
+        $parent = parent::getGlobalSettings();
+        $defaults = [];
         $defaults['excludeFiles']['gitSync'] = [
             'fabfile.yaml',
             '.fabfile.yaml',
             '.git',
         ];
 
-        return $defaults;
+        return $parent->merge(new Node($defaults, $this->getName() . ' global settings'));
     }
 
     /**
      * Get default config.
      *
      * @param ConfigurationService $configuration_service
-     * @param array $host_config
-     * @return array
+     * @param \Phabalicious\Configuration\Storage\Node $host_config
+     *
+     * @return \Phabalicious\Configuration\Storage\Node
      */
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $return = parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
+        $return = [];
         $return['tmpFolder'] = '/tmp';
         $return['executables'] = [
             'git' => 'git',
@@ -97,7 +101,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
 
         $return['deployMethod'] = 'git-sync';
 
-        return $return;
+        return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
     }
 
     /**
@@ -106,7 +110,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
      * @param array $config
      * @param ValidationErrorBagInterface $errors
      */
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
         if ($config['deployMethod'] !== 'git-sync') {

@@ -36,9 +36,22 @@ This command will list all found blueprint configurations.
 
 ``` bash
 phab --config=<your-config> about
+phab --config=<your-config> about -v
 ```
 
-will display the configuration of host `<your-config>`.
+will display the configuration of host `<your-config>` and the corresponding dockerHost-config, if any. If you increase the verbosity `about` will also show from where the values are consumed.
+
+## find:property
+
+``` bash
+phab --config=<your-config> find:property
+```
+
+Provides an interactive way to search for a specific property whithout knowing its exact name or location. Just type parts of the property after the prompt, phab will try to autocomplete your input. If the autocomplete does not reveal what you are looking for, just hit enter, phab will show a list of possible candidates, from which you can choose one.
+
+You can limit the search to the current (docker-)host-configuration by prefixing your input with `host.` or `dockerHost.`.
+
+Phab will output the current value of the searched property and from which resource it was inherited. Please note, if your searched property is a branch (means it has child values) then the inheritance source does only reflect the source of the property itself, not necessarily for its enclosed children.
 
 ## output
 
@@ -172,7 +185,23 @@ This command will install a new installation (see the `install`-command) and aft
 **See also:**
 
 * install
+* install:from-sql-file
 * copyFrom
+
+## install:from-sql-file
+
+``` bash
+phab --config=<your-config> install:from-sql-file <sql-file-path>
+phab --config=<your-config> install:from-sql-file <sql-file-path> --skip-drop-db
+```
+This command will install an application from a local sql-file, by running the three standalone commands `install`, `restore:from-sql-file` and `reset`. It will skip any configuration-import while running install to speed things up.
+
+Passing the option `--skip-drop-db` will keep the existing DB intact, but this might result in problems while importing the SQL-file, so use with care.
+
+**See also:**
+
+* install
+* install:from
 
 ## backup
 

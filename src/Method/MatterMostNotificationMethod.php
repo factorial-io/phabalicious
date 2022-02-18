@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use GuzzleHttp\Client;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
@@ -15,14 +16,15 @@ use ThibaudDauce\Mattermost\Message;
 class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInterface, NotifyMethodInterface
 {
 
-    public function getGlobalSettings(): array
+    public function getGlobalSettings(): Node
     {
-        $settings = parent::getGlobalSettings();
+        $parent = parent::getGlobalSettings();
+        $settings = [];
         $settings['notifications']['mattermost'] = [
             'username' => 'Phabalicious',
         ];
 
-        return $settings;
+        return $parent->merge(new Node($settings, $this->getName() . ' global settings'));
     }
 
     /**
@@ -31,21 +33,20 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
      * @return array
      * @throws ValidationFailedException
      */
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
         $config = $configuration_service->getSetting('mattermost', []);
         $errors = new ValidationErrorBag();
         $validation = new ValidationService($config, $errors, 'mattermost');
         $validation->hasKey('webhook', 'Incoming webhook url of the mattermost-server');
-        $validation->hasKey('channel', 'Channel to post notifcations into');
+        $validation->hasKey('channel', 'Channel to post notifications into');
         $validation->hasKey('username', 'The username to use as author of the notification');
 
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
         }
 
-        $result = parent::getDefaultConfig($configuration_service, $host_config);
-        return $result;
+        return parent::getDefaultConfig($configuration_service, $host_config);
     }
 
 

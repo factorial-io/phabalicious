@@ -44,8 +44,6 @@ class ListCommand extends BaseOptionsCommand
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -54,7 +52,7 @@ class ListCommand extends BaseOptionsCommand
 
         $host_config_names = array_keys(
             array_filter(
-                $this->configuration->getAllHostConfigs(),
+                $this->configuration->getAllHostConfigs()->getValue(),
                 function ($host_config) {
                     return empty($host_config['hidden']) && empty($host_config['inheritOnly']);
                 }

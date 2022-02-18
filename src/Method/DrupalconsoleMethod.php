@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
@@ -23,13 +24,13 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
         return $method_name === 'drupalconsole' || $method_name === 'drupal';
     }
 
-    public function getGlobalSettings(): array
+    public function getGlobalSettings(): Node
     {
-        return [
+        return new Node([
             'executables' => [
                 'drupal' => 'drupal',
             ],
-        ];
+        ], $this->getName() . ' global settings');
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool

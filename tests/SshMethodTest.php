@@ -3,6 +3,7 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\SshMethod;
 use Phabalicious\Validation\ValidationErrorBag;
 use Psr\Log\AbstractLogger;
@@ -25,14 +26,15 @@ class SshMethodTest extends PhabTestCase
     {
         $errors = new ValidationErrorBag();
 
-        $this->method->createShellProvider([])->validateConfig([
+        $config = new Node([
             'user' => 'testuser',
             'host' => 'localhost',
             'port' => 22,
             'rootFolder' => '/',
             'shellExecutable' => '/usr/bin/ssh',
             'configName' => 'test'
-        ], $errors);
+        ], '');
+        $this->method->createShellProvider([])->validateConfig($config, $errors);
         $this->assertEquals($errors->hasErrors(), false);
     }
 
@@ -40,10 +42,10 @@ class SshMethodTest extends PhabTestCase
     {
         $errors = new ValidationErrorBag();
 
-        $this->method->createShellProvider([])->validateConfig([
+        $this->method->createShellProvider([])->validateConfig(new Node([
             'host' => 'localhost',
             'configName' => 'test'
-        ], $errors);
+        ], ''), $errors);
         $this->assertEquals(true, $errors->hasErrors());
         $this->assertEqualsCanonicalizing(
             ['user', 'port', 'rootFolder', 'rootFolder', 'shellExecutable'],
@@ -55,11 +57,11 @@ class SshMethodTest extends PhabTestCase
     {
         $errors = new ValidationErrorBag();
 
-        $this->method->createShellProvider([])->validateConfig([
+        $this->method->createShellProvider([])->validateConfig(new Node([
             'host' => 'localhost',
             'configName' => 'test',
             'rootFolder' => '/some/rootFolder/'
-        ], $errors);
+        ], ''), $errors);
         $this->assertEquals(true, $errors->hasErrors());
         $this->assertEqualsCanonicalizing(
             ['user', 'port', 'rootFolder', 'shellExecutable'],
@@ -71,7 +73,7 @@ class SshMethodTest extends PhabTestCase
     {
         $errors = new ValidationErrorBag();
 
-        $this->method->createShellProvider([])->validateConfig([
+        $this->method->createShellProvider([])->validateConfig(new Node([
             'configName' => 'test',
             'host' => 'localhost',
             'user' => 'user',
@@ -82,7 +84,7 @@ class SshMethodTest extends PhabTestCase
                 'bridgeHost' => 'localhost',
                 'bridgeUser' => 'user',
             ],
-        ], $errors);
+        ], ''), $errors);
         $this->assertEquals(true, $errors->hasErrors());
         $this->assertEqualsCanonicalizing(
             ['bridgePort', 'destPort', 'destHost', 'localPort'],
@@ -98,13 +100,13 @@ class SshMethodTest extends PhabTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $config = [
+        $config = new Node([
             'configName' => 'test',
             'user' => 'user',
             'host' => 'host',
             'sshTunnel' => [
             ]
-        ];
+        ], '');
         $shell_provider = $this->method->createShellProvider([]);
         $result = $shell_provider->getDefaultConfig($configuration_service, $config);
         $this->assertArrayHasKey('port', $result);
@@ -125,7 +127,7 @@ class SshMethodTest extends PhabTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $config = [
+        $config = new Node([
             'config_name' => 'test',
             'user' => 'user',
             'host' => 'host',
@@ -134,7 +136,7 @@ class SshMethodTest extends PhabTestCase
             ],
             'sshTunnel' => [
             ]
-        ];
+        ], '');
         $shell_provider = $this->method->createShellProvider([]);
         $result = $shell_provider->getDefaultConfig($configuration_service, $config);
         $this->assertArrayHasKey('destHostFromDockerContainer', $result['sshTunnel']);

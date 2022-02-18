@@ -35,14 +35,14 @@ class InstallFromCommand extends BaseCommand
     public function completeArgumentValues($argumentName, CompletionContext $context)
     {
         if ($argumentName == 'from') {
-            $data = $this->configuration->getAllHostConfigs();
-            return array_keys($data);
+            return $this->configuration->getAllHostConfigs()->getKeys();
         } elseif ($argumentName == 'what') {
             return [
                 'db',
                 'files'
             ];
         }
+        return [];
     }
 
     /**

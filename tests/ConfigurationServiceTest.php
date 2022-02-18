@@ -3,6 +3,7 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\BaseMethod;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\LocalMethod;
@@ -183,7 +184,7 @@ class ConfigurationServiceTest extends PhabTestCase
         $this->config->getMethodFactory()->addMethod(new SshMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
         $this->config->readConfiguration(__DIR__ . '/assets/sshtunnel-tests');
-        $ssh_tunnel = $this->config->getHostConfig('unaltered')['sshTunnel'];
+        $ssh_tunnel = $this->config->getHostConfig('unaltered')->get('sshTunnel');
         $this->assertEquals('1.2.3.4', $ssh_tunnel['destHost']);
         $this->assertEquals('1234', $ssh_tunnel['destPort']);
         $this->assertEquals('2.3.4.5', $ssh_tunnel['bridgeHost']);
@@ -218,7 +219,7 @@ class ConfigurationServiceTest extends PhabTestCase
 
     public function testResolveInheritanceRefs()
     {
-        $data = [
+        $data = new Node([
             'inheritsFrom' => './one.yml',
             'foo' => [
                 'inheritsFrom' => '../../two.yml',
@@ -226,15 +227,18 @@ class ConfigurationServiceTest extends PhabTestCase
             'bar' => [
                 'inheritsFrom' => '@/three.yml'
             ],
-        ];
+        ], 'https://two.example.com/foo/bar/index.yml');
 
-        $this->config->resolveRelativeInheritanceRefs($data, 'https://example.com', 'https://two.example.com/foo/bar');
+        $this->config->resolveRelativeInheritanceRefs(
+            $data,
+            'https://example.com',
+        );
 
-        $this->assertEquals('https://two.example.com/foo/bar/one.yml', $data['inheritsFrom'][0]);
-        $this->assertEquals('https://two.example.com/two.yml', $data['foo']['inheritsFrom'][0]);
-        $this->assertEquals('https://example.com/three.yml', $data['bar']['inheritsFrom'][0]);
+        $this->assertEquals('https://two.example.com/foo/bar/one.yml', $data->getProperty('inheritsFrom.0'));
+        $this->assertEquals('https://two.example.com/two.yml', $data->getProperty('foo.inheritsFrom.0'));
+        $this->assertEquals('https://example.com/three.yml', $data->getProperty('bar.inheritsFrom.0'));
 
-        $data = [
+        $data = new Node([
             'inheritsFrom' => './one.yml',
             'foo' => [
                 'inheritsFrom' => '../../two.yml',
@@ -242,15 +246,18 @@ class ConfigurationServiceTest extends PhabTestCase
             'bar' => [
                 'inheritsFrom' => '@/three.yml'
             ],
-        ];
+        ], '/home/foo/bar/index.yml');
 
-        $this->config->resolveRelativeInheritanceRefs($data, '/home/somewhere/else', '/home/foo/bar');
+        $this->config->resolveRelativeInheritanceRefs(
+            $data,
+            '/home/somewhere/else',
+        );
 
-        $this->assertEquals('/home/foo/bar/one.yml', $data['inheritsFrom'][0]);
-        $this->assertEquals('/home/two.yml', $data['foo']['inheritsFrom'][0]);
-        $this->assertEquals('/home/somewhere/else/three.yml', $data['bar']['inheritsFrom'][0]);
+        $this->assertEquals('/home/foo/bar/one.yml', $data->getProperty('inheritsFrom.0'));
+        $this->assertEquals('/home/two.yml', $data->getProperty('foo.inheritsFrom.0'));
+        $this->assertEquals('/home/somewhere/else/three.yml', $data->getProperty('bar.inheritsFrom.0'));
 
-        $data = [
+        $data = new Node([
             'inheritsFrom' => './one.yml',
             'foo' => [
                 'inheritsFrom' => '../../two.yml',
@@ -258,12 +265,15 @@ class ConfigurationServiceTest extends PhabTestCase
             'bar' => [
                 'inheritsFrom' => '@/three.yml'
             ],
-        ];
+        ], '../config/public/index.yml');
 
-        $this->config->resolveRelativeInheritanceRefs($data, '..//somewhere/else', '../config/public');
+        $this->config->resolveRelativeInheritanceRefs(
+            $data,
+            '..//somewhere/else',
+        );
 
-        $this->assertEquals('../config/public/one.yml', $data['inheritsFrom'][0]);
-        $this->assertEquals('../two.yml', $data['foo']['inheritsFrom'][0]);
-        $this->assertEquals('../somewhere/else/three.yml', $data['bar']['inheritsFrom'][0]);
+        $this->assertEquals('../config/public/one.yml', $data->getProperty('inheritsFrom.0'));
+        $this->assertEquals('../two.yml', $data->getProperty('foo.inheritsFrom.0'));
+        $this->assertEquals('../somewhere/else/three.yml', $data->getProperty('bar.inheritsFrom.0'));
     }
 }

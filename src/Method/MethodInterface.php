@@ -4,6 +4,7 @@ namespace Phabalicious\Method;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\TunnelHelper\TunnelHelperFactory;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 
@@ -18,17 +19,17 @@ interface MethodInterface
 
     public function getKeysForDisallowingDeepMerge(): array;
 
-    public function getGlobalSettings(): array;
+    public function getGlobalSettings(): Node;
 
     public function setTunnelHelperFactory(TunnelHelperFactory  $tunnel_helper_factory);
 
-    public function getDefaultConfig(ConfigurationService $configuration_service, array $host_config): array;
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node;
 
-    public function validateGlobalSettings(array $settings, ValidationErrorBagInterface $errors);
+    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors);
 
-    public function validateConfig(array $config, ValidationErrorBagInterface $errors);
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors);
 
-    public function alterConfig(ConfigurationService $configuration_service, array &$data);
+    public function alterConfig(ConfigurationService $configuration_service, Node $data);
 
     public function createShellProvider(array $host_config);
 
@@ -42,5 +43,5 @@ interface MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task);
 
-    public function getMethodDependencies(MethodFactory $factory, array $data): array;
+    public function getMethodDependencies(MethodFactory $factory, \ArrayAccess $data): array;
 }
