@@ -76,7 +76,8 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
                 (stripos($version, 'alpha') !== false) ||
                 (stripos($version, 'beta') !== false);
 
-            [$latest,] = $this->getLatestReleaseFromGithub($preview);
+
+            $latest = $this->getLatestReleaseFromGithub(['preview' => $preview])['version'];
 
             $update_available = ($latest && Comparator::greaterThan($latest, $this->currentVersion));
             $this->configuration->getLogger()->debug(sprintf(
@@ -113,7 +114,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
             /** @var \Phabalicious\Command\SelfUpdateCommand command */
             $command = $event->getCommand()->getApplication()->find('self-update');
 
-            if ($output->isDecorated()
+            if (1 || $output->isDecorated()
                 && !$output->isQuiet()
                 && !$event->getCommand()->isHidden()
                 && !$event->getCommand()->getName() !== 'self:update'
