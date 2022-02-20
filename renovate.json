@@ -2,5 +2,21 @@
     "extends": [
         ":preserveSemverRanges",
         "config:base"
-    ]
+    ],
+    "packageRules": [
+      {
+        "matchPackagePrefixes": [
+          "symfony/"
+        ],
+        "groupName": "symfony packages",
+        "groupSlug": "symfony"
+      },
+      {
+        "matchPackagePrefixes": [
+          "phpstan/"
+        ],
+        "groupName": "phpstan packages",
+        "groupSlug": "phpstan"
+      }
+  ]
 }
