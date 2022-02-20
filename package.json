@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "@factorial/vuepress-theme": "1.0.0-alpha.1",
-    "vuepress": "^1.1.0"
+    "vuepress": "1.9.5"
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",
