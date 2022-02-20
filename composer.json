@@ -36,7 +36,7 @@
         "phpro/grumphp-shim": "^0.22.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
         "drupal/coder": "^8.3",
-        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-symfony": "^0.12"
     },
     "autoload": {
