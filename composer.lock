@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ef84af087ee31ee73c0e276c8ba5956",
+    "content-hash": "5c0c6c51db308d36b17c60b05dc66cd5",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -4557,28 +4557,28 @@
         },
         {
             "name": "phpro/grumphp-shim",
-            "version": "v0.22.0",
+            "version": "v1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpro/grumphp-shim.git",
-                "reference": "212ce1558ee15e34dc23ee769f62bc4218919dd6"
+                "reference": "312df26448acd5c5058e300ea08a80897715a659"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpro/grumphp-shim/zipball/212ce1558ee15e34dc23ee769f62bc4218919dd6",
-                "reference": "212ce1558ee15e34dc23ee769f62bc4218919dd6",
+                "url": "https://api.github.com/repos/phpro/grumphp-shim/zipball/312df26448acd5c5058e300ea08a80897715a659",
+                "reference": "312df26448acd5c5058e300ea08a80897715a659",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "~1.0 || ~2.0",
+                "composer-plugin-api": "~2.0",
                 "ext-json": "*",
-                "php": "^7.1"
+                "php": "^8.0"
             },
             "replace": {
                 "phpro/grumphp": "self.version"
             },
             "require-dev": {
-                "humbug/box": "^3.8.4",
+                "humbug/box": "^3.12.2",
                 "jetbrains/phpstorm-stubs": "dev-master@dev"
             },
             "bin": [
@@ -4611,9 +4611,9 @@
             "description": "GrumPHP Phar distribution",
             "support": {
                 "issues": "https://github.com/phpro/grumphp-shim/issues",
-                "source": "https://github.com/phpro/grumphp-shim/tree/v0.22.0"
+                "source": "https://github.com/phpro/grumphp-shim/tree/v1.8.1"
             },
-            "time": "2020-09-03T12:13:55+00:00"
+            "time": "2022-02-09T12:14:21+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -6176,5 +6176,5 @@
     "platform-overrides": {
         "php": "7.2.15"
     },
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }
