@@ -19,7 +19,7 @@
         "stecman/symfony-console-completion": "^0.11.0",
         "symfony/finder": "^4.1",
         "thibaud-dauce/mattermost-php": "^1.2",
-        "twig/twig": "^2.7",
+        "twig/twig": "^3.0",
         "ext-openssl": "*",
         "jakeasmith/http_build_url": "^1.0",
         "padraic/phar-updater": "^1.0",
