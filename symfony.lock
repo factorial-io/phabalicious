@@ -1,7 +1,4 @@
 {
-    "composer/package-versions-deprecated": {
-        "version": "1.11.99.1"
-    },
     "composer/semver": {
         "version": "1.4.2"
     },
@@ -56,9 +53,6 @@
     "nikic/php-parser": {
         "version": "v4.13.1"
     },
-    "ocramius/package-versions": {
-        "version": "1.4.0"
-    },
     "paragonie/random_compat": {
         "version": "v9.99.100"
     },
@@ -67,9 +61,6 @@
     },
     "phar-io/version": {
         "version": "2.0.1"
-    },
-    "php": {
-        "version": "7.2.15"
     },
     "php-parallel-lint/php-parallel-lint": {
         "version": "v1.1.0"
@@ -91,6 +82,9 @@
     },
     "phpspec/prophecy": {
         "version": "1.8.0"
+    },
+    "phpstan/phpdoc-parser": {
+        "version": "1.2.0"
     },
     "phpstan/phpstan": {
         "version": "0.11.9"
@@ -190,6 +184,21 @@
     },
     "sirbrillig/phpcs-variable-analysis": {
         "version": "v2.11.0"
+    },
+    "slevomat/coding-standard": {
+        "version": "7.0.18"
+    },
+    "squizlabs/php_codesniffer": {
+        "version": "3.6",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.6",
+            "ref": "1019e5c08d4821cb9b77f4891f8e9c31ff20ac6f"
+        },
+        "files": [
+            "phpcs.xml.dist"
+        ]
     },
     "stecman/symfony-console-completion": {
         "version": "0.8.0"

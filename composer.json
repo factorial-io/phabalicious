@@ -16,10 +16,10 @@
         "symfony/flex": "^1.1",
         "symfony/dotenv": "^2.8|^3|^4.1",
         "ext-json": "*",
-        "stecman/symfony-console-completion": "^0.10.0",
+        "stecman/symfony-console-completion": "^0.11.0",
         "symfony/finder": "^4.1",
         "thibaud-dauce/mattermost-php": "^1.2",
-        "twig/twig": "^2.7",
+        "twig/twig": "^3.0",
         "ext-openssl": "*",
         "jakeasmith/http_build_url": "^1.0",
         "lesstif/php-jira-rest-client": "^1.35",
@@ -37,8 +37,8 @@
         "phpro/grumphp-shim": "^1",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
         "drupal/coder": "^8.3",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-symfony": "^0.12"
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-symfony": "^1.0"
     },
     "autoload": {
         "psr-4": {
