@@ -139,7 +139,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
                 $right->set($key, $value);
             } else {
                 // Right has the value, check if an associative array
-                if ($right->get($key)->isAssocArray()) {
+                if ($right->get($key)->isAssocArray() && $value->isAssocArray()) {
                     $right->get($key)->baseOntopImpl($value);
                 }
                 // Otherwise skip it, as we do not merge plain arrays.
