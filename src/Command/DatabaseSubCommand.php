@@ -24,6 +24,10 @@ abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubComm
             ->setAliases(['database:' . $info['subcommand']])
             ->setDescription($info['description'])
             ->setHelp($info['help']);
+
+        foreach ($this->getSubcommandArguments() as $name => $description) {
+            $this->addArgument($name, true, $description);
+        }
     }
 
     /**
@@ -50,6 +54,10 @@ abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubComm
         $what = strtolower($this->getSubcommandInfo()['subcommand']);
         $context->set('what', $what);
 
+        foreach ($this->getSubcommandArguments() as $name => $desc) {
+            $context->set($name, $input->getArgument($name));
+        }
+
         $this->getMethods()
             ->runTask('database', $this->getHostConfig(), $context);
 
@@ -59,5 +67,10 @@ abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubComm
                 ->success(sprintf('Database-command `%s` executed successfully!', $what));
         }
         return $return_code;
+    }
+
+    public function getSubcommandArguments(): array
+    {
+        return [];
     }
 }
