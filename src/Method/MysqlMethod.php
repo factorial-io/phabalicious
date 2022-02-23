@@ -172,6 +172,9 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         );
 
         $result = $shell->run(implode(' ', $cmd), true, true);
+        if ($result->failed()) {
+            $result->throwException("Could not drop tables from db!");
+        }
 
         $cmd =array_merge(
             [
