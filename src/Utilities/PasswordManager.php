@@ -362,21 +362,23 @@ class PasswordManager implements PasswordManagerInterface
     private function extractSecretFrom1PasswordPayload($payload, $cli)
     {
         $json = json_decode($payload);
-        if ($cli) {
-            $json = $json->details;
-        }
-        if (!empty($json->password)) {
-            return $json->password;
-        }
-        if (!empty($json->sections)) {
-            foreach ($json->sections as $section) {
-                if (isset($secton->fields) && $result = $this->extractFieldsHelper($section->fields)) {
-                    return $result;
+        if ($json) {
+            if ($cli) {
+                $json = $json->details;
+            }
+            if (!empty($json->password)) {
+                return $json->password;
+            }
+            if (!empty($json->sections)) {
+                foreach ($json->sections as $section) {
+                    if (isset($secton->fields) && $result = $this->extractFieldsHelper($section->fields)) {
+                        return $result;
+                    }
                 }
             }
-        }
-        if (!empty($json->fields)) {
-            return $this->extractFieldsHelper($json->fields);
+            if (!empty($json->fields)) {
+                return $this->extractFieldsHelper($json->fields);
+            }
         }
 
         $this->getContext()->getConfigurationService()->getLogger()->warning(
