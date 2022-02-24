@@ -256,7 +256,7 @@ class PasswordManager implements PasswordManagerInterface
     {
         $op_file_path = getenv('PHAB_OP_FILE_PATH') ?: '/usr/local/bin/op';
         if (!$op_file_path || !file_exists($op_file_path)) {
-            return new CommandResult(1, ['COuld not find 1password binary.']);
+            return new CommandResult(1, ['Could not find 1password binary.']);
         }
 
         $output = [];

@@ -84,7 +84,7 @@ class OutputCommand extends BaseCommand
             $template = $this->getConfiguration()->getBlueprints()->getTemplate($config);
             $data = $template->expand($blueprint);
             $data = [
-                $data['configName'] => $data
+                $data['configName'] => $data->asArray()
             ];
             $title = 'Output of applied blueprint `' . $config . '`';
         } elseif ($what == 'host') {
