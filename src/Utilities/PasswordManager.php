@@ -359,7 +359,7 @@ class PasswordManager implements PasswordManagerInterface
         return false;
     }
 
-    private function extractSecretFrom1PasswordPayload($payload, $cli)
+    public function extractSecretFrom1PasswordPayload($payload, $cli)
     {
         $json = json_decode($payload);
         if ($json) {
@@ -371,7 +371,7 @@ class PasswordManager implements PasswordManagerInterface
             }
             if (!empty($json->sections)) {
                 foreach ($json->sections as $section) {
-                    if (isset($secton->fields) && $result = $this->extractFieldsHelper($section->fields)) {
+                    if (isset($section->fields) && $result = $this->extractFieldsHelper($section->fields)) {
                         return $result;
                     }
                 }
