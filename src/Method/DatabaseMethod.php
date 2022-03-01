@@ -187,6 +187,11 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
         if (!$file) {
             throw new InvalidArgumentException('Missing file parameter');
         }
+
+        // Make sure, there is a db to copy into.
+        $this->waitForDatabase($host_config, $context);
+        $this->install($host_config, $context);
+
         $shell = $this->getShell($host_config, $context);
 
         $result = $this->importSqlFromFile(
