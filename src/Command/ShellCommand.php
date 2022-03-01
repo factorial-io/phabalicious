@@ -65,7 +65,7 @@ class ShellCommand extends BaseCommand
         $options->setUseTty(true);
         $options->setQuiet(false);
 
-        $process = $this->startInteractiveShell($context->io(), $shell, [], $options);
+        $process = $this->startInteractiveShell($context, $shell, [], $options);
         return $process->getExitCode();
     }
 }

@@ -98,7 +98,7 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
             ));
 
             $options = $this->getSuitableShellOptions($output);
-            $process = $this->startInteractiveShell($context->io(), $shell, $command, $options);
+            $process = $this->startInteractiveShell($context, $shell, $command, $options);
             return $process->getExitCode();
         } else {
             return $context->getResult('exitCode', 0);

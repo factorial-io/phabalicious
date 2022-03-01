@@ -45,7 +45,7 @@ class DatabaseShellCommand extends DatabaseSubCommand
         $options->setUseTty(true);
         $options->setQuiet(false);
 
-        $process = $this->startInteractiveShell($context->io(), $shell, [ implode(' ', $shell_command) ], $options);
+        $process = $this->startInteractiveShell($context, $shell, [ implode(' ', $shell_command) ], $options);
         return $process->getExitCode();
     }
 }

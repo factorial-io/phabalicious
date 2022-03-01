@@ -243,16 +243,16 @@ abstract class BaseCommand extends BaseOptionsCommand
      * @return Process
      */
     protected function startInteractiveShell(
-        SymfonyStyle $io,
+        TaskContextInterface $context,
         ShellProviderInterface $shell,
         array $command = [],
         ShellOptions $options = null
     ) {
-        $fn = function ($type, $buffer) use ($io) {
+        $fn = function ($type, $buffer) use ($context) {
             if ($type == Process::ERR) {
-                $io->error($buffer);
+                $context->io()->error($buffer);
             } else {
-                $io->write($buffer);
+                $context->getOutput()->write($buffer);
             }
         };
         if (!$options) {
@@ -274,7 +274,7 @@ abstract class BaseCommand extends BaseOptionsCommand
         $process->start($fn);
         $process->wait($fn);
         if ($process->isTerminated() && !$process->isSuccessful()) {
-            $io->error(sprintf(
+            $context->io()->error(sprintf(
                 'Command %s failed with error %s',
                 $process->getCommandLine(),
                 $process->getExitCode()

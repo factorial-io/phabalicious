@@ -9,6 +9,7 @@ use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -189,7 +190,12 @@ class TaskContext implements TaskContextInterface
     public function io()
     {
         if (!$this->io) {
-            $this->io = new SymfonyStyle($this->getInput(), $this->getOutput());
+            $output = $this->getOutput();
+            // Use stderr if available.
+            if (!$output->isDecorated() && $output instanceof ConsoleOutputInterface) {
+                $output = $output->getErrorOutput();
+            }
+            $this->io = new SymfonyStyle($this->getInput(), $output);
         }
         return $this->io;
     }
