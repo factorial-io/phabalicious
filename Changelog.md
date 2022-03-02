@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.7.7 / 2022-03-02
+
+### Fixes:
+
+  * Check only params for globally used parameter options (Fixes #254)
+  * Remove accidentally added composer mirror
+  * Use mysql port information when running install
+
+### Chore:
+
+  * Introduce renovate bot to update dependencies automatically
+  * Update depencencies
+
 ## 3.7.6 / 2022-01-18
 
 ### Fixes:
