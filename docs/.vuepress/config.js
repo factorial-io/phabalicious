@@ -2,7 +2,6 @@ module.exports = {
   base: "/",
   title: "Phabalicious",
   description: "A deployment system and general purpose helper",
-  theme: require.resolve("@factorial/vuepress-theme"),
   themeConfig: {
     algolia: {
       apiKey: '69abc87124806b56252e00022c94f392',
