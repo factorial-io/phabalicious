@@ -182,6 +182,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
         $this->value[$key] = $value;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset)->getValue();
@@ -192,6 +193,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
         return $this->has($offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (!$value instanceof Node) {
@@ -200,6 +202,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
         $this->set($offset, $value);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->value[$offset]);

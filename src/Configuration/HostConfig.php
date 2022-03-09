@@ -7,16 +7,19 @@ namespace Phabalicious\Configuration;
 class HostConfig extends HostConfigAbstract
 {
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->data->offsetGet($offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value): void
     {
         $this->data->offsetSet($offset, $value);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset): void
     {
         $this->data->offsetUnset($offset);
