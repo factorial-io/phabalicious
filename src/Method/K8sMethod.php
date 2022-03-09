@@ -332,6 +332,9 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $this->ensureShell($host_config, $context);
         $scaffold_url = $kube_config['scaffolder']['baseUrl'] . '/' . $kube_config['scaffolder']['template'];
+        if ($scaffold_url[0] == '.') {
+            $scaffold_url = realpath($scaffold_url);
+        }
         $scaffolder = new Scaffolder($configuration);
 
         $options = new Options();
