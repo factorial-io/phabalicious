@@ -20,6 +20,6 @@ class Confirm extends QuestionBase implements QuestionInterface
             $this->data['default'] ?? false
         );
 
-        return $io->askQuestion($question);
+        return $io->askQuestion($question) ? 1 : 0;
     }
 }
