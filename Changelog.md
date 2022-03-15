@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.7.8 / 2022-03-15
+
+### Fixes:
+
+  * notify: Handle `--channel` option correctly.
+
+
 ## 3.7.7 / 2022-03-02
 
 ### Fixes:
