@@ -61,11 +61,11 @@ class JiraCommand extends BaseOptionsCommand
         ]));
 
         $jql = sprintf(
-            'assignee="%s" and project="%s" AND statusCategory != Done',
-            $jira_config['user'],
+            'project="%s" AND statusCategory!=Done AND assignee=currentUser()',
             $this->configuration->getSetting('jira.projectKey', $this->configuration->getSetting('key'))
         );
 
+        $this->configuration->getLogger()->info(sprintf('Querying jira with %s', $jql));
         $issues = $client->search($jql);
         $context->io()->title('My open tickets on ' . $this->configuration->getSetting('name'));
         $context->io()->table(
