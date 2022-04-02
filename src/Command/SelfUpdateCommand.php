@@ -50,6 +50,7 @@ class SelfUpdateCommand extends BaseOptionsCommand
         } else {
             $helper->note('No newer version found!');
         }
+        return 0;
     }
 
     protected static function getUpdater(Application $application, $allow_unstable)
@@ -71,8 +72,8 @@ class SelfUpdateCommand extends BaseOptionsCommand
         if (!$update_data) {
             return false;
         }
-        $allow_unstable = $update_data['unstable'];
-        $updater = self::getUpdater($this->getApplication(), $allow_unstable);
+        $use_unstable = $update_data['unstable'];
+        $updater = self::getUpdater($this->getApplication(), $use_unstable);
         $result = $updater->update();
         return $result ? $updater->getNewVersion() : false;
     }
@@ -81,30 +82,39 @@ class SelfUpdateCommand extends BaseOptionsCommand
     {
         try {
             $version = $this->getApplication()->getVersion();
-            $allow_unstable =
+            // If the current running version is alpha/beta,
+            // then the updater behaves is as if user intend to use
+            // --allow-unstable.
+            $use_unstable =
                 $allow_unstable ||
                 (stripos($version, 'alpha') !== false) ||
                 (stripos($version, 'beta') !== false);
 
-            $updater = self::getUpdater($this->getApplication(), $allow_unstable);
-
-            if ($allow_unstable && !$updater->hasUpdate()) {
-                // No new unstable version available, try again on the stable branch.
-                $allow_unstable = false;
-                $updater = self::getUpdater($this->getApplication(), $allow_unstable);
+            $stable_updater = self::getUpdater($this->getApplication(), false);
+            $updater = $stable_updater;
+            if ($use_unstable) {
+                $unstable_updater = self::getUpdater($this->getApplication(), true);
+                $unstable_version = $unstable_updater->getNewVersion();
+                $stable_version = $stable_updater->getNewVersion();
+                // Using an unstable version doesn't make sense if the latest
+                // version is greater than the latest unstable version.
+                // Hence, we try to update to unstable version
+                // if and only if stable version is less than unstable version.
+                if (Comparator::lessThan($stable_version, $unstable_version)) {
+                    $updater = $unstable_version;
+                }
             }
-
             if (!$updater->hasUpdate()) {
                 return false;
             }
 
             return [
                 'new_version' => $updater->getNewVersion(),
-                'unstable' => $allow_unstable,
+                'unstable' => $use_unstable,
             ];
         } catch (\Exception $e) {
             // Fallback, call github directly.
-            return $this->getLatestReleaseFromGithub($allow_unstable);
+            return $this->getLatestReleaseFromGithub($use_unstable);
         }
 
         return false;
