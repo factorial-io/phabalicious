@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.8.0-beta.1
+## 3.8.0-beta.1 / 2022-04-02
 
 ### Changed:
 
@@ -8,35 +8,75 @@
 
 ### New:
 
-* Added script- and scaffold-callbacks for encryption and decryption using `defuse/php-encryption`
+  * Added script- and scaffold-callbacks for encryption and decryption using `defuse/php-encryption`
 
-  You can encrypt files in a script with
+    You can encrypt files in a script with
 
-  ```yaml
-  secrets:
-    name-of-secret:
-      question: What is the password
+    ```yaml
+    secrets:
+      name-of-secret:
+        question: What is the password
 
-  scripts:
-    encryt:
-      - encrypt_files(path/to/files/or/folders/to/encrypt/*.ext, path/to/folder/to/store/encrypted/files, name-of-secret)
-    decryt:
-      - decrypt_files(path/to/files/or/folders/to/decrypt/*.enc, path/to/folder/to/store/decrypted/files, name-of-secret)
-  ```
+    scripts:
+      encryt:
+        - encrypt_files(path/to/files/or/folders/to/encrypt/*.ext, path/to/folder/to/store/encrypted/files, name-of-secret)
+      decryt:
+        - decrypt_files(path/to/files/or/folders/to/decrypt/*.enc, path/to/folder/to/store/decrypted/files, name-of-secret)
+    ```
 
-  The scaffolder has a new callback called `decrypt_assets` which works the same as `copy_assets` but with a preliminary decryption step
+    The scaffolder has a new callback called `decrypt_assets` which works the same as `copy_assets` but with a preliminary decryption step
 
-  ```yaml
-  scaffold:
-    - decrypt_assets(targetFolder, dataKey, secretName, twigExtension)
-  ```
+    ```yaml
+    scaffold:
+      - decrypt_assets(targetFolder, dataKey, secretName, twigExtension)
+    ```
 
-* Added new callbacks for getting a file from 1password-cli / -connect
-* Obfuscate passwords in log-outputs
+  * Refactored data is read and stored, which allows now to introspect a configuration mor thoroughly than before:
+
+    * Added a new command `find:property` which will promt the user for a propery-name, and display from where the value got inherited and other useful information. If the property cant be found, a list of possible candidates is shown, the input supports autocomplete.
+    * The command `about` will output from where the data got inherited, when the `-v` was passed.
+    * Relative inheritance is now fully supported, that means you can inherit from a file/ http ressource via a relative path
+
+  * Added new callbacks for getting a file from 1password-cli / -connect
+  * Obfuscate passwords in log-outputs
+  * new command `db:query` to run custom queries against a db configuration
+  * Add support for database credentials from 1password cli
+  * Add support for nested fields by 1password
+  * Add new command `install:from-sql-file` which will stream-line the installation process when installing from a sql-file (Fixes #223)
+  * Add options for mac-arm to workspace commands, ignore saved existing scaffold-tokens
+  * Add feature-flag to use rsync implementation of get/put:file on k8s
 
 ### Fixed
 
-* Do not run reset when only running copy-from files (Fixes Do not run reset after phab copy-from <xxx> files #181)
+  * Do not run reset when only running copy-from files (Fixes Do not run reset after phab copy-from <xxx> files #181)
+  * Change jql to support also jira-cloud
+  * `confirm`-question returns now 0 instead of an empty result (Fixes #219)
+  * Hide warning when using PHP 8.1
+  * Use absolute paths when scaffolding from a relative path
+  * show log-messages and app-prompts on stderr if the output is not decorated, e.g. when using pipes (Fixes #250)
+  * command output left information when using blueprint
+  * fix error in password extraction from 1p client, add test-coverage
+  * throw an exception if tables cant be dropped
+  * Handle empty results from op with more grace
+  * Wrap mysql password in quotes
+  * feat: Allow global docker config which gets inherited by host-specific docker config
+  * Better error reporting for missing scaffolding source files
+  * Pass context down the lane, when running multiple commands serially
+  * Fix warnings when no passwords are cached
+  * Fix version check, do not check for version when running `self:update` (Fixes #174)
+  * Use mysql port information when running install
+  * Report deprecation messages after all inheritance is resolved
+  * Show proper error message if script could not be located in the fabfile. (Fixes #220)
+  * Better file names with date and time (Fixes #214)
+  * Fix problems with tilde in file path in mysql method
+  * Reset admin password after drupal is deployed completely (Fixes #211)
+  * Do not run reset when only running `copy-from files` (Fixes #181)
+  * Update grumphp so it works under PHP 8.x
+  * Switch to consolidation/self-update as the other used lib is abandonded. Fixed some warnings under php 8.1
+  * Pass shellProviderOptions to rsync
+  * dump database structure and data separately to prevent missing table structures for ignored tables
+  * Refactor copyAssets-callback to be more flexible
+
 
 ## 3.7.9 / 2022-04-02
 
