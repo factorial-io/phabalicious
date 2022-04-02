@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.7.9 / 2022-04-02
+
+### Fixes:
+
+  * fix: [#260] self-update --allow-unstable=1 toggles between stable and unstable version
+  * Updated dependencies
+
 ## 3.7.8 / 2022-03-15
 
 ### Fixes:
