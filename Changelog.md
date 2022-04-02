@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.8.0
+## 3.8.0-beta.1
 
 ### Changed:
 
@@ -37,6 +37,19 @@
 ### Fixed
 
 * Do not run reset when only running copy-from files (Fixes Do not run reset after phab copy-from <xxx> files #181)
+
+## 3.7.9 / 2022-04-02
+
+### Fixes:
+
+  * fix: [#260] self-update --allow-unstable=1 toggles between stable and unstable version
+  * Updated dependencies
+
+## 3.7.8 / 2022-03-15
+
+### Fixes:
+
+  * notify: Handle `--channel` option correctly.
 
 ## 3.7.7 / 2022-03-02
 

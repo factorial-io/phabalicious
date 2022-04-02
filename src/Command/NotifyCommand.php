@@ -35,7 +35,9 @@ class NotifyCommand extends BaseCommand
             )
             ->addOption(
                 'channel',
-                InputOption::VALUE_OPTIONAL
+                false,
+                InputOption::VALUE_OPTIONAL,
+                'The channel to send the message to'
             )
             ->setHelp('Send a custom message as notification.');
     }

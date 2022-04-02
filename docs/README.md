@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: https://logo.factorial.io/color.svg
+heroImage: logo_phab_io_factorialcolors.svg
 heroText: "Phabalicious"
 tagline: Supports your deployments and every-day devops-tasks
 actionText: Get Started →
