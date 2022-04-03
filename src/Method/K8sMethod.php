@@ -152,7 +152,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
             'host' => $data->asArray(),
         ]);
 
-        $data->expandReplacements($replacements, ['podSelector', 'deployments']);
+        $data->expandReplacements($replacements, ['podSelector', 'deployments', 'parameters']);
 
         $data['kubectlOptionsCombined'] = trim(implode(
             ' ',
@@ -165,6 +165,8 @@ class K8sMethod extends BaseMethod implements MethodInterface
      *
      * @param HostConfig $config
      * @param string $arg
+     * @param array $exclude
+     *
      * @return string
      */
     protected function expandCmd(HostConfig $config, $arg = '', $exclude = [])
@@ -352,11 +354,13 @@ class K8sMethod extends BaseMethod implements MethodInterface
             escapeshellarg($projectFolder),
             escapeshellarg($projectFolder . "/*")
         ));
+
+        $parameters = $this->expandReplacements($host_config, $context, $kube_config['parameters']);
         $scaffolder->scaffold(
             $scaffold_url,
             $projectFolder,
             $context,
-            $kube_config['parameters'],
+            $parameters,
             $options
         );
     }
