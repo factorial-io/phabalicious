@@ -664,6 +664,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
     /**
      * @param \Phabalicious\Configuration\HostConfig $host_config
      * @param \Phabalicious\Method\TaskContextInterface $context
+     *
+     * @throws \Phabalicious\Exception\FailedShellCommandException
      */
     public function requestDatabaseCredentialsAndWorkingDir(HostConfig $host_config, TaskContextInterface  $context)
     {
@@ -726,5 +728,41 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 break;
         }
         $context->setResult(DatabaseMethod::DATABASE_CREDENTIALS, $data);
+    }
+
+    protected function setMaintenanceMode(
+        HostConfig $host_config,
+        TaskContextInterface  $context,
+        bool $maintenance_mode_enabled
+    ) {
+        $context->io()->comment(sprintf("Setting maintenance mode to %s", ($maintenance_mode_enabled ? "ON" : "OFF")));
+
+        $shell = $this->getShell($host_config, $context);
+        $shell->pushWorkingDir($host_config['siteFolder']);
+
+        if ($host_config['drupalVersion'] >= 8) {
+            $this->runDrush($shell, false, sprintf(
+                "state:set system.maintenance_mode %d --input-format=integer",
+                $maintenance_mode_enabled
+            ));
+            $this->runDrush($shell, false, "cache:rebuild");
+        } else {
+            $this->runDrush($shell, false, sprintf(
+                "vset maintenance_mode %d",
+                $maintenance_mode_enabled
+            ));
+            $this->runDrush($shell, false, "cc --all");
+        }
+        $shell->popWorkingDir();
+    }
+
+    public function freezeApp(HostConfig $host_config, TaskContextInterface  $context)
+    {
+        $this->setMaintenanceMode($host_config, $context, true);
+    }
+
+    public function unfreezeApp(HostConfig $host_config, TaskContextInterface  $context)
+    {
+        $this->setMaintenanceMode($host_config, $context, false);
     }
 }

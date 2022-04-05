@@ -277,27 +277,35 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         string $file,
         bool $drop_db
     ): CommandResult {
-        $data = $this->getDatabaseCredentials($host_config, $context);
+        $context->getConfigurationService()->getMethodFactory()->runTask("freezeApp", $host_config, $context);
+        try {
+            $data = $this->getDatabaseCredentials($host_config, $context);
 
-        $shell->pushWorkingDir($data['workingDir']);
+            $shell->pushWorkingDir($data['workingDir']);
 
-        if ($drop_db) {
-            $this->dropDatabase($host_config, $context, $shell, $data);
+            if ($drop_db) {
+                $this->dropDatabase($host_config, $context, $shell, $data);
+            }
+
+            $this->logger->info(sprintf('Restoring db from %s ...', $file));
+
+            $cmd = $this->getMysqlCommand($host_config, $context, 'mysql', $data, true);
+
+            if (substr($file, strrpos($file, '.') + 1) == 'gz') {
+                array_unshift($cmd, "#!gunzip", "-c", $file, "|");
+            } else {
+                array_unshift($cmd, "#!cat", $file, "|");
+            }
+            $result = $shell->run(implode(" ", $cmd));
+            $shell->popWorkingDir();
+
+            $context->getConfigurationService()->getMethodFactory()->runTask("unfreezeApp", $host_config, $context);
+
+            return $result;
+        } catch (\Exception $e) {
+            $context->getConfigurationService()->getMethodFactory()->runTask("unfreezeApp", $host_config, $context);
+            throw $e;
         }
-
-        $this->logger->info(sprintf('Restoring db from %s ...', $file));
-
-        $cmd = $this->getMysqlCommand($host_config, $context, 'mysql', $data, true);
-
-        if (substr($file, strrpos($file, '.') + 1) == 'gz') {
-            array_unshift($cmd, "#!gunzip", "-c", $file, "|");
-        } else {
-            array_unshift($cmd, "#!cat", $file, "|");
-        }
-        $result = $shell->run(implode(" ", $cmd));
-        $shell->popWorkingDir();
-
-        return $result;
     }
 
     /**
