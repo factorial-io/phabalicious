@@ -114,7 +114,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
             /** @var \Phabalicious\Command\SelfUpdateCommand command */
             $command = $event->getCommand()->getApplication()->find('self-update');
 
-            if (1 || $output->isDecorated()
+            if ($output->isDecorated()
                 && !$output->isQuiet()
                 && !$event->getCommand()->isHidden()
                 && !$event->getCommand()->getName() !== 'self:update'
