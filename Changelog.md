@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.8.0-beta2 / 2022-04-11
+
+### New:
+
+  * feature(db): Freeze/ unfreeze application while importing a sql dump
+    for dupal project the site is put into maintenance mode while importing the dump
+
+### Fixed:
+  * fix: Limit when to check for updates again
+  * fix(k8s): Apply replacements for `parameters` before doing the scaffold
+
 ## 3.8.0-beta.1 / 2022-04-02
 
 ### Changed:
