@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.10 / 2022-04-19
+
+### Fixes:
+
+  * fix(k8s): Fix bug in cleanup code for the temporary scaffold folder
+
 ## 3.7.9 / 2022-04-02
 
 ### Fixes:
