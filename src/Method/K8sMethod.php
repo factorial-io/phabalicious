@@ -352,7 +352,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         $this->kubectlShell->run(sprintf(
             "mkdir -p %s && rm -rf %s",
             escapeshellarg($projectFolder),
-            escapeshellarg($projectFolder . "/*")
+            escapeshellarg($projectFolder)
         ));
 
         $parameters = $this->expandReplacements($host_config, $context, $kube_config['parameters']);
