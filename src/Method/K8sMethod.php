@@ -345,7 +345,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         $this->kubectlShell->run(sprintf(
             "mkdir -p %s && rm -rf %s",
             escapeshellarg($projectFolder),
-            escapeshellarg($projectFolder . "/*")
+            escapeshellarg($projectFolder)
         ));
         $scaffolder->scaffold(
             $scaffold_url,
