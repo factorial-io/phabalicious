@@ -39,6 +39,8 @@ class ScriptExecutionContext
 
     protected $scriptWorkingDir;
 
+    protected $dockerComposeRootDir;
+
 
     public function __construct($working_dir, string $context_name, array $context_data)
     {
@@ -95,7 +97,8 @@ class ScriptExecutionContext
 
         switch ($this->currentContextName) {
             case self::DOCKER_COMPOSE_RUN:
-                $shell->cd($this->getArgument('rootFolder'));
+                $this->dockerComposeRootDir = $this->getArgument('rootFolder');
+                $shell->cd($this->dockerComposeRootDir);
                 $shell->run('docker-compose pull && docker-compose build', false, true);
                 $this->shell = $shell->startSubShell([
                     'docker-compose',
@@ -160,6 +163,7 @@ class ScriptExecutionContext
 
         if ($this->currentContextName == self::DOCKER_COMPOSE_RUN) {
             $this->shell->cd($this->initialWorkingDir);
+            $this->shell->cd($this->dockerComposeRootDir);
             $this->shell->run('docker-compose rm -s -v --force');
         }
     }
