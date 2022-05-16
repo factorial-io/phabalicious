@@ -512,6 +512,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
                 'globals' => Utilities::getGlobalReplacements($context->getConfigurationService()),
                 'host' => $host_config->asArray(),
                 'context' => $context->getData(),
+                'settings' => $context->getConfigurationService()->getAllSettings(),
             ], $vars)
         );
         $data = Utilities::expandStrings($data, $replacements);
