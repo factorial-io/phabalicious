@@ -97,7 +97,12 @@ class Scaffolder
         if (!$data = $options->getScaffoldDefinition()) {
             $root_path = dirname($url);
             try {
-                if (substr($url, 0, 4) !== 'http') {
+                if (!Utilities::isHttpUrl($url)) {
+                    $fullpath = realpath($url);
+                    if (empty($fullpath)) {
+                        throw new \RuntimeException(sprintf('Could not find file at `%s`!', $url));
+                    }
+                    $url = $fullpath;
                     $data = new Node(Yaml::parseFile($url), $url);
                 } else {
                     $data = $this->configuration->readHttpResource($url);
