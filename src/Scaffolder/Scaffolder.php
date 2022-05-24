@@ -157,7 +157,7 @@ class Scaffolder
             if ($is_remote) {
                 foreach ($data['inheritsFrom'] as $item) {
                     $item = trim($item);
-                    if ($item[0] !== '@' && substr($item, 0, 4) !== 'http') {
+                    if ($item[0] !== '@' && !Utilities::isHttpUrl($item)) {
                         $data['inheritsFrom'] = $data['base_path'] . '/' . $item;
                     }
                 }

@@ -380,7 +380,7 @@ class ConfigurationService
                 $item = $child->getValue();
 
                 // Skip urls and absolute paths:
-                if ($item[0] === '/' || ((substr($item, 0, 4) == 'http') && strpos($item, '://') !== false)) {
+                if ($item[0] === '/' || Utilities::isHttpUrl($item)) {
                     continue;
                 }
 
@@ -458,7 +458,7 @@ class ConfigurationService
             $add_data = false;
             if ($lookup->has($resource)) {
                 $add_data = $lookup->get($resource);
-            } elseif (strpos($resource, 'http') !== false) {
+            } elseif (Utilities::isHttpUrl($resource)) {
                 $content = $this->readHttpResource($resource);
                 if ($content) {
                     $add_data = new Node(Yaml::parse($content), $resource);

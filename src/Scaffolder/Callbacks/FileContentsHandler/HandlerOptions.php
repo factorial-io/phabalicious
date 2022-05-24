@@ -49,7 +49,7 @@ class HandlerOptions
         ) == CopyAssetsBaseCallback::IGNORE_SUBFOLDERS_STRATEGY;
         $this->data = $data;
         $this->tokens = $context->get('tokens');
-        $this->isRemote = substr($data['base_path'], 0, 4) == 'http';
+        $this->isRemote = Utilities::isHttpUrl($data['base_path']);
         $this->replacements = Utilities::getReplacements($this->tokens);
         $this->basePath = $data['base_path'];
     }

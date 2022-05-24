@@ -645,4 +645,12 @@ class Utilities
         }
         return $url;
     }
+
+    /**
+     * Returns true if url is a http url.
+     */
+    public static function isHttpUrl($url): bool
+    {
+        return (substr($url, 0, 4) === 'http')  && (strpos($url, '://') !== false);
+    }
 }
