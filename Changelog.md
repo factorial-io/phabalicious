@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.8.0-beta3 / 2022-05-26
+
+### Fixes:
+
+  * k8s: Fix bug in cleanup code for the temporary folder
+  * k8s: Expose global settings as replacement patterns for k8s parameters
+  * scripts: Fix cleanup of script execution context `docker-compose-run`
+  * db: Make sure db is installed when trying to import sql
+  * db: Show warning if tables cant be dropped
+  * Pass absolute paths to scaffolder to prevent ambiguities when resolving relative pathsu
+
+
 ## 3.8.0-beta2 / 2022-04-11
 
 ### New:
