@@ -3,7 +3,6 @@
 namespace Phabalicious\Configuration;
 
 use Composer\Semver\Comparator;
-use http\Exception\RuntimeException;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Configuration\Storage\Store;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
@@ -445,7 +444,7 @@ class ConfigurationService
         if ($baseUrl && $baseUrl[0] = '.') {
             $fullpathBaseUrl = realpath($baseUrl);
             if (!$fullpathBaseUrl) {
-                throw new RuntimeException(sprintf('Could not resolve/ find base url: `%s`', $baseUrl));
+                throw new \RuntimeException(sprintf('Could not resolve/ find base url: `%s`', $baseUrl));
             }
             $baseUrl = $fullpathBaseUrl;
         }
