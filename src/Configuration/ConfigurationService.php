@@ -441,7 +441,7 @@ class ConfigurationService
         }
 
         $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getInheritanceBaseUrl();
-        if ($baseUrl && $baseUrl[0] = '.') {
+        if ($baseUrl && $baseUrl[0] == '.') {
             $fullpathBaseUrl = realpath($baseUrl);
             if (!$fullpathBaseUrl) {
                 throw new \RuntimeException(sprintf('Could not resolve/ find base url: `%s`', $baseUrl));
