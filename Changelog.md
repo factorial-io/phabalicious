@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.8.0-beta4 / 2022-05-29
+
+### Fixes:
+  * Fix error when checking base-url
+  * Fix wrong usage of runtime-exception
+
 ## 3.8.0-beta3 / 2022-05-26
 
 ### Fixes:
