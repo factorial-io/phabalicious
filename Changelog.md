@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.7.11 / 2022-05-30
+
+### Fixes:
+  * fix(k8s): Fix the real bug which prevents scaffolding k8s files introduced with 3.7.10
+
 ## 3.7.10 / 2022-04-19
 
 ### Fixes:
