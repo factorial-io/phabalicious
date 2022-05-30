@@ -249,7 +249,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $shell->run(implode(" ", $get_data_cmd), false, true);
 
         if ($zipped_backup) {
-            $shell->run(sprintf('#!gzip %s', $backup_file_name));
+            $shell->run(sprintf('#!gzip -f %s', $backup_file_name));
             $backup_file_name .= '.gz';
         }
         $shell->run('set +o pipefail');

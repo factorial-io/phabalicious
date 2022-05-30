@@ -878,6 +878,9 @@ class ConfigurationService
 
     public function addHost($host_data)
     {
+        if (empty($this->hosts)) {
+            $this->hosts = new Node([], 'configuration');
+        }
         $this->hosts[$host_data['configName']] = $host_data;
     }
 

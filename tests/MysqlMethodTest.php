@@ -65,7 +65,9 @@ class MysqlMethodTest extends PhabTestCase
             'needs' => [
                 'mysql'
             ],
-            'mysqlDumpOptions' => [],
+            'mysqlDumpOptions' => [
+                '--column-statistics=0'
+            ],
             'executables' => [
                 'mysql' => 'mysql',
                 'mysqladmin' => 'mysqladmin',
@@ -170,9 +172,9 @@ class MysqlMethodTest extends PhabTestCase
         $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
         $result = $this->shell->run(implode(' ', $cmd));
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertStringContainsString('customers', $result->getOutput());
-        $this->assertStringContainsString('employees', $result->getOutput());
-        $this->assertStringContainsString('offices', $result->getOutput());
+        $this->assertContains('customers', $result->getOutput());
+        $this->assertContains('employees', $result->getOutput());
+        $this->assertContains('offices', $result->getOutput());
 
         // Now export the sql again.
 
@@ -196,7 +198,7 @@ class MysqlMethodTest extends PhabTestCase
         $cmd = $this->getExecuteSQLCommand(true, "SHOW DATABASES");
         $result = $this->shell->run(implode(' ', $cmd));
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertStringContainsString('test-phabalicious', $result->getOutput());
+        $this->assertContains('test-phabalicious', $result->getOutput());
 
         $cmd = $this->getExecuteSQLCommand(true, "USE test-phabalicious;");
         $result = $this->shell->run(implode(' ', $cmd));
@@ -208,7 +210,7 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->shell->run(implode(' ', $cmd));
 
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertStringContainsString('test_table', $result->getOutput());
+        $this->assertContains('test_table', $result->getOutput());
 
         $this->context->set('what', 'drop');
         $result = $this->method->database($this->hostConfig, $this->context);
