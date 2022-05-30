@@ -1,0 +1,44 @@
+name: getproperty-tests
+
+needs:
+  - k8s
+  - local
+
+hosts:
+  k8s-base:
+    kube:
+      kubeconfig: /not/used
+      podSelector:
+      - not_used
+      parameters:
+        valueA: foo
+        valueB: bar
+
+  test:
+    rootFolder: .
+    inheritsFrom:
+      - k8s-base
+    kube:
+      scaffolder:
+        baseUrl: ./scaffold
+        template: test.yml
+
+  test-overridden:
+    inheritsFrom:
+      - test
+    kube:
+      parameters:
+        valueA: foobar
+        valueB: baz
+
+  test-name-in-question:
+    inheritsFrom:
+      - test
+    kube:
+      scaffolder:
+        template: test-question-with-name.yml
+      parameters:
+        valueA: foobar
+        valueB: baz
+
+

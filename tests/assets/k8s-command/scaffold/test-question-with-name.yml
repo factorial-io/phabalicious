@@ -1,0 +1,9 @@
+assets:
+  - deployment.yml
+
+questions:
+  name:
+    question: What is the name of the project
+
+scaffold:
+    - copy_assets(%rootFolder%)

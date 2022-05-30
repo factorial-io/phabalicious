@@ -328,7 +328,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         }
         $configuration = $context->getConfigurationService();
 
-        $this->ensureShell($host_config, $context);
+        $root_folder = $this->ensureShell($host_config, $context);
         $scaffold_url = $kube_config['scaffolder']['baseUrl'] . '/' . $kube_config['scaffolder']['template'];
         $scaffolder = new Scaffolder($configuration);
 
@@ -351,7 +351,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         // We scaffold the files into a folder relative to the location of the fabfile.
         $scaffolder->scaffold(
             $scaffold_url,
-            $context->getConfigurationService()->getFabfilePath(),
+            $root_folder,
             $context,
             $kube_config['parameters'],
             $options

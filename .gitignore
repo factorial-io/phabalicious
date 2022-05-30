@@ -13,3 +13,4 @@ tests/test-alter/
 tests/test-scaffold-callback/
 tests/test-scaffold-twig
 .obsidian
+tests/assets/k8s-command/kube/

@@ -1,0 +1,7 @@
+assets:
+  - deployment.yml
+
+questions: []
+
+scaffold:
+    - copy_assets(%rootFolder%)
