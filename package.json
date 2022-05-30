@@ -1,10 +1,31 @@
 {
+  "name": "phabalicious",
+  "version": "3.8.0-beta.4",
+  "main": "index.js",
+  "repository": "https://github.com/factorial-io/phabalicious.git",
+  "author": "Stephan Huber <stephan@factorial.io>",
+  "license": "MIT",
+  "private": true,
   "devDependencies": {
+    "@commitlint/cli": "^17.0.1",
+    "@commitlint/config-conventional": "^17.0.0",
     "@factorial/vuepress-theme": "1.0.0-alpha.1",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "3.3.0",
+    "cz-customizable": "^6.3.0",
+    "husky": "^8.0.1",
+    "standard-version": "^9.5.0",
     "vuepress": "^1.1.0"
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
+    "postinstall": "husky install",
+    "release": "standard-version -t ''"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

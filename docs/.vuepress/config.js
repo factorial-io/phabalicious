@@ -50,7 +50,7 @@ module.exports = {
             "/blog/how-to-use-secrets.html"
         ],
       },
-      "/Changelog.html"
+      "/CHANGELOG.html"
     ]
   }
 };

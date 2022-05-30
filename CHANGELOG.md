@@ -1,5 +1,7 @@
 # Changelog
 
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
 ## 3.8.0-beta4 / 2022-05-29
 
 ### Fixes:
