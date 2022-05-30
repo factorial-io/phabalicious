@@ -347,9 +347,11 @@ class K8sMethod extends BaseMethod implements MethodInterface
             escapeshellarg($projectFolder),
             escapeshellarg($projectFolder)
         ));
+
+        // We scaffold the files into a folder relative to the location of the fabfile.
         $scaffolder->scaffold(
             $scaffold_url,
-            $projectFolder,
+            $context->getConfigurationService()->getFabfilePath(),
             $context,
             $kube_config['parameters'],
             $options
