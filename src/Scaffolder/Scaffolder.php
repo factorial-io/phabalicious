@@ -110,7 +110,7 @@ class Scaffolder
                     $is_remote = true;
                 }
             } catch (ParseException $e) {
-                throw new YamlParseException(sprintf("Could not parse %s!", $url), 0, $e);
+                throw new YamlParseException(sprintf("Could not parse %s! Working dir: %s", $url, getcwd()), 0, $e);
             }
             if (!$data) {
                 throw new InvalidArgumentException('Could not read yaml from ' . $url);
@@ -214,8 +214,10 @@ class Scaffolder
 
         $this->shell = $shell;
 
-        if (empty($data['questions']['name']) && $options->getSkipSubfolder() && $options->getAllowOverride()) {
+        if (empty($data['questions']['name'])) {
             $tokens['name'] = $tokens['name'] ?? basename($root_folder);
+        }
+        if ($options->getSkipSubfolder() && $options->getAllowOverride()) {
             $root_folder = dirname($root_folder);
         }
 

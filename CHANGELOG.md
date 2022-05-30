@@ -108,6 +108,18 @@ All notable changes to this project will be documented in this file. See [standa
   * dump database structure and data separately to prevent missing table structures for ignored tables
   * Refactor copyAssets-callback to be more flexible
 
+## 3.7.12 / 2022-05-30
+
+### Fixes:
+
+  * fix(k8s): Add test coverage for k8s scaffold, fixed some bugs because of race-conditions
+
+## 3.7.11 / 2022-05-30
+
+### Fixes:
+  * fix(k8s): Fix the real bug which prevents scaffolding k8s files introduced with 3.7.10
+>>>>>>> main:Changelog.md
+
 ## 3.7.10 / 2022-04-19
 
 ### Fixes:
@@ -139,7 +151,6 @@ All notable changes to this project will be documented in this file. See [standa
 
   * Introduce renovate bot to update dependencies automatically
   * Update depencencies
->>>>>>> main
 
 ## 3.7.6 / 2022-01-18
 

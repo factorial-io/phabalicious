@@ -13,6 +13,8 @@ tests/test-alter/
 tests/test-scaffold-callback/
 tests/test-scaffold-twig
 .obsidian
+<<<<<<< HEAD
 tests/assets/script-tests/crypto/decrypted
 tests/assets/script-tests/crypto/encrypted
+tests/assets/k8s-command/kube/
 .phpunit.result.cache
