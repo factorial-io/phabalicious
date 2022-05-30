@@ -16,7 +16,7 @@ needs:
 scripts:
   scaffold-test:
     - mkdir -p %host.rootFolder%/test-d8
-    - scaffold("https://config.factorial.io/scaffold/d8/d8.yml", "%host.rootFolder%/test-d8", "name=test-d8", "shortName=td8", "phpVersion=7.4")
+    - scaffold("https://config.factorial.io/scaffold/d8/d9.yml", "%host.rootFolder%/test-d8", "name=test-d8", "shortName=td8", "phpVersion=7.4")
 
 hosts:
   localhost:
@@ -24,7 +24,9 @@ hosts:
     port: 22
     user: stephan
     rootFolder: /tmp
+
   clients.factorial.io:
-    inheritsFrom: localhost
+    inheritsFrom:
+      - localhost
     host: clients.factorial.io
     rootFolder: /home/stephan

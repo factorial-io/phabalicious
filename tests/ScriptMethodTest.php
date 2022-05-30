@@ -340,7 +340,7 @@ class ScriptMethodTest extends PhabTestCase
 
         $output = $this->context->getCommandResult()->getOutput();
 
-        $this->assertStringContainsString("PHAB_SUB_SHELL=1", $output);
+        $this->assertContains("PHAB_SUB_SHELL=1", $output);
     }
 
 
