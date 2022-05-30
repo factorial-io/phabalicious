@@ -4,6 +4,7 @@ Scripts are a powerful concept of phabalicious. There are a lot of places where 
 
 A script is basically a list of commands which get executed via shell on a local or remote machine. To stay independent of the host where the script is executed, phabalicious parses the script before executing it and replaces given variables with their counterpart in the yaml file.
 
+
 ## Replacement-patterns
 
 Replacement-Patterns are specific strings enclosed in `%`s, e.g. `%host.port%`, `%dockerHost.rootFolder%` or `%arguments.name%`.
@@ -125,6 +126,50 @@ These script execution-contexts are available
 
    the script will be executed in a docker-container created with the provided name of the docker-image to use. The current folder will be mounted as a volume inside the docker-container at `/app` and the script will be executed as the current user and group (if not a dedicated user is set via `user`). The container will be deleted afterwards, if you need to keep files persistent, make sure to move/ copy them to `/app`
    The above example will install the node-based app and execute the `build`-command
+
+ * `docker-compose-run`
+
+   the script will be executed in a specific service of a docker-compose-setup. This will give you greater control when your app needs specific services running. When setting the context to `docker-compose-run` you need to provide the path to the `docker-compose.yml` file, the name of the service phab should use to execute the commands in and some other, optional parameters. Here's a full-fledge example:
+
+   ```yaml
+   scripts:
+     test:backend:
+       script:
+         - composer install
+         - php artisan migrate:fresh --seed
+         - vendor/bin/phpunit
+       context: docker-compose-run
+       rootFolder: ./hosting/tests
+       shellExecutable: /bin/bash # defaults to /bin/sh
+       service: php
+   ```
+
+   Phab will search for a `docker-compose.yml` in `.hosting/tests` and will run `docker-compose run php /bin/bash` to start a shell. Afterwards it will run the script itself. After the script completes, phab will remove any containers and volumes automatically. Here's the corresponding docker-compose.yml-file:
+
+   ```yaml
+   version: '2.1'
+   services:
+     php:
+       depends_on:
+         db:
+           condition: service_healthy
+       build:
+         context: ../../
+         dockerfile: ./hosting/builder/Dockerfile
+       environment:
+         DB_PASSWORD: root
+         DB_USERNAME: root
+         DB_DATABASE: tests
+         DB_HOST: db
+         APP_ENV: local
+       db:
+         image: mysql:8
+         environment:
+           MYSQL_ROOT_PASSWORD: root
+           MYSQL_DATABASE: tests
+         healthcheck:
+           test: "mysqladmin -u root -proot ping"
+   ```
 
 ## Questions
 
