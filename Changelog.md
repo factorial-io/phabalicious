@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.12 / 2022-05-30
+
+### Fixes:
+
+  * fix(k8s): Add test coverage for k8s scaffold, fixed some bugs because of race-conditions
+
 ## 3.7.11 / 2022-05-30
 
 ### Fixes:
