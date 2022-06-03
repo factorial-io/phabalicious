@@ -110,6 +110,9 @@ scripts:
     script:
       - npm install
       - npm run build
+    environment:
+      FOO: bar
+      FOOBAR: baz
 ```
 
 These script execution-contexts are available
@@ -124,7 +127,7 @@ These script execution-contexts are available
 
  * `docker-image`
 
-   the script will be executed in a docker-container created with the provided name of the docker-image to use. The current folder will be mounted as a volume inside the docker-container at `/app` and the script will be executed as the current user and group (if not a dedicated user is set via `user`). The container will be deleted afterwards, if you need to keep files persistent, make sure to move/ copy them to `/app`
+   the script will be executed in a docker-container created with the provided name of the docker-image to use, passing any environment variables to docker if any set. The current folder will be mounted as a volume inside the docker-container at `/app` and the script will be executed as the current user and group (if not a dedicated user is set via `user`). The container will be deleted afterwards, if you need to keep files persistent, make sure to move/ copy them to `/app`
    The above example will install the node-based app and execute the `build`-command
 
  * `docker-compose-run`
@@ -142,9 +145,12 @@ These script execution-contexts are available
        rootFolder: ./hosting/tests
        shellExecutable: /bin/bash # defaults to /bin/sh
        service: php
+       environment:
+         FOO: bar
+         FOOBAR: baz
    ```
 
-   Phab will search for a `docker-compose.yml` in `.hosting/tests` and will run `docker-compose run php /bin/bash` to start a shell. Afterwards it will run the script itself. After the script completes, phab will remove any containers and volumes automatically. Here's the corresponding docker-compose.yml-file:
+   Phab will search for a `docker-compose.yml` in `.hosting/tests` and will run `docker-compose run php /bin/bash` to start a shell in the container of the named `service`. Any environment variables in `environment` get passed to docker-compose beforehand. Afterwards it will run the script itself in the service. After the script completes, phab will remove any containers and volumes automatically. Here's the corresponding docker-compose.yml-file:
 
    ```yaml
    version: '2.1'
