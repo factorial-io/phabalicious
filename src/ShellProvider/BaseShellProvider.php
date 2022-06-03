@@ -112,7 +112,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     public function cd(string $dir): ShellProviderInterface
     {
         if (empty($dir) || $dir[0] == '.') {
-            $result = $this->run(sprintf('cd %s; echo $PWD', $dir), true);
+            $result = $this->run(sprintf('cd %s; echo $PWD', $dir), true, true);
             $dir = $result->getOutput()[0];
         }
         $this->workingDir = $dir;
