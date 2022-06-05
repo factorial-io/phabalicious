@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.8.0-beta.5 (2022-06-05)
+
+
+### Features
+
+* Add support for database credentials from 1password cli ([1903ec5](https://github.com/factorial-io/phabalicious/commit/1903ec5e1488284be70aeddaeb77993ba846ac3c))
+* Allow global docker config which gets inherited by host-specific docker config ([d1221d4](https://github.com/factorial-io/phabalicious/commit/d1221d40e81f5d274531090820ac68aed72e3121))
+* new command `db:query` to run custom queries against a db configuration ([21a2048](https://github.com/factorial-io/phabalicious/commit/21a204839295ca8974ab1a267ff99ed2a9a54ebc))
+
+
+### Bug Fixes
+
+* [[#260](https://github.com/factorial-io/phabalicious/issues/260)] self-update --allow-unstable=1 toggles between stable and unstable version ([402ed66](https://github.com/factorial-io/phabalicious/commit/402ed660443f146f9f73b5f024c5ebead82a26f6))
+* Better error reporting for missing scaffolding source files ([7a2f675](https://github.com/factorial-io/phabalicious/commit/7a2f6750c1fc59e486ba9498f34b2206b12522b7))
+* Check only params for globally used parameter options (Fixes [#254](https://github.com/factorial-io/phabalicious/issues/254)) ([8bf84b8](https://github.com/factorial-io/phabalicious/commit/8bf84b806bd87635cba9d5f0c0b6f854f80e34e3))
+* command output left information when using blueprint ([9b1bab9](https://github.com/factorial-io/phabalicious/commit/9b1bab9b7175b63dbed606fbe6a5d12f35169b69))
+* confirm returns now 0 instead of an empty result (Fixes [#219](https://github.com/factorial-io/phabalicious/issues/219)) ([bfab90b](https://github.com/factorial-io/phabalicious/commit/bfab90bfb032914f20e000d420bcdf56d008508e))
+* **dep:** remove accidentally added mirror ([3efbf36](https://github.com/factorial-io/phabalicious/commit/3efbf36a60c8bbaf420f7e07478794032e371a3d))
+* Expose global settings as replacement patterns for k8s parameters ([3fd09e4](https://github.com/factorial-io/phabalicious/commit/3fd09e45886c56841d60036c5e1b96689151bfa0))
+* fix error in password extraction from 1p client, add test-coverage ([3b0730e](https://github.com/factorial-io/phabalicious/commit/3b0730e857fab062f5fd87df6d841e199460954b))
+* fix failing tests ([2c7bc3a](https://github.com/factorial-io/phabalicious/commit/2c7bc3a2843b82c04ae4146ee4a82049584e0ab6))
+* fix misc erros in database tests ([e178be1](https://github.com/factorial-io/phabalicious/commit/e178be1d079247d96eedb5c2a5b3fe0cc25f2641))
+* Fix stupid error when checking base-url ([c3d2cc7](https://github.com/factorial-io/phabalicious/commit/c3d2cc7c31bacc54f1ed8221da5b34d179bb856f))
+* Fix wrong usage of runtime-exceopion ([5ec2788](https://github.com/factorial-io/phabalicious/commit/5ec2788773b76a976f1877bddb7a6a28d3b0556a))
+* Get parent folder for a specific data-item directly from the source ([513df49](https://github.com/factorial-io/phabalicious/commit/513df49249e644ae7bbf4a8a218ee8f3e8220fc5))
+* handle another race-condition when merging arrays ([2588478](https://github.com/factorial-io/phabalicious/commit/25884781cd3fb1e6dbdede284538687cc06efe56))
+* Handle empty results from op with more grace ([32c0307](https://github.com/factorial-io/phabalicious/commit/32c0307a8ba232d40fac8013aecf1c9926757271))
+* Handle missing data with more grace ([751d4e8](https://github.com/factorial-io/phabalicious/commit/751d4e8ae65ee265584bc35cf9aac8439df40601))
+* Handle protected properties better ([ef3885c](https://github.com/factorial-io/phabalicious/commit/ef3885ca3ba5bcfa95e791809b8e3b8c114645ac))
+* Hide warning when using PHP 8.1 ([7020ece](https://github.com/factorial-io/phabalicious/commit/7020ecedc9f348a05c630acc5ebbb87062d41cfe))
+* inheritFromBlueprint did not work correctly with new node-based data-retrieval ([b1b18db](https://github.com/factorial-io/phabalicious/commit/b1b18db66132c5278c6c11c5ed920a241bb78b12))
+* Introduce new utility function to check if a string is a url ([d8d753a](https://github.com/factorial-io/phabalicious/commit/d8d753a41597830965a35762239fb521b528e450))
+* **jira:** Change jql to support also jira-cloud ([b5f89b4](https://github.com/factorial-io/phabalicious/commit/b5f89b46610e0d8f7b99f12ad492de050d7ced53))
+* **k8s:** Add test coverage for k8s scaffold, fixed some bugs because of reace-conditions ([74b4323](https://github.com/factorial-io/phabalicious/commit/74b43238140b028dba4df6caa9e4cea7cdad46aa))
+* **k8s:** Apply replacements for `parameters` before doing the scaffold ([468317f](https://github.com/factorial-io/phabalicious/commit/468317ff6001d8f0ab2afb9975f53c8ff06c6e6c))
+* **k8s:** Fix bug in cleanup code for the temporary folder ([925d1f8](https://github.com/factorial-io/phabalicious/commit/925d1f82a17baa3abb89ceaaf0aab300b4fa753a))
+* **k8s:** Fix bug in cleanup code for the temporary folder ([cb9acca](https://github.com/factorial-io/phabalicious/commit/cb9accaf3c224c7537acfacbd4d1046e8a0e86f6))
+* **k8s:** the real bug which prevents scaffolding k8s files ([b4b40d0](https://github.com/factorial-io/phabalicious/commit/b4b40d075dca47db7341208b3f5cf81318276468))
+* Limit when to check for updates again ([e5fb8af](https://github.com/factorial-io/phabalicious/commit/e5fb8afed6bf2e295e47c245bdae01ebca0bcc24))
+* Make sure db is installed when trying to import sql ([129c42a](https://github.com/factorial-io/phabalicious/commit/129c42a7c2a5bdce07582bfa7a72e6785e4d4c25))
+* **notify:** Handle `--channel` option correctly. ([5fec55a](https://github.com/factorial-io/phabalicious/commit/5fec55af732472c35e054af22da791b1fafcc800)), closes [#261](https://github.com/factorial-io/phabalicious/issues/261)
+* Pass absolute paths to scaffolder to prevent ambiguities when resolving relative paths ([a13a360](https://github.com/factorial-io/phabalicious/commit/a13a360a1bf0c95c34c72419900e5ceb9a9e4f78))
+* race-condition in new data handling method ([e5f1e99](https://github.com/factorial-io/phabalicious/commit/e5f1e99b1acaa87431a60d30c9e010c4d8b28dc2))
+* resolveRelativeInheritance handles parent folder now for all cases ([5185b57](https://github.com/factorial-io/phabalicious/commit/5185b57f21bb175f9e2deeda31a948f9fc89adf7))
+* **script-exection-context:** Update docs. ([89086d4](https://github.com/factorial-io/phabalicious/commit/89086d47e4b65b38d21ba4eaaf05e6162ca83c1c))
+* **scripts:** Fix cleanup of script execution context docker-compose-run ([2105fcb](https://github.com/factorial-io/phabalicious/commit/2105fcb934b0ff0eaa3941a0babf1cdf5f9d6e1f))
+* show log-messages and app-prompts on stderr if the output is not decorated, e.g. when using pipes (Fixes [#250](https://github.com/factorial-io/phabalicious/issues/250)) ([8e1ee2b](https://github.com/factorial-io/phabalicious/commit/8e1ee2bf20d16785d82b10904a5cc9327c0d9ccc))
+* Show warning if tables cant be dropped ([58c89b3](https://github.com/factorial-io/phabalicious/commit/58c89b30deb1c557ccfefcf73c2e9d642d14deca))
+* throw an exception if tables cant be dropped ([9f3d9c8](https://github.com/factorial-io/phabalicious/commit/9f3d9c80755d7e3e4786c2d1f0009608f7f54bcc))
+* Use absolute path for base urls ([b6b1616](https://github.com/factorial-io/phabalicious/commit/b6b161646e4c671da8821ea1cd8cd138be08d1f3))
+* Use absolute paths when scaffolding from a relative path ([26fdfcb](https://github.com/factorial-io/phabalicious/commit/26fdfcb7d4fc7f9b0d38c3fc1ee8857dd8f2b758))
+* Wrap mysql password in quotes ([cea6466](https://github.com/factorial-io/phabalicious/commit/cea64661ced95725078dae636a884b23cffd2270))
+
 ## 3.8.0-beta4 / 2022-05-29
 
 ### Fixes:
