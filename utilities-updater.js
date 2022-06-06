@@ -11,6 +11,5 @@ module.exports.readVersion = function (contents) {
 module.exports.writeVersion = function (contents, version) {
   const replace = `const FALLBACK_VERSION = '${version}';`;
   const result = contents.replace(version_regex, replace);
-  console.log('WRITE version =', result);
   return result;
 }

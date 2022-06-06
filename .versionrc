@@ -3,6 +3,10 @@
     {
       "filename": "src/Utilities/Utilities.php",
       "updater": "utilities-updater.js"
+    },
+    {
+      "filename": "package.json",
+      "type": "json"
     }
   ]
 }
