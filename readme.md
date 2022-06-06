@@ -110,7 +110,7 @@ yarn install && yarn release
 To prepare a preview-release (e.g. a beta-version)
 
 ```
-yarn install && yarn standard-version  -- --prerelease
+yarn install && yarn standard-version  --  -t '' --sign --prerelease
 ```
 
 

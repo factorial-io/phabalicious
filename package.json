@@ -21,7 +21,7 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "postinstall": "husky install",
-    "release": "standard-version -t ''"
+    "release": "standard-version -t '' --sign"
   },
   "config": {
     "commitizen": {
