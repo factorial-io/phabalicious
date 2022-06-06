@@ -82,13 +82,24 @@ Please add test-cases for your bug-fixes or new features. We are using GrumPHP t
 check code-style (PSR2), run tests etc when committing new code. This repository
 uses github-flow as branching strategy.
 
+### Commit-messages
+
+The project follows also the conventional-commit best-practices (since 3.8), you can run
+
+```
+yarn install
+yarn cz # if you have installed commitizen globally you can use also git cz
+```
+
+to get a helper composing your commit-message. We are using the `method`-name as `type`
+in the commit-message to group them together, e.g. `feat(k8s): Support helm`
 
 ## Create a release
 
 This repo is using github-flow to manage versions. Releases are created by
 github-action automatically. Phab is using [standard-version](https://github.com/conventional-changelog/standard-version)
-to automate creating a release. It will take care of bumping version umbers and
-updating the Changelog.
+to automate preparing a release. It will take care of bumping version numbers and
+updating the changelog.
 
 To prepare a new release, run the following commands:
 
