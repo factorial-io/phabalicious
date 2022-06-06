@@ -75,37 +75,33 @@ If you want to get the latest dev-version, add `--allow-unstable=1`
 
 ## Enhancing phab, contributing to phab
 
-We welcome contributions! Please fork the repository, create a feature branch and submit a pull-request.
-Please add test-cases for your bug-fixes or new features. We are using GrumPHP to check code-style (PSR2), run tests etc when committing new code. This repository uses github-flow as branching strategy.
+We welcome contributions! Please fork the repository, create a feature branch and
+submit a pull-request.
+
+Please add test-cases for your bug-fixes or new features. We are using GrumPHP to
+check code-style (PSR2), run tests etc when committing new code. This repository
+uses github-flow as branching strategy.
 
 
 ## Create a release
 
-This repo is using github-flow to manage versions. Releases are created by github-action automatically. If you need to create one manually you can use either phab
+This repo is using github-flow to manage versions. Releases are created by
+github-action automatically. Phab is using [standard-version](https://github.com/conventional-changelog/standard-version)
+to automate creating a release. It will take care of bumping version umbers and
+updating the Changelog.
+
+To prepare a new release, run the following commands:
 
 ```
-bin/phab -cci create-release
+yarn install && yarn release
 ```
 
-and answer the questions. You can create a release also manually:
+To prepare a preview-release (e.g. a beta-version)
 
-* Create a release or a hotfix branch depending of cour changes. Make sure, it is
-  tagged with the correct version
-* Edit `src/Utilities/Utilities.php` and update the fallback version number
-* run `git changelog -t <YOUR_NEW_VERSION>` (this might require `git-extras`)
-* Edit the changelog according to the existing structure, remove unrelated commit-
-  messages
-* Commit both files to your release- or hotfix branch
-* Finish your hotfix/ release
-* Push both branches, master and develop to github, **but do not push the tags!**
-* Switch to the master branch via `git checkout master`
-* cd into `build` and create the phar with `sh create-release.sh`. This will build the
-  phar, create a new release on github and attach the phar to the release
-* As a final step copy the changes from changelog.md for that particular release and
-  update the information for your new release from that.
+```
+yarn install && yarn standard-version  -- --prerelease
+```
 
-If you introduced new features or change exsiting behavioud, do not forget to update
-the documentation and rebuild the docs
 
 ## Rebuild the docs
 
@@ -113,7 +109,7 @@ The docs are built with vuepress, so you need to run `yarn install` beforehand.
 
 ### Review them locally
 
-Just run `yarn docs:dev`, this will allow you to browse the docs with your browser with
+Run `yarn docs:dev`, this will allow you to browse the docs with your browser with
 hot reloading and all the fancy stuff
 
 ### Build and publish the documentation
