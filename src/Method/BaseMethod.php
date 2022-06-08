@@ -12,6 +12,7 @@ use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
 
 abstract class BaseMethod implements MethodInterface
@@ -113,15 +114,18 @@ abstract class BaseMethod implements MethodInterface
      * @return int
      * @throws \Exception
      */
-    public function executeCommand(TaskContext $context, $command_name, $args)
+    public function executeCommand(TaskContextInterface $context, $command_name, $in_args)
     {
+        $args = [];
         /** @var Command $command */
         $command = $context->getCommand()->getApplication()->find($command_name);
-        if (isset($args[0])) {
-            $args[$command_name] = $args[0];
-            unset($args[0]);
+        if (isset($in_args[0])) {
+            $args[$command_name] = $in_args[0];
+            unset($in_args[0]);
         }
         $variables = $context->get('variables', []);
+
+        // Passing arguments and secrets to the command to execute
         if ($command->getDefinition()->hasOption('arguments') &&
             !empty($variables['arguments']) &&
             is_array($variables['arguments'])
@@ -132,6 +136,27 @@ abstract class BaseMethod implements MethodInterface
             $args['--secret'] = $context->getInput()->getOption('secret');
         }
         $args['--config'] = $context->get('host_config')->getConfigName();
+        array_unshift($in_args, "phab", $command_name);
+        $argv_input = new ArgvInput($in_args);
+        $argv_input->bind($command->getDefinition());
+
+        foreach ($argv_input->getOptions() as $name => $option) {
+            if (empty($option)) {
+                continue;
+            }
+            $name = '--' . $name;
+            if (isset($args[$name])) {
+                if (is_array($args[$name])) {
+                    $args[$name] = array_merge($args[$name], $option);
+                } else {
+                    // Discard this option, as we already have one.
+                    continue;
+                }
+            } else {
+                $args[$name] = $option;
+            }
+        }
+
         $input = new ArrayInput($args);
         return $command->run($input, $context->getOutput());
     }
