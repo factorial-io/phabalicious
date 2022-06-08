@@ -1,4 +1,11 @@
+
 # Changelog
+
+## 3.7.13 / 2022-06-08
+
+### Fixes:
+
+  * Changed name of overridden private class property. (Fixes #272)
 
 ## 3.7.12 / 2022-05-30
 
