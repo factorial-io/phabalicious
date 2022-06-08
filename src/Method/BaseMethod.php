@@ -14,6 +14,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\StringInput;
 
 abstract class BaseMethod implements MethodInterface
 {
@@ -136,8 +137,8 @@ abstract class BaseMethod implements MethodInterface
             $args['--secret'] = $context->getInput()->getOption('secret');
         }
         $args['--config'] = $context->get('host_config')->getConfigName();
-        array_unshift($in_args, "phab", $command_name);
-        $argv_input = new ArgvInput($in_args);
+        array_unshift($in_args, $command_name);
+        $argv_input = new StringInput(implode(' ', $in_args));
         $argv_input->bind($command->getDefinition());
 
         foreach ($argv_input->getOptions() as $name => $option) {
