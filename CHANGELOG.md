@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0-beta.8](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.5...3.8.0-beta.8) (2022-06-09)
+
+
+### Bug Fixes
+
+* Allow arguments containing = ([7e9eb94](https://github.com/factorial-io/phabalicious/commit/7e9eb9448f0a5b2408efaca8407296ce6ef8a984))
+
+## [3.8.0-beta.7](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.5...3.8.0-beta.7) (2022-06-09)
+
+
+### Bug Fixes
+
+* Allow arguments containing = ([7e9eb94](https://github.com/factorial-io/phabalicious/commit/7e9eb9448f0a5b2408efaca8407296ce6ef8a984))
+
+## [3.8.0-beta.6](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.5...3.8.0-beta.6) (2022-06-09)
+
+
+### Bug Fixes
+
+* Allow arguments containing = ([7e9eb94](https://github.com/factorial-io/phabalicious/commit/7e9eb9448f0a5b2408efaca8407296ce6ef8a984))
+
 ## [3.8.0-beta.5](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta4...3.8.0-beta.5) (2022-06-06)
 
 
