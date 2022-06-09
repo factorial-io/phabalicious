@@ -441,7 +441,7 @@ class Utilities
         });
         $named_args = [];
         foreach ($temp as $value) {
-            $a = explode('=', $value);
+            $a = explode('=', $value, 2);
             $named_args[$a[0]] = $a[1];
         }
 

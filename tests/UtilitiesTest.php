@@ -355,4 +355,10 @@ class UtilitiesTest extends PhabTestCase
             $this->assertEquals($result, Utilities::cleanupString($input));
         }
     }
+
+    public function testArgumentsParsing()
+    {
+        $args = Utilities::parseArguments("password=aFQd=BDq_ys9j72frDgM");
+        $this->assertEquals("aFQd=BDq_ys9j72frDgM", $args['password']);
+    }
 }
