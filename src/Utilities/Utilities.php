@@ -573,9 +573,14 @@ class Utilities
         return $version;
     }
 
+    public static function getTempNamePrefixFromString(string $str, $prefix = 'phab'): string
+    {
+        return $prefix . '-' . md5($str . mt_rand());
+    }
+
     public static function getTempNamePrefix($hostconfig): string
     {
-        return 'phab-' . md5($hostconfig->getConfigName() . mt_rand());
+        return self::getTempNamePrefixFromString($hostconfig->getConfigName());
     }
 
     public static function getTempFileName(HostConfig $host_config, $str): string

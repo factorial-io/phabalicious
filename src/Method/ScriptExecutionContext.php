@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\SubShellProvider;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -40,6 +41,8 @@ class ScriptExecutionContext
     protected $scriptWorkingDir;
 
     protected $dockerComposeRootDir;
+
+    protected $uniqueHash;
 
 
     public function __construct($working_dir, string $context_name, array $context_data)
@@ -94,23 +97,23 @@ class ScriptExecutionContext
     public function enter(ShellProviderInterface $shell): ShellProviderInterface
     {
         $this->initialWorkingDir = $shell->getWorkingDir();
+        $this->uniqueHash = Utilities::getTempNamePrefixFromString(
+            $shell->getHostConfig()->getConfigName(),
+            Utilities::slugify(basename($this->initialWorkingDir), '-')
+        );
 
         switch ($this->currentContextName) {
             case self::DOCKER_COMPOSE_RUN:
                 $this->dockerComposeRootDir = $this->getArgument('rootFolder');
                 $shell->applyEnvironment($this->getArgument('environment', []));
                 $shell->cd($this->dockerComposeRootDir);
-                $shell->run(
-                    'docker-compose pull && docker-compose build',
-                    false,
-                    true
-                );
-                $this->shell = $shell->startSubShell([
-                    'docker-compose',
+                $shell->run($this->getDockerComposeCmd('pull'), false, true);
+                $shell->run($this->getDockerComposeCmd('build'), false, true);
+                $this->shell = $shell->startSubShell($this->getDockerComposeCmdAsArray(
                     'run',
                     $this->getArgument('service'),
                     $this->getArgument('shellExecutable', '/bin/sh')
-                ]);
+                ));
                 $this->setScriptWorkingDir($this->getArgument('workingDir', '/app'));
 
                 break;
@@ -170,7 +173,8 @@ class ScriptExecutionContext
         if ($this->currentContextName == self::DOCKER_COMPOSE_RUN) {
             $this->shell->cd($this->initialWorkingDir);
             $this->shell->cd($this->dockerComposeRootDir);
-            $this->shell->run('docker-compose rm -s -v --force');
+
+            $this->shell->run($this->getDockerComposeCmd('rm', '-s -v --force'));
         }
     }
 
@@ -187,5 +191,23 @@ class ScriptExecutionContext
     protected function setScriptWorkingDir($working_dir)
     {
         $this->scriptWorkingDir = $working_dir;
+    }
+
+    private function getDockerComposeCmdAsArray(string $cmd, ...$args): array
+    {
+        $return = [
+            'docker-compose',
+            '-p',
+            $this->uniqueHash,
+            $cmd
+            ];
+
+        return array_merge($return, $args);
+    }
+
+    private function getDockerComposeCmd($cmd, ...$args): string
+    {
+        $result = $this->getDockerComposeCmdAsArray($cmd, ...$args);
+        return implode(' ', $result);
     }
 }

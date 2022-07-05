@@ -28,26 +28,70 @@ will show `I am running on mbb`.
 * The host-configuration gets exposes via the `host.`-prefix, so `port` maps to `%host.port%`, etc.
 * The dockerHost-configuration gets exposed via the `dockerHost`-prefix, so `rootFolder` maps to `%dockerHost.rootFolder%`
 * The global configuration of the yams-file gets exposed to the `settings`-prefix, so `uuid` gets mapped to `%settings.uuid%
-* Optional arguments to the `script`-taks get the `argument`-prefix, e.g. `%arguments.name%`. You can get all arguments via `%arguments.combined%`.
+* Optional arguments to the `script`-task get the `argument`-prefix, e.g. `%arguments.name%`. You can get all arguments via `%arguments.combined%`.
+* Questions will also be exposed under the `%arguments.`-prefix (See below)
+* Computed properties are exposed under the `%computed.`-prefix. (See below)
+* Secrets are exposed under the `%secret.`-prefixe (See the [secrets](/passwords)-section)
 * You can access hierarchical information via the dot-operator, e.g. `%host.database.name%`
+
 
 If phabalicious detects a pattern it can't replace it will abort the execution of the script and displays a list of available replacement-patterns.
 
+Here's a more elaborated example:
+
+```yaml
+foo: bar
+
+hosts:
+  a:
+    foo: foobar
+  b:
+    foo: baz
+
+scripts:
+  global-example:
+    - echo foo is %settings.foo%
+  host-specific:
+     - echo foo is %host.foo%
+  user-example:
+    defaults:
+      foo: %settings.foo%
+    script:
+      echo foo is %arguments.foo%
+
+```
+
+Here's the output:
+
+```shell
+$ phab -ca script global-example
+foo is bar
+
+$ phab -ca script host-specific
+foo is foobar
+
+$ phab -cb script host-specific
+foo is baz
+
+$ phab -ca script user-example --arguments foo=foobarbaz
+foo is foobarbaz
+```
+
 ## Internal commands
 
-These internal commands control the flow inside phabalicious:
+Phab provides a set of internal commands which can be called from within a script:
 
-* `fail_on_error(1|0)` If fail_on_error is set to one, phabalicious will exit if one of the script commands returns a non-zero return-code. When using `fail_on_error(0)` only a warning is displayed, the script will continue.
+* `fail_on_error(1|0)` If fail_on_error is set to one, phabalicious will exit if one of the script commands returns a non-zero return-code. When using `fail_on_error(0)` only a warning is displayed, the script will continue. Default is to stop execution if en error is detected
 * `execute(task, subtask, arguments)` execute a phabalicious task. For example you can run a deployment from a script via `execute(deploy)` or stop a docker-container from a script via `execute(docker, stop)`
 * `fail_on_missing_directory(directory, message)` will print message `message` if the directory `directory` does not exist.
-* `log_message(severity, message)` Prints a message to the output, for more info have a look at the .
+* `log_message(severity, message)` Prints a message to the output, for more info have a look at the [scaffolder-documentation](/scaffolder).
 * `confirm(message)` Will prompt for a confirmation from the user.
 
 You can use most of the commands listed in the [scaffolder-documentation](/scaffolder) in scripts too.
 
 ## Task-related scripts
 
-You can add scripts to the `common`-section, which will called for any host. You can differentiate by task-name and host-type, e.g. create a script which gets called for the task `deploy` and type `dev`.
+You can add scripts to the `common`-section, which will be called for any host. You can differentiate by task-name and host-type, e.g. create a script which gets called for the task `deploy` and type `dev`.
 
 You can even run scripts before or after a task is executed. Append the task with `Prepare` or `Finished`.
 
@@ -69,7 +113,7 @@ These scripts in the above examples gets executed only for the host `test` and t
 
 ## Defaults
 
-You an provide defaults for a script, which can be verridden via the `--arguments` commandline option
+You can provide defaults for a script, which can be overridden via the `--arguments` commandline option
 
 ```yaml
 scripts:

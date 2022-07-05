@@ -156,6 +156,12 @@ All notable changes to this project will be documented in this file. See [standa
   * dump database structure and data separately to prevent missing table structures for ignored tables
   * Refactor copyAssets-callback to be more flexible
 
+## 3.7.13 / 2022-06-08
+
+### Fixes:
+
+  * Changed name of overridden private class property. (Fixes #272)
+
 ## 3.7.12 / 2022-05-30
 
 ### Fixes:

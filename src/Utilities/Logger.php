@@ -26,7 +26,15 @@ class Logger extends ConsoleLogger
      */
     protected $passwordManager;
 
-    private $verbosityLevelMap = array(
+    /**
+     * Overrides $verbosityLevelMap in the parent class.
+     *
+     * The property name is changed to prevent a crash caused by a bug in PHP
+     * 8.0.8: see https://github.com/factorial-io/phabalicious/issues/272.
+     *
+     * @var array
+     */
+    private $verbosityLevelMapOverride = array(
         LogLevel::EMERGENCY => OutputInterface::VERBOSITY_NORMAL,
         LogLevel::ALERT => OutputInterface::VERBOSITY_NORMAL,
         LogLevel::CRITICAL => OutputInterface::VERBOSITY_NORMAL,
@@ -41,7 +49,7 @@ class Logger extends ConsoleLogger
     {
         if (!$output->isDecorated()) {
             // For undecorated output warnings will be shown only when using verbose mode.
-            $this->verbosityLevelMap[LogLevel::WARNING] = OutputInterface::VERBOSITY_VERBOSE;
+            $this->verbosityLevelMapOverride[LogLevel::WARNING] = OutputInterface::VERBOSITY_VERBOSE;
 
             if ($output instanceof ConsoleOutputInterface) {
                 $output = $output->getErrorOutput();
@@ -75,10 +83,14 @@ class Logger extends ConsoleLogger
                 LogLevel::INFO => self::INFO,
                 LogLevel::DEBUG => self::DEBUG,
         ];
+        if (!$output->isDecorated()) {
+            // For undecorated output warnings will be shown only when using verbose mode.
+            $this->verbosityLevelMapOverride[LogLevel::WARNING] = OutputInterface::VERBOSITY_VERBOSE;
+        }
 
         parent::__construct(
             $output,
-            $this->verbosityLevelMap,
+            $this->verbosityLevelMapOverride,
             $formatLevelMap
         );
 
@@ -91,7 +103,7 @@ class Logger extends ConsoleLogger
      */
     public function log($level, $message, array $context = array())
     {
-        if ($this->output->getVerbosity() < $this->verbosityLevelMap[$level]) {
+        if ($this->output->getVerbosity() < $this->verbosityLevelMapOverride[$level]) {
             return;
         }
         if ($this->passwordManager) {
