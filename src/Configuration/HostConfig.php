@@ -160,7 +160,7 @@ class HostConfig implements \ArrayAccess
 
     public function getConfigName()
     {
-        return $this->data['configName'];
+        return $this->data['configName'] ?? 'unknown config name';
     }
 
     public function getPublicUrls()
