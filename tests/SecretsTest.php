@@ -33,6 +33,10 @@ class SecretsTest extends PhabTestCase
 
         $this->application->add(new OutputCommand($configuration, $method_factory));
         $this->application->add(new ScriptCommand($configuration, $method_factory));
+
+        putenv("SMTP_PASSWORD");
+        putenv("MARIADB_PASSWORD");
+        putenv("OP_PASSWORD");
     }
 
 
@@ -46,7 +50,7 @@ class SecretsTest extends PhabTestCase
             '--blueprint' => 'test',
             '--what' => 'host',
             '--config' => 'testBlueprint',
-            '--secret' => [ 'mysql-password=top_Secret', 'smtp-password=$leet%']
+            '--secret' => [ 'mysql-password=top_Secret', 'smtp-password=$leet%', 'op-password=foobar']
         ));
 
         $output = $commandTester->getDisplay();
@@ -65,7 +69,7 @@ class SecretsTest extends PhabTestCase
             'command' => $command->getName(),
             '--what' => 'host',
             '--config' => 'testHost',
-            '--secret' => [ 'mysql-password=top_Secret', 'smtp-password=$leet%']
+            '--secret' => [ 'mysql-password=top_Secret', 'smtp-password=$leet%', 'op-password=foobar']
         ));
 
         $output = $commandTester->getDisplay();
@@ -80,6 +84,7 @@ class SecretsTest extends PhabTestCase
 
         putenv("SMTP_PASSWORD=top_Secret");
         putenv("MARIADB_PASSWORD=top_Secret");
+        putenv("OP_PASSWORD=foobar");
         $command = $this->application->find('output');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
@@ -92,12 +97,14 @@ class SecretsTest extends PhabTestCase
         $this->assertStringContainsString('top_Secret', $output);
         $this->assertStringContainsString('123--top_Secret--321', $output);
         $this->assertStringNotContainsString('%secret.mysql-password', $output);
+
     }
 
     public function testSecretsAsEnvironmentVar()
     {
 
         putenv("SMTP_PASSWORD=top_Secret");
+        putenv("MARIADB_PASSWORD=top_Secret");
         $command = $this->application->find('output');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
