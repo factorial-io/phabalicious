@@ -11,7 +11,18 @@ secrets:
     question: What password is op using
     onePasswordId: n42hkvghk2onwnyugf6k2etdra
 
-
+scripts:
+  test:secrets:1:
+    - echo mysql-password is //%secret.mysql-password%//
+    - echo smtp-password is //%secret.smtp-password%//
+    - echo op-password is //%secret.op-password%//
+    - echo database-password is //%host.database.password%//
+  test:secrets:2:
+    script:
+      - echo mysql-password is //%secret.mysql-password%//
+      - echo smtp-password is //%secret.smtp-password%//
+      - echo op-password is //%secret.op-password%//
+      - echo database-password is //%host.database.password%//
 hosts:
   base:
     type: dev
@@ -24,6 +35,13 @@ hosts:
       password: "%secret.mysql-password%"
       password_combined: "123--%secret.mysql-password%--321"
       multiple_secrets: "--%secret.mysql-password%--%secret.smtp-password%--"
+    scripts:
+      test:secrets:3:
+        script:
+          - echo mysql-password is //%secret.mysql-password%//
+          - echo smtp-password is //%secret.smtp-password%//
+          - echo op-password is //%secret.op-password%//
+          - echo database-password is //%host.database.password%//
 
   testEnv:
     inheritsFrom: base

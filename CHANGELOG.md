@@ -156,6 +156,12 @@ All notable changes to this project will be documented in this file. See [standa
   * dump database structure and data separately to prevent missing table structures for ignored tables
   * Refactor copyAssets-callback to be more flexible
 
+## 3.7.15 / 2022-07-14
+
+### Fixes:
+
+  * fix(secrets): Fix replacement-patterns validation, exclude secrets from validation
+
 ## 3.7.14 / 2022-07-05
 
 ### Fixes:
