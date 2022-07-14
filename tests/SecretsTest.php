@@ -98,7 +98,6 @@ class SecretsTest extends PhabTestCase
         $this->assertStringContainsString('top_Secret', $output);
         $this->assertStringContainsString('123--top_Secret--321', $output);
         $this->assertStringNotContainsString('%secret.mysql-password', $output);
-
     }
 
     public function testSecretsAsEnvironmentVar()
