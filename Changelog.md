@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.15 / 2022-07-14
+
+### Fixes:
+
+  * fix(secrets): Fix replacement-patterns validation, exclude secrets from validation
+
 ## 3.7.14 / 2022-07-05
 
 ### Fixes:
