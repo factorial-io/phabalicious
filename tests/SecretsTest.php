@@ -3,6 +3,7 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Command\OutputCommand;
+use Phabalicious\Command\ScriptCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
@@ -17,7 +18,7 @@ class SecretsTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
@@ -31,6 +32,7 @@ class SecretsTest extends PhabTestCase
         $configuration->readConfiguration(__DIR__ . '/assets/secret-tests/fabfile.yaml');
 
         $this->application->add(new OutputCommand($configuration, $method_factory));
+        $this->application->add(new ScriptCommand($configuration, $method_factory));
     }
 
 
@@ -109,6 +111,37 @@ class SecretsTest extends PhabTestCase
         $this->assertStringContainsString('123--top_Secret--321', $output);
         $this->assertStringNotContainsString('%secret.smtp-password', $output);
         putenv("SMTP_PASSWORD");
+    }
+    /**
+     * @dataProvider provideTestScriptNames
+     */
+    public function testSecretsInScripts($script_name)
+    {
+
+        $command = $this->application->find('script');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command' => $command->getName(),
+            'script' => $script_name,
+            '--config' => 'testHost',
+            '--secret' => [ 'mysql-password=top_Secret', 'smtp-password=\$leet%', 'op-password=foobar']
+        ));
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('mysql-password is //top_Secret//', $output);
+        $this->assertStringContainsString('database-password is //top_Secret//', $output);
+        $this->assertStringContainsString('smtp-password is //$leet%//', $output);
+        $this->assertStringContainsString('op-password is //foobar//', $output);
+        $this->assertStringNotContainsString('%secret.mysql-password', $output);
+    }
+
+    public function provideTestScriptNames()
+    {
+        return [
+            ['test:secrets:1'],
+            ['test:secrets:2'],
+            ['test:secrets:3'],
+        ];
     }
 
     /**

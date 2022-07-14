@@ -321,6 +321,24 @@ class ScriptMethodTest extends PhabTestCase
             "%here%%huhu%",
             "khjkhjkjhkjh",
         ]));
+
+        $this->assertEquals(true, Utilities::validateReplacements([
+            "lhkjdhkadhj",
+            "echo %secret.googlemaps_api_dev_key%",
+            "khjkhjkjhkjh",
+        ]));
+
+        $this->assertEquals(true, Utilities::validateReplacements([
+            "lhkjdhkadhj",
+            "echo smtp-password is //%secret.smtp-password%//",
+            "khjkhjkjhkjh",
+        ]));
+
+        $this->assertEquals(true, Utilities::validateReplacements([
+            "lhkjdhkadhj",
+            "echo smtp-password is //\%secret.smtp-password%//",
+            "khjkhjkjhkjh",
+        ]));
     }
 
     /**

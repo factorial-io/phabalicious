@@ -192,10 +192,14 @@ class Utilities
     public static function validateReplacements(array $strings)
     {
         foreach ($strings as $line) {
-            if (preg_match('/[^\\\]%[A-Za-z0-9\.-_]*%/', $line)) {
+            // Ignore secrets, as they will be evaluated at a later stage.
+            if (preg_match('/\\\?%secret\.[A-Za-z0-9\.\-_]*%/', $line)) {
+                continue;
+            }
+            if (preg_match('/[^\\\]%[A-Za-z0-9\.\-_]*%/', $line)) {
                 return $line;
             }
-            if (preg_match('/^%[A-Za-z0-9\.-_]*%/', $line)) {
+            if (preg_match('/^%[A-Za-z0-9\.\-_]*%/', $line)) {
                 return $line;
             }
         }
