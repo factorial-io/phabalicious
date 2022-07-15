@@ -91,7 +91,7 @@ class MethodFactory
      * @param TaskContextInterface|NULL $context
      * @param array $nextTasks
      *
-     * @return TaskContext|TaskContextInterface
+     * @return TaskContextInterface
      * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
      */
@@ -99,8 +99,9 @@ class MethodFactory
         string $task_name,
         HostConfig $configuration,
         TaskContextInterface $context = null,
-        $nextTasks = []
+        array $nextTasks = []
     ) {
+        $saved_next_tasks = $context->getResult('runNextTasks', []);
         $context->setResult('runNextTasks', $nextTasks);
         $this->preflight('preflight', $task_name, $configuration, $context);
         $this->runTaskImpl($task_name . 'Prepare', $configuration, $context, false);
@@ -115,6 +116,7 @@ class MethodFactory
         $this->runTaskImpl($task_name . 'Finished', $configuration, $context, false);
         $this->preflight('postflight', $task_name, $configuration, $context);
 
+        $context->setResult('runNextTasks', $saved_next_tasks);
         return $context;
     }
 
