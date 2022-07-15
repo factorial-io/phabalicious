@@ -49,6 +49,20 @@ scripts:
       target: "%host.rootFolder%/crypto/decrypted/"
     script:
       - decrypt_files(%arguments.source%, %arguments.target%, test-secret)
+  testArgumentsBase:
+    defaults:
+      foo: bar
+    script:
+      - echo "Foo is //%arguments.foo%//"
+  testArgumentsDerived:
+    defaults:
+      foo: baz
+    script:
+      - execute(script, testArgumentsBase)
+  testArgumentsOverridden:
+    script:
+      - execute(script, testArgumentsBase, --arguments foo=foobar)
+
 
 hosts:
   base:

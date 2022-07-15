@@ -125,4 +125,31 @@ class ScriptCommandTest extends PhabTestCase
             $this->assertEquals($decrypted, $source);
         }
     }
+
+    /**
+     * @dataProvider provideTestScriptNames
+     */
+    public function testRunScriptArguments($scriptName, $expected)
+    {
+        $command = $this->application->find('script');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+            '--config' => 'base',
+            'script' => $scriptName
+        ));
+
+        $output = $commandTester->getDisplay();
+
+        $this->assertStringContainsString("Foo is //$expected//", $output);
+    }
+
+    public function provideTestScriptNames()
+    {
+        return [
+            ['testArgumentsBase', 'bar'],
+            ['testArgumentsDerived', 'baz'],
+            ['testArgumentsOverridden', 'foobar'],
+        ];
+    }
 }
