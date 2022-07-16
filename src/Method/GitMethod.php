@@ -25,7 +25,7 @@ class GitMethod extends BaseMethod implements MethodInterface
         return $method_name === 'git';
     }
 
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
             'gitOptions' =>  [

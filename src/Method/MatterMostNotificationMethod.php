@@ -16,9 +16,9 @@ use ThibaudDauce\Mattermost\Message;
 class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInterface, NotifyMethodInterface
 {
 
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
-        $parent = parent::getGlobalSettings();
+        $parent = parent::getGlobalSettings($configuration);
         $settings = [];
         $settings['notifications']['mattermost'] = [
             'username' => 'Phabalicious',
@@ -29,9 +29,10 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
 
     /**
      * @param ConfigurationService $configuration_service
-     * @param array $host_config
-     * @return array
-     * @throws ValidationFailedException
+     * @param \Phabalicious\Configuration\Storage\Node $host_config
+     *
+     * @return \Phabalicious\Configuration\Storage\Node
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {

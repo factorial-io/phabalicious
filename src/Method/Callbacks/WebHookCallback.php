@@ -38,9 +38,12 @@ class WebHookCallback implements CallbackInterface
             $config = [
                 'webhooks' =>$configurationService->getSetting('webhooks', []),
             ];
-            $config = Utilities::mergeData($this->method->getGlobalSettings(), $config);
+            $config = Utilities::mergeData($this->method->getGlobalSettings($configurationService)->asArray(), $config);
             $configurationService->setSetting('webhooks', $config['webhooks']);
-            $this->method->validateGlobalSettings($configurationService->getAllSettings(), $errors);
+            $this->method->validateGlobalSettings(
+                $configurationService->getRawSettings(),
+                $errors
+            );
             if ($errors->hasErrors()) {
                 throw new ValidationFailedException($errors);
             }

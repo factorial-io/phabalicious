@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\Callbacks\WebHookCallback;
@@ -29,9 +30,9 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         return $method_name == $this->getName();
     }
 
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
-        $parent = parent::getGlobalSettings();
+        $parent = parent::getGlobalSettings($configuration);
         $settings = [];
         $settings['webhooks'] = [
             'defaults' => [

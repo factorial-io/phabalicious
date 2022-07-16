@@ -41,7 +41,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     /**
      * @return string[][]
      */
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
             'executables' => [

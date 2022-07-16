@@ -55,7 +55,7 @@ abstract class BaseMethod implements MethodInterface
         return [];
     }
 
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([], $this->getName() . ' global settings');
     }

@@ -54,7 +54,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         ];
     }
 
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
             'adminUser' => 'admin',

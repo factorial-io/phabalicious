@@ -19,7 +19,7 @@ interface MethodInterface
 
     public function getKeysForDisallowingDeepMerge(): array;
 
-    public function getGlobalSettings(): Node;
+    public function getGlobalSettings(ConfigurationService $configuration): Node;
 
     public function setTunnelHelperFactory(TunnelHelperFactory  $tunnel_helper_factory);
 

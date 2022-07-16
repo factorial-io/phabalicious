@@ -24,7 +24,7 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
         return $method_name === 'drupalconsole' || $method_name === 'drupal';
     }
 
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
             'executables' => [

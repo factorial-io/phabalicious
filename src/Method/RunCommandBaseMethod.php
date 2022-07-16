@@ -41,7 +41,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         return "{$this->getConfigPrefix()}RunContext";
     }
 
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         $executable = $this->getExecutableName();
         return new Node([

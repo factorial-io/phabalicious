@@ -59,9 +59,9 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
     /**
      * Get global settings
      */
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
-        $parent = parent::getGlobalSettings();
+        $parent = parent::getGlobalSettings($configuration);
         $defaults = [];
         $defaults['excludeFiles']['gitSync'] = [
             'fabfile.yaml',

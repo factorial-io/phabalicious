@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Method;
 
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\CommandResult;
@@ -34,7 +35,7 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
     /**
      * @return Node
      */
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
             'executables' => [

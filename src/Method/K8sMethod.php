@@ -49,7 +49,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         return $method_name === 'k8s';
     }
 
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
             'kube' => [

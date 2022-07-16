@@ -24,7 +24,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         return $method_name == $this->getName();
     }
 
-    public function getGlobalSettings(): Node
+    public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
             'executables' => [

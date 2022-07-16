@@ -182,7 +182,7 @@ class ConfigurationService
             foreach ($this->methods->all() as $method) {
                 $data = $this->applyDefaults(
                     $data,
-                    $method->getGlobalSettings(),
+                    $method->getGlobalSettings($this),
                     $disallow_deep_merge_for_keys
                 );
             }
@@ -800,6 +800,7 @@ class ConfigurationService
             $replacements = Utilities::expandVariables([
                 'globals' => Utilities::getGlobalReplacements($this),
                 'host' => $data->asArray(),
+                'settings' => $this->getAllSettings()
             ]);
             $data['info'] = Utilities::expandStrings($data['info'], $replacements);
         }
@@ -875,6 +876,11 @@ class ConfigurationService
         return $copy;
     }
 
+    public function getRawSettings(): Node
+    {
+        return $this->settings;
+    }
+
     public function getAllHostConfigs(): Node
     {
         return $this->hosts;
@@ -898,7 +904,7 @@ class ConfigurationService
         return $this->blueprints;
     }
 
-    private function validateDockerConfig(Node $data, $config_name)
+    private function validateDockerConfig(Node $data, $config_name): Node
     {
         $data['configName'] = 'dockerHosts.' . $config_name;
 

@@ -25,18 +25,20 @@ use Psr\Log\LogLevel;
 class DockerMethod extends BaseMethod implements MethodInterface
 {
 
+    const METHOD_NAME = 'docker';
+
     protected $cache = [];
 
     protected $environmentVarsCache = [];
 
     public function getName(): string
     {
-        return 'docker';
+        return self::METHOD_NAME;
     }
 
     public function supports(string $method_name): bool
     {
-        return $method_name === 'docker';
+        return $method_name === $this->getName();
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
