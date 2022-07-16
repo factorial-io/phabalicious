@@ -1,0 +1,14 @@
+name: additional-needs-test
+
+
+needs:
+  - scripts
+
+hosts:
+  test:
+    host: localhost
+    user: root
+    additionalNeeds:
+      - ssh
+
+

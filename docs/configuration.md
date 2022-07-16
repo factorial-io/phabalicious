@@ -52,6 +52,8 @@ List here all needed methods for that type of project. Available methods are:
   * `laravel` for laravel-based applications
   * `k8s` to interact with an application hosted in a Kubernetes cluster
 
+Needs can be set also per `host`. You can also declare `additionalNeeds` per host. If you need to "remove" a need on a per host-bases you need to completely override `needs`.
+
 **Example for drupal 7**
 
 ```yaml
@@ -151,6 +153,7 @@ This will print all host configuration for the host `staging`.
     The main use-case is to run different scripts per type, see the `common`-section.
 * `rootFolder`  the web-root-folder of the installation, typically exposed to the public.
 * `needs` a list of needed methods, if not set, the globally set `needs` gets used.
+* `additionalNeeds` a list of additional needs. The list will be appended to the global or per-host `needs`-declaration.
 * `configName` is set by phabalicious, it's the name of the configuration
 * `supportsInstalls`, default is true for `types` != `prod`. If sent to true you can run the `install`-task
 * `supportsCopyFrom`, default is true. If set to true, you can use that configuration as a source for the `copy-from`-task.

@@ -217,6 +217,17 @@ class ConfigurationServiceTest extends PhabTestCase
         $config = $this->config->getHostConfig("test");
     }
 
+    public function testAdditionalNeeds()
+    {
+
+        $this->config->getMethodFactory()->addMethod(new SshMethod($this->logger));
+        $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
+        $this->config->readConfiguration(__DIR__ . '/assets/additional-needs-tests');
+        $needs = $this->config->getHostConfig('test')->get('needs');
+        $this->assertContains('ssh', $needs);
+        $this->assertContains('script', $needs);
+    }
+
     public function testResolveInheritanceRefs()
     {
         $data = new Node([

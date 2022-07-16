@@ -714,6 +714,10 @@ class ConfigurationService
                 $data->get('needs')->push('script');
             }
         }
+        if ($data->has('additionalNeeds')) {
+            $data->get('additionalNeeds')->ensureArray();
+            $data->get('needs')->merge($data->get('additionalNeeds'));
+        }
 
         $data = $this->applyDefaults($data, new Node($defaults, 'host defaults'), $this->disallowDeepMergeForKeys);
         /**
