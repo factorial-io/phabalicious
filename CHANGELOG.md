@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0-beta.8](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.7...3.8.0-beta.8) (2022-07-16)
+
+
+### Features
+
+* **configuration:** allow `additionalNeeds` for host-configurations to declare additional needs ([5edacb2](https://github.com/factorial-io/phabalicious/commit/5edacb2264b9c88012881616b0e5bd64cf281877))
+* **ddev:** add missing ddev method implementation ([11bf097](https://github.com/factorial-io/phabalicious/commit/11bf0976ec6fa94f774dfe7b1b28cd74cad7d38f))
+* **ddev:** experimental lightweight integration with ddev ([fcb8162](https://github.com/factorial-io/phabalicious/commit/fcb8162bc7ec78a4bce26ba3dcdf427801625ad3))
+
+
+### Bug Fixes
+
+* fix regression not calling reset after copy-from ([bdfe66d](https://github.com/factorial-io/phabalicious/commit/bdfe66d192b5a6d854d70ae90b1e7d14a54e2284))
+
 ## [3.8.0-beta.7](https://github.com/factorial-io/phabalicious/compare/3.7.15...3.8.0-beta.7) (2022-07-14)
 
 
