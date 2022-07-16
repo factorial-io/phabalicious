@@ -1,0 +1,53 @@
+<?php
+
+namespace Phabalicious\Method;
+
+use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\Utilities\Utilities;
+use Phabalicious\Validation\ValidationErrorBagInterface;
+use Phabalicious\Validation\ValidationService;
+
+class DdevMethod extends BaseMethod implements MethodInterface
+{
+
+    public function getName(): string
+    {
+        return 'ddev';
+    }
+
+    public function supports(string $method_name): bool
+    {
+        return $method_name === $this->getName();
+    }
+
+    public function getGlobalSettings(ConfigurationService $configuration): Node
+    {
+        $node = new Node([], $this->getName() . ' global settings');
+        $config_file = $configuration->getFabfilePath() . '/.ddev/config.yaml';
+        if (file_exists($config_file)) {
+            $data = Node::parseYamlFile($config_file);
+            $node->set('ddev', $data);
+        }
+
+        return $node;
+    }
+
+    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors)
+    {
+        if ($settings->has('ddev')) {
+            $ddev = $settings['ddev'];
+            $service = new ValidationService($ddev, $errors, 'ddev settings');
+            $service->hasKey('name', 'the ddev project-name is missing');
+        } else {
+            $errors->addError('ddev', 'No ddev config found, check `.ddev/config.yaml`');
+        }
+    }
+
+    public function getMethodDependencies(MethodFactory $factory, \ArrayAccess $data): array
+    {
+        return [
+            DockerMethod::METHOD_NAME
+        ];
+    }
+}
