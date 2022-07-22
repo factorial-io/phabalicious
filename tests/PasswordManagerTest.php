@@ -52,6 +52,6 @@ JSON;
         $mng = new PasswordManager();
         $mng->setContext($this->context);
 
-        $this->assertEquals("my-very-special-secret", $mng->extractSecretFrom1PasswordPayload($payload, true));
+        $this->assertEquals("my-very-special-secret", $mng->extractSecretFrom1PasswordPayload($payload, 1));
     }
 }

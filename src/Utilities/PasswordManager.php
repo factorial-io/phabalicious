@@ -252,15 +252,48 @@ class PasswordManager implements PasswordManagerInterface
         return $pw;
     }
 
-    private function exec1PasswordCli($cmd)
+    private function get1PasswordCliFilePath()
     {
         $op_file_path = getenv('PHAB_OP_FILE_PATH') ?: '/usr/local/bin/op';
         if (!$op_file_path || !file_exists($op_file_path)) {
             return new CommandResult(1, ['Could not find 1password binary.']);
         }
+        return $op_file_path;
+    }
 
+    private function get1PasswordCliVersion()
+    {
+        // Check version.
+        static $op_version = false;
+        if (!$op_version) {
+            $op_file_path = $this->get1PasswordCliFilePath();
+            $output = [];
+            $result_code = 0;
+            $result = exec(sprintf("%s --version", $op_file_path), $output, $result_code);
+            if ($result_code) {
+                throw new \RuntimeException("Couldnt determine the version of op cli");
+            }
+            $op_version = substr($result, 0, strpos($result, "."));
+            if ($op_version > 2) {
+                throw new \RuntimeException("1password version not supported! Use 1.x or 2.x");
+            }
+        }
+
+        return $op_version;
+    }
+
+    private function exec1PasswordCli($cmd_v1, $cmd_v2)
+    {
+        $op_file_path = $this->get1PasswordCliFilePath();
         $output = [];
         $result_code = 0;
+
+        if ($this->get1PasswordCliVersion() == 1) {
+            $cmd = $cmd_v1;
+        } else {
+            $cmd = $cmd_v2;
+        }
+
         $cmd = sprintf("%s %s", $op_file_path, $cmd);
         $this->context->getConfigurationService()->getLogger()->info(sprintf("Running 1password cli with `%s`", $cmd));
         $result = exec($cmd, $output, $result_code);
@@ -269,19 +302,24 @@ class PasswordManager implements PasswordManagerInterface
 
     private function getSecretFrom1PasswordCli($item_id)
     {
-        $result = $this->exec1PasswordCli(sprintf("get item %s", $item_id));
+        $result = $this->exec1PasswordCli(
+            sprintf("get item %s", $item_id),
+            sprintf("item get %s --format json", $item_id)
+        );
 
         if ($result && $result->succeeded()) {
             $payload = implode("\n", $result->getOutput());
-            return $this->extractSecretFrom1PasswordPayload($payload, true);
+            return $this->extractSecretFrom1PasswordPayload($payload, $this->get1PasswordCliVersion());
         }
-
         $result->throwException("1Password returned an error, are you logged in?");
     }
 
     private function getFileFrom1PasswordCli($item_id, $target_file_dir)
     {
-        return $this->exec1PasswordCli(sprintf('get document %s > %s', $item_id, $target_file_dir));
+        return $this->exec1PasswordCli(
+            sprintf('get document %s > "%s"', $item_id, $target_file_dir),
+            sprintf('document get %s --output="%s"', $item_id, $target_file_dir)
+        );
     }
 
     private function get1PasswordConnectResponse($token_id, $url)
@@ -359,11 +397,11 @@ class PasswordManager implements PasswordManagerInterface
         return false;
     }
 
-    public function extractSecretFrom1PasswordPayload($payload, $cli)
+    public function extractSecretFrom1PasswordPayload($payload, $cli_version)
     {
         $json = json_decode($payload);
         if ($json) {
-            if ($cli) {
+            if ($cli_version === 1) {
                 $json = $json->details;
             }
             if (!empty($json->password)) {
@@ -425,7 +463,7 @@ class PasswordManager implements PasswordManagerInterface
         }
         if (!$content) {
             $tmp_file = tempnam('/tmp', 'phab-tmp');
-            $this->exec1PasswordCli(sprintf('get document %s > "%s"', $item_id, $tmp_file));
+            $this->getFileFrom1PasswordCli($item_id, $tmp_file);
             $content = file_get_contents($tmp_file);
             @unlink($tmp_file);
         }
