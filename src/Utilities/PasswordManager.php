@@ -247,13 +247,33 @@ class PasswordManager implements PasswordManagerInterface
         if (!$op_file_path || !file_exists($op_file_path)) {
             return false;
         }
+        // Check version.
+        static $op_version = false;
+        if (!$op_version) {
+            $output = [];
+            $result_code = 0;
+            $result = exec(sprintf("%s --version", $op_file_path), $output, $result_code);
+            if ($result_code) {
+                throw new \RuntimeException("Couldnt determine the version of op cli");
+            }
+            $op_version = substr($result, 0, strpos($result, "."));
+            if ($op_version > 2) {
+                throw new \RuntimeException("1password version not supported! Use 1.x or 2.x");
+            }
+        }
 
         $output = [];
         $result_code = 0;
-        $result = exec(sprintf("%s get item %s", $op_file_path, $item_id), $output, $result_code);
+        if ($op_version == 1) {
+            $cmd = sprintf("%s get item %s", $op_file_path, $item_id);
+        } else {
+            $cmd = sprintf("%s item get %s --format json", $op_file_path, $item_id);
+        }
+
+        $result = exec($cmd, $output, $result_code);
         if ($result_code == 0) {
             $payload = implode("\n", $output);
-            return $this->extractSecretFrom1PasswordPayload($payload, true);
+            return $this->extractSecretFrom1PasswordPayload($payload, $op_version);
         } else {
             throw new \RuntimeException("1Password returned an error, are you logged in?");
         }
@@ -304,10 +324,10 @@ class PasswordManager implements PasswordManagerInterface
         return false;
     }
 
-    private function extractSecretFrom1PasswordPayload($payload, $cli)
+    private function extractSecretFrom1PasswordPayload($payload, $cli_version = 1)
     {
         $json = json_decode($payload);
-        if ($cli) {
+        if ($cli_version === 1) {
             $json = $json->details;
         }
         if (!empty($json->password)) {
