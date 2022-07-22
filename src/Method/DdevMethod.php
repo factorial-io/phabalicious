@@ -39,8 +39,6 @@ class DdevMethod extends BaseMethod implements MethodInterface
             $ddev = $settings['ddev'];
             $service = new ValidationService($ddev, $errors, 'ddev settings');
             $service->hasKey('name', 'the ddev project-name is missing');
-        } else {
-            $errors->addError('ddev', 'No ddev config found, check `.ddev/config.yaml`');
         }
     }
 
