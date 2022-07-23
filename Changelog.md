@@ -1,7 +1,6 @@
 # Changelog
 
-3.7.16 / 2022-07-23
-===================
+## 3.7.16 / 2022-07-23
 
 * feature(1password): Add support for 1password cli 2.x
 
