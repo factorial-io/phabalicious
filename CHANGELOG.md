@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0-beta.9](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.8...3.8.0-beta.9) (2022-07-23)
+
+
+### Bug Fixes
+
+* **ddev:** fix bug when no ddev is used ([b744070](https://github.com/factorial-io/phabalicious/commit/b744070c2324e02d16d2dd146232d17c7f349650))
+
 ## [3.8.0-beta.8](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.7...3.8.0-beta.8) (2022-07-16)
 
 
