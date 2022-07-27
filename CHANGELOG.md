@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0-beta.10](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.9...3.8.0-beta.10) (2022-07-27)
+
+
+### Bug Fixes
+
+* **ddev:** Fix docker integration, compute right docker container name, replace patterns in info and docker ([2cf445e](https://github.com/factorial-io/phabalicious/commit/2cf445efb805da4a8f36e5c6265722bcf598dd04))
+
 ## [3.8.0-beta.9](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.8...3.8.0-beta.9) (2022-07-23)
 
 
