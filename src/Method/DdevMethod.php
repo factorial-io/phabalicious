@@ -42,6 +42,22 @@ class DdevMethod extends BaseMethod implements MethodInterface
         }
     }
 
+    public function alterConfig(ConfigurationService $configuration_service, Node $data)
+    {
+        $tokens =[
+            'global' => Utilities::getGlobalReplacements($configuration_service),
+            'settings' => $configuration_service->getAllSettings(),
+            'host' => $data->asArray(),
+        ];
+        $replacements = Utilities::expandVariables($tokens);
+        // Apply replacements to info and docker keys.
+        foreach (['info', 'docker'] as $key) {
+            if ($data->has($key)) {
+                $data->get($key)->expandReplacements($replacements, []);
+            }
+        }
+    }
+
     public function getMethodDependencies(MethodFactory $factory, \ArrayAccess $data): array
     {
         return [
