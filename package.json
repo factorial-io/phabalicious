@@ -1,6 +1,6 @@
 {
   "name": "phabalicious",
-  "version": "3.8.0-beta.10",
+  "version": "3.8.0-beta.11",
   "main": "index.js",
   "repository": "https://github.com/factorial-io/phabalicious.git",
   "author": "Stephan Huber <stephan@factorial.io>",
@@ -21,7 +21,8 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "postinstall": "husky install",
-    "release": "standard-version -t '' --sign"
+    "release": "standard-version -- -t '' --sign --no-verify",
+    "beta-release": "standard-version  --  -t '' --sign --prerelease --no-verify"
   },
   "config": {
     "commitizen": {
