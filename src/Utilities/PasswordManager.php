@@ -256,7 +256,7 @@ class PasswordManager implements PasswordManagerInterface
             if ($result_code) {
                 throw new \RuntimeException("Couldnt determine the version of op cli");
             }
-            $op_version = substr($result, 0, strpos($result, "."));
+            $op_version = intval(substr($result, 0, strpos($result, ".")));
             if ($op_version > 2) {
                 throw new \RuntimeException("1password version not supported! Use 1.x or 2.x");
             }
