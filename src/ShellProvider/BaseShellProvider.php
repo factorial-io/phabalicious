@@ -249,12 +249,18 @@ abstract class BaseShellProvider implements ShellProviderInterface
         $this->applyEnvironment($environment);
     }
 
-    public function applyEnvironment(array $environment)
-    {
+    public function getApplyEnvironmentCmds(array $environment) {
+
         $cmds = [];
         foreach ($environment as $key => $value) {
             $cmds[] = "export \"$key\"=\"$value\"";
         }
+        return $cmds;
+    }
+
+    public function applyEnvironment(array $environment)
+    {
+        $cmds = $this->getApplyEnvironmentCmds($environment);
         if (!empty($cmds)) {
             $this->run(implode(" && ", $cmds));
         }

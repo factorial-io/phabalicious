@@ -90,6 +90,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
                 'backup',
                 'restore',
                 'listBackups',
+                'restic'
             ]);
     }
 
@@ -172,7 +173,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         string $restic_path,
         array $files
     ) {
-        $options = $this->getResticOptions($host_config, $context);
+        $options = $this->getResticOptions($host_config, $context, true);
 
         foreach ($context->getConfigurationService()->getSetting('excludeFiles.backup', []) as $exclude) {
             $options[] = '--exclude';
@@ -198,7 +199,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         string $restic_path,
         string $short_id
     ) {
-        $options = $this->getResticOptions($host_config, $context);
+        $options = $this->getResticOptions($host_config, $context, true);
 
         $result = $shell->run(sprintf(
             '%s %s restore %s --target /',
@@ -245,7 +246,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
         $this->ensureKnownHosts($host_config, $context, $shell);
 
-        $options = $this->getResticOptions($host_config, $context);
+        $options = $this->getResticOptions($host_config, $context, true);
         $options[] = '--json';
 
         $result = $shell->run(sprintf("%s %s snapshots", $restic_path, implode(' ', $options)), true);
@@ -280,17 +281,20 @@ class ResticMethod extends BaseMethod implements MethodInterface
      *
      * @return array|mixed
      */
-    protected function getResticOptions(HostConfig $host_config, TaskContextInterface $context)
+    protected function getResticOptions(HostConfig $host_config, TaskContextInterface $context, $include_host)
     {
         $options = $host_config['restic']['options'] ?? [];
         $options[] = '-r';
         $options[] = $host_config['restic']['repository'];
 
-        $options[] = '--host';
-        $options[] = Utilities::slugify(
-            $context->getConfigurationService()->getSetting('name', 'unknown'),
-            '-'
-        ) . '--' . $host_config->getConfigName();
+        if ($include_host) {
+            $options[] = '--host';
+            $options[] = Utilities::slugify(
+                $context->getConfigurationService()
+                        ->getSetting('name', 'unknown'),
+                '-'
+            ) . '--' . $host_config->getConfigName();
+        }
 
         return $options;
     }
@@ -339,5 +343,32 @@ class ResticMethod extends BaseMethod implements MethodInterface
             ];
             EnsureKnownHosts::ensureKnownHosts($context->getConfigurationService(), $known_hosts, $shell);
         }
+    }
+
+    public function restic(HostConfig $host_config, TaskContextInterface $context)
+    {
+        $shell = $this->getShellForRestic($host_config, $context);
+
+        $repository = $host_config['restic']['repository'];
+        $this->ensureKnownHosts($host_config, $context, $shell);
+        $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
+
+        $environment = $host_config['restic']['environment'];
+        if ($context->getPasswordManager()) {
+            $environment = $context->getPasswordManager()->resolveSecrets($environment);
+        }
+
+        $environment_cmds = $shell->getApplyEnvironmentCmds($environment);
+        $cmds = [];
+        foreach ($environment_cmds as $c) {
+            $cmds[] = $c;
+            $cmds[] = '&&';
+        }
+        $cmds[] = $restic_path;
+        $command_to_execute = $context->get('command', 'snapshots');
+        $cmds = array_merge($cmds, $this->getResticOptions($host_config, $context, false));
+        $cmds[] = $command_to_execute;
+        $context->setResult('shell', $shell);
+        $context->setResult('command', $cmds);
     }
 }

@@ -483,6 +483,34 @@ You can test the Mattermost config via
 ```bash
 phab notify "hello world" --config <your-config>
 ```
+## restic
+
+Provides integration with the restic command. Restic is used as a backup command if configured correctly and enabled via `needs`. Restic will be executed in the host-context, that means phab will create a shell for the given host-config and executes the restic-command there. It will try to install restic if it can't find an executable.
+
+You can configure how restic is executed by adding the following snippet either in the global scope, or in a host-configuration. Use a secret to prevent storing sensitive data in the fabfile.
+
+```yaml
+secrets:
+  restic-password:
+    question: Password for offsite restic-repository?
+    onePasswordId: xxx
+    onePasswordVaultId: xxx
+    tokenId: default
+
+restic:
+  # defaults:
+  allowInstallation: 1
+  downloadUrl: https://github.com/restic/restic/releases/download/v0.12.0/restic_0.12.0_linux_amd64.bz2
+  options:
+    - --verbose
+  # required:
+  repository: <url-to-your-repo>
+  environment:
+    RESTIC_PASSWORD: "%secret.restic-password%"
+```
+
+Phab will include the repository, any options ir environment variables when executing restic, so no need to add them by yourself. All command line arguments will be passed to restic.
+
 
 ## webhooks
 

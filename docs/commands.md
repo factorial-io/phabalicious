@@ -652,3 +652,14 @@ phab -chost db:shell:command
 
 This command will print the shell commands necessary to run so that the user can connect to the db client directly.
 
+## restic
+```bash
+phab -cmy-config restic -- snapshots
+phab -cmy-config restic -- restore <snapshot-id>
+phab -cmy-config restic -- snapshots --host-name my-hostname
+phab -cmy-config restic -- forget --prune --keep-daily=14 --keep-weekly=4 \
+  --keep-monthly=6 --group-by host --prune
+```
+
+If your host has `restic` listed as its `needs` then restic will be used to run offsite-backups. You can interact with
+your restic repository using the `restic`-command. All given arguments and options will be passed down to restic, enriched with the configuration stored in the fabfile (See [also](/configuration.html#restic)).
