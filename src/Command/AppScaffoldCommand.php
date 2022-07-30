@@ -46,6 +46,24 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
             'Set to true if you want to override existing folders',
             false
         );
+
+        $this->setHelp('
+Scaffolds a new application from a given url to a scaffold yml file. The scaffold
+process will be scaffolded into a new folder named from the project name.
+
+The scaffold-file might contain some questions to set some options. The values
+for these questions can be set via environment variables (in upper case snake
+case) or by passing them via the command line options (using kebab-case)
+
+For more information about scaffolding new apps, please visit
+<href=https://docs.phab.io/app-scaffold.html>the official documentation</> (https://docs.phab.io/app-scaffold.html)
+
+
+Examples:
+<info>phab app:scaffold https://config.factorial.io/scaffold/d9/d9.yml</info>
+<info>phab app:scaffold https://config.factorial.io/scaffold/d9/d9.yml --name "test drupal" --short-name td \
+  --php-version 8.1</info>
+        ');
     }
 
     /**

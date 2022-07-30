@@ -26,8 +26,7 @@ class AppCreateCommand extends AppBaseCommand
         parent::configure();
         $this
             ->setName('app:create')
-            ->setDescription('Creates a new app from vthe code-base of a project')
-            ->setHelp('Creates a new app from the code-base of a project');
+            ->setDescription('Creates a new app from the code-base of a project');
 
         $this->addOption(
             'copy-from',
@@ -35,6 +34,31 @@ class AppCreateCommand extends AppBaseCommand
             InputOption::VALUE_OPTIONAL,
             false
         );
+        $this->setHelp('
+Creates a new application from an existing config. Phabalicious executes a list
+of socalled stages, e.g.
+
+- preparing the destination,
+- install the current code base,
+- start the application,
+- install its dependencies and
+- install the app.
+
+If phab detects an already created app, it will instead deploy the current
+application.
+
+Using blueprints makes it possible to create a new application which is derived
+from a single variable (most often the branch name) to create a new application.
+Useful for sth like feature-based deployments.
+
+For more information about creating new apps, please visit
+<href=https://docs.phab.io/app-create-destroy.html>the official documentation</> (https://docs.phab.io/app-create-destroy.html)
+
+
+Examples:
+<info>phab -cconfig app:create</info>
+<info>phab --blueprint=some-blueprint --config=config app:create</info>
+        ');
     }
 
     /**

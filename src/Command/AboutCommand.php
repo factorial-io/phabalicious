@@ -21,7 +21,18 @@ class AboutCommand extends BaseCommand
         $this
             ->setName('about')
             ->setDescription('Shows the configuration')
-            ->setHelp('Shows a detailed view of all configuration of that specific host');
+            ->setHelp('
+This command shows all information for a specific host including the optional
+dockerHost-configuration in a table. If you increase the verbosity via <info>-v</info>
+then it will also show from where the actual info got loaded.
+
+About will also resolve all inheritances and will show all data flattened.
+
+
+Examples:
+<info>phab -cmy-config about</info>
+<info>phab -cmy-config about -v</info>
+            ');
     }
 
     /**

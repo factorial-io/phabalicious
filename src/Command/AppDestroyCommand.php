@@ -20,7 +20,26 @@ class AppDestroyCommand extends AppBaseCommand
         $this
             ->setName('app:destroy')
             ->setDescription('Destroys an existing app and removes it completely')
-            ->setHelp('Destroys an existing app and removes it completely');
+            ->setHelp('
+Destroys an existing application. Phabalicious executes a list
+of socalled stages, e.g.
+
+- spin down the application
+- delete the containers/ pods
+- delete the code base
+
+Using blueprints makes it possible to delete an exisiting application which is
+derived from a single variable (most often the branch name). Useful for sth like
+feature-based deployments.
+
+For more information about destroying existing apps, please visit
+<href=https://docs.phab.io/app-create-destroy.html>the official documentation</> (https://docs.phab.io/app-create-destroy.html)
+
+
+Examples:
+<info>phab -cconfig app:destroy</info>
+<info>phab --blueprint=some-blueprint --config=config app:destroy</info>
+        ');
     }
 
     /**
