@@ -122,7 +122,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
             if ($output->isDecorated()
                 && !$output->isQuiet()
                 && !$event->getCommand()->isHidden()
-                && !$event->getCommand()->getName() !== 'self:update'
+                &&  $event->getCommand()->getName() !== 'self:update'
                 && !$command->getConfiguration()->isOffline()
                 && !$input->hasParameterOption(['--offline'])
                 && !$input->hasParameterOption(['--no-interaction'])
