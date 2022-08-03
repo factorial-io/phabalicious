@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0-beta.14](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.13...3.8.0-beta.14) (2022-08-03)
+
+
+### Features
+
+* Add new command restic to interact with your backups ([e054444](https://github.com/factorial-io/phabalicious/commit/e054444813b0627d189be828cfef105ba7b9e82b))
+* Add new command restic to interact with your backups ([800927c](https://github.com/factorial-io/phabalicious/commit/800927cc447b9fdac7c6d81037d77633582a822c))
+
+
+### Bug Fixes
+
+* Normalize version number before testing for available update ([7ca6032](https://github.com/factorial-io/phabalicious/commit/7ca6032757af2379f2b4e11e7f2b3a06c8b2b497))
+
 ## [3.8.0-beta.13](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.10...3.8.0-beta.13) (2022-07-28)
 
 
