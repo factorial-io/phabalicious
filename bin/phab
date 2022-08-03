@@ -65,12 +65,7 @@ $dispatcher = $container->get(EventDispatcher::class);
 $application->setDispatcher($dispatcher);
 SelfUpdateCommand::registerListener($dispatcher);
 
-$version = '@git_tag@';
-if ($version[0] == '@') {
-    $version = Utilities::FALLBACK_VERSION;
-}
-
-$application->setVersion($version);
+$application->setVersion(Utilities::FALLBACK_VERSION);
 $application->setName('phabalicious');
 $application->setDefaultCommand('list');
 PluginDiscovery::discoverFromFabfile($container, $output);

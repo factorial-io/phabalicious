@@ -24,7 +24,10 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
     {
         $this->configuration = $configuration;
 
-        parent::__construct('phab', Utilities::FALLBACK_VERSION, 'factorial-io/phabalicious');
+        $version_parser = new VersionParser();
+        $version = $version_parser->normalize(Utilities::FALLBACK_VERSION);
+
+        parent::__construct('phab', $version, 'factorial-io/phabalicious');
     }
 
     public function getConfiguration(): ConfigurationService
@@ -72,6 +75,8 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
     {
         try {
             $version = $this->getApplication()->getVersion();
+            $version_parser = new VersionParser();
+            $version = $version_parser->normalize($version);
             $preview =
                 (stripos($version, 'alpha') !== false) ||
                 (stripos($version, 'beta') !== false);
@@ -79,7 +84,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
 
             $latest = $this->getLatestReleaseFromGithub(['preview' => $preview])['version'];
 
-            $update_available = ($latest && Comparator::greaterThan($latest, $this->currentVersion));
+            $update_available = ($latest && Comparator::greaterThan($latest, $version));
             $this->configuration->getLogger()->debug(sprintf(
                 'Version-Check: current: %s, latest on remote: %s, check for preview: %s, update available: %s',
                 $version,
