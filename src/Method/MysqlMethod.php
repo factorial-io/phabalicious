@@ -423,7 +423,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             $context,
             'mysql',
             $data,
-            false,
+            !empty($data['name']),
             ['-e', escapeshellarg($query)]
         );
         return $shell->run(implode(" ", $command), true, true);

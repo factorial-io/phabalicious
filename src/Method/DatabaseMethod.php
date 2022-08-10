@@ -10,6 +10,7 @@ use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -403,7 +404,9 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
                 break;
 
             case 'query':
-                return $this->runQuery($host_config, $context, $shell, $data);
+                $result = $this->runQuery($host_config, $context, $shell, $data);
+                $context->setCommandResult($result);
+                return $result;
                 break;
 
             case 'shell':
@@ -417,5 +420,14 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
                 return true;
         }
         throw new RuntimeException(sprintf("Unknown database command `%s`", $what));
+    }
+
+    public function runQuery(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        array $data
+    ): CommandResult {
+        throw new RuntimeException("Method runQuery not implemented!");
     }
 }

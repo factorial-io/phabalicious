@@ -256,6 +256,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         if (preg_match('/##RESULT:(\d*)$/', $exit_code, $matches)) {
             $exit_code = intval($matches[1]);
         }
+        if ($exit_code && empty($lines)) {
+            $lines = explode("\n", trim($this->process->getErrorOutput()));
+        }
 
         $cr = new CommandResult($exit_code, $lines);
         if ($cr->failed() && !$capture_output && $throw_exception_on_error) {
