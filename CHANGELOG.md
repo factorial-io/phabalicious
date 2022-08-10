@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0-beta.15](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.14...3.8.0-beta.15) (2022-08-10)
+
+
+### Bug Fixes
+
+* Code cleanup, enable debug mode with `-vvvv` ([3b253d9](https://github.com/factorial-io/phabalicious/commit/3b253d9fe79acf77c34cbd32bfd90dd91908a18c))
+* Do not run update check on self:update ([55f9b13](https://github.com/factorial-io/phabalicious/commit/55f9b130673615b8b16f67f8f8c9688fc1ce26b2))
+* Don't try to apply empty environment variables ([623179b](https://github.com/factorial-io/phabalicious/commit/623179b9e9ee72642fde1f02c83c87fdf0d7e29d))
+
 ## [3.8.0-beta.14](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.13...3.8.0-beta.14) (2022-08-03)
 
 
