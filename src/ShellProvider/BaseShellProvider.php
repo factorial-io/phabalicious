@@ -254,6 +254,9 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
         $cmds = [];
         foreach ($environment as $key => $value) {
+            if (is_null($value) || $value === false || trim($value) === '') {
+                continue;
+            }
             $cmds[] = "export \"$key\"=\"$value\"";
         }
         return $cmds;
