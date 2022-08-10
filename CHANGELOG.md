@@ -310,6 +310,18 @@ All notable changes to this project will be documented in this file. See [standa
   * dump database structure and data separately to prevent missing table structures for ignored tables
   * Refactor copyAssets-callback to be more flexible
 
+## 3.7.17 / 2022-07-28
+
+### Fixes:
+
+  * fix(1password): fix version detection
+
+## 3.7.16 / 2022-07-23
+
+### New:
+
+* feature(1password): Add support for 1password cli 2.x
+
 ## 3.7.15 / 2022-07-14
 
 ### Fixes:
