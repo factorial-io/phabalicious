@@ -418,25 +418,4 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
         }
         throw new RuntimeException(sprintf("Unknown database command `%s`", $what));
     }
-
-    protected function runQuery(
-        HostConfig $host_config,
-        TaskContextInterface $context,
-        ?ShellProviderInterface $shell,
-        array $data
-    ) {
-        $tmp_file_name = tempnam($host_config->get('tmpFolder', '/tmp'), 'query');
-        $query = $context->get(self::SQL_QUERY);
-        $context->io()->comment(sprintf("Running query:\n`%s`", $query));
-        file_put_contents($tmp_file_name, $query);
-        $result = $this->importSqlFromFile(
-            $host_config,
-            $context,
-            $shell,
-            $tmp_file_name,
-            false,
-        );
-        @unlink($tmp_file_name);
-        return $result;
-    }
 }

@@ -407,4 +407,25 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $data = $this->getDatabaseCredentials($host_config, $context);
         return $this->getMysqlCommand($host_config, $context, 'mysql', $data, true, []);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function runQuery(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        array $data
+    ): CommandResult {
+        $query = $context->get(self::SQL_QUERY);
+        $command = $this->getMysqlCommand(
+            $host_config,
+            $context,
+            'mysql',
+            $data,
+            false,
+            ['-e', escapeshellarg($query)]
+        );
+        return $shell->run(implode(" ", $command), true, true);
+    }
 }

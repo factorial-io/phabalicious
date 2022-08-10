@@ -109,4 +109,21 @@ interface DatabaseMethodInterface
     public static function createCredentialsUrlForDrupal(array $database): string;
 
     public function getShellCommand(HostConfig $host_config, TaskContextInterface $context): array;
+
+    /**
+     * Run a single query.
+     *
+     * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
+     * @param array $data
+     *
+     * @return \Phabalicious\ShellProvider\CommandResult
+     */
+    public function runQuery(
+        HostConfig $host_config,
+        TaskContextInterface $context,
+        ShellProviderInterface $shell,
+        array $data
+    ): CommandResult;
 }

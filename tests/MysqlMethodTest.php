@@ -130,7 +130,7 @@ class MysqlMethodTest extends PhabTestCase
         $this->backgroundProcess->setInput($input);
         $this->backgroundProcess->setTimeout(0);
         $this->backgroundProcess->start(function ($type, $buffer) {
-            fwrite(STDOUT, $buffer);
+            // fwrite(STDOUT, $buffer);
         });
         // Give the container some time to spin up
         sleep(5);
@@ -258,8 +258,8 @@ class MysqlMethodTest extends PhabTestCase
 
         $this->context->set('what', 'query');
         $this->context->set(DatabaseMethod::SQL_QUERY, $query);
-        /** @var \Phabalicious\ShellProvider\CommandResult $cmd */
-        $cmd = $this->method->database($this->hostConfig, $this->context);
+        /** @var \Phabalicious\ShellProvider\CommandResult $result */
+        $result = $this->method->database($this->hostConfig, $this->context);
 
         $this->assertEquals(0, $result->getExitCode());
         $this->assertContains($expected, $result->getOutput());
@@ -277,7 +277,7 @@ class MysqlMethodTest extends PhabTestCase
             [
                 'USE test-phabalicious; CREATE TABLE test_table(title VARCHAR(100) NOT NULL); SHOW TABLES;',
                 'test_table',
-                ],
+            ],
         ];
     }
 }
