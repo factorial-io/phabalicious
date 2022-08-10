@@ -11,6 +11,7 @@ namespace Phabalicious\Tests;
 use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Method\DatabaseMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
@@ -129,12 +130,25 @@ class MysqlMethodTest extends PhabTestCase
         $this->backgroundProcess->setInput($input);
         $this->backgroundProcess->setTimeout(0);
         $this->backgroundProcess->start(function ($type, $buffer) {
-            fwrite(STDOUT, $buffer);
+            // fwrite(STDOUT, $buffer);
         });
         // Give the container some time to spin up
         sleep(5);
     }
 
+    public function getExecuteSQLCommand(bool $include_database_arg, string $sql): array
+    {
+        $cmd = $this->method->getMysqlCommand(
+            $this->hostConfig,
+            $this->context,
+            'mysql',
+            $this->hostConfig['database'],
+            $include_database_arg
+        );
+        $cmd[] = '-e';
+        $cmd[] = escapeshellarg($sql);
+        return $cmd;
+    }
     /**
      * @group docker
      */
@@ -185,6 +199,14 @@ class MysqlMethodTest extends PhabTestCase
         $this->assertEquals(true, file_exists($export_file_name));
     }
 
+    public function providerSqlFiles()
+    {
+        return [
+            [ __DIR__ . '/../tests/assets/mysqlsampledatabase.sql.gz' ],
+            [ __DIR__ . '/../tests/assets/mysqlsampledatabase.sql' ],
+        ];
+    }
+
     /**
      * @group docker
      */
@@ -223,25 +245,39 @@ class MysqlMethodTest extends PhabTestCase
         $this->assertEquals(0, count($result->getOutput()));
     }
 
-    public function providerSqlFiles()
+    /**
+     * @dataProvider providerSqlQueries
+     * @group docker
+     */
+    public function testSqlQuery($query, $expected)
     {
-        return [
-            [ __DIR__ . '/../tests/assets/mysqlsampledatabase.sql.gz' ],
-            [ __DIR__ . '/../tests/assets/mysqlsampledatabase.sql' ],
-        ];
+
+        $this->context->set('what', 'install');
+        $result = $this->method->database($this->hostConfig, $this->context);
+        $this->assertEquals(0, $result->getExitCode());
+
+        $this->context->set('what', 'query');
+        $this->context->set(DatabaseMethod::SQL_QUERY, $query);
+        /** @var \Phabalicious\ShellProvider\CommandResult $result */
+        $result = $this->method->database($this->hostConfig, $this->context);
+
+        $this->assertEquals(0, $result->getExitCode());
+        $this->assertContains($expected, $result->getOutput());
     }
 
-    public function getExecuteSQLCommand(bool $include_database_arg, string $sql): array
+
+
+    public function providerSqlQueries()
     {
-        $cmd = $this->method->getMysqlCommand(
-            $this->hostConfig,
-            $this->context,
-            'mysql',
-            $this->hostConfig['database'],
-            $include_database_arg
-        );
-        $cmd[] = '-e';
-        $cmd[] = escapeshellarg($sql);
-        return $cmd;
+        return [
+            [
+                'SHOW DATABASES',
+                'test-phabalicious'
+            ],
+            [
+                'USE test-phabalicious; CREATE TABLE test_table(title VARCHAR(100) NOT NULL); SHOW TABLES;',
+                'test_table',
+            ],
+        ];
     }
 }

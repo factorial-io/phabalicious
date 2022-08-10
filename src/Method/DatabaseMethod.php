@@ -10,6 +10,7 @@ use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -403,7 +404,9 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
                 break;
 
             case 'query':
-                return $this->runQuery($host_config, $context, $shell, $data);
+                $result = $this->runQuery($host_config, $context, $shell, $data);
+                $context->setCommandResult($result);
+                return $result;
                 break;
 
             case 'shell':
@@ -419,24 +422,12 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
         throw new RuntimeException(sprintf("Unknown database command `%s`", $what));
     }
 
-    protected function runQuery(
+    public function runQuery(
         HostConfig $host_config,
         TaskContextInterface $context,
-        ?ShellProviderInterface $shell,
+        ShellProviderInterface $shell,
         array $data
-    ) {
-        $tmp_file_name = tempnam($host_config->get('tmpFolder', '/tmp'), 'query');
-        $query = $context->get(self::SQL_QUERY);
-        $context->io()->comment(sprintf("Running query:\n`%s`", $query));
-        file_put_contents($tmp_file_name, $query);
-        $result = $this->importSqlFromFile(
-            $host_config,
-            $context,
-            $shell,
-            $tmp_file_name,
-            false,
-        );
-        @unlink($tmp_file_name);
-        return $result;
+    ): CommandResult {
+        throw new RuntimeException("Method runQuery not implemented!");
     }
 }

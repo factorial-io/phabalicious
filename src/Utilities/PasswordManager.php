@@ -194,6 +194,8 @@ class PasswordManager implements PasswordManagerInterface
             throw new \RuntimeException("Cant resolve secrets as no valid context is available!");
         }
 
+        $exceptions = [];
+
         try {
             // Check onepassword connect ...
             if (!empty($secret_data['onePasswordVaultId']) && !empty($secret_data['onePasswordId'])) {
@@ -216,7 +218,7 @@ class PasswordManager implements PasswordManagerInterface
                 }
             }
         } catch (\Exception $e) {
-            $configuration_service->getLogger()->error($e->getMessage());
+            $exceptions[] = $e;
             // Give the user the chance to input the secret.
         }
 
@@ -233,8 +235,14 @@ class PasswordManager implements PasswordManagerInterface
                 }
             }
         } catch (\Exception $e) {
-            $configuration_service->getLogger()->error($e->getMessage());
+            $exceptions[] = $e;
             // Give the user the chance to input the secret.
+        }
+
+        if (!empty($exceptions)) {
+            foreach ($exceptions as $e) {
+                $configuration_service->getLogger()->error($e->getMessage());
+            }
         }
 
         $pw = $this->getQuestionFactory()->askAndValidate($this->getContext()->io(), $secret_data, null);

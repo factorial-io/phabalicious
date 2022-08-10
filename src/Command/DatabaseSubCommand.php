@@ -61,6 +61,10 @@ abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubComm
         $this->getMethods()
             ->runTask('database', $this->getHostConfig(), $context);
 
+        if ($this->getContext()->getCommandResult() && $this->getContext()->getCommandResult()->failed()) {
+            $this->getContext()->getCommandResult()->throwException("Query failed!");
+        }
+
         $return_code = $context->getResult('exitCode', 0);
         if ($return_code === 0) {
             $context->io()
