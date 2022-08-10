@@ -28,18 +28,13 @@ foreach ($autoloaders as $autoloader) {
   }
 }
 
-if (!isset($_SERVER['APP_ENV'])) {
-    if (!class_exists(Dotenv::class)) {
-        throw new \RuntimeException('APP_ENV environment variable is not defined. You need to define environment variables for configuration or add "symfony/dotenv" as a Composer dependency to load variables from a .env file.');
-    }
-    if (file_exists(__DIR__.'/../.env')) {
-        (new Dotenv())->load(__DIR__ . '/../.env');
-    }
+if (file_exists(__DIR__.'/../.env')) {
+    (new Dotenv())->load(__DIR__ . '/../.env');
 }
 
 $input = new ArgvInput();
-$env = $input->getParameterOption(['--env', '-e'], $_SERVER['APP_ENV'] ?? 'prod', true);
-$debug = (bool) ($_SERVER['APP_DEBUG'] ?? ('prod' !== $env)) && !$input->hasParameterOption('--no-debug', true);
+$env = $_SERVER['APP_ENV'] ?? 'prod';
+$debug = ($input->hasParameterOption('-vvvv', true));
 
 if ($debug) {
     umask(0000);
