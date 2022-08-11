@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0-beta.16](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.15...3.8.0-beta.16) (2022-08-11)
+
+### [3.7.17](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.13...3.7.17) (2022-07-28)
+
+
+### Bug Fixes
+
+* **1password:** fix version detection ([884077e](https://github.com/factorial-io/phabalicious/commit/884077e2f469b3da2c6a71dd4fa46f6540fc3db0))
+
+### [3.7.16](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.9...3.7.16) (2022-07-23)
+
 ## [3.8.0-beta.15](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.14...3.8.0-beta.15) (2022-08-10)
 
 
