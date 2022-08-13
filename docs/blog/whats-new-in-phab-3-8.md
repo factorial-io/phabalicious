@@ -8,8 +8,9 @@ Phabalicious requires now PHP version 7.3. It should work with newer versions, i
 
 ### Better integration with 1Password cli/ connect
 
-* Support for version 2 of the cli added new script callback `get_file_from_1password`  which will retrieve an encrypted
-* file from 1password, decrypt it and store it somewhere, suitable when scaffolding.
+* Support for version 2 of the cli
+* added new script callback `get_file_from_1password` which will retrieve an encrypted file from 1password,
+  decrypt it and store it somewhere, suitable when scaffolding.
 
 ### Encryption and decryption
 
@@ -42,14 +43,14 @@ test.yml
 
 ```twig
 data:
-  my_secret_data: "{{ decrypt(my_secret_data, 'my-password') }}"
-  encrypted: "{{ encrypt("Hello world", 'my-password') }}"
+  my_secret_data: "{{ decrypt(my_secret_data, 'name-of-secret') }}"
+  encrypted: "{{ encrypt("Hello world", 'name-of-secret') }}"
 ```
 
 ### new command `install:from-sql-file`
 
 The command `install:from` and the new command `install:from-sql-file` get reworked to prevent double-work and to
-streamline the process. You can now install the app from an exiting sql-file, which translate into an optimized
+streamline the process. You can now install the app from an existing sql-file, which translates into an optimized
 flow of
 
 ```shell
@@ -83,19 +84,19 @@ fabfile.yml:
 
 ```yaml
 inheritsFrom:
-    - ./base.yml
+  - ./base.yml
 
 needs:
-    - local
+  - local
 
 hosts:
-    test:
-        foo: Hello mars
+  test:
+    foo: Hello mars
 ```
 
 This enhances also the introspection possibilities:
 
-#### the about command got a `-v` flag
+### the about command got a `-v` flag
 
 The about-command got enhanced in such a way, that it will show the source of  inheritance when the `-v`-parameter is
 provided. This helps investigating from where a particular value was inherited and in which file it stored. This works
@@ -214,6 +215,20 @@ the actual `.fabfile.yml`:
 ```yaml
 inheritsFrom:
   - ./ddev.yml
+
+hosts:
+  ddev:
+    # its a drupal installation, so add the drupal-specfic stuff
+    adminPass: admin
+    replaceSettingsFile: false
+    alterSettingsFile: false
+    executables:
+      drush: /var/www/html/vendor/bin/drush
+    needs:
+      - git
+      - docker
+      - drush
+      - files
 ```
 
 running `phab list:hosts` will show sth like this for your ddev-project:
@@ -221,8 +236,8 @@ running `phab list:hosts` will show sth like this for your ddev-project:
 ```shell
 ❯ phab list:hosts -v
 
-Available configurations for controlling
-========================================
+Available configurations for your project
+=========================================
 
 Local development
 -----------------
@@ -241,10 +256,10 @@ or `ddev stop`
 
 * Passwords are now obfuscated in phabs output.
 * Update-check is now using a maintained php library and works more reliably.
-* When importing a sql-dump freeze the app, and unfreeze it afterwards. For drupal applications the site will be put in
+* When importing a sql-dump phab freezes the app, and unfreezes it afterwards. For drupal applications the site will be put in
   maintenance mode and back.
 
 
-### Switch to convenctional commits and semi-automated releases
+### Switch to conventional commits and semi-automated releases
 
-We switch to the conventional commits convention and introduced `standard-release` to help us creating proper releases.
+We switched to the conventional commits convention and introduced `standard-release` to help us creating proper releases.
