@@ -29,7 +29,7 @@ scripts:
     - decrypt_files(path/to/files/or/folders/to/decrypt/*.enc, path/to/folder/to/store/decrypted/files, name-of-secret)
 ```
 
-The scaffolder has a new callback called decrypt_assets which works the same as copy_assets but with a preliminary
+The scaffolder has a new callback called `decrypt_assets` which works the same as `copy_assets` but with an additional
 decryption step
 
 ```yaml
