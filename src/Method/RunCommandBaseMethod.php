@@ -15,6 +15,10 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
 
     const HOST_CONTEXT = 'host';
     const DOCKER_HOST_CONTEXT = 'dockerHost';
+    const DOCKER_IMAGE = ScriptExecutionContext::DOCKER_IMAGE;
+
+    const RUN_CONTEXT_KEY = 'runContext';
+    const ROOT_FOLDER_KEY = 'rootFolder';
 
     public function supports(string $method_name): bool
     {
@@ -33,12 +37,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
 
     public function getRootFolderKey(): string
     {
-        return $this->getConfigPrefix() . 'RootFolder';
-    }
-
-    protected function getRunContextKey()
-    {
-        return "{$this->getConfigPrefix()}RunContext";
+        return $this->getConfigPrefix() . '.rootFolder';
     }
 
     public function getGlobalSettings(ConfigurationService $configuration): Node
@@ -59,41 +58,69 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         if ($task !== $this->getName()) {
             return false;
         }
-        return $host_config[$this->getRunContextKey()] === self::HOST_CONTEXT;
+        return $host_config->getProperty($this->getConfigKey(self::RUN_CONTEXT_KEY)) === self::HOST_CONTEXT;
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
         return new Node([
-            $this->getRootFolderKey() => $host_config['gitRootFolder'] ?? $host_config['rootFolder'],
-            $this->getRunContextKey() => self::HOST_CONTEXT,
+            $this->getConfigPrefix() => [
+                'rootFolder' => $host_config['gitRootFolder'] ?? $host_config['rootFolder'],
+                'runContext' => self::HOST_CONTEXT,
+            ],
         ], $this->getName() . ' method defaults');
+    }
+
+    public function getDeprecationMapping(): array
+    {
+        $mapping = parent::getDeprecationMapping();
+        $prefix = $this->getConfigPrefix();
+        return array_merge($mapping, [
+            "${prefix}RootFolder" => "${prefix}.rootFolder",
+            "${prefix}RunContext" => "${prefix}.context",
+        ]);
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         $validation = new ValidationService($config, $errors, 'host-config');
+        $prefix = $this->getConfigPrefix();
+        $validation->deprecate([
+            "${prefix}RootFolder" => "please change to `${prefix}.rootFolder`",
+            "${prefix}RunContext" => "please change to `${prefix}.context`",
+        ]);
         $args = $this->getRootFolderKey();
         $validation->hasKey($args, sprintf('%s should point to your root folder for %s.', $args, $this->getName()));
         $validation->checkForValidFolderName($args);
 
-        $runContextKey = $this->getRunContextKey();
-        $validation->isOneOf($runContextKey, [self::HOST_CONTEXT, self::DOCKER_HOST_CONTEXT]);
+        $run_context_key = $this->getConfigKey(self::RUN_CONTEXT_KEY);
+        $validation->isOneOf(
+            $run_context_key,
+            [self::HOST_CONTEXT, self::DOCKER_HOST_CONTEXT, self::DOCKER_IMAGE]
+        );
 
-        if ($config[$runContextKey] == self::DOCKER_HOST_CONTEXT && !in_array('docker', $config['needs'])) {
-            $errors->addError($runContextKey, sprintf(
+        if ($config->getProperty($run_context_key) == self::DOCKER_HOST_CONTEXT
+            && !in_array('docker', $config['needs'])
+        ) {
+            $errors->addError($run_context_key, sprintf(
                 '`%s` is set to `%s`, this requires `docker` as part of the hosts needs.',
-                $runContextKey,
+                $run_context_key,
                 self::DOCKER_HOST_CONTEXT
             ));
         }
     }
 
     /**
-     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @param \Phabalicious\Configuration\HostConfig $host_config
+     * @param \Phabalicious\Method\TaskContextInterface $context
+     * @param string $command
+     *
      * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     protected function runCommand(
         HostConfig $host_config,
@@ -101,27 +128,74 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         string $command
     ) {
         $command = $this->prepareCommand($host_config, $context, $command);
+        $run_context = $host_config->getProperty($this->getConfigKey(self::RUN_CONTEXT_KEY));
 
-        /** @var ShellProviderInterface $shell */
-        if ($host_config[$this->getRunContextKey()] == self::DOCKER_HOST_CONTEXT) {
-            /** @var DockerMethod $docker_method */
-            $docker_method = $context->getConfigurationService()->getMethodFactory()->getMethod('docker');
-            $docker_config = $docker_method->getDockerConfig($host_config, $context);
-            $shell = $docker_config->shell();
-            $shell->pushWorkingDir($docker_method->getProjectFolder($docker_config, $host_config));
-            $shell->cd($host_config[$this->getRootFolderKey()]);
-        } else {
-            $shell = $this->getShell($host_config, $context);
-            $shell->pushWorkingDir($host_config[$this->getRootFolderKey()]);
+        switch ($run_context) {
+            case self::DOCKER_IMAGE:
+                // Lets construct a script and set the execution context there.
+                /** @var \Phabalicious\Method\ScriptMethod $script_method */
+                $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
+                $script_context = clone $context;
+                $script_context->set(ScriptMethod::SCRIPT_CONTEXT, $run_context);
+                $script_context->set(
+                    ScriptMethod::SCRIPT_CONTEXT_DATA,
+                    $host_config->getProperty($this->getConfigPrefix())
+                );
+                $script_context->setShell($this->getShell($host_config, $context));
+
+                $bag = new ScriptDataBag();
+                $bag->setContext($script_context)
+                    ->setCommands([
+                        sprintf('#!%s %s', $this->getExecutableName(), $command)
+                    ])
+                    ->setRootFolder($this->getConfig($host_config, self::ROOT_FOLDER_KEY));
+
+                $result = $script_method->runScriptImpl($bag);
+                $context->mergeResults($script_context);
+
+                $context->setResult('exitCode', $result->getExitCode());
+                $context->setCommandResult($result);
+                break;
+
+            case self::DOCKER_HOST_CONTEXT:
+                /** @var DockerMethod $docker_method */
+                $docker_method = $context->getConfigurationService()->getMethodFactory()->getMethod('docker');
+                $docker_config = $docker_method->getDockerConfig($host_config, $context);
+                $shell = $docker_config->shell();
+                $shell->pushWorkingDir($docker_method->getProjectFolder($docker_config, $host_config));
+                $shell->cd($this->getConfig($host_config, self::ROOT_FOLDER_KEY));
+                $result = $shell->run('#!' . $this->getExecutableName(). ' ' . $command);
+                $context->setResult('exitCode', $result->getExitCode());
+                $context->setCommandResult($result);
+                $shell->popWorkingDir();
+
+                break;
+
+            default:
+                $shell = $this->getShell($host_config, $context);
+                $shell->pushWorkingDir($this->getConfig($host_config, self::ROOT_FOLDER_KEY));
+                $result = $shell->run('#!' . $this->getExecutableName(). ' ' . $command);
+                $context->setResult('exitCode', $result->getExitCode());
+                $context->setCommandResult($result);
+                $shell->popWorkingDir();
+
+                break;
         }
-
-        $result = $shell->run('#!' . $this->getExecutableName(). ' ' . $command);
-        $context->setResult('exitCode', $result->getExitCode());
-        $shell->popWorkingDir();
     }
 
     protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command): string
     {
         return $command;
     }
+
+    private function getConfigKey(string $key): string
+    {
+        return sprintf("%s.%s", $this->getConfigPrefix(), $key);
+    }
+
+    protected function getConfig(HostConfig $host_config, string $key)
+    {
+        return $host_config->getProperty($this->getConfigKey($key));
+    }
+
 }
