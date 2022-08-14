@@ -57,11 +57,12 @@ hosts:
     port: {{ 1024 + random(20000) }}
     type: dev
     rootFolder: /var/www/web
-    gitRootFolder: /var/www
+    git:
+      rootFolder: /var/www
+      branch: develop
     siteFolder: /sites/default
     filesFolder: /sites/default/files
     backupFolder: /var/www/backups
-    branch: develop
     supportsInstalls: true
     docker:
       name: {{ projectFolder }}_web_1

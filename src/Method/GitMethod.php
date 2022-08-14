@@ -15,6 +15,9 @@ use Phabalicious\Validation\ValidationService;
 class GitMethod extends BaseMethod implements MethodInterface
 {
 
+    const ROOT_FOLDER_KEY = 'git.rootFolder';
+    const BRANCH_KEY = 'git.branch';
+
     public function getName(): string
     {
         return 'git';
@@ -28,10 +31,12 @@ class GitMethod extends BaseMethod implements MethodInterface
     public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
-            'gitOptions' =>  [
-                'pull' => [
-                    '--no-edit',
-                    '--rebase'
+            'git' =>
+                ['options' =>  [
+                    'pull' => [
+                        '--no-edit',
+                        '--rebase'
+                    ],
                 ],
             ],
             'executables' => [
@@ -40,22 +45,35 @@ class GitMethod extends BaseMethod implements MethodInterface
         ], $this->getName() . ' global settings');
     }
 
+    public function getDeprecationMapping(): array
+    {
+        $mapping = parent::getDeprecationMapping();
+        return array_merge($mapping, [
+            "gitRootFolder" => "git.rootFolder",
+            "ignoreSubmodules" => "git.ignoreSubmodules",
+            "gitOptions" => "git.options",
+            "branch" => self::BRANCH_KEY,
+        ]);
+    }
+
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
         return new Node([
-            'branch' => 'develop',
-            'gitRootFolder' => $host_config['rootFolder'] ?? null,
-            'ignoreSubmodules' => false,
-            'gitOptions' => $configuration_service->getSetting('gitOptions', []),
+            'git' => [
+                'branch' => 'develop',
+                'rootFolder' => $host_config['rootFolder'] ?? null,
+                'ignoreSubmodules' => false,
+                'options' => $configuration_service->getSetting('git.options', []),
+            ],
         ], $this->getName() . ' method defaults');
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         $validation = new ValidationService($config, $errors, sprintf('host-config: `%s`', $config['configName']));
-        $validation->hasKey('gitRootFolder', 'gitRootFolder should point to your gits root folder.');
-        $validation->checkForValidFolderName('gitRootFolder');
-        $validation->hasKey('branch', 'git needs a branch-name so it can run deployments.');
+        $validation->hasKey('git.rootFolder', 'git.rootFolder should point to your gits root folder.');
+        $validation->checkForValidFolderName('git.rootFolder');
+        $validation->hasKey(self::BRANCH_KEY, 'git needs a branch-name so it can run deployments.');
     }
 
     public function alterConfig(ConfigurationService $configuration_service, Node $data)
@@ -75,14 +93,14 @@ class GitMethod extends BaseMethod implements MethodInterface
 
     public function getTag(HostConfig $host_config, TaskContextInterface $context)
     {
-        $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
+        $host_config->shell()->pushWorkingDir($host_config->getProperty('git.rootFolder'));
         $result = $host_config->shell()->run('#!git describe --exact-match', true);
         $host_config->shell()->popWorkingDir();
         return $result->succeeded() ? str_replace('/', '-', $result->getOutput()[0]) : false;
     }
     public function getVersion(HostConfig $host_config, TaskContextInterface $context)
     {
-        $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
+        $host_config->shell()->pushWorkingDir($host_config->getProperty('git.rootFolder'));
         $result = $host_config->shell()->run('#!git describe --always --tags', true);
         $host_config->shell()->popWorkingDir();
         return $result->succeeded() ? str_replace('/', '-', $result->getOutput()[0]) : '';
@@ -90,7 +108,7 @@ class GitMethod extends BaseMethod implements MethodInterface
 
     public function getCommitHash(HostConfig $host_config, TaskContextInterface $context)
     {
-        $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
+        $host_config->shell()->pushWorkingDir($host_config->getProperty('git.rootFolder'));
         $result = $host_config->shell()->run('#!git rev-parse HEAD', true);
         $host_config->shell()->popWorkingDir();
         return $result->getOutput()[0];
@@ -98,7 +116,7 @@ class GitMethod extends BaseMethod implements MethodInterface
 
     public function isWorkingcopyClean(HostConfig $host_config, TaskContextInterface $context)
     {
-        $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
+        $host_config->shell()->pushWorkingDir($host_config->getProperty('git.rootFolder'));
         $result = $host_config->shell()->run('#!git diff --exit-code --quiet', true);
         $host_config->shell()->popWorkingDir();
         return $result->succeeded();
@@ -120,7 +138,7 @@ class GitMethod extends BaseMethod implements MethodInterface
             return ;
         }
         $shell = $this->getShell($host_config, $context);
-        $shell->cd($host_config['gitRootFolder']);
+        $shell->cd($host_config->getProperty('git.rootFolder'));
 
         if (!$this->isWorkingcopyClean($host_config, $context)) {
             $this->logger->error('Working copy is not clean, aborting');
@@ -128,7 +146,7 @@ class GitMethod extends BaseMethod implements MethodInterface
             throw new EarlyTaskExitException();
         }
 
-        $branch = $context->get('branch', $host_config['branch']);
+        $branch = $context->get('branch', $host_config->getProperty(self::BRANCH_KEY));
 
         $shell->run('#!git fetch -q origin');
         $shell->run('#!git checkout ' . $branch);
@@ -165,10 +183,10 @@ class GitMethod extends BaseMethod implements MethodInterface
     public function appCheckExisting(HostConfig $host_config, TaskContextInterface $context)
     {
         if (!$context->getResult('installDir', false)) {
-            $context->setResult('installDir', $host_config['gitRootFolder']);
+            $context->setResult('installDir', $host_config->getProperty('git.rootFolder'));
         }
         if (!$context->getResult('appInstallDir', false)) {
-            $context->setResult('appInstallDir', $host_config['gitRootFolder']);
+            $context->setResult('appInstallDir', $host_config->getProperty('git.rootFolder'));
         }
     }
 
@@ -183,7 +201,7 @@ class GitMethod extends BaseMethod implements MethodInterface
         }
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('outerShell', $host_config->shell());
-        $install_dir = $context->get('installDir', $host_config['gitRootFolder']);
+        $install_dir = $context->get('installDir', $host_config->getProperty('git.rootFolder'));
 
         $repository = $host_config->get(
             'repository',
@@ -233,6 +251,6 @@ class GitMethod extends BaseMethod implements MethodInterface
 
     public function getRootFolderKey(): string
     {
-        return 'gitRootFolder';
+        return 'git.rootFolder';
     }
 }

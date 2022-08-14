@@ -110,7 +110,8 @@ hosts:
         id: 01-example
         label: An example category
     rootFolder: /var/www/public
-    gitRootFolder: /var/www
+    git:
+      rootFolder: /var/www
     siteFolder: /sites/default
     filesFolder: /sites/default/files
     backupFolder: /var/www/backups
@@ -201,10 +202,10 @@ This will print all host configuration for the host `staging`.
 
 ### Configuration for the git-method
 
-* `gitRootFolder`  the folder, where the git-repository is located. Defaults to `rootFolder`
-* `branch` the name of the branch to use for deployments, they get usually checked out and pulled from origin.
-* `ignoreSubmodules` default is false, set to false, if you don't want to update a projects' submodule on deploy.
-* `gitOptions` a keyed list of options to apply to a git command. Currently only pull is supported. If your git-version does not support `--rebase` you can disable it via an empty array: `pull: []`
+* `git.rootFolder`  the folder, where the git-repository is located. Defaults to `rootFolder`
+* `git.branch` the name of the branch to use for deployments, they get usually checked out and pulled from origin.
+* `git.ignoreSubmodules` default is false, set to false, if you don't want to update a projects' submodule on deploy.
+* `git.options` a keyed list of options to apply to a git command. Currently only pull is supported. If your git-version does not support `--rebase` you can disable it via an empty array: `pull: []`
 
 ### Configuration for the composer-method
 
@@ -555,7 +556,7 @@ webhooks:
     url: <url>
     method: get
     payload:
-      branch: "%host.branch%"
+      branch: "%host.git.branch%"
       token: "%settings.token%"
       someOtherValue: "%arguments.foo%"
 ```

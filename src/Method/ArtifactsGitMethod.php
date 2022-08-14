@@ -30,6 +30,11 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
          'pushToTargetRepository'
     ];
 
+    const TARGET_BRANCH_KEY = 'artifact.branch';
+    const REPOSITORY_KEY =    'artifact.repository';
+    const BASE_BRANCH_KEY =   'artifact.baseBranch';
+    const GIT_CLONE_OPTIONS_KEY = 'artifact.gitOptions.clone';
+
     /**
      * ArtifactsGitMethod constructor.
      * @param LoggerInterface $logger
@@ -89,7 +94,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             'git' => 'git',
             'find' => 'find',
         ];
-        $return[self::PREFS_KEY] = [
+        $return['artifact'] = [
             'branch' => false,
             'useLocalRepository' => false,
             'gitOptions' => [
@@ -107,7 +112,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
     /**
      * Validate config.
      *
-     * @param array $config
+     * @param \Phabalicious\Configuration\Storage\Node $config
      * @param ValidationErrorBagInterface $errors
      */
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
@@ -116,16 +121,18 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         if ($config['deployMethod'] !== 'git-sync') {
             $errors->addError('deployMethod', 'deployMethod must be `git-sync`!');
         }
-        $service = new ValidationService($config[self::PREFS_KEY], $errors, 'artifacts--git config');
-        $service->hasKey('repository', 'artifacts--git needs a target repository to push build artifacts to!');
+        $service = new ValidationService($config, $errors, 'artifacts--git config');
+        $service->hasKey(self::REPOSITORY_KEY, 'artifacts--git needs a target repository to push build artifacts to!');
     }
 
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws MethodNotFoundException
-     * @throws MissingScriptCallbackImplementation
-     * @throws TaskNotFoundInMethodException
+     *
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -166,7 +173,9 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
      */
     private function getGitMethod(TaskContextInterface $context)
     {
-        return $context->getConfigurationService()->getMethodFactory()->getMethod('git');
+        /** @var \Phabalicious\Method\GitMethod $method */
+        $method = $context->getConfigurationService()->getMethodFactory()->getMethod('git');
+        return $method;
     }
 
     /**
@@ -201,11 +210,11 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
     protected function pullTargetRepository(HostConfig $host_config, TaskContextInterface $context)
     {
         $target_dir = $context->get('targetDir', false);
-        $target_branch = $host_config[self::PREFS_KEY]['branch'];
+        $target_branch = $host_config->getProperty(self::TARGET_BRANCH_KEY);
         if (!$target_branch) {
-            $target_branch = $host_config['branch'];
+            $target_branch = $host_config->getProperty(GitMethod::BRANCH_KEY);
         }
-        $target_repository = $host_config[self::PREFS_KEY]['repository'];
+        $target_repository = $host_config->getProperty(self::REPOSITORY_KEY);
 
         /** @var ShellProviderInterface $shell */
         $shell = $context->get('outerShell', $host_config->shell());
@@ -213,8 +222,10 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             sprintf('#!git ls-remote -h --exit-code %s %s', $target_repository, $target_branch),
             true
         )->succeeded();
-        $branch_to_clone = $branch_exists ? $target_branch : $host_config[self::PREFS_KEY]['baseBranch'] ?? 'master';
-        $clone_options = $host_config[self::PREFS_KEY]['gitOptions']['clone'] ?? [];
+        $branch_to_clone = $branch_exists
+            ? $target_branch
+            : $host_config->getProperty(self::BASE_BRANCH_KEY, 'master');
+        $clone_options = $host_config->getProperty(self::GIT_CLONE_OPTIONS_KEY, []);
         $shell->run(sprintf(
             '#!git clone %s -b %s %s %s',
             implode(' ', $clone_options),
@@ -319,9 +330,6 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $shell->popWorkingDir();
     }
 
-
-
-
     /**
      * @param ShellProviderInterface $shell
      * @param TaskContextInterface $context
@@ -334,7 +342,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         TaskContextInterface $context,
         $last_commit_hash,
         $current_commit_hash
-    ) {
+    ): array {
         $install_dir = $context->get('installDir', false);
         $shell->pushWorkingDir($install_dir);
 

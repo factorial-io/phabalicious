@@ -65,7 +65,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
     {
         return new Node([
             $this->getConfigPrefix() => [
-                'rootFolder' => $host_config['gitRootFolder'] ?? $host_config['rootFolder'],
+                'rootFolder' => $host_config->getProperty('git.rootFolder', $host_config['rootFolder']),
                 'runContext' => self::HOST_CONTEXT,
             ],
         ], $this->getName() . ' method defaults');
@@ -197,5 +197,4 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
     {
         return $host_config->getProperty($this->getConfigKey($key));
     }
-
 }

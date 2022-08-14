@@ -246,5 +246,4 @@ abstract class BaseMethod implements MethodInterface
     {
         return [];
     }
-
 }

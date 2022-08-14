@@ -11,6 +11,7 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
+use Phabalicious\Method\GitMethod;
 use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -67,13 +68,13 @@ class DeployCommand extends BaseCommand
         // Override branch in config.
         $branch = $input->getArgument('branch');
         if (!empty($branch)) {
-            $this->getHostConfig()['branch'] = $branch;
+            $this->getHostConfig()->setProperty(GitMethod::BRANCH_KEY, $branch);
         }
 
-        if ($this->getHostConfig()->get('branch')) {
+        if ($this->getHostConfig()->getProperty(GitMethod::BRANCH_KEY)) {
             $context->io()->comment(sprintf(
                 'Deploying branch `%s` with config `%s` ...',
-                $this->getHostConfig()['branch'],
+                $this->getHostConfig()->getProperty(GitMethod::BRANCH_KEY),
                 $this->getHostConfig()->getConfigName()
             ));
         }

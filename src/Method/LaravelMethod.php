@@ -98,7 +98,7 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
         if (empty($data)) {
             /** @var \Phabalicious\ShellProvider\ShellProviderInterface $shell */
             $shell = $context->get('shell', $host_config->shell());
-            $shell->pushWorkingDir($host_config['gitRootFolder']);
+            $shell->pushWorkingDir($host_config->getProperty('git.rootFolder'));
             $result = $shell->run('cat .env', true, false);
             if ($result->failed()) {
                 throw new \RuntimeException('Cant get database credentials from laravel installation!');

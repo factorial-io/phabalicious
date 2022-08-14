@@ -33,7 +33,7 @@ abstract class ActionBase implements ActionInterface
         $service = new ValidationService(
             $action_config,
             $errors,
-            sprintf('host-config.%s.%s.actions', $host_config['configName'], ArtifactsBaseMethod::PREFS_KEY)
+            sprintf('host-config.%s.%s', $host_config['configName'], ArtifactsBaseMethod::ACTIONS_KEY)
         );
         $service->hasKeys([
             'action' => 'Every action needs the type of action to perform',

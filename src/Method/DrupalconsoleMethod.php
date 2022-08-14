@@ -52,7 +52,7 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
     {
         $keys = [
             'composer.rootFolder',
-            'gitRootFolder',
+            'git.rootFolder',
             'rootFolder'
         ];
         foreach ($keys as $key) {

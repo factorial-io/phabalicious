@@ -64,7 +64,7 @@ class ValidationService
     }
     public function isArray(string $key, string $message)
     {
-        if ($this->hasKey($key, $message) && !is_array($this->config[$key])) {
+        if ($this->hasKey($key, $message) && !is_array(Utilities::getProperty($this->config, $key))) {
             $this->errors->addError($key, 'key '. $key . ' not an array in ' . $this->prefixMessage . ': ' . $message);
         }
     }

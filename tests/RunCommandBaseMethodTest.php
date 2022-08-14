@@ -135,5 +135,4 @@ class RunCommandBaseMethodTest extends PhabTestCase
             ['laravel', false, 'php'],
         ];
     }
-
 }

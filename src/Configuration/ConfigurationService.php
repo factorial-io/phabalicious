@@ -1134,9 +1134,7 @@ class ConfigurationService
         foreach ($mapping as $deprecated => $key) {
             if ($data->has($deprecated)) {
                 $data->setProperty($key, $data[$deprecated]);
-
             }
         }
     }
-
 }
