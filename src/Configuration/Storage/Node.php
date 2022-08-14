@@ -276,9 +276,19 @@ class Node implements \IteratorAggregate, \ArrayAccess
     {
         $node = $this->find($dotted_key);
         if (!$node) {
-            throw new \InvalidArgumentException(sprintf("Could not find key %s in data!", $dotted_key));
+            $node = $this;
+            $keys = explode(".", $dotted_key);
+            $last_key = array_pop($keys);
+            foreach ($keys as $key) {
+                if (!$node->has($key)) {
+                    $node[$key] = [];
+                }
+                $node = $node->get($key);
+            }
+            $node[$last_key] = $new_value;
+        } else {
+            $node->setValue($new_value);
         }
-        $node->setValue($new_value);
     }
 
     public function push($value)
