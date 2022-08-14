@@ -40,12 +40,12 @@ class ConfigurationServiceValidationTest extends PhabTestCase
 
     public function testGlobalSettingsFromMethod()
     {
-        $this->assertEquals($this->config->getSetting('gitOptions.pull'), ['--no-edit', '--rebase']);
+        $this->assertEquals($this->config->getSetting('git.options.pull'), ['--no-edit', '--rebase']);
     }
 
     public function testMethodDefaultSettings()
     {
         $host = $this->config->getHostConfig('mbb');
-        $this->assertEquals($host['gitRootFolder'], $host['rootFolder']);
+        $this->assertEquals($host->getProperty('git.rootFolder'), $host['rootFolder']);
     }
 }

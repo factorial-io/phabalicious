@@ -4,6 +4,7 @@ namespace Phabalicious\Utilities;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\ArgumentParsingException;
 use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Method\TaskContextInterface;
@@ -311,6 +312,10 @@ class Utilities
 
     public static function getProperty($data, string $key, $default_value = null)
     {
+        if ($data instanceof Node) {
+            return $data->getProperty($key, $default_value);
+        }
+
         $value = $default_value;
         $keys = explode('.', $key);
         $first_run = true;

@@ -10,5 +10,6 @@ hosts:
 
   hostA:
     inheritsFrom: base
-    branch: master
+    git:
+      branch: master
 

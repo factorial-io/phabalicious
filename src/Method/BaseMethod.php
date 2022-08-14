@@ -241,4 +241,9 @@ abstract class BaseMethod implements MethodInterface
     {
         return 'rootFolder';
     }
+
+    public function getDeprecationMapping(): array
+    {
+        return [];
+    }
 }

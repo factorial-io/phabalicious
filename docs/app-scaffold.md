@@ -265,9 +265,10 @@ hosts:
     port: {{ 1024 + random(20000) }}
     type: dev
     rootFolder: /var/www/{{ webRoot }}
-    gitRootFolder: /var/www
+    git:
+      rootFolder: /var/www
+      branch: develop
     backupFolder: /var/www/backups
-    branch: develop
     database:
       name: {{ projectFolder|replace({'-': '_'}) }}_db
       user: root

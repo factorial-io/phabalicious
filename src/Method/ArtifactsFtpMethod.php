@@ -25,6 +25,13 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         'syncToFtp'
     ];
 
+    const PASSWORD_KEY     = 'artifact.password';
+    const USER_KEY         = 'artifact.user';
+    const HOST_KEY         = 'artifact.host';
+    const PORT_KEY         = 'artifact.port';
+    const ROOT_FOLDER_KEY  = 'artifact.rootFolder';
+    const LFTP_OPTIONS_KEY = 'artifact.lftpOptions';
+
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
@@ -50,7 +57,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         ];
 
         $return['deployMethod'] = $this->getName();
-        $return[self::PREFS_KEY] = [
+        $return['artifact'] = [
             'useLocalRepository' => false,
             'port' => 21,
             'lftpOptions' => [
@@ -84,7 +91,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
     }
 
     /**
-     * @param array $config
+     * @param \Phabalicious\Configuration\Storage\Node $config
      * @param ValidationErrorBagInterface $errors
      */
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
@@ -104,40 +111,37 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
             $errors->addWarning('needs', sprintf('`ftp-sync` is deprecated, please use `%s`', $this->getName()));
         }
         if (isset($config['ftp'])) {
-            $errors->addError('ftp', sprintf('`ftp` is deprecated, please use `%s` instead!', self::PREFS_KEY));
+            $errors->addError('ftp', '`ftp` is deprecated, please use `artifact` instead!');
         }
 
-        if (!empty($config[self::PREFS_KEY])) {
-            $service = new ValidationService($config[self::PREFS_KEY], $errors, sprintf(
-                'host-config.%s.%s',
-                $config['configName'],
-                self::PREFS_KEY
-            ));
-            $service->hasKeys([
-                'user' => 'the ftp user-name',
-                'host' => 'the ftp host to connect to',
-                'port' => 'the port to connect to',
-                'rootFolder' => 'the rootfolder of your app on the remote file-system',
-            ]);
-            if (empty($config[self::PREFS_KEY]['password'])) {
-                $errors->addWarning(
-                    'password',
-                    'Support for plain passwords is deprecated and will ' .
-                    'be removed in a future version of phab. Please use the secret-system instead!'
-                );
-            }
-            $service->checkForValidFolderName('rootFolder');
+        $service = new ValidationService($config, $errors, sprintf(
+            'host-config.%s.artifact',
+            $config['configName'],
+        ));
+        $service->hasKeys([
+            self::USER_KEY => 'the ftp user-name',
+            self::HOST_KEY => 'the ftp host to connect to',
+            self::PORT_KEY => 'the port to connect to',
+            self::ROOT_FOLDER_KEY => 'the rootfolder of your app on the remote file-system',
+        ]);
+        if (empty($config->getProperty(self::PASSWORD_KEY))) {
+            $errors->addWarning(
+                self::PASSWORD_KEY,
+                'Support for plain passwords is deprecated and will ' .
+                'be removed in a future version of phab. Please use the secret-system instead!'
+            );
         }
+        $service->checkForValidFolderName(self::ROOT_FOLDER_KEY);
     }
 
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      *
-     * @throws MethodNotFoundException
-     * @throws MissingScriptCallbackImplementation
-     * @throws TaskNotFoundInMethodException
      * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -145,11 +149,14 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
             return;
         }
 
-        if (empty($host_config[self::PREFS_KEY]['password'])) {
-            $ftp = $host_config[self::PREFS_KEY];
+        if (empty($host_config->getProperty(self::PASSWORD_KEY))) {
             $pw = $context->getPasswordManager();
-            $ftp['password'] = $pw->getPasswordFor($pw->getKeyFromLogin($ftp['host'], $ftp['port'], $ftp['user']));
-            $host_config[self::PREFS_KEY] = $ftp;
+            $password = $pw->getPasswordFor($pw->getKeyFromLogin(
+                $host_config->getProperty(self::HOST_KEY),
+                $host_config->getProperty(self::PORT_KEY),
+                $host_config->getProperty(self::USER_KEY),
+            ));
+            $host_config->setProperty(self::PASSWORD_KEY, $password);
         }
 
         $stages = $context->getConfigurationService()->getSetting('appStages.artifacts.ftp', self::STAGES);
@@ -184,7 +191,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         $shell = $this->getShell($host_config, $context);
         $target_dir = $context->get('targetDir', false);
         $exclude = $context->getResult(ExcludeAction::FTP_SYNC_EXCLUDES, []);
-        $options = implode(' ', $host_config[self::PREFS_KEY]['lftpOptions']);
+        $options = implode(' ', $host_config->getProperty(self::LFTP_OPTIONS_KEY));
         if (count($exclude)) {
             $options .= ' --exclude ' . implode(' --exclude ', $exclude);
         }
@@ -194,17 +201,17 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         $shell->run(sprintf('touch %s', $command_file));
         $shell->run(sprintf(
             "echo 'open -u %s,%s -p%s %s' >> %s",
-            $host_config[self::PREFS_KEY]['user'],
-            $host_config[self::PREFS_KEY]['password'],
-            $host_config[self::PREFS_KEY]['port'],
-            $host_config[self::PREFS_KEY]['host'],
+            $host_config->getProperty(self::USER_KEY),
+            $host_config->getProperty(self::PASSWORD_KEY),
+            $host_config->getProperty(self::PORT_KEY),
+            $host_config->getProperty(self::HOST_KEY),
             $command_file
         ));
         $shell->run(sprintf(
             'echo "mirror %s -c -e -R  %s %s" >> %s',
             $options,
             $target_dir,
-            $host_config[self::PREFS_KEY]['rootFolder'],
+            $host_config->getProperty(self::ROOT_FOLDER_KEY),
             $command_file
         ));
 

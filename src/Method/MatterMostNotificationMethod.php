@@ -101,7 +101,7 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
             }
             $attachment
                 ->field('Configuration', $host_config->getConfigName(), true)
-                ->field('Branch', $host_config['branch'], true);
+                ->field('Branch', $host_config->getProperty(GitMethod::BRANCH_KEY), true);
 
             /** @var MetaInformation $item */
             foreach ($meta as $item) {

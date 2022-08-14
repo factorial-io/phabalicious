@@ -25,13 +25,13 @@ excludeFiles:
 
 scripts:
   behatInstall:
-     - cd %host.gitRootFolder% && composer install --ignore-platform-reqs
+     - cd %host.git.rootFolder% && composer install --ignore-platform-reqs
   behat:
     - fail_on_error(0)
-    - cd %host.gitRootFolder%.tools/behat && %host.gitRootFolder%/vendor/bin/behat %arguments.combined%
+    - cd %host.git.rootFolder%/vendor/bin/behat %arguments.combined%
     - fail_on_error(1)
   copyHtAccess:
-    - cd %host.gitRootFolder% && cp .tools/htaccess .htaccess
+    - cd %host.git.rootFolder% && cp .tools/htaccess .htaccess
   reindex-content:
     - cd %host.siteFolder% && drush solr-delete-index; drush solr-mark-all; drush solr-index;
   patternlab:
@@ -104,11 +104,12 @@ hosts:
     port: 36997
     type: dev
     rootFolder: /var/www
-    gitRootFolder: /var/www
+    git:
+      rootFolder: /var/www
+      branch: int
     siteFolder: /sites/default
     filesFolder: /sites/default/files
     backupFolder: /var/www/backups
-    branch: int
     supportsInstalls: true
     docker:
       name: fr012-bi-france_web_1

@@ -119,6 +119,10 @@ class ScriptExecutionContext
                 break;
 
             case self::DOCKER_IMAGE:
+                $working_dir = realpath($this->workingDir);
+                if (!$working_dir) {
+                    throw new \RuntimeException(sprintf('Can\'t resolve working dir %s!', $this->workingDir));
+                }
                 $shell->applyEnvironment($this->getArgument('environment', []));
                 $shell->run(sprintf('docker pull %s', $this->getArgument('image')));
                 $cmd = [
@@ -136,7 +140,7 @@ class ScriptExecutionContext
                         sprintf('%d:%d', posix_getuid(), posix_getgid())
                     ),
                     '-v',
-                    sprintf('%s:/app', $this->workingDir),
+                    sprintf('%s:/app', realpath($this->workingDir)),
                 ];
                 if (!is_null($entrypoint = $this->getArgument('entryPoint'))) {
                     $cmd[] = sprintf('--entrypoint="%s"', $entrypoint);

@@ -57,7 +57,7 @@ class GitMethodTest extends PhabTestCase
     private function setupRepo(HostConfig $host_config)
     {
         $shell = $host_config->shell();
-        $shell->cd($host_config['gitRootFolder']);
+        $shell->cd($host_config->getProperty('git.rootFolder'));
         $shell->run('rm -rf .git');
         $shell->run('git init . ');
         $shell->run('git config user.email "phabalicious@factorial.io"');
@@ -71,7 +71,7 @@ class GitMethodTest extends PhabTestCase
     private function cleanupRepo(HostConfig $host_config)
     {
         $shell = $host_config->shell();
-        $shell->cd($host_config['gitRootFolder']);
+        $shell->cd($host_config->getProperty('git.rootFolder'));
         $shell->run('rm -rf .git');
     }
 

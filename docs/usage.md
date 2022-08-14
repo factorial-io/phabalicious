@@ -85,7 +85,8 @@ Here's an example blueprint:
 blueprint:
   inheritsFrom: http://some.host/data.yaml
   configName: '%project-slug%-%slug.with-hyphens.without-feature%.some.host.tld'
-  branch: '%identifier%'
+  git:
+    branch: '%identifier%'
   database:
     name: '%slug.without-feature%_mysql'
   docker:
@@ -98,7 +99,8 @@ And the output of `phab --blueprint=feature/XY-123-my_Branch-name --config=<conf
 
 ```yaml
   phbackend-xy-123-my-branch-name.some.host.tld:
-    branch: feature/XY-123-my_Branch-name
+    git:
+      branch: feature/XY-123-my_Branch-name
     configName: phbackend-xy-123-my-branch-name.some.host.tld
     database:
       name: xy123mybranchname_mysql

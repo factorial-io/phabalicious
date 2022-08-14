@@ -18,6 +18,8 @@ use Psr\Log\LoggerInterface;
 class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterface
 {
 
+    const STAGES_KEY = 'artifact.stages';
+
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
@@ -40,7 +42,7 @@ class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterfa
         $return = [];
         $return['tmpFolder'] = '/tmp';
         $return['deployMethod'] = $this->getName();
-        $return[self::PREFS_KEY] = [
+        $return['artifact'] = [
             'useLocalRepository' => false,
         ];
 
@@ -48,28 +50,30 @@ class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterfa
     }
 
     /**
-     * @param array $config
+     * @param \Phabalicious\Configuration\Storage\Node $config
      * @param ValidationErrorBagInterface $errors
      */
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
         parent::validateConfig($config, $errors);
-        $validation = new ValidationService($config[self::PREFS_KEY], $errors, "artifact settings");
-        $validation->hasKey('stages', '`stages` is required.');
-        $validation->isArray('stages', '`stages` should be an array');
+        $validation = new ValidationService($config, $errors, "artifact settings");
+        $validation->hasKey(self::STAGES_KEY, '`stages` is required.');
+        $validation->isArray(self::STAGES_KEY, '`stages` should be an array');
     }
 
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @throws MethodNotFoundException
-     * @throws MissingScriptCallbackImplementation
-     * @throws TaskNotFoundInMethodException
+     *
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
 
-        $stages = $host_config[self::PREFS_KEY]['stages'];
+        $stages = $host_config->getProperty(self::STAGES_KEY);
         $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages, true);
 
         $this->buildArtifact($host_config, $context, $stages);

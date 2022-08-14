@@ -753,6 +753,9 @@ class ConfigurationService
         // Validate data against used methods.
 
         foreach ($used_methods as $method) {
+            if (!empty($deprecation_mapping = $method->getDeprecationMapping())) {
+                $this->mapDeprecatedConfig($data, $deprecation_mapping);
+            }
             $method->validateConfig($data, $validation_errors);
         }
 
@@ -1124,5 +1127,14 @@ class ConfigurationService
     public function getData(): Node
     {
         return $this->settings;
+    }
+
+    private function mapDeprecatedConfig(Node $data, array $mapping)
+    {
+        foreach ($mapping as $deprecated => $key) {
+            if ($data->has($deprecated)) {
+                $data->setProperty($key, $data[$deprecated]);
+            }
+        }
     }
 }

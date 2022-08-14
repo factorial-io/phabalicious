@@ -46,8 +46,8 @@ class ArtifactBasedDeploymentTest extends PhabTestCase
         // the output of the command in the console
         $output = $commandTester->getDisplay();
         $this->assertStringContainsStringIgnoringCase('[error]', $output);
-        $this->assertStringContainsStringIgnoringCase('Missing key stages', $output);
-        $this->assertStringContainsStringIgnoringCase('Missing key actions', $output);
+        $this->assertStringContainsStringIgnoringCase('Missing key artifact.stages', $output);
+        $this->assertStringContainsStringIgnoringCase('Missing key artifact.actions', $output);
         $this->assertEquals(1, $commandTester->getStatusCode());
     }
 
