@@ -152,7 +152,7 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         $keys = array_unique($keys);
 
         foreach ($keys as $key) {
-            if ($host_config->get($key, 'ignore')[0] == '.') {
+            if ($host_config->getProperty($key, 'ignore')[0] == '.') {
                  $dir = $install_dir . '/' . $host_config[$key];
             } else {
                 $dir = $install_dir;
