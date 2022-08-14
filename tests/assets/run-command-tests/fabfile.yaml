@@ -1,0 +1,28 @@
+name: laravel-tests
+
+needs:
+  - laravel
+
+artisanTasks:
+  reset:
+    - mycustomdefaultresettask
+  install:
+    - mycustomdefaultinstalltask
+
+hosts:
+  test:
+    rootFolder: /var/www
+
+  test-custom-artisan-tasks:
+    rootFolder: .
+    artisanTasks:
+      reset:
+        - mycustomresettask
+      install:
+        - mycustominstalltask
+
+  test-default-custom-artisan-tasks:
+    rootFolder: '.'
+    artisanTasks:
+      install:
+        - mycustominstalltask
