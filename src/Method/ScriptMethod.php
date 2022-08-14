@@ -164,7 +164,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @throws \Phabalicious\Exception\ValidationFailedException
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
-    private function runScriptImpl(ScriptDataBag $bag) : ?CommandResult
+    public function runScriptImpl(ScriptDataBag $bag) : ?CommandResult
     {
         $bag->getContext()->set('break_on_first_error', $this->getBreakOnFirstError());
 
