@@ -32,6 +32,8 @@ class ConfigurationService
 {
     const MAX_FILECACHE_LIFETIME = 60 * 60;
 
+    const DISCARD_DEPRECATED_PROPERTIES = false;
+
     /**
      * @var LoggerInterface
      */
@@ -755,9 +757,18 @@ class ConfigurationService
         foreach ($used_methods as $method) {
             if (!empty($deprecation_mapping = $method->getDeprecationMapping())) {
                 $this->mapDeprecatedConfig($data, $deprecation_mapping);
+                foreach ($deprecation_mapping as $old => $new) {
+                    $validation->deprecate([
+                        $old => sprintf("Please use new format: `%s`", $new),
+                    ]);
+                    if (self::DISCARD_DEPRECATED_PROPERTIES) {
+                        unset($data[$old]);
+                    }
+                }
             }
             $method->validateConfig($data, $validation_errors);
         }
+
 
         // Give methods a chance to alter the config.
         foreach ($used_methods as $method) {
@@ -794,7 +805,12 @@ class ConfigurationService
         }
         if ($validation_errors->getWarnings()) {
             foreach ($validation_errors->getWarnings() as $key => $warning) {
-                $this->logger->warning('Found deprecated key in `' . $config_name .'`, `' . $key . '`: ' . $warning);
+                $this->logger->warning(sprintf(
+                    'Found deprecated key `%s` in `%s`: %s',
+                    $key,
+                    $config_name,
+                    $warning
+                ));
             }
         }
 
