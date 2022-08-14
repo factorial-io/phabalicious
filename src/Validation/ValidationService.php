@@ -3,6 +3,7 @@
 
 namespace Phabalicious\Validation;
 
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 
 class ValidationService
@@ -32,7 +33,7 @@ class ValidationService
     }
     public function hasKey(string $key, string $message): bool
     {
-        if (!isset($this->config[$key])) {
+        if (is_null(Utilities::getProperty($this->config, $key, null))) {
             $this->errors->addError($key, 'Missing key '. $key . ' in ' . $this->prefixMessage . ': ' . $message);
             return false;
         }
@@ -49,7 +50,7 @@ class ValidationService
     public function deprecate(array $keys)
     {
         foreach ($keys as $key => $message) {
-            if (isset($this->config[$key])) {
+            if (!is_null(Utilities::getProperty($this->config, $key, null))) {
                 $this->errors->addWarning($key, $message);
             }
         }
@@ -70,12 +71,20 @@ class ValidationService
 
     public function isOneOf(string $key, array $candidates)
     {
-        if ($this->hasKey($key, 'Candidates: ' . implode(', ', $candidates))
-            && !in_array($this->config[$key], $candidates)) {
+        if (!$this->hasKey($key, 'Candidates: ' . implode(', ', $candidates))) {
+            return false;
+        }
+        $value = Utilities::getProperty($this->config, $key);
+        if (!in_array($value, $candidates)) {
             $this->errors->addError(
                 $key,
-                'key '. $key . ' has unrecognized value: ' .
-                $this->config[$key] . ' in ' . $this->prefixMessage . ': Candidates are ' . implode(', ', $candidates)
+                sprintf(
+                    'key %s has unrecognized value: `%s` in %s: Candidates are %s',
+                    $key,
+                    $value,
+                    $this->prefixMessage,
+                    implode(', ', $candidates)
+                )
             );
         }
     }
@@ -85,10 +94,11 @@ class ValidationService
         if (!$this->hasKey($key, 'Missing key')) {
             return false;
         }
-        if ($this->config[$key] !== '/' && substr($this->config[$key], -1) === DIRECTORY_SEPARATOR) {
+        $root_folder = Utilities::getProperty($this->config, $key);
+        if ($root_folder !== '/' && substr($root_folder, -1) === DIRECTORY_SEPARATOR) {
             $this->errors->addError(
                 $key,
-                sprintf('key %s is ending with a directory separator, please change!', $key)
+                sprintf('key `%s` is ending with a directory separator, please change!', $key)
             );
             return false;
         }
