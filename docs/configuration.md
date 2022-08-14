@@ -208,7 +208,7 @@ This will print all host configuration for the host `staging`.
 
 ### Configuration for the composer-method
 
-* `composerRootFolder` the folder where the composer.json for the project is stored, defaults to `gitRootFolder`.
+* `composer.rootFolder` the folder where the composer.json for the project is stored, defaults to `git.rootFolder`.
 
 ### Configuration for the drush-method
 
@@ -258,7 +258,7 @@ This will print all host configuration for the host `staging`.
 
 ### Configuration of the laravel-method
 
-* `laravelRootFolder` folder where the package.json is located, defaults to the (git-) root-folder.
+* `laravel.rootFolder` folder where the package.json is located, defaults to the (git-) root-folder.
 * `artisanTasks`:
   * `reset`: (array) A list of aritsan tasks to execute for the `reset`-command. Default is
     - `config:cache`
@@ -271,15 +271,29 @@ This will print all host configuration for the host `staging`.
 
 ### Configuration of the yarn-method
 
-* `yarnRootFolder` folder where the package.json is located.
-* `yarnBuildCommand` build-command for yarn to execute when running the install- or reset-task.
-* `yarnRunContext` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the yarn command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the yarn executable by a docker exec method.
+```yaml
+  yarn:
+    buildCommand: ...
+    context: ...
+    rootFolder: ...
+```
+
+* `yarn.rootFolder` folder where the package.json is located.
+* `yarn.buildCommand` build-command for yarn to execute when running the install- or reset-task.
+* `yarn.context` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the yarn command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the yarn executable by a docker exec method. You can also use `docker-image to execute yarn in a dedicated docker image. More infos can be found at script execution contexts.
 
 ### Configuration of the npm-method
 
-* `npmRootFolder` folder where the package.json is located.
-* `npmBuildCommand` build-command for npm to execute when running the install- or reset-task.
-* `npmRunContext` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the npm command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the npm executable by a docker exec method.
+```yaml
+  npm:
+    buildCommand: ...
+    context: ...
+    rootFolder: ...
+```
+
+* `npm.rootFolder` folder where the package.json is located.
+* `npm.buildCommand` build-command for npm to execute when running the install- or reset-task.
+* `npm.context` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the npm command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the npm executable by a docker exec method. You can also use `docker-image` to execute npm in a dedicated docker image. More infos can be found at script execution contexts.
 
 ### Configuration of the artifacts--ftp-method
 
@@ -327,6 +341,7 @@ This will print all host configuration for the host `staging`.
 * `notifyOn`: a list of all tasks where to send a message to a Mattermost channel. Have a look at the global Mattermost-configuration-example below.
 
 ### Configuration of the k8s-method
+
 The Kubernetes integration is documented [here](kubernetes.md).
 
 ## dockerHosts
