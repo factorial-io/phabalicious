@@ -25,7 +25,7 @@ secrets:
 scripts:
   encrypt:
     - encrypt_files(path/to/files/or/folders/to/encrypt/*.ext, path/to/folder/to/store/encrypted/files, name-of-secret)
-  decryt:
+  decrypt:
     - decrypt_files(path/to/files/or/folders/to/decrypt/*.enc, path/to/folder/to/store/decrypted/files, name-of-secret)
 ```
 
