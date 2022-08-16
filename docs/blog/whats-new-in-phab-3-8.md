@@ -96,7 +96,7 @@ hosts:
 
 This enhances also the introspection possibilities:
 
-### the about command got a `-v` flag
+### The about command got a `-v` flag
 
 The about-command got enhanced in such a way, that it will show the source of  inheritance when the `-v`-parameter is
 provided. This helps investigating from where a particular value was inherited and in which file it stored. This works
