@@ -255,7 +255,7 @@ This will print all host configuration for the host `staging`.
 
 ### Configuration of the laravel-method
 
-* `laravelRootFolder` folder where the package.json is located, defaults to the (git-) root-folder.
+* `laravelRootFolder` folder where to run the `php artisan` tasks, defaults to the (git-) root-folder.
 * `artisanTasks`:
   * `reset`: (array) A list of aritsan tasks to execute for the `reset`-command. Default is
     - `config:cache`
