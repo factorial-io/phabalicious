@@ -94,6 +94,8 @@ class SelfUpdateCommand extends BaseOptionsCommand
             $updater = $stable_updater;
             if ($use_unstable) {
                 $unstable_updater = self::getUpdater($this->getApplication(), true);
+                $unstable_updater->hasUpdate(); // fetch version from github
+                $stable_updater->hasUpdate(); // fetch version from github
                 $unstable_version = $unstable_updater->getNewVersion();
                 $stable_version = $stable_updater->getNewVersion();
                 // Using an unstable version doesn't make sense if the latest
@@ -101,7 +103,7 @@ class SelfUpdateCommand extends BaseOptionsCommand
                 // Hence, we try to update to unstable version
                 // if and only if stable version is less than unstable version.
                 if (Comparator::lessThan($stable_version, $unstable_version)) {
-                    $updater = $unstable_version;
+                    $updater = $unstable_updater;
                 }
             }
             if (!$updater->hasUpdate()) {
