@@ -67,7 +67,7 @@ phab -cconfig install:from-sql-file sql.gz
 
 ### Refactoring of data-handling
 
-phab now handles data differently, by storing from which file or url a piece of data was loaded. This enables phab to
+Phab now handles data differently, by storing from which file or url a piece of data was loaded. This enables phab to
 use relative includes, even for remote configurations. Now you can do things like
 
 base.yml
