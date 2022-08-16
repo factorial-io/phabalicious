@@ -140,7 +140,7 @@ There's a new subcommand available `db:query` where you can run a query against 
 without starting a database-shell and run the query manually.
 
 ```shell
-phab -cmy-config db:query "show tables"
+phab -cconfig db:query "show tables"
 ```
 
 It will try to get the database credentials from the configuration and apply them. This command is only implemented for
