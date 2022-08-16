@@ -47,7 +47,7 @@ data:
   encrypted: "{{ encrypt("Hello world", 'name-of-secret') }}"
 ```
 
-### new command `install:from-sql-file`
+### New command `install:from-sql-file`
 
 The command `install:from` and the new command `install:from-sql-file` get reworked to prevent double-work and to
 streamline the process. You can now install the app from an existing sql-file, which translates into an optimized
