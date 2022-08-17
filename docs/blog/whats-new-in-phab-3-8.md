@@ -14,8 +14,8 @@ Phabalicious requires now PHP version 7.3. It should work with newer versions, i
 
 ### Encryption and decryption
 
-Phab supports now encryption and decryption of files and strings. It uses `defuse/php-encryption` under the hood. You
-can encrypt files in a script with
+Phab supports now encryption and decryption of files and strings. It uses `[defuse/php-encryption](https://github.com/defuse/php-encryption)`,
+a widely used library for encryption  under the hood. You can encrypt files in a script with
 
 ```yaml
 secrets:
@@ -94,13 +94,36 @@ hosts:
     foo: Hello mars
 ```
 
+Running `output` will show the resolved inheritances:
+
+```shell
+❯ phab38 -ctest output --what host
+
+
+Output of host-configuration `test`
+===================================
+
+  test:
+    foo: 'Hello mars'
+    bar: 'Hello from base.yml'
+    needs:
+      - local
+      - script
+    type: dev
+    .
+    .
+    .
+```
+
 This enhances also the introspection possibilities:
 
 ### The about command got a `-v` flag
 
-The about-command got enhanced in such a way, that it will show the source of  inheritance when the `-v`-parameter is
-provided. This helps investigating from where a particular value was inherited and in which file it stored. This works
-for local but also for remote sources. `about` will also show all default values applied to a specific configuration.
+The `about` command has another trick up its sleeve now. When inheriting configurations from multiple files, it can now
+display the exact location from which a particular parameter is being picked. Thus, finding out if a value is coming from an inherited file from a remote server or some sensible defaults is at your fingertip.
+
+Let's have a look at an example to see this in action. The command displays not only the active value for a particular
+key but also the location from which it is picked up.
 
 In our case the ouput of `phab -ctest about` will show the inheritance very in the second column:
 
@@ -144,13 +167,13 @@ phab -cconfig db:query "show tables"
 ```
 
 It will try to get the database credentials from the configuration and apply them. This command is only implemented for
-mysql for now.
+mysql/mariadb for now.
 
 
 ### New command `restic`
 
-Phab 3.7 got support for offsite backups via restic. But it was still a bit cumbersome to interact with the restic
-repository for a given configuration using restic alone. That's why phab now has the restic command; it is applying the
+Phab 3.7 got support for offsite backups via [restic](https://github.com/restic/restic). But it was still a bit cumbersome to interact with the restic
+repository for a given configuration using restic alone. That's why phab now has the restic command. It is applying the
 configuration and options from the fabfile and you can concentrate on the commands you want to pass to restic. Some
 examples:
 
@@ -255,7 +278,7 @@ or `ddev stop`
 ### Smaller enhancements
 
 * Passwords are now obfuscated in phabs output.
-* Update-check is now using a maintained php library and works more reliably.
+* Update-check is now using a maintained [php library](https://github.com/consolidation/self-update) and works more reliably.
 * When importing a sql-dump phab freezes the app, and unfreezes it afterwards. For drupal applications the site will be put in
   maintenance mode and back.
 
