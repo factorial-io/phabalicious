@@ -115,13 +115,18 @@ class RunCommandBaseMethodTest extends PhabTestCase
         $result = $this->context->getCommandResult();
 
         $this->assertEquals(0, $result->getExitCode());
+
+        $payload = implode("\n", $result->getOutput());
+        $this->assertStringContainsString("name: 'react'", $payload);
     }
 
 
     public function hostConfigDataProvider(): array
     {
         return [
+            ['inside-docker-image-on-docker-host'],
             ['on-host'],
+            ['on-docker-host'],
             ['inside-docker-image'],
         ];
     }

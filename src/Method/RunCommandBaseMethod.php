@@ -14,8 +14,9 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
 
 
     const HOST_CONTEXT = 'host';
-    const DOCKER_HOST_CONTEXT = 'dockerHost';
-    const DOCKER_IMAGE = ScriptExecutionContext::DOCKER_IMAGE;
+    const DOCKER_HOST_CONTEXT = 'docker-host';
+    const DOCKER_IMAGE_CONTEXT = ScriptExecutionContext::DOCKER_IMAGE;
+    const DOCKER_IMAGE_ON_DOCKER_HOST_CONTEXT = 'docker-image-on-docker-host';
 
     const RUN_CONTEXT_KEY = 'runContext';
     const ROOT_FOLDER_KEY = 'rootFolder';
@@ -96,7 +97,10 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $run_context_key = $this->getConfigKey(self::RUN_CONTEXT_KEY);
         $validation->isOneOf(
             $run_context_key,
-            [self::HOST_CONTEXT, self::DOCKER_HOST_CONTEXT, self::DOCKER_IMAGE]
+            [
+                self::HOST_CONTEXT,
+                self::DOCKER_HOST_CONTEXT,
+                self::DOCKER_IMAGE_CONTEXT]
         );
 
         if ($config->getProperty($run_context_key) == self::DOCKER_HOST_CONTEXT
@@ -130,57 +134,66 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $command = $this->prepareCommand($host_config, $context, $command);
         $run_context = $host_config->getProperty($this->getConfigKey(self::RUN_CONTEXT_KEY));
 
+        // Lets construct a script and set the execution context there.
+        /** @var \Phabalicious\Method\ScriptMethod $script_method */
+        $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
+        $script_context = clone $context;
+        $script_context->set(
+            ScriptMethod::SCRIPT_CONTEXT_DATA,
+            $host_config->getProperty($this->getConfigPrefix())
+        );
+
         switch ($run_context) {
-            case self::DOCKER_IMAGE:
-                // Lets construct a script and set the execution context there.
-                /** @var \Phabalicious\Method\ScriptMethod $script_method */
-                $script_method = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
-                $script_context = clone $context;
+            case self::DOCKER_IMAGE_CONTEXT:
                 $script_context->set(ScriptMethod::SCRIPT_CONTEXT, $run_context);
-                $script_context->set(
-                    ScriptMethod::SCRIPT_CONTEXT_DATA,
-                    $host_config->getProperty($this->getConfigPrefix())
-                );
-                $script_context->setShell($this->getShell($host_config, $context));
 
-                $bag = new ScriptDataBag();
-                $bag->setContext($script_context)
-                    ->setCommands([
-                        sprintf('#!%s %s', $this->getExecutableName(), $command)
-                    ])
-                    ->setRootFolder($this->getConfig($host_config, self::ROOT_FOLDER_KEY));
+                $shell = $this->getShell($host_config, $context);
+                $shell->pushWorkingDir($this->getConfig($host_config, self::ROOT_FOLDER_KEY));
 
-                $result = $script_method->runScriptImpl($bag);
-                $context->mergeResults($script_context);
-
-                $context->setResult('exitCode', $result->getExitCode());
-                $context->setCommandResult($result);
                 break;
 
             case self::DOCKER_HOST_CONTEXT:
+            case self::DOCKER_IMAGE_ON_DOCKER_HOST_CONTEXT:
                 /** @var DockerMethod $docker_method */
                 $docker_method = $context->getConfigurationService()->getMethodFactory()->getMethod('docker');
                 $docker_config = $docker_method->getDockerConfig($host_config, $context);
                 $shell = $docker_config->shell();
                 $shell->pushWorkingDir($docker_method->getProjectFolder($docker_config, $host_config));
                 $shell->cd($this->getConfig($host_config, self::ROOT_FOLDER_KEY));
-                $result = $shell->run('#!' . $this->getExecutableName(). ' ' . $command);
-                $context->setResult('exitCode', $result->getExitCode());
-                $context->setCommandResult($result);
-                $shell->popWorkingDir();
+
+                if ($run_context == self::DOCKER_IMAGE_ON_DOCKER_HOST_CONTEXT) {
+                    $script_context->set(ScriptMethod::SCRIPT_CONTEXT, ScriptExecutionContext::DOCKER_IMAGE);
+                }
 
                 break;
 
             default:
                 $shell = $this->getShell($host_config, $context);
                 $shell->pushWorkingDir($this->getConfig($host_config, self::ROOT_FOLDER_KEY));
-                $result = $shell->run('#!' . $this->getExecutableName(). ' ' . $command);
-                $context->setResult('exitCode', $result->getExitCode());
-                $context->setCommandResult($result);
-                $shell->popWorkingDir();
 
                 break;
         }
+
+        $commands = is_array($command)
+            ? $command
+            : [
+                sprintf('#!%s %s', $this->getExecutableName(), $command),
+            ];
+
+        $script_context->setShell($shell);
+
+        $bag = new ScriptDataBag();
+        $bag->setContext($script_context)
+            ->setCommands($commands)
+            ->setRootFolder($this->getConfig($host_config, self::ROOT_FOLDER_KEY));
+
+        $result = $script_method->runScriptImpl($bag);
+        $context->mergeResults($script_context);
+
+        $context->setResult('exitCode', $result->getExitCode());
+        $context->setCommandResult($result);
+
+        $shell->popWorkingDir();
     }
 
     protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command): string

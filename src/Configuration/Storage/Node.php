@@ -12,14 +12,8 @@ class Node implements \IteratorAggregate, \ArrayAccess
 
     public function __construct($value, $source)
     {
-        if (is_array($value)) {
-            $this->value = array_map(function ($elem) use ($source) {
-                return new Node($elem, $source);
-            }, $value);
-        } else {
-            $this->value = $value;
-        }
         $this->source = Sources::getSource($source);
+        $this->setValue($value);
     }
 
     public function __clone()
@@ -60,7 +54,13 @@ class Node implements \IteratorAggregate, \ArrayAccess
      */
     public function setValue($value): Node
     {
-        $this->value = $value;
+        if (is_array($value)) {
+            $this->value = array_map(function ($elem) {
+                return new Node($elem, $this->getSource());
+            }, $value);
+        } else {
+            $this->value = $value;
+        }
         return $this;
     }
 
