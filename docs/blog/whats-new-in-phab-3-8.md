@@ -54,15 +54,15 @@ streamline the process. You can now install the app from an existing sql-file, w
 flow of
 
 ```shell
-phab -cconfig install
-phab -cconfig restore:sql-from-file sql.gz
-phab -cconfig reset
+phab -cmy-host-config install
+phab -cmy-host-config restore:sql-from-file sql.gz
+phab -cmy-host-config reset
 ```
 
 Instead run
 
 ```shell
-phab -cconfig install:from-sql-file sql.gz
+phab -cmy-host-config install:from-sql-file sql.gz
 ```
 
 ### Refactoring of data-handling
@@ -163,7 +163,7 @@ There's a new subcommand available `db:query` where you can run a query against 
 without starting a database-shell and run the query manually.
 
 ```shell
-phab -cconfig db:query "show tables"
+phab -cmy-host-config db:query "show tables"
 ```
 
 It will try to get the database credentials from the configuration and apply them. This command is only implemented for
