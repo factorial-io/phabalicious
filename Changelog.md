@@ -1723,3 +1723,4 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * `sshCommand` is deprecated and got renamed to `shell:command` and will return the command to run a shell with the given configuration
 * the needs `drush7`, `drush8` and `drush9` are deprecated, use the need `drush` and the newly introduced options `drupalVersion` and `drushVersion` instead,
 * the `slack`-configuration got removed and got replaced by a general notification solution, currently only with a mattermost implementation.
+
