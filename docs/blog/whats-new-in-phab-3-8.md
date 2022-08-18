@@ -14,7 +14,7 @@ Phabalicious requires now PHP version 7.3. It should work with newer versions, i
 
 ### Encryption and decryption
 
-Phab supports now encryption and decryption of files and strings. It uses `[defuse/php-encryption](https://github.com/defuse/php-encryption)`,
+Phab supports now encryption and decryption of files and strings. It uses [defuse/php-encryption](https://github.com/defuse/php-encryption),
 a widely used library for encryption  under the hood. You can encrypt files in a script with
 
 ```yaml
