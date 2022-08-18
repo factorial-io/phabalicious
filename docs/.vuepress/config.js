@@ -48,7 +48,8 @@ module.exports = {
             "/blog/architecture.html",
             "/blog/whats-new-in-phab-3-7.html",
             "/blog/how-to-use-secrets.html",
-            "blog/how-to-use-phab-beta-in-parallel.html"
+            "blog/how-to-use-phab-beta-in-parallel.html",
+            "/blog/whats-new-in-phab-3-8.html",
             ],
         },
         "/Changelog.html"
