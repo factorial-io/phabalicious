@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0-beta.17](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.16...3.8.0-beta.17) (2022-08-19)
+
+
+### Features
+
+* Allow methods to declare deprecation mappings ([ab37bd4](https://github.com/factorial-io/phabalicious/commit/ab37bd4216147bfe0a1fce078db804fde183d841))
+* Make runScriptImpl public ([4c15d5e](https://github.com/factorial-io/phabalicious/commit/4c15d5ec02c70f393eefca1dc341e737919be231))
+* Methods based on RunCommandBaseMethod can use docker-image as run context ([91b59b6](https://github.com/factorial-io/phabalicious/commit/91b59b6ebe9528fd4f3d9110897ea93e5adc3e26))
+* **Validation:** Add support for hierarchical keys using dot-notation ([70c0b80](https://github.com/factorial-io/phabalicious/commit/70c0b80ca5a8c51a2f84cf7d81e67dafdb4f8f86))
+* yarn, npm and composer methods can use docker-image as run-contexts now ([894fcf6](https://github.com/factorial-io/phabalicious/commit/894fcf6f4de3d66f1367c79724fc71684cc09f2e))
+
+
+### Bug Fixes
+
+* Add a warning for deprecated properties ([0956a98](https://github.com/factorial-io/phabalicious/commit/0956a98bbfbda0c54e49a854821357b4eab029a1))
+* **configuration:** Move deprecation logic before handling defaults ([19193e8](https://github.com/factorial-io/phabalicious/commit/19193e8e82e83e019eb59c5d43c68525e6a3d0ca))
+* Handle run context better for yarn, npm and others ([bede679](https://github.com/factorial-io/phabalicious/commit/bede6793580ab13e71b190f155328d958de3d720))
+* Node::setProperty will create nested properties if needed. ([058dfef](https://github.com/factorial-io/phabalicious/commit/058dfef03f8d0af6ca7cc118ae2e773c37e047a6))
+* **ScriptExecutionContext:** Use absolute path for working directory ([76d777c](https://github.com/factorial-io/phabalicious/commit/76d777c4e99503953a68cdf1af519a1bb87942e2))
+* Shortcut for Node based data ([00b8dcb](https://github.com/factorial-io/phabalicious/commit/00b8dcb22ee3dd904d161b79033230174147804e))
+
 ## [3.8.0-beta.16](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.15...3.8.0-beta.16) (2022-08-11)
 
 
