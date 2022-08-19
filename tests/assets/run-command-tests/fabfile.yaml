@@ -1,0 +1,77 @@
+name: run-command-tests
+
+needs:
+  - yarn
+
+dockerHosts:
+  docker-host:
+    runLocally: true
+    rootFolder: .
+
+hosts:
+  yarn-deprecated:
+    rootFolder: .
+    yarnRootFolder: /foo/bar
+    yarnBuildCommand: build:prod
+    yarnRunContext: docker-image
+    image: node:16
+
+  npm-deprecated:
+    needs:
+      - npm
+    rootFolder: .
+    npmRootFolder: /foo/bar
+    npmBuildCommand: build:prod
+    npmRunContext: docker-image
+    image: node:16
+
+  composer-deprecated:
+    needs:
+      - composer
+    rootFolder: .
+    composerRootFolder: /foo/bar
+    composerRunContext: docker-image
+    image: composer
+
+  laravel-deprecated:
+    needs:
+      - laravel
+    rootFolder: .
+    laravelRootFolder: /foo/bar
+    laravelRunContext: docker-image
+    image: php
+
+  on-host:
+    rootFolder: .
+    yarnBuildCommand: info react
+    yarnRunContext: host
+
+  on-docker-host:
+    needs:
+      - docker
+      - yarn
+    rootFolder: .
+    yarnBuildCommand:
+      - pwd
+      - yarn info react
+    yarnRunContext: docker-host
+    docker:
+      configuration: docker-host
+      service: web
+      projectFolder: .
+
+  inside-docker-image:
+    inheritsFrom:
+      - on-host
+    yarn:
+      buildCommand: info react
+      context: docker-image
+      image: node:14
+
+  inside-docker-image-on-docker-host:
+    inheritsFrom:
+      - on-docker-host
+    yarn:
+      buildCommand: info react
+      context: docker-image-on-docker-host
+      image: node:14

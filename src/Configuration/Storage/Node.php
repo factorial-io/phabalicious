@@ -12,14 +12,8 @@ class Node implements \IteratorAggregate, \ArrayAccess
 
     public function __construct($value, $source)
     {
-        if (is_array($value)) {
-            $this->value = array_map(function ($elem) use ($source) {
-                return new Node($elem, $source);
-            }, $value);
-        } else {
-            $this->value = $value;
-        }
         $this->source = Sources::getSource($source);
+        $this->setValue($value);
     }
 
     public function __clone()
@@ -60,7 +54,13 @@ class Node implements \IteratorAggregate, \ArrayAccess
      */
     public function setValue($value): Node
     {
-        $this->value = $value;
+        if (is_array($value)) {
+            $this->value = array_map(function ($elem) {
+                return new Node($elem, $this->getSource());
+            }, $value);
+        } else {
+            $this->value = $value;
+        }
         return $this;
     }
 
@@ -276,9 +276,19 @@ class Node implements \IteratorAggregate, \ArrayAccess
     {
         $node = $this->find($dotted_key);
         if (!$node) {
-            throw new \InvalidArgumentException(sprintf("Could not find key %s in data!", $dotted_key));
+            $node = $this;
+            $keys = explode(".", $dotted_key);
+            $last_key = array_pop($keys);
+            foreach ($keys as $key) {
+                if (!$node->has($key)) {
+                    $node[$key] = [];
+                }
+                $node = $node->get($key);
+            }
+            $node[$last_key] = $new_value;
+        } else {
+            $node->setValue($new_value);
         }
-        $node->setValue($new_value);
     }
 
     public function push($value)

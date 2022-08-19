@@ -32,6 +32,8 @@ class ConfigurationService
 {
     const MAX_FILECACHE_LIFETIME = 60 * 60;
 
+    const DISCARD_DEPRECATED_PROPERTIES = false;
+
     /**
      * @var LoggerInterface
      */
@@ -735,7 +737,24 @@ class ConfigurationService
         $data['needs'] = $gathered_methods;
         $used_methods = $this->methods->getSubset($data['needs']);
 
+        // Overall validation.
+        $validation_errors = new ValidationErrorBag();
+        $validation = new ValidationService($data, $validation_errors, 'host-config: `' . $config_name . '`');
+
+        // Apply defaults and handle deprecations
+
         foreach ($used_methods as $method) {
+            if (!empty($deprecation_mapping = $method->getDeprecationMapping())) {
+                $this->mapDeprecatedConfig($data, $deprecation_mapping);
+                foreach ($deprecation_mapping as $old => $new) {
+                    $validation->deprecate([
+                        $old => sprintf("Please use new format: `%s`", $new),
+                    ]);
+                    if (self::DISCARD_DEPRECATED_PROPERTIES) {
+                        unset($data[$old]);
+                    }
+                }
+            }
             $data = $this->applyDefaults(
                 $data,
                 $method->getDefaultConfig($this, $data),
@@ -743,10 +762,7 @@ class ConfigurationService
             );
         }
 
-        // Overall validation.
 
-        $validation_errors = new ValidationErrorBag();
-        $validation = new ValidationService($data, $validation_errors, 'host-config: `' . $config_name . '`');
         $validation->isArray('needs', 'Please specify the needed methods as an array');
         $validation->isOneOf('type', HostType::getAll());
 
@@ -755,6 +771,7 @@ class ConfigurationService
         foreach ($used_methods as $method) {
             $method->validateConfig($data, $validation_errors);
         }
+
 
         // Give methods a chance to alter the config.
         foreach ($used_methods as $method) {
@@ -791,7 +808,12 @@ class ConfigurationService
         }
         if ($validation_errors->getWarnings()) {
             foreach ($validation_errors->getWarnings() as $key => $warning) {
-                $this->logger->warning('Found deprecated key in `' . $config_name .'`, `' . $key . '`: ' . $warning);
+                $this->logger->warning(sprintf(
+                    'Found deprecated key `%s` in `%s`: %s',
+                    $key,
+                    $config_name,
+                    $warning
+                ));
             }
         }
 
@@ -1124,5 +1146,17 @@ class ConfigurationService
     public function getData(): Node
     {
         return $this->settings;
+    }
+
+    private function mapDeprecatedConfig(Node $data, array $mapping)
+    {
+        foreach ($mapping as $deprecated => $key) {
+            if (!is_null($deprecated_value = $data->getProperty($deprecated))) {
+                $existing_value = $data->find($key);
+                if (is_null($existing_value)) {
+                    $data->setProperty($key, $deprecated_value);
+                }
+            }
+        }
     }
 }

@@ -401,10 +401,16 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $key = $key_combined;
             }
             if ($what == 'host') {
+                if (is_null($this->hostConfig->getProperty($key, null))) {
+                    throw new \InvalidArgumentException('Can only set existing values!');
+                }
                 $this->hostConfig->setProperty($key, $value);
             } elseif ($what == 'docker') {
                 $docker_config = $this->getDockerConfig();
                 if ($docker_config) {
+                    if (is_null($docker_config->getProperty($key, null))) {
+                        throw new \InvalidArgumentException('Can only set existing values!');
+                    }
                     $docker_config->setProperty($key, $value);
                 } else {
                     throw new \InvalidArgumentException('Can\'t set value for unavailable docker-config');

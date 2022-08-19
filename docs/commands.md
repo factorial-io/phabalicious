@@ -582,16 +582,16 @@ phab npm run build:css --config hostA
 phab npm run lint --config hostB
 ```
 
-This will run an npm command on the given configuration. Make sure, that your host config has `npm` as a need a `npmRootFolder` points to the folder containing package.json.
+This will run an npm command on the given configuration. Make sure, that your host config has `npm` as a need a `npm.rootFolder` points to the folder containing package.json.
 
 ## yarn
 
 ```bash
-phab npm yarn build:css --config hostA
-phab npm yarn lint --config hostB
+phab yarn build:css --config hostA
+phab yarn lint --config hostB
 ```
 
-This will run a yarn command on the given configuration. Make sure, that your host config has `yarn` as a need a `yarnRootFolder` points to the folder containing package.json.
+This will run a yarn command on the given configuration. Make sure, that your host config has `yarn` as a need a `yarn.rootFolder` points to the folder containing package.json.
 
 ##variable:pull
 
