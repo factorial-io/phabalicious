@@ -18,7 +18,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
     const DOCKER_IMAGE_CONTEXT = ScriptExecutionContext::DOCKER_IMAGE;
     const DOCKER_IMAGE_ON_DOCKER_HOST_CONTEXT = 'docker-image-on-docker-host';
 
-    const RUN_CONTEXT_KEY = 'runContext';
+    const RUN_CONTEXT_KEY = 'context';
     const ROOT_FOLDER_KEY = 'rootFolder';
 
     public function supports(string $method_name): bool
@@ -67,7 +67,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         return new Node([
             $this->getConfigPrefix() => [
                 'rootFolder' => $host_config['gitRootFolder'] ?? $host_config['rootFolder'],
-                'runContext' => self::HOST_CONTEXT,
+                'context' => self::HOST_CONTEXT,
             ],
         ], $this->getName() . ' method defaults');
     }
@@ -100,16 +100,19 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
             [
                 self::HOST_CONTEXT,
                 self::DOCKER_HOST_CONTEXT,
-                self::DOCKER_IMAGE_CONTEXT]
+                self::DOCKER_IMAGE_CONTEXT,
+                self::DOCKER_IMAGE_ON_DOCKER_HOST_CONTEXT
+            ]
         );
 
         if ($config->getProperty($run_context_key) == self::DOCKER_HOST_CONTEXT
             && !in_array('docker', $config['needs'])
         ) {
             $errors->addError($run_context_key, sprintf(
-                '`%s` is set to `%s`, this requires `docker` as part of the hosts needs.',
+                '`%s` is set to `%s`, this requires `docker` as part of hosts.%s.needs',
                 $run_context_key,
-                self::DOCKER_HOST_CONTEXT
+                self::DOCKER_HOST_CONTEXT,
+                $config->get('configName')->getValue()
             ));
         }
     }
@@ -210,5 +213,4 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
     {
         return $host_config->getProperty($this->getConfigKey($key));
     }
-
 }

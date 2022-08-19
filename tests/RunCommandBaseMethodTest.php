@@ -6,6 +6,7 @@ use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\ComposerMethod;
+use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\LaravelMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\NpmMethod;
@@ -50,6 +51,7 @@ class RunCommandBaseMethodTest extends PhabTestCase
         $method_factory->addMethod(new NpmMethod($this->logger));
         $method_factory->addMethod(new ComposerMethod($this->logger));
         $method_factory->addMethod(new LaravelMethod($this->logger));
+        $method_factory->addMethod(new DockerMethod($this->logger));
 
         $this->methodFactory = $method_factory;
 
@@ -106,10 +108,11 @@ class RunCommandBaseMethodTest extends PhabTestCase
      * @dataProvider hostConfigDataProvider
      * @group docker
      */
-    public function testYarnRunCommand($config)
+    public function testYarnRunCommand($config, $yarn_run_context)
     {
         $host_config = $this->configurationService->getHostConfig($config);
 
+        $this->assertEquals($yarn_run_context, $host_config->getProperty('yarn.context'));
         $this->context->set('command', 'info react');
         $this->methodFactory->getMethod('yarn')->yarn($host_config, $this->context);
         $result = $this->context->getCommandResult();
@@ -124,10 +127,10 @@ class RunCommandBaseMethodTest extends PhabTestCase
     public function hostConfigDataProvider(): array
     {
         return [
-            ['inside-docker-image-on-docker-host'],
-            ['on-host'],
-            ['on-docker-host'],
-            ['inside-docker-image'],
+            ['inside-docker-image-on-docker-host', 'docker-image-on-docker-host'],
+            ['on-host', 'host'],
+            ['on-docker-host', 'docker-host'],
+            ['inside-docker-image', 'docker-image'],
         ];
     }
 
@@ -140,5 +143,4 @@ class RunCommandBaseMethodTest extends PhabTestCase
             ['laravel', false, 'php'],
         ];
     }
-
 }

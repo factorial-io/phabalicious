@@ -4,7 +4,7 @@ needs:
   - yarn
 
 dockerHosts:
-  dockerHost:
+  docker-host:
     runLocally: true
     rootFolder: .
 
@@ -47,6 +47,9 @@ hosts:
     yarnRunContext: host
 
   on-docker-host:
+    needs:
+      - docker
+      - yarn
     rootFolder: .
     yarnBuildCommand:
       - pwd
@@ -54,6 +57,8 @@ hosts:
     yarnRunContext: docker-host
     docker:
       configuration: docker-host
+      service: web
+      projectFolder: .
 
   inside-docker-image:
     inheritsFrom:

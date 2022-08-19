@@ -279,8 +279,13 @@ This will print all host configuration for the host `staging`.
 ```
 
 * `yarn.rootFolder` folder where the package.json is located.
-* `yarn.buildCommand` build-command for yarn to execute when running the install- or reset-task.
-* `yarn.context` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the yarn command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the yarn executable by a docker exec method. You can also use `docker-image to execute yarn in a dedicated docker image. More infos can be found at script execution contexts.
+* `yarn.buildCommand` build-command for yarn to execute when running the install- or reset-task. If the value is an
+  array, then the value is handled as a script block, so please add the name of the executable
+* `yarn.context` in which context should the command be executed. Defaults to `host`. Possible values are:
+  * `host` yarn is executed on the host, where the app is also running
+  * `docker-host` is executed on the parent host, which controls docker execution
+  * `docker-image` is executed in a dedicated docker-image, see script execution context for possible config options
+  * `docker-image-on-docker-host` a mixture of `docker-image` and `docker-host`
 
 ### Configuration of the npm-method
 
@@ -293,7 +298,7 @@ This will print all host configuration for the host `staging`.
 
 * `npm.rootFolder` folder where the package.json is located.
 * `npm.buildCommand` build-command for npm to execute when running the install- or reset-task.
-* `npm.context` in which context should the command be executed. Defaults to `host`, alternative is `dockerHost`, which means, that the npm command is not executed in the context of the host, but instead of the dockerHost. Suitable if you replace the npm executable by a docker exec method. You can also use `docker-image` to execute npm in a dedicated docker image. More infos can be found at script execution contexts.
+* `npm.context` in which context should the command be executed. See the configuration of the yarn-method for possible options
 
 ### Configuration of the artifacts--ftp-method
 
