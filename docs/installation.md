@@ -4,6 +4,15 @@
 
 Phabalicious needs at least PHP 7.2 with the json- and openssl-extensions. Most of the methods dependes on installed cli commands, you will get an error-message if they can't be found.
 
+## Installation via homebrew (mac os x)
+
+```
+brew tap factorial-io/homebrew-phabalicious
+brew install phab
+```
+
+* If you have installed phab previously, you might need to delete phab from /usr/local/bin
+
 ## Installation using published phar
 
 * Download the latest version from [Github](https://github.com/factorial-io/phabalicious/releases)
