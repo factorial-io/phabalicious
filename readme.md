@@ -24,6 +24,17 @@ You can find the docs [here](https://factorial-io.github.io/phabalicious/)
 
 ## Installation
 
+### Via homebrew (mac os x)
+
+```
+brew tap factorial-io/homebrew-phabalicious
+brew install phab
+```
+
+* If you have installed phab the manual way before, please remove the app from /usr/local/bin
+
+### Manually
+
 * Download the latest version from [Github](https://github.com/factorial-io/phabalicious/releases)
 * copy the phar to a suitable folder, e.g. `/usr/local/bin` and rename it to `phab`:
 
