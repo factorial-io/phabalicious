@@ -737,22 +737,11 @@ class ConfigurationService
         $data['needs'] = $gathered_methods;
         $used_methods = $this->methods->getSubset($data['needs']);
 
-        foreach ($used_methods as $method) {
-            $data = $this->applyDefaults(
-                $data,
-                $method->getDefaultConfig($this, $data),
-                $this->disallowDeepMergeForKeys
-            );
-        }
-
         // Overall validation.
-
         $validation_errors = new ValidationErrorBag();
         $validation = new ValidationService($data, $validation_errors, 'host-config: `' . $config_name . '`');
-        $validation->isArray('needs', 'Please specify the needed methods as an array');
-        $validation->isOneOf('type', HostType::getAll());
 
-        // Validate data against used methods.
+        // Apply defaults and handle deprecations
 
         foreach ($used_methods as $method) {
             if (!empty($deprecation_mapping = $method->getDeprecationMapping())) {
@@ -766,6 +755,20 @@ class ConfigurationService
                     }
                 }
             }
+            $data = $this->applyDefaults(
+                $data,
+                $method->getDefaultConfig($this, $data),
+                $this->disallowDeepMergeForKeys
+            );
+        }
+
+
+        $validation->isArray('needs', 'Please specify the needed methods as an array');
+        $validation->isOneOf('type', HostType::getAll());
+
+        // Validate data against used methods.
+
+        foreach ($used_methods as $method) {
             $method->validateConfig($data, $validation_errors);
         }
 
@@ -1148,11 +1151,12 @@ class ConfigurationService
     private function mapDeprecatedConfig(Node $data, array $mapping)
     {
         foreach ($mapping as $deprecated => $key) {
-            if ($data->has($deprecated)) {
-                $data->setProperty($key, $data[$deprecated]);
-
+            if (!is_null($deprecated_value = $data->getProperty($deprecated))) {
+                $existing_value = $data->find($key);
+                if (is_null($existing_value)) {
+                    $data->setProperty($key, $deprecated_value);
+                }
             }
         }
     }
-
 }
