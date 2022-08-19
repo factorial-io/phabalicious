@@ -36,7 +36,7 @@ Npm configuation is per host
         npm:
           # the build command to execute on install and reset
           buildCommand: build:prod
-          context: (host|docker-host|docker-image)
+          context: (host|docker-host|docker-image|docker-image-on-docker-host)
           # for the docker-image context you can add additional configuration
           # see script execution context for more info
           image: node: 16
