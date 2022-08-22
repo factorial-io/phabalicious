@@ -8,7 +8,7 @@ Phabalicious needs at least PHP 7.2 with the json- and openssl-extensions. Most 
 
 ```
 brew tap factorial-io/homebrew-phabalicious
-brew install phab
+brew install phab@3.8
 ```
 
 * If you have installed phab previously, you might need to delete phab from /usr/local/bin

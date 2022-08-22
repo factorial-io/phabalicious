@@ -28,7 +28,7 @@ You can find the docs [here](https://factorial-io.github.io/phabalicious/)
 
 ```
 brew tap factorial-io/homebrew-phabalicious
-brew install phab
+brew install phab@3.8
 ```
 
 * If you have installed phab the manual way before, please remove the app from /usr/local/bin
