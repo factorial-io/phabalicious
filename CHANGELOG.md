@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [3.8.0](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.17...3.8.0) (2022-08-22)
+## [3.8.0](https://github.com/factorial-io/phabalicious/compare/3.7.18...3.8.0) (2022-08-22)
 
 * Official release of 3.8.0 beta, an overview of the changes can be found at https://docs.phab.io/blog/whats-new-in-phab-3-8.html
 * See the dedicated release notes of the beta version for detailed infos
