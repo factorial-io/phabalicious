@@ -16,9 +16,12 @@ jobs:
   build-and-deploy-docs:
     runs-on: ubuntu-latest
     steps:
+    - name: Use node 16
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
     - name: Checkout
       uses: actions/checkout@master
-
     - name: Build and Deploy
       uses: rreichel3/vuepress-github-actions-deploy@master
       env:
