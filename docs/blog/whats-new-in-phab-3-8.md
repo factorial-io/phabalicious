@@ -286,7 +286,7 @@ provide the executable-name by yourself:
 
 Old:
 
-```
+```yaml
 hosts:
   test:
     yarnBuildCommand: build:production
@@ -295,7 +295,7 @@ hosts:
 
 New:
 
-```
+```yaml
 hosts:
   test:
     yarn:
