@@ -178,9 +178,9 @@ configuration and options from the fabfile and you can concentrate on the comman
 examples:
 
 ```shell
-phab -cmyconfig restic snapshots
-phab -cmyconfig restic -- snapshots --host-name my-config
-phab -cmyconfig restic -- forget --keep-daily=14 --keep-weekly=4 --keep-monthly=6 --group-by host --prune
+phab -cmy-host-config restic snapshots
+phab -cmy-host-config restic -- snapshots --host-name my-config
+phab -cmy-host-config restic -- forget --keep-daily=14 --keep-weekly=4 --keep-monthly=6 --group-by host --prune
 ```
 
 ### Experimental integration with ddev
