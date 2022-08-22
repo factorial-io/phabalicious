@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.17...3.8.0) (2022-08-22)
+
+### [3.7.18](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.16...3.7.18) (2022-08-16)
+
+
+### Bug Fixes
+
+* Fix updates when requesting beta versions ([9a5c269](https://github.com/factorial-io/phabalicious/commit/9a5c26938a9251efb601a31c76f64f2ee248b610))
+
 ## [3.8.0-beta.17](https://github.com/factorial-io/phabalicious/compare/3.8.0-beta.16...3.8.0-beta.17) (2022-08-19)
 
 
@@ -1979,4 +1988,3 @@ Most notably the handling of arguments and options has changed a lot. Fabric gav
 * `sshCommand` is deprecated and got renamed to `shell:command` and will return the command to run a shell with the given configuration
 * the needs `drush7`, `drush8` and `drush9` are deprecated, use the need `drush` and the newly introduced options `drupalVersion` and `drushVersion` instead,
 * the `slack`-configuration got removed and got replaced by a general notification solution, currently only with a mattermost implementation.
-
