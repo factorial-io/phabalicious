@@ -19,7 +19,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: Build and Deploy
-      uses: stmh/vuepress-github-actions-deploy
+      uses: stmh/vuepress-github-actions-deploy@master
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BUILD_DIR: docs/.vuepress/dist
