@@ -264,7 +264,7 @@ class PasswordManager implements PasswordManagerInterface
     {
         $op_file_path = getenv('PHAB_OP_FILE_PATH') ?: '/usr/local/bin/op';
         if (!$op_file_path || !file_exists($op_file_path)) {
-            return new CommandResult(1, ['Could not find 1password binary.']);
+            return false;
         }
         return $op_file_path;
     }
@@ -275,6 +275,9 @@ class PasswordManager implements PasswordManagerInterface
         static $op_version = false;
         if (!$op_version) {
             $op_file_path = $this->get1PasswordCliFilePath();
+            if (!$op_file_path) {
+                return false;
+            }
             $output = [];
             $result_code = 0;
             $result = exec(sprintf("%s --version", $op_file_path), $output, $result_code);
@@ -293,6 +296,9 @@ class PasswordManager implements PasswordManagerInterface
     private function exec1PasswordCli($cmd_v1, $cmd_v2)
     {
         $op_file_path = $this->get1PasswordCliFilePath();
+        if (!$op_file_path) {
+            return new CommandResult(1, ['Could not find 1password binary.']);
+        }
         $output = [];
         $result_code = 0;
 
