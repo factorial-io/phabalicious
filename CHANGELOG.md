@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.1](https://github.com/factorial-io/phabalicious/compare/3.8.0...3.8.1) (2022-08-23)
+
+
+### Bug Fixes
+
+* Fix edge-cases where 1password cli is not installed ([35830b4](https://github.com/factorial-io/phabalicious/commit/35830b48a4cfdd51eadc288883465f847294fc54))
+* shell-completion runs without warnings on PHP 8.1 ([452d4bc](https://github.com/factorial-io/phabalicious/commit/452d4bc544c56518fdd5be1aef1cce097997f214))
+
 ## [3.8.0](https://github.com/factorial-io/phabalicious/compare/3.7.18...3.8.0) (2022-08-22)
 
 * Official release of 3.8.0 beta, an overview of the changes can be found at https://docs.phab.io/blog/whats-new-in-phab-3-8.html
