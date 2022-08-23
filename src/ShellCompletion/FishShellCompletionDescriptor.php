@@ -71,7 +71,7 @@ class FishShellCompletionDescriptor extends Descriptor
             "' -f"
         );
 
-        if (strlen($option->getShortcut()) > 0) {
+        if ($option->getShortcut() && strlen($option->getShortcut()) > 0) {
             if (strlen($option->getShortcut()) == 1) {
                 $this->output->write(" -s ");
             } else {
