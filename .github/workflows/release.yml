@@ -28,7 +28,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.3'
+          php-version: '7.4'
           extensions: intl, zip, zlib
           coverage: none
           ini-values: memory_limit=1G, phar.readonly=0
