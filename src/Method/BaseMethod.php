@@ -191,6 +191,11 @@ abstract class BaseMethod implements MethodInterface
         return $result;
     }
 
+    public function getDeprecatedValuesMapping(): array
+    {
+        return [];
+    }
+
     protected function parseBackupFile(HostConfig $host_config, string $file, string $type)
     {
         $p = strrpos($file, '--');

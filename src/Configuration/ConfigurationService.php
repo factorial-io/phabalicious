@@ -755,6 +755,16 @@ class ConfigurationService
                     }
                 }
             }
+
+            foreach ($method->getDeprecatedValuesMapping() as $mapping) {
+                if ($n = $data->find($mapping->getKey())) {
+                    if ($mapping->apply($n)) {
+                        $validation->deprecate([
+                             $mapping->getKey() => $mapping->getDeprecationMessage(),
+                        ]);
+                    }
+                }
+            }
             $data = $this->applyDefaults(
                 $data,
                 $method->getDefaultConfig($this, $data),

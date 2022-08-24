@@ -46,4 +46,9 @@ interface MethodInterface
     public function getMethodDependencies(MethodFactory $factory, \ArrayAccess $data): array;
 
     public function getDeprecationMapping(): array;
+
+    /**
+     * @return \Phabalicious\ConfigurationService\DeprecatedValueMapping[]
+     */
+    public function getDeprecatedValuesMapping(): array;
 }

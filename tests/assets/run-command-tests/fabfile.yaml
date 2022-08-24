@@ -54,7 +54,7 @@ hosts:
     yarnBuildCommand:
       - pwd
       - yarn info react
-    yarnRunContext: docker-host
+    yarnRunContext: dockerHost
     docker:
       configuration: docker-host
       service: web

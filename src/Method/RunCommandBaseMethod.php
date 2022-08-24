@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\ConfigurationService\DeprecatedValueMapping;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -79,6 +80,16 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         return array_merge($mapping, [
             "${prefix}RootFolder" => "${prefix}.rootFolder",
             "${prefix}RunContext" => "${prefix}.context",
+        ]);
+    }
+
+    public function getDeprecatedValuesMapping(): array
+    {
+        $mapping = parent::getDeprecatedValuesMapping();
+        $prefix = $this->getConfigPrefix();
+        return array_merge($mapping, [
+            new DeprecatedValueMapping("${prefix}RunContext", 'dockerHost', 'docker-host'),
+            new DeprecatedValueMapping("${prefix}.context", 'dockerHost', 'docker-host'),
         ]);
     }
 
