@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.5](https://github.com/factorial-io/phabalicious/compare/3.8.4...3.8.5) (2022-09-02)
+
+
+### Bug Fixes
+
+* **scaffolder:** Fix scaffolding files from within the phar-archive. ([1b9c4a8](https://github.com/factorial-io/phabalicious/commit/1b9c4a866c513f16fce7d820fc94b68675d45b43))
+* Silence some warnings ([8967400](https://github.com/factorial-io/phabalicious/commit/896740068323fb99d427ea3dd981407ed6c6282d))
+
 ### [3.8.4](https://github.com/factorial-io/phabalicious/compare/3.8.3...3.8.4) (2022-08-24)
 
 
