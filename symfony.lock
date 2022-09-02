@@ -83,6 +83,9 @@
     "phpspec/prophecy": {
         "version": "1.8.0"
     },
+    "phpspec/prophecy-phpunit": {
+        "version": "v2.0.1"
+    },
     "phpstan/phpdoc-parser": {
         "version": "1.2.0"
     },

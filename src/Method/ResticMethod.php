@@ -337,7 +337,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
     ): void {
         $repository = $host_config['restic']['repository'];
         if (substr($repository, 0, 5) == 'sftp:') {
-            $a = parse_url($repository);
+            $a = Utilities::parseUrl($repository);
             $known_hosts = [
                 sprintf("%s:%d", $a['host'], $a['port'] ?? 22)
             ];

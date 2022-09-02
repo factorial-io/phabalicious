@@ -382,7 +382,7 @@ class ConfigurationService
                 $item = $child->getValue();
 
                 // Skip urls and absolute paths:
-                if ($item[0] === '/' || Utilities::isHttpUrl($item)) {
+                if ($item[0] === '/' || Utilities::isHttpUrl($item) || Utilities::isPharUrl($item)) {
                     continue;
                 }
 
@@ -549,7 +549,7 @@ class ConfigurationService
         if (!$this->offlineMode) {
             try {
                 $this->logger->info(sprintf('Read remote file from `%s`', $resource));
-                $url = parse_url($resource);
+                $url = Utilities::parseUrl($resource);
                 $url['path'] = urlencode($url['path']);
                 $url['path'] = str_replace('%2F', '/', $url['path']);
                 $resource =  http_build_url($url);

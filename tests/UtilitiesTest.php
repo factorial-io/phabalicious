@@ -361,4 +361,22 @@ class UtilitiesTest extends PhabTestCase
         $args = Utilities::parseArguments("password=aFQd=BDq_ys9j72frDgM");
         $this->assertEquals("aFQd=BDq_ys9j72frDgM", $args['password']);
     }
+
+    public function testRelativePharUrls()
+    {
+        $url = 'phar:///usr/local/bin/phab/config/scaffold/mbb/./mbb-base.yml';
+        $this->assertEquals(
+            'phar:///usr/local/bin/phab/config/scaffold/mbb/mbb-base.yml',
+            Utilities::resolveRelativePaths($url)
+        );
+    }
+
+    public function testRelativeFileUrls()
+    {
+        $url = 'file:///usr/local/bin/phab/config/scaffold/mbb/./mbb-base.yml';
+        $this->assertEquals(
+            'file:///usr/local/bin/phab/config/scaffold/mbb/mbb-base.yml',
+            Utilities::resolveRelativePaths($url)
+        );
+    }
 }

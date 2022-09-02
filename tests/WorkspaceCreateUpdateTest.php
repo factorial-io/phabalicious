@@ -5,18 +5,31 @@ namespace Phabalicious\Tests;
 use Phabalicious\Command\WorkspaceCreateCommand;
 use Phabalicious\Command\WorkspaceUpdateCommand;
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
+use Phabalicious\Method\TaskContext;
+use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Scaffolder\Options;
+use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\Utilities\Utilities;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Yaml\Yaml;
 
 class WorkspaceCreateUpdateTest extends PhabTestCase
 {
+
+    use ProphecyTrait;
+
     /** @var Application */
     protected $application;
+
+    protected $configuration;
 
     public function setup(): void
     {
@@ -24,13 +37,13 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
-        $configuration = new ConfigurationService($this->application, $logger);
-        $method_factory = new MethodFactory($configuration, $logger);
+        $this->configuration = new ConfigurationService($this->application, $logger);
+        $method_factory = new MethodFactory($this->configuration, $logger);
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $this->application->add(new WorkspaceCreateCommand($configuration, $method_factory));
-        $this->application->add(new WorkspaceUpdateCommand($configuration, $method_factory));
+        $this->application->add(new WorkspaceCreateCommand($this->configuration, $method_factory));
+        $this->application->add(new WorkspaceUpdateCommand($this->configuration, $method_factory));
     }
 
     private function prepareTarget()

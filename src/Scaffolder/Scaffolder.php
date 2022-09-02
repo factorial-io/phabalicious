@@ -98,7 +98,8 @@ class Scaffolder
             $root_path = dirname($url);
             try {
                 if (!Utilities::isHttpUrl($url)) {
-                    $fullpath = realpath($url);
+                    $is_phar = Utilities::isPharUrl($url);
+                    $fullpath = $is_phar ? $url : realpath($url);
                     if (empty($fullpath)) {
                         throw new \RuntimeException(sprintf('Could not find file at `%s`!', $url));
                     }
@@ -384,6 +385,7 @@ class Scaffolder
             ? Phar::running() . '/config/scaffold'
             : realpath(__DIR__ . '/../../config/scaffold/');
 
+        print_r($rootFolder);
         return $rootFolder . '/' . $name;
     }
 

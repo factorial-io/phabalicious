@@ -603,9 +603,26 @@ class Utilities
             basename($str);
     }
 
+    /**
+     * Custom parse_url implementation, as parse_url does not support phar-scheme.
+     */
+    public static function parseUrl($url)
+    {
+        if (self::isPharUrl($url)) {
+            return [
+               'scheme' => 'phar',
+               'path' => str_replace('phar://', '//', $url),
+            ];
+        }
+        return parse_url($url);
+    }
+
+
     public static function resolveRelativePaths(string $url): string
     {
-        $result = parse_url($url);
+        $result = self::parseUrl($url);
+        print_r($url);
+        print_r($result);
         $filename = $result['path'];
         $path = [];
         $parts = explode('/', $filename);
@@ -645,7 +662,7 @@ class Utilities
         if (!empty($components['username']) && !empty($components['password'])) {
             $url .= $components['username'] . ':' . $components['password'] . '@';
         }
-        if (!empty($components['scheme'])) {
+        if (!empty($components['host'])) {
             $url .= $components['host'];
         }
         if (!empty($components['port'])) {
@@ -669,5 +686,13 @@ class Utilities
     public static function isHttpUrl($url): bool
     {
         return (substr($url, 0, 4) === 'http')  && (strpos($url, '://') !== false);
+    }
+
+    /**
+     * Returns true if url is a phar url.
+     */
+    public static function isPharUrl($url): bool
+    {
+        return (substr($url, 0, 4) === 'phar')  && (strpos($url, '://') !== false);
     }
 }
