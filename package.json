@@ -12,7 +12,7 @@
     "@factorial/vuepress-theme": "1.0.0-alpha.1",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "3.3.0",
-    "cz-customizable": "^6.3.0",
+    "cz-customizable": "^7.0.0",
     "husky": "^8.0.1",
     "standard-version": "^9.5.0",
     "vuepress": "^1.1.0"
