@@ -180,7 +180,7 @@ class Utilities
         }
 
         return array_map(function ($r) {
-            return str_replace('\%', '%', $r);
+            return is_string($r) ? str_replace('\%', '%', $r) : "";
         }, $commands);
     }
 
@@ -193,6 +193,9 @@ class Utilities
     public static function validateReplacements(array $strings)
     {
         foreach ($strings as $line) {
+            if (!is_string($line)) {
+                continue;
+            }
             // Ignore secrets, as they will be evaluated at a later stage.
             if (preg_match('/\\\?%secret\.[A-Za-z0-9\.\-_]*%/', $line)) {
                 continue;
