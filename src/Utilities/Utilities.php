@@ -621,8 +621,6 @@ class Utilities
     public static function resolveRelativePaths(string $url): string
     {
         $result = self::parseUrl($url);
-        print_r($url);
-        print_r($result);
         $filename = $result['path'];
         $path = [];
         $parts = explode('/', $filename);
