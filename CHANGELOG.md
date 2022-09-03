@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.6](https://github.com/factorial-io/phabalicious/compare/3.8.5...3.8.6) (2022-09-03)
+
+
+### Bug Fixes
+
+* Remove debug output ([b345060](https://github.com/factorial-io/phabalicious/commit/b3450602f06b66ade3a1aec84055883effcee830))
+
 ### [3.8.5](https://github.com/factorial-io/phabalicious/compare/3.8.4...3.8.5) (2022-09-02)
 
 
