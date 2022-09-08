@@ -48,7 +48,7 @@ class YarnMethod extends RunCommandBaseMethod
     public function resetPrepare(HostConfig $host_config, TaskContextInterface $context)
     {
         $this->runCommand($host_config, $context, 'install');
-        $this->runCommand($host_config, $context, $host_config->get('yarnBuildCommand'));
+        $this->runCommand($host_config, $context, $host_config->get('yarn.buildCommand'));
     }
 
     public function installPrepare(HostConfig $host_config, TaskContextInterface $context)
