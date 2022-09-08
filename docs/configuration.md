@@ -285,7 +285,7 @@ This will print all host configuration for the host `staging`.
   * `host` yarn is executed on the host, where the app is also running
   * `docker-host` is executed on the parent host, which controls docker execution
   * `docker-image` is executed in a dedicated docker-image, see script execution context for possible config options
-  * `docker-image-on-docker-host` a mixture of `docker-image` and `docker-host`
+  * `docker-image-on-docker-host` a mixture of `docker-image` and `docker-host` (still experimental)
 
 ### Configuration of the npm-method
 
