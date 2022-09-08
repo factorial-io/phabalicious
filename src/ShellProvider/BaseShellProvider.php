@@ -292,8 +292,8 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $this->fileOperationsHandler->putFileContents($filename, $data, $context);
     }
 
-    public function realPath($filename, TaskContextInterface $context)
+    public function realPath($filename)
     {
-        return $this->fileOperationsHandler->realPath($filename, $context);
+        return $this->fileOperationsHandler->realPath($filename);
     }
 }

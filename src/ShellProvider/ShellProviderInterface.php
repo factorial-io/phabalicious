@@ -108,5 +108,5 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function putFileContents($filename, $data, TaskContextInterface $context);
 
-    public function realPath($filename, TaskContextInterface $context);
+    public function realPath($filename);
 }
