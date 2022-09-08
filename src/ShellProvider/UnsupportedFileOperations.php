@@ -17,7 +17,7 @@ class UnsupportedFileOperations implements FileOperationsInterface
         throw new \RuntimeException('putFileContents not supported in this context!');
     }
 
-    public function realPath($filename, $context)
+    public function realPath($filename)
     {
         throw new \RuntimeException('realPath not supported in this context!');
     }

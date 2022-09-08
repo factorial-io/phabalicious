@@ -18,7 +18,7 @@ class NoopFileOperations implements FileOperationsInterface
         return false;
     }
 
-    public function realPath($filename, $context)
+    public function realPath($filename)
     {
         return $filename;
     }

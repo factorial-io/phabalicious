@@ -310,7 +310,7 @@ There are two new contexts available which pigypack on the existing functionalit
 
 * `docker-image` will execute the yarn build in a docker image (see script execution contexts for configuration options)
 * `docker-image-on-docker-host` same as above, but it will be executed on the same instance where docker-commands are
-    executed, usually where your dockerConfig points to.
+    executed, usually where your dockerConfig points to. (Still experimental)
 
 ### Smaller enhancements
 

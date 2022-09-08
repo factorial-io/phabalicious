@@ -119,7 +119,7 @@ class ScriptExecutionContext
                 break;
 
             case self::DOCKER_IMAGE:
-                $working_dir = realpath($this->workingDir);
+                $working_dir = $shell->realPath($this->workingDir);
                 if (!$working_dir) {
                     throw new \RuntimeException(sprintf('Can\'t resolve working dir %s!', $this->workingDir));
                 }
@@ -140,7 +140,7 @@ class ScriptExecutionContext
                         sprintf('%d:%d', posix_getuid(), posix_getgid())
                     ),
                     '-v',
-                    sprintf('%s:/app', realpath($this->workingDir)),
+                    sprintf('%s:/app', $working_dir),
                 ];
                 if (!is_null($entrypoint = $this->getArgument('entryPoint'))) {
                     $cmd[] = sprintf('--entrypoint="%s"', $entrypoint);
