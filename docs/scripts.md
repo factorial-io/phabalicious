@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Scripts
 
 Scripts are a powerful concept of phabalicious. There are a lot of places where scripts can be called. The `common`-section defines common scripts to be run for specific task/installation-type-configurations, docker-tasks are also scripts which you can execute via the docker-command. And you can even script phabalicious tasks and create meta-tasks. And you can add custom scripts to the general section of a fabfile or to a host-configuration. Scripts can call other scripts.

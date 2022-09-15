@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Running phabalicious
 
 To execute a command with the help of phabalicious, just

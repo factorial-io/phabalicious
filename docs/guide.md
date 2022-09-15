@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # How does phabalicious work in two sentences
 
 Phabalicious is using configuration stored in a special file in the root of your project (the `fabfile.yaml`) to run tasks in a shell. This shell can be provided by a docker-container, a ssh-connection, a Kubernetes-pod or a local shell. This means, you can store all your devops-scripts in the fabfile and apply it to a list of configurations. Phabalicious tries to abstract away the inner workings of a configuration and give the user a handful useful commands to run common tasks, like:

@@ -9,17 +9,17 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.1",
     "@commitlint/config-conventional": "^17.0.0",
-    "@factorial/vuepress-theme": "1.0.0-alpha.1",
+    "@factorial/docs": "^0.1.2",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "3.3.0",
     "cz-customizable": "^7.0.0",
     "husky": "^8.0.1",
-    "standard-version": "^9.5.0",
-    "vuepress": "^1.1.0"
+    "standard-version": "^9.5.0"
   },
+  "dependencies": {},
   "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
+    "docs:dev": "fdocs --config=.fdocs.js --serve",
+    "docs:build": "fdocs --config=.fdocs.js",
     "postinstall": "husky install",
     "release": "standard-version -- -t '' --sign --no-verify",
     "beta-release": "standard-version  --  -t '' --sign --prerelease --no-verify"

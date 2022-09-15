@@ -1,5 +1,5 @@
 ---
-sidebarDepth: 3
+parent: documentation
 ---
 # Structure of the configuration file
 
