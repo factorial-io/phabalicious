@@ -23,5 +23,5 @@ jobs:
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BUILD_DIR: docs/_dist
-        BUILD_SCRIPT: yarn install && yarn run docs:build
+        BUILD_SCRIPT: export FDOCS_HOST=https://docs.phab.io && yarn install && yarn run docs:build
         PAGES_CNAME: docs.phab.io
