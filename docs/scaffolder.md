@@ -1,5 +1,5 @@
 ---
-sidebarDepth: 3
+parent: documentation
 ---
 # Scaffolding arbitrary files
 

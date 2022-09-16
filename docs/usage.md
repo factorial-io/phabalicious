@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Running phabalicious
 
 To execute a command with the help of phabalicious, just
@@ -197,4 +200,4 @@ Phab caches remote files in `~/.phabalicious` and will use the cached version if
 * `PHABALICIOUS_DEFAULT_CONFIG` sets the default config name to use, when no config name was given via the `--config` flag
 * `PHABALICIOUS_FORCE_GIT_ARTIFACT_DEPLOYMENT` forces the git artifact deployment.
 * `PHAB_OP_FILE_PATH` file path to [1password](./passwords.md) executable.
-* `PHAB_OP_JWT_TOKEN__<TOKEN_ID>` token for [1password](./password.md) connect
+* `PHAB_OP_JWT_TOKEN__<TOKEN_ID>` token for [1password](./passwords.md) connect

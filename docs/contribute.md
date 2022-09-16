@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Contributing to Phabalicious
 
 If you get stuck at any point you can create a [ticket on GitHub](https://github.com/factorial-io/phabalicious/issues).

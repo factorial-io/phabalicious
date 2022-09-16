@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Kubernetes integration
 
 Phabalicious can help you integrating your app with a Kubernetes stack and running your common tasks against an installation hosted on a Kubernetes cluster. You can leverage phabalicious scaffolder to create yml definitions for your app and apply them to your cluster automatically. Phab can also help you getting a shell to one of your pods.

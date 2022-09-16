@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Setup a local dev environment (multibasebox)
 
 Phabalicious 3.3 incorporates two new commands to scaffold a local dev environment based on [multibasebox](https://github.com/factorial-io/multibasebox). Multibasebox is a lightweight, docker based solution, which allows you to run your local app-stack via docker.

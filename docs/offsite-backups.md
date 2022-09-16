@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Offsite backups
 
 Phab supports onsite- and offsite-backups. Onsite means, the backups are stored on the same host as the application is run. Depending on the hosting setup this might not be enough as the backups might not be stored forever, e.g. if the backup folder is not mapped to a persistent volume in Kubernetes.

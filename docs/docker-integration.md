@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Docker integration
 
 The docker-integration is quite simple, but very powerful. In a fabfile, there are host-configuration under the key `hosts` and docker-configs under the key `dockerHosts`. A `host` can reference a docker-configuration, multiple hosts can use one docker-config.

@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Passwords and secrets
 
 You should not store any sensitive passwords in the fabfile. It's a possible security risk, as the file is part of your repository.

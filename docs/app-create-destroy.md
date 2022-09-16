@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Creating/ destroying an app from existing configuration
 
 Phabalicious can create or delete a complete app with two commands:

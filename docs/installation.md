@@ -1,3 +1,6 @@
+---
+parent: documentation
+---
 # Installation
 
 ## Dependencies

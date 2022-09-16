@@ -22,6 +22,6 @@ jobs:
       uses: stmh/vuepress-github-actions-deploy@master
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BUILD_DIR: docs/.vuepress/dist
+        BUILD_DIR: docs/_dist
         BUILD_SCRIPT: yarn install && yarn run docs:build
         PAGES_CNAME: docs.phab.io
