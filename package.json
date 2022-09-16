@@ -18,7 +18,7 @@
   },
   "dependencies": {},
   "scripts": {
-    "docs:dev": "fdocs --config=.fdocs.js --serve",
+    "docs:dev": "export FDOCS_HOST=http://localhost && fdocs --config=.fdocs.js --serve",
     "docs:build": "fdocs --config=.fdocs.js",
     "postinstall": "husky install",
     "release": "standard-version -- -t '' --sign --no-verify",
