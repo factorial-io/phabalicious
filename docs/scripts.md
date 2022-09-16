@@ -34,7 +34,7 @@ will show `I am running on mbb`.
 * Optional arguments to the `script`-task get the `argument`-prefix, e.g. `%arguments.name%`. You can get all arguments via `%arguments.combined%`.
 * Questions will also be exposed under the `%arguments.`-prefix (See below)
 * Computed properties are exposed under the `%computed.`-prefix. (See below)
-* Secrets are exposed under the `%secret.`-prefixe (See the [secrets](/passwords)-section)
+* Secrets are exposed under the `%secret.`-prefixe (See the [secrets](/passwords.md)-section)
 * You can access hierarchical information via the dot-operator, e.g. `%host.database.name%`
 
 
@@ -87,10 +87,10 @@ Phab provides a set of internal commands which can be called from within a scrip
 * `fail_on_error(1|0)` If fail_on_error is set to one, phabalicious will exit if one of the script commands returns a non-zero return-code. When using `fail_on_error(0)` only a warning is displayed, the script will continue. Default is to stop execution if en error is detected
 * `execute(task, subtask, arguments)` execute a phabalicious task. For example you can run a deployment from a script via `execute(deploy)` or stop a docker-container from a script via `execute(docker, stop)`
 * `fail_on_missing_directory(directory, message)` will print message `message` if the directory `directory` does not exist.
-* `log_message(severity, message)` Prints a message to the output, for more info have a look at the [scaffolder-documentation](/scaffolder).
+* `log_message(severity, message)` Prints a message to the output, for more info have a look at the [scaffolder-documentation](/scaffolder.md).
 * `confirm(message)` Will prompt for a confirmation from the user.
 
-You can use most of the commands listed in the [scaffolder-documentation](/scaffolder) in scripts too.
+You can use most of the commands listed in the [scaffolder-documentation](/scaffolder.md) in scripts too.
 
 ## Task-related scripts
 

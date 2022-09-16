@@ -215,4 +215,4 @@ This short intro showed you some key concepts of phabalicious:
 - How we can interact with our application with the `shell`-command
 - If you are curious what phabalicious executes under the hood, add `-v` to the command
 
-Hopefully this gave you a rough idea what phabalicious is capable of. We didn't talk about scaffolders or [secrets](/how-to-use-secrets.md), jump into the documentation to find out more. There is also a more theoretical blog-post about the [architecture of phabalicious](./architecture.md). Or wait for the next episode where we try to add a fabfile to an existing drupal project.
+Hopefully this gave you a rough idea what phabalicious is capable of. We didn't talk about scaffolders or [secrets](/blog/how-to-use-secrets.md), jump into the documentation to find out more. There is also a more theoretical blog-post about the [architecture of phabalicious](./architecture.md). Or wait for the next episode where we try to add a fabfile to an existing drupal project.
