@@ -53,26 +53,4 @@ class WebhookTest extends PhabTestCase
         $host_config = $this->configurationService->getHostConfig('hostA');
         $this->assertFalse($this->method->runWebhook('testUnavailableWebhook', $host_config, $this->context));
     }
-
-    public function testPostAndGetWebhook()
-    {
-        $host_config = $this->configurationService->getHostConfig('hostA');
-        $result = $this->method->runWebhook('testDelete', $host_config, $this->context);
-        $this->assertEquals(204, $result->getStatusCode());
-
-        $result = $this->method->runWebhook('testPost', $host_config, $this->context);
-        $this->assertEquals(200, $result->getStatusCode());
-        $body = (string) $result->getBody();
-
-        $result = $this->method->runWebhook('testGet', $host_config, $this->context);
-        $this->assertEquals(200, $result->getStatusCode());
-        $body = (string) $result->getBody();
-        $json = json_decode($body);
-
-        $this->assertNotEmpty($json[0]->body, 'Response body is empty');
-        $payload = json_decode($json[0]->body);
-
-        $this->assertEquals("This is var1 from hostA", $payload->var1);
-        $this->assertEquals("This is global settings var 2", $payload->var2);
-    }
 }
