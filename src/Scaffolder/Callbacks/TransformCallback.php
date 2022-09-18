@@ -63,7 +63,7 @@ class TransformCallback implements CallbackInterface
 
         if (!$transformer) {
             throw new \InvalidArgumentException(sprintf(
-                'Unknown transformer %s, available transformers %s,',
+                'Unknown transformer %s, available transformers are %s!',
                 $transformer_key,
                 implode(', ', array_keys(self::$transformers))
             ));
