@@ -7,17 +7,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* add support for yarn.buildCommand ([a53c624](https://github.com/factorial-io/phabalicious/commit/a53c6248e2ec69d4619b9fe50ca04607bce1ed5d))
-* Adds missing SVGs when serving docs ([a06e03e](https://github.com/factorial-io/phabalicious/commit/a06e03e01a81026faecb9b7ead212512ec562b8a))
+* Add support for yarn.buildCommand ([a53c624](https://github.com/factorial-io/phabalicious/commit/a53c6248e2ec69d4619b9fe50ca04607bce1ed5d))
 * Artifact deployment-method used wrong way to pass rootfolders to cloned config, this is now fixed ([e5ab47d](https://github.com/factorial-io/phabalicious/commit/e5ab47dc1ddfa9826db6229205ada24a921b676d))
-* Fix broken links ([a37e3da](https://github.com/factorial-io/phabalicious/commit/a37e3da4153746d4e50524eff5ee4db70b48487d))
 * Fix docker-image-on-docker-host ([2a457c9](https://github.com/factorial-io/phabalicious/commit/2a457c9f0de43bb67fbadb25203f0a52cbde4d3e))
-* Fix github action ([d320c28](https://github.com/factorial-io/phabalicious/commit/d320c28cc5d74236d44da29737f421c6612aaf55))
-* Fix github action ([1915ca7](https://github.com/factorial-io/phabalicious/commit/1915ca73550437e321dd3dca4a142cc00a8b71b2))
 * Script-action throws now an exception if execution failed with an error ([42d2cf4](https://github.com/factorial-io/phabalicious/commit/42d2cf471cc9b56e6c9c94076b1648609132a2ea))
-* set FDOCS_HOST to localhost when running yarn dev:serve ([692f389](https://github.com/factorial-io/phabalicious/commit/692f389c88a148f9795b3a34abeaf054281a6d80))
-* set port for FDOCS_HOST ([8733d72](https://github.com/factorial-io/phabalicious/commit/8733d72e7ba8d9d130a97ce8f3a245ba7bdfd835))
-* Update dist dir ([6736432](https://github.com/factorial-io/phabalicious/commit/6736432a7e58e6cdb1278ad466c5b8588e5ddbae))
 
 ### [3.8.6](https://github.com/factorial-io/phabalicious/compare/3.8.5...3.8.6) (2022-09-03)
 
