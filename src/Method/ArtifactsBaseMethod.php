@@ -153,11 +153,11 @@ abstract class ArtifactsBaseMethod extends BaseMethod
 
         foreach ($keys as $key) {
             if ($host_config->getProperty($key, 'ignore')[0] == '.') {
-                 $dir = $install_dir . '/' . $host_config[$key];
+                 $dir = $install_dir . '/' . $host_config->getProperty($key);
             } else {
                 $dir = $install_dir;
             }
-            $cloned_host_config[$key] = $dir;
+            $cloned_host_config->setProperty($key, $dir);
         }
         $shell->setHostConfig($cloned_host_config);
         $shell->cd($cloned_host_config['tmpFolder']);
