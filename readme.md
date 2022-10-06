@@ -12,18 +12,18 @@ Phabalicious is using configuration stored in a special file in the root of your
 * backup/ restore data
 * copy data from one installation to another
 * scaffold new projects
-* run scripts on different local or remote installations.
+* run scripts on different local or remote installations and run-contexts
 * handle SSH-tunnels transparently
 * trigger webhooks
 * send notifications via mattermost
-* optionally brings its own local dev-stack called [multibasebox](https://github.com/factorial-io/multibasebox)
+* interact and deploy to kubernetes clusters
 
 It integrates nicely with existing solutions like for continous integration or docker-based setups or diverse hosting
 environments like lagoon, platform.sh or complicated custom IT infrastructures.
 
 ## Documentation
 
-You can find the docs [here](https://factorial-io.github.io/phabalicious/)
+You can find the docs here at [docs.phab.io](https://docs.phab.io)
 
 ## Installation
 

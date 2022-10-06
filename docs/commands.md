@@ -666,3 +666,7 @@ phab -cmy-config restic -- forget --prune --keep-daily=14 --keep-weekly=4 \
 
 If your host has `restic` listed as its `needs` then restic will be used to run offsite-backups. You can interact with
 your restic repository using the `restic`-command. All given arguments and options will be passed down to restic, enriched with the configuration stored in the fabfile (See [also](/configuration.html#restic)).
+
+## workspace:create / workspace:update
+
+Please refer to the dedicated [page here](./workspace.md)
