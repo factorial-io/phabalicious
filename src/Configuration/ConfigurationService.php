@@ -712,7 +712,7 @@ class ConfigurationService
         $data->get('needs')->ensureArray();
 
         if (!$this->getSetting('disableScripts', false)) {
-            if (!$data->get('needs')->has('script')) {
+            if (!in_array('script', $data->get('needs')->asArray())) {
                 $data->get('needs')->push('script');
             }
         }
