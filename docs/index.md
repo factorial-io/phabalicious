@@ -3,7 +3,7 @@ homepage: true
 hero_text: Phabalicious
 tagline: Supports your deployments and every-day devops-tasks
 action_text: Get started
-action_link: /documentation.html
+action_link: /guide.html
 features:
   - title: All your instances
     details: Store all necessary configuration for all your instances inside your project-folder.
