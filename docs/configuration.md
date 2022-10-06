@@ -606,6 +606,51 @@ host:
       deployPrepare: myWebhook1
       deployFinished: myWebhook2
 ```
+## `executables`
+
+Phab supports that host-configurations can override the path to specific executables. These overrides can be done on a global level (e.g. the root level of the fabfile) and/ or on a per host-basis. Phab detects an executable name by the hash-bang notation (`#!`) or when `$$` prefixes the executable-name. Here are some examples:
+
+```shell
+$$echo "hello world"
+#!git pull origin main
+#!tar -xzvf files.tgz
+#!cat dump.sql | #!mysql -u root -p root db
+```
+
+Phab will lookup the actual executable from the global `executables`-setting or from the actual host-configuration, here's an example fabfile:
+
+```yaml
+executables:
+  echo: echo
+  git: /usr/local/bin/git --quiet
+  tar: /usr/bin/tar
+
+hosts:
+  a:
+    executables:
+      mysql: /usr/local/bin/mariadb
+```
+
+As you can see, this allows you to specify the exact path to the executable without relying on rc scripts, env-vars, etc. It allows you also to use completely different executables in certain scenarios, e.g. some hosting providers do have dedicated php executables per version, e.g. php74 php8, etc.
+
+You can use this mechanism also in your scripts, by using the above mentioned prefixes, e.g.
+
+```yaml
+executables:
+  git: /usr/local/bin/git
+  chmod: /bin/true
+  php: /usr/local/bin/php74
+  drush: /usr/local/bin/php80 /var/www/vendor/bin/drush
+script:
+  git-pull:
+    # Please note, that the next line is quoted, so yaml wont
+    # interpret the hash as a comment. That's actually also
+    # the reason, why there is the second prefix $$
+    - "#!git pull origin main"
+    - $$chmod -R 777 .
+```
+
+This mechanism allows you to solve some complicated setup stuff (e.g. like disabling the chmod in the above example by replacing it with `/bin/true` or by specifying a dedicated php executable for drush) by keeping your script code relatively sane, which allows that scripts can be reused more often.
 
 ## other
 
