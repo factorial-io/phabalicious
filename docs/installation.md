@@ -5,16 +5,16 @@ parent: documentation
 
 ## Dependencies
 
-Phabalicious needs at least PHP 7.2 with the json- and openssl-extensions. Most of the methods dependes on installed cli commands, you will get an error-message if they can't be found.
+Phabalicious needs at least PHP 7.3 with the json- and openssl-extensions. Most of the methods dependes on installed cli commands, you will get an error-message if they can't be found.
 
 ## Installation via homebrew (mac os x)
 
 ```
 brew tap factorial-io/homebrew-phabalicious
-brew install phab@3.8
+brew install phab
 ```
 
-* If you have installed phab previously, you might need to delete phab from /usr/local/bin
+* If you have installed phab previously, you might need to delete phab from `/usr/local/bin`
 
 ## Installation using published phar
 
@@ -32,7 +32,7 @@ brew install phab@3.8
 
 ## Install it as a project dependency
 
-* run `composer require factorial-io/phabalicious`
+* run `composer require --dev factorial-io/phabalicious`
 
 Note, phabalicious is using Symfony 4 so you might get some unresolvable conflicts (Merge Requests welcome!)
 
@@ -56,9 +56,9 @@ source <(phab _completion --generate-hook)
 
 ## Updating phab
 
--   Run `phab self-update`, this will download the latest release from GitHub.
+- Run `phab self-update`, this will download the latest release from GitHub. This might require super-user privileges.
 
-If you want to get the latest dev-version, add `--allow-unstable=1`
+If you want to get the latest dev-version, add `--preview`
 
 ## And then ...
 
@@ -72,9 +72,6 @@ Here's a simple example demonstrating a `fabfile.yaml`:
 ```yaml
 name: My awesome project
 
-# We'll need phabalicious >= 3.0
-requires: 3.0
-
 # We need git and ssh, there are more options
 needs:
   - ssh
@@ -84,8 +81,8 @@ needs:
 hosts:
   dev:
     info:
-	  description: A dev instance
-	  publicUrl: https://myhost.test
+      description: A dev instance
+      publicUrl: https://myhost.test
     host: myhost.test
     user: root
     port: 22
@@ -96,28 +93,6 @@ hosts:
 ```
 
 For more infos about the file-format have a look at the [configuration](./configuration.md)
-
-## Shell autocompletion
-
-Add this to your shell-startup script:
-
-* for fish-shells
-
-    ```
-    phab _completion --generate-hook --shell-type fish | source
-    ```
-
-* for zsh/bash-shells
-
-    ```
-    source <(phab _completion --generate-hook)
-    ```
-
-## Updating phab
-
-* Run `phab self-update`, this will download the latest release from GitHub.
-
-If you want to get the latest dev-version, add `--allow-unstable=1`
 
 ## Enhancing phab, contributing to phab
 
