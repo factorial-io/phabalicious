@@ -307,6 +307,8 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
         if ($host_config['drushVersion'] >= 10) {
             $this->runDrush($shell, true, 'deploy:hook -y');
+        } else {
+            $this->logger->info("Skipping drush deploy:hook because drush seems too old, check `drushVersion`");
         }
 
         // Set admin password for dev-instances.
