@@ -7,6 +7,7 @@ module.exports = function (defaultConfig) {
         output: "docs/_site",
         githubUrl: "https://github.com/factorial-io/phabalicious",
         twitter: "@phabalicious",
+        openSource: true,
         heroImage: {
             src: "/assets/hero.png",
             width: 720,

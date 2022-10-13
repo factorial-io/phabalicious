@@ -445,10 +445,10 @@
     "@docsearch/css" "3.2.1"
     algoliasearch "^4.0.0"
 
-"@factorial/docs@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@factorial/docs/-/docs-0.1.4.tgz#7012f4a32875804c4fba7d5d96db3b369dff912c"
-  integrity sha512-YBZhvelXYbYgz5WpIni0k1wXMQaaIKc5TXB237VeYUZXLF+v4m9k+FzMcVA96vWdX1igSA0KGNVPQtWBwCQ8Lw==
+"@factorial/docs@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@factorial/docs/-/docs-0.2.2.tgz#71b6f1b1dafd6dc73448d679dd89f61489d2f176"
+  integrity sha512-Z4tdhSKN6Cy8aTmS5wC02+FoNcadz20ScG+QiyZu6suX7GnTkpR1ucFbNokJBPatGmvRbOtAcwqLNU191FdPiw==
   dependencies:
     "@11ty/eleventy" "^1.0.2"
     "@11ty/eleventy-img" "^2.0.1"
