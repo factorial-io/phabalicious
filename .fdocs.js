@@ -50,12 +50,12 @@ module.exports = function (defaultConfig) {
             {
                 path: "blog",
                 children: [
-                    "blog/introduction",
-                    "blog/architecture",
-                    "blog/whats-new-in-phab-3-7",
-                    "blog/how-to-use-secrets",
-                    "blog/how-to-use-phab-beta-in-parallel",
-                    "blog/whats-new-in-phab-3-8",
+                    "introduction",
+                    "architecture",
+                    "whats-new-in-phab-3-7",
+                    "how-to-use-secrets",
+                    "how-to-use-phab-beta-in-parallel",
+                    "whats-new-in-phab-3-8",
                 ],
             },
             "changelog",
