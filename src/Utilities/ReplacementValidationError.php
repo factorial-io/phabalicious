@@ -69,4 +69,16 @@ class ReplacementValidationError
     {
         return $this->context[$this->getLineNumber()];
     }
+
+    public function getMissingArgument()
+    {
+        $failedLine = $this->getFailedLine();
+        $p = strpos($failedLine, "%arguments.");
+        if ($p === false) {
+            return false;
+        }
+        $p += 11;
+        $endp = strpos($failedLine, '%', $p);
+        return substr($failedLine, $p, $endp - $p);
+    }
 }

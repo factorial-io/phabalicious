@@ -338,9 +338,21 @@ class ScriptMethodTest extends PhabTestCase
         ]);
 
         $this->assertNotTrue($error);
+        $this->assertEquals(false, $error->getMissingArgument());
         $this->assertEquals(1, $error->getLineNumber());
         $this->assertEquals('e%%', $error->getFailedPattern());
         $this->assertEquals('%here%%huhu%', $error->getFailedLine());
+
+        $error = Utilities::validateReplacements([
+            "lhkjdhkadhj",
+            "there is an missing argument here: %arguments.foobar% and more text",
+            "khjkhjkjhkjh",
+        ]);
+
+        $this->assertNotTrue($error);
+        $this->assertEquals("foobar", $error->getMissingArgument());
+        $this->assertEquals(1, $error->getLineNumber());
+        $this->assertEquals(' %arguments.foobar%', $error->getFailedPattern());
 
         $this->assertEquals(true, Utilities::validateReplacements([
             "lhkjdhkadhj",

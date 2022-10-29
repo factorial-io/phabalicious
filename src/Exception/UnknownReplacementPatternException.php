@@ -30,6 +30,14 @@ class UnknownReplacementPatternException extends \Exception
 
     public function __toString()
     {
+        if ($argument = $this->error->getMissingArgument()) {
+            return sprintf(
+                "Missing command-line-argument `%s`!\n\n" .
+                "Please add `--arguments %s=<YOUR-VALUE>` to the invocation of the command",
+                $argument,
+                $argument
+            );
+        }
         return implode("\n", [
             sprintf("Unknown pattern `%s` in", $this->error->getFailedPattern()),
             "",
