@@ -172,7 +172,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $execution_context = new ScriptExecutionContext(
             $bag->getRootFolder(),
             $bag->getContext()->get(self::SCRIPT_CONTEXT, ScriptExecutionContext::HOST),
-            $bag->getContext()->get(self::SCRIPT_CONTEXT_DATA, [])
+            $bag->getScriptContextData()
         );
 
         $shell = $execution_context->enter($shell);

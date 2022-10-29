@@ -110,17 +110,41 @@ class ScriptDataBag
     public function getEnvironment(): array
     {
         $environment = $this->environment;
+        return $this->expandStrings($environment);
+    }
+
+    /**
+     * Expand replacements in array.
+     *
+     * @param array $data
+     *   array with strings.
+     *
+     * @return array
+     *   the expanded array.
+     *
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     */
+    protected function expandStrings(array $data): array
+    {
         $replacements = $this->getReplacements();
-        $environment = Utilities::expandStrings($environment, $replacements);
-        $environment = $this
+        $data = Utilities::expandStrings($data, $replacements);
+        $data = $this
             ->getContext()
             ->getConfigurationService()
             ->getPasswordManager()
-            ->resolveSecrets($environment);
+            ->resolveSecrets($data);
 
-        return Utilities::validateScriptCommands($environment, $replacements);
+        return Utilities::validateScriptCommands($data, $replacements);
     }
 
+    /**
+     * Get script context data.
+     */
+    public function getScriptContextData(): array
+    {
+        $data = $this->context->get(ScriptMethod::SCRIPT_CONTEXT_DATA, []);
+        return $this->expandStrings($data);
+    }
     /**
      * @return mixed
      */
