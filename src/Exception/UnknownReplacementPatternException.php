@@ -2,26 +2,28 @@
 
 namespace Phabalicious\Exception;
 
+use Phabalicious\Utilities\ReplacementValidationError;
+
 class UnknownReplacementPatternException extends \Exception
 {
     private $patterns;
-    private $offendingLine;
+    private $error;
 
     /**
      * ValidationFailedException constructor.
      *
-     * @param string $offending_line
+     * @param \Phabalicious\Utilities\ReplacementValidationError $error
      * @param array $patterns
      */
-    public function __construct(string $offending_line, array $patterns)
+    public function __construct(ReplacementValidationError $error, array $patterns)
     {
-        $this->offendingLine = $offending_line;
+        $this->error = $error;
         $this->patterns = $patterns;
         parent::__construct();
         $this->message = $this->__toString();
     }
 
-    public function getPatterns()
+    public function getPatterns(): array
     {
         return $this->patterns;
     }
@@ -29,9 +31,9 @@ class UnknownReplacementPatternException extends \Exception
     public function __toString()
     {
         return implode("\n", [
-            'Error in ' . $this->getOffendingLine(),
-            "Available patterns:",
-            implode("\n", $this->getPatterns())
+            sprintf("Unknown pattern `%s` in", $this->error->getFailedPattern()),
+            "",
+            $this->error->getFailedLineWithinContext(),
         ]);
     }
 
@@ -40,6 +42,14 @@ class UnknownReplacementPatternException extends \Exception
      */
     public function getOffendingLine(): string
     {
-        return $this->offendingLine;
+        return $this->error->getLineNumber();
+    }
+
+    /**
+     * @return \Phabalicious\Utilities\ReplacementValidationError
+     */
+    public function getError(): ReplacementValidationError
+    {
+        return $this->error;
     }
 }

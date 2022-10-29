@@ -300,27 +300,47 @@ class ScriptMethodTest extends PhabTestCase
             "bla\%blaa\%"
         ]));
 
-        $this->assertEquals("%here%", Utilities::validateReplacements([
+        $error = Utilities::validateReplacements([
             "lhkjdhkadhj",
             "%here%",
             "khjkhjkjhkjh",
-        ]));
+        ]);
 
-        $this->assertEquals("huhu %here%", Utilities::validateReplacements([
+        $this->assertNotTrue($error);
+        $this->assertEquals(1, $error->getLineNumber());
+        $this->assertEquals('%here%', $error->getFailedPattern());
+
+
+        $error = Utilities::validateReplacements([
             "lhkjdhkadhj",
             "huhu %here%",
             "khjkhjkjhkjh",
-        ]));
-        $this->assertEquals("%here%haha", Utilities::validateReplacements([
+        ]);
+
+        $this->assertNotTrue($error);
+        $this->assertEquals(1, $error->getLineNumber());
+        $this->assertEquals(' %here%', $error->getFailedPattern());
+
+        $error = Utilities::validateReplacements([
             "lhkjdhkadhj",
-            "%here%haha",
             "khjkhjkjhkjh",
-        ]));
-        $this->assertEquals("%here%%huhu%", Utilities::validateReplacements([
+            "%here%haha",
+        ]);
+
+        $this->assertNotTrue($error);
+        $this->assertEquals(2, $error->getLineNumber());
+        $this->assertEquals('%here%', $error->getFailedPattern());
+
+        $error = Utilities::validateReplacements([
             "lhkjdhkadhj",
             "%here%%huhu%",
             "khjkhjkjhkjh",
-        ]));
+        ]);
+
+        $this->assertNotTrue($error);
+        $this->assertEquals(1, $error->getLineNumber());
+        $this->assertEquals('e%%', $error->getFailedPattern());
+        $this->assertEquals('%here%%huhu%', $error->getFailedLine());
 
         $this->assertEquals(true, Utilities::validateReplacements([
             "lhkjdhkadhj",

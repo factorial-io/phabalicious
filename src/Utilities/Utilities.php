@@ -188,11 +188,11 @@ class Utilities
      * Validate for any remaining replacement strings.
      *
      * @param string[] $strings
-     * @return true|string
+     * @return true|ReplacementValidationError
      */
     public static function validateReplacements(array $strings)
     {
-        foreach ($strings as $line) {
+        foreach ($strings as $ndx => $line) {
             if (!is_string($line)) {
                 continue;
             }
@@ -200,11 +200,13 @@ class Utilities
             if (preg_match('/\\\?%secret\.[A-Za-z0-9\.\-_]*%/', $line)) {
                 continue;
             }
-            if (preg_match('/[^\\\]%[A-Za-z0-9\.\-_]*%/', $line)) {
-                return $line;
+            $matches = [];
+            if (preg_match('/[^\\\]%[A-Za-z0-9\.\-_]*%/', $line, $matches)) {
+                return new ReplacementValidationError($strings, $ndx, $matches[0]);
             }
-            if (preg_match('/^%[A-Za-z0-9\.\-_]*%/', $line)) {
-                return $line;
+            $matches = [];
+            if (preg_match('/^%[A-Za-z0-9\.\-_]*%/', $line, $matches)) {
+                return new ReplacementValidationError($strings, $ndx, $matches[0]);
             }
         }
         return true;
