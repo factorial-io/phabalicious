@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 ### Features
 
 * Allow replacement patterns in script context data ([5f7d2eb](https://github.com/factorial-io/phabalicious/commit/5f7d2eb6ce92161b9da1762cfd72329ebf18b712))
-* Provide more context when replacemen- patterns cant be expanded ([286998b](https://github.com/factorial-io/phabalicious/commit/286998b5fbe3b8574ea7b06b5afcc3f7d4030ba8))
+* Provide more context when replacement-patterns cant be expanded ([286998b](https://github.com/factorial-io/phabalicious/commit/286998b5fbe3b8574ea7b06b5afcc3f7d4030ba8))
 * **script-execution-context:** Add support for rootFolder and pullLatestImage ([4b577a2](https://github.com/factorial-io/phabalicious/commit/4b577a2d7af7f89cb12d84bc2445baff0a836104))
 * Show better error message if a script requires a passed argument via the command line ([84a60e3](https://github.com/factorial-io/phabalicious/commit/84a60e376fe76187aeabab68920ac5d6102a51e0))
 
