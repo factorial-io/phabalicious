@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.8](https://github.com/factorial-io/phabalicious/compare/3.8.7...3.8.8) (2022-10-30)
+
+
+### Features
+
+* Allow replacement patterns in script context data ([5f7d2eb](https://github.com/factorial-io/phabalicious/commit/5f7d2eb6ce92161b9da1762cfd72329ebf18b712))
+* Provide more context when replacemen- patterns cant be expanded ([286998b](https://github.com/factorial-io/phabalicious/commit/286998b5fbe3b8574ea7b06b5afcc3f7d4030ba8))
+* **script-execution-context:** Add support for rootFolder and pullLatestImage ([4b577a2](https://github.com/factorial-io/phabalicious/commit/4b577a2d7af7f89cb12d84bc2445baff0a836104))
+* Show better error message if a script requires a passed argument via the command line ([84a60e3](https://github.com/factorial-io/phabalicious/commit/84a60e376fe76187aeabab68920ac5d6102a51e0))
+
+
+### Bug Fixes
+
+* **deps:** update dependency twig/twig to v3.4.3 [security] ([8712c8a](https://github.com/factorial-io/phabalicious/commit/8712c8a4529bb68b33d14bce1e321af0687e53e6))
+* Fix regression and prevent adding `script` to `needs` when already part of it ([94e0847](https://github.com/factorial-io/phabalicious/commit/94e08476a51c61fb74a16b8e55484122e4dd455d))
+* Fix regression and prevent adding `script` to `needs` when already part of it ([9d5c98d](https://github.com/factorial-io/phabalicious/commit/9d5c98d6d8a7a6e78da008d098ff246679f6f0fe))
+* show info message, when deploy-hooks are not executed, because of a too old `drushVersion` ([3861055](https://github.com/factorial-io/phabalicious/commit/3861055ab02af61193f42be4a17a59df98e426f2))
+
 ### [3.8.7](https://github.com/factorial-io/phabalicious/compare/3.8.6...3.8.7) (2022-09-24)
 
 
