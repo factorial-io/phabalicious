@@ -107,7 +107,9 @@ class ScriptExecutionContext
                 $this->dockerComposeRootDir = $this->getArgument('rootFolder');
                 $shell->applyEnvironment($this->getArgument('environment', []));
                 $shell->cd($this->dockerComposeRootDir);
-                $shell->run($this->getDockerComposeCmd('pull'), false, true);
+                if ($this->getArgument('pullLatestImage', true)) {
+                    $shell->run($this->getDockerComposeCmd('pull'), false, true);
+                }
                 $shell->run($this->getDockerComposeCmd('build'), false, true);
                 $this->shell = $shell->startSubShell($this->getDockerComposeCmdAsArray(
                     'run',
@@ -119,12 +121,15 @@ class ScriptExecutionContext
                 break;
 
             case self::DOCKER_IMAGE:
-                $working_dir = $shell->realPath($this->workingDir);
+                $root_folder =$this->getArgument('rootFolder', $this->workingDir);
+                $working_dir = $shell->realPath($root_folder);
                 if (!$working_dir) {
-                    throw new \RuntimeException(sprintf('Can\'t resolve working dir %s!', $this->workingDir));
+                    throw new \RuntimeException(sprintf('Can\'t resolve working dir %s!', $root_folder));
                 }
                 $shell->applyEnvironment($this->getArgument('environment', []));
-                $shell->run(sprintf('docker pull %s', $this->getArgument('image')));
+                if ($this->getArgument('pullLatestImage', true)) {
+                    $shell->run(sprintf('docker pull %s', $this->getArgument('image')));
+                }
                 $cmd = [
                     'docker',
                     'run',

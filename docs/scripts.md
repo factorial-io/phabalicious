@@ -153,6 +153,8 @@ scripts:
   test-in-docker-container:
     context: docker-image
     image: node:12
+    pullLatestImage: true
+    rootFolder: ./some/sub/folder
     user: node
     script:
       - npm install
@@ -175,7 +177,7 @@ These script execution-contexts are available
  * `docker-image`
 
    the script will be executed in a docker-container created with the provided name of the docker-image to use, passing any environment variables to docker if any set. The current folder will be mounted as a volume inside the docker-container at `/app` and the script will be executed as the current user and group (if not a dedicated user is set via `user`). The container will be deleted afterwards, if you need to keep files persistent, make sure to move/ copy them to `/app`
-   The above example will install the node-based app and execute the `build`-command
+   The above example will install the node-based app and execute the `build`-command using `some/sub/folder` as the root folder. If you want to skip the pull of the latest image, then set `pullLatestImage` to false.
 
  * `docker-compose-run`
 
@@ -190,6 +192,7 @@ These script execution-contexts are available
          - vendor/bin/phpunit
        context: docker-compose-run
        rootFolder: ./hosting/tests
+       pullLatestImage: true
        shellExecutable: /bin/bash # defaults to /bin/sh
        service: php
        environment:
