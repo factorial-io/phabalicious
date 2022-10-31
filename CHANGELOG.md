@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.10](https://github.com/factorial-io/phabalicious/compare/3.8.8...3.8.10) (2022-10-31)
+
+
+### Features
+
+* New option bindCurrentFolder to disable bindmount of current folder for script execution context docker-image ([4618235](https://github.com/factorial-io/phabalicious/commit/4618235d40f08bfb738560e5ec7195a13b6d224f))
+
 ### [3.8.9](https://github.com/factorial-io/phabalicious/compare/3.8.8...3.8.9) (2022-10-31)
 
 ### [3.8.8](https://github.com/factorial-io/phabalicious/compare/3.8.7...3.8.8) (2022-10-30)
