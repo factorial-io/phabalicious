@@ -144,9 +144,11 @@ class ScriptExecutionContext
                         'user',
                         sprintf('%d:%d', posix_getuid(), posix_getgid())
                     ),
-                    '-v',
-                    sprintf('%s:/app', $working_dir),
                 ];
+                if ($this->getArgument('bindCurrentFolder', true)) {
+                    $cmd[] = '-v';
+                    $cmd[] = sprintf('%s:/app', $working_dir);
+                }
                 if (!is_null($entrypoint = $this->getArgument('entryPoint'))) {
                     $cmd[] = sprintf('--entrypoint="%s"', $entrypoint);
                 }
