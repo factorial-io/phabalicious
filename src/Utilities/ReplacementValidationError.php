@@ -59,7 +59,6 @@ class ReplacementValidationError
     {
         $return = [];
         foreach ($this->context as $ndx => $line) {
-            print_r($line);
             $return[] = (($ndx == $this->lineNumber) ? ">  " : "   ") . $ndx . ": " . Yaml::dump($line, 0);
         }
         return implode("\n", $return);

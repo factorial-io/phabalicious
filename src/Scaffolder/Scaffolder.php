@@ -385,7 +385,6 @@ class Scaffolder
             ? Phar::running() . '/config/scaffold'
             : realpath(__DIR__ . '/../../config/scaffold/');
 
-        print_r($rootFolder);
         return $rootFolder . '/' . $name;
     }
 
