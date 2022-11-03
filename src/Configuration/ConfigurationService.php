@@ -852,9 +852,10 @@ class ConfigurationService
      * @param string $config_name
      *
      * @return DockerConfig
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws ValidationFailedException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function getDockerConfig(string $config_name)
     {

@@ -151,7 +151,7 @@ abstract class HostConfigAbstract implements \ArrayAccess
         return $urls ? $urls[0] : false;
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->data['info']['description'] ?? '';
     }
@@ -166,5 +166,11 @@ abstract class HostConfigAbstract implements \ArrayAccess
     public function getCategory(): HostConfigurationCategory
     {
         return $this->category;
+    }
+
+    public function getDockerConfig(): ?DockerConfig
+    {
+        $docker_config_name = $this->getProperty('docker.configuration', null);
+        return $docker_config_name ? $this->getConfigurationService()->getDockerConfig($docker_config_name) : null;
     }
 }

@@ -19,6 +19,9 @@ class AppCreateCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
+    /** @var \Phabalicious\Configuration\ConfigurationService  */
+    protected $configuration;
+
     public function setup(): void
     {
         $this->application = new Application();
@@ -31,6 +34,7 @@ class AppCreateCommandTest extends PhabTestCase
         $method_factory->addMethod(new DockerMethod($logger));
 
         $configuration->readConfiguration(__DIR__ . '/assets/app-create-tests/fabfile.yaml');
+        $this->configuration = $configuration;
 
         $this->application->add(new AppCreateCommand($configuration, $method_factory));
         $this->application->add(new ResetCommand($configuration, $method_factory));
@@ -43,8 +47,18 @@ class AppCreateCommandTest extends PhabTestCase
         $target_folder = $this->getTmpDir();
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
+        } else {
+            @unlink("$target_folder/.projectCreated");
         }
+        $this
+            ->configuration
+            ->getHostConfig('test')
+            ->getDockerConfig()
+            ->setProperty('rootFolder', $target_folder);
 
+        chdir($target_folder);
+
+        /** @var AppCreateCommand $command */
         $command = $this->application->find('app:create');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
@@ -64,9 +78,19 @@ class AppCreateCommandTest extends PhabTestCase
         $target_folder = $this->getTmpDir();
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
+        } else {
+            @unlink("$target_folder/.projectCreated");
         }
 
+        $this
+            ->configuration
+            ->getHostConfig('testWithPrepare')
+            ->getDockerConfig()
+            ->setProperty('rootFolder', $target_folder);
+
         $command = $this->application->find('app:create');
+
+        /** @var AppCreateCommand $command */
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
             '--config'  => 'testWithPrepare',

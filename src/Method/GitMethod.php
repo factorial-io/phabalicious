@@ -217,6 +217,7 @@ class GitMethod extends BaseMethod implements MethodInterface
 
         $shell->run('touch .projectCreated');
         $shell->cd($cwd);
+        $context->setResult('projectCreated', true);
     }
 
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)

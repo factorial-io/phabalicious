@@ -146,11 +146,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $this->hostConfig = $this->getConfiguration()->getHostConfig($config_name);
             }
 
-            if (!empty($this->hostConfig['docker']['configuration'])) {
-                $docker_config_name = $this->hostConfig['docker']['configuration'];
-                $this->dockerConfig = $this->getConfiguration()->getDockerConfig($docker_config_name);
-            }
-
+            $this->dockerConfig = $this->hostConfig->getDockerConfig();
             $this->hostConfig->shell()->setOutput($output);
 
             if ($input->getOption('variants')) {

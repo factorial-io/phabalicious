@@ -133,13 +133,10 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @param \Phabalicious\Method\TaskContextInterface $context
      *
      * @return DockerConfig
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function getDockerConfig(HostConfig $host_config, TaskContextInterface $context): DockerConfig
     {
-        $config = $context->getConfigurationService()->getDockerConfig($host_config['docker']['configuration']);
+        $config = $host_config->getDockerConfig();
         $config['executables'] = $host_config['executables'];
         $environment = $this->environmentVarsCache[$host_config->getConfigName()] ?? false;
         if (!$environment) {
@@ -577,6 +574,27 @@ class DockerMethod extends BaseMethod implements MethodInterface
      */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
+        if (!$current_stage = $context->get('currentStage', false)) {
+            throw new \InvalidArgumentException('Missing currentStage on context!');
+        }
+
+        if (($current_stage === 'installCode') && !$context->getResult('projectCreated', false)) {
+
+            /** @var \Phabalicious\ShellProvider\ShellProviderInterface $shell */
+            $shell = $context->get('outerShell', $host_config->shell());
+            $install_dir = $context->get('installDir', false);
+
+            if ($install_dir) {
+                $shell->pushWorkingDir(dirname($install_dir));
+                $shell->run(sprintf('mkdir -p %s', $install_dir));
+
+                $shell->cd($install_dir);
+                $shell->run('touch .projectCreated');
+                $shell->popWorkingDir();
+                $context->setResult('projectCreated', true);
+            }
+        }
+
         $this->runAppSpecificTask($host_config, $context);
     }
 
