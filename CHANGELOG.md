@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.11](https://github.com/factorial-io/phabalicious/compare/3.8.10...3.8.11) (2022-11-03)
+
+
+### Bug Fixes
+
+* Fix missing shell for kubectl execution context ([0c02c3d](https://github.com/factorial-io/phabalicious/commit/0c02c3d3bed7af86d8d5b409488140760a69a689))
+
 ### [3.8.10](https://github.com/factorial-io/phabalicious/compare/3.8.8...3.8.10) (2022-10-31)
 
 
