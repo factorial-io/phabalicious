@@ -180,7 +180,7 @@ class Utilities
         }
 
         return array_map(function ($r) {
-            return is_string($r) ? str_replace('\%', '%', $r) : "";
+            return is_string($r) ? str_replace('\%', '%', $r) : $r;
         }, $commands);
     }
 
