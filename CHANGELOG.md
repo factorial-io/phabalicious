@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.13](https://github.com/factorial-io/phabalicious/compare/3.8.12...3.8.13) (2022-11-09)
+
+
+### Bug Fixes
+
+* Cleanup more thouroughly after docker-compose is finished ([b988a6a](https://github.com/factorial-io/phabalicious/commit/b988a6a5dfbe255ba17cdcf430ad3c648adfc0fe))
+
 ### [3.8.12](https://github.com/factorial-io/phabalicious/compare/3.8.11...3.8.12) (2022-11-09)
 
 ### [3.8.11](https://github.com/factorial-io/phabalicious/compare/3.8.10...3.8.11) (2022-11-03)
