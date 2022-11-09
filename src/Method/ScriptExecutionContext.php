@@ -185,7 +185,7 @@ class ScriptExecutionContext
             $this->shell->cd($this->initialWorkingDir);
             $this->shell->cd($this->dockerComposeRootDir);
 
-            $this->shell->run($this->getDockerComposeCmd('rm', '-s -v --force'));
+            $this->shell->run($this->getDockerComposeCmd('down', '-v'));
         }
     }
 
