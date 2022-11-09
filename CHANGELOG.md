@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.12](https://github.com/factorial-io/phabalicious/compare/3.8.11...3.8.12) (2022-11-09)
+
 ### [3.8.11](https://github.com/factorial-io/phabalicious/compare/3.8.10...3.8.11) (2022-11-03)
 
 
