@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.14](https://github.com/factorial-io/phabalicious/compare/3.8.13...3.8.14) (2022-11-11)
+
+
+### Features
+
+* Set USER_ID and GROUP_ID env-vars for docker-compose-run script execution context ([05e0fe6](https://github.com/factorial-io/phabalicious/commit/05e0fe6a65c4e6deedd5f095c79272c6b75b629f))
+
 ### [3.8.13](https://github.com/factorial-io/phabalicious/compare/3.8.12...3.8.13) (2022-11-09)
 
 
