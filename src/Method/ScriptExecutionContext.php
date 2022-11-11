@@ -106,16 +106,7 @@ class ScriptExecutionContext
             case self::DOCKER_COMPOSE_RUN:
                 $this->dockerComposeRootDir = $this->getArgument('rootFolder');
                 $shell->cd($this->dockerComposeRootDir);
-                $environment = $this->getArgument('environment', []);
-                $environment['USER_ID'] = $this->getArgument(
-                    'user',
-                    $shell->run('id -u', true, true)->getTrimmedOutput()
-                );
-                $environment['GROUP_ID'] = $this->getArgument(
-                    'group',
-                    $shell->run('id -g', true, true)->getTrimmedOutput()
-                );
-                $shell->applyEnvironment($environment);
+                $this->applyEnvironmentToHostShell($shell);
                 if ($this->getArgument('pullLatestImage', true)) {
                     $shell->run($this->getDockerComposeCmd('pull'), false, true);
                 }
@@ -135,7 +126,7 @@ class ScriptExecutionContext
                 if (!$working_dir) {
                     throw new \RuntimeException(sprintf('Can\'t resolve working dir %s!', $root_folder));
                 }
-                $shell->applyEnvironment($this->getArgument('environment', []));
+                $this->applyEnvironmentToHostShell($shell);
                 if ($this->getArgument('pullLatestImage', true)) {
                     $shell->run(sprintf('docker pull %s', $this->getArgument('image')));
                 }
@@ -194,6 +185,8 @@ class ScriptExecutionContext
             $this->shell->cd($this->initialWorkingDir);
             $this->shell->cd($this->dockerComposeRootDir);
 
+            $this->applyEnvironmentToHostShell($this->shell);
+
             $this->shell->run($this->getDockerComposeCmd('down', '-v'));
         }
     }
@@ -229,5 +222,24 @@ class ScriptExecutionContext
     {
         $result = $this->getDockerComposeCmdAsArray($cmd, ...$args);
         return implode(' ', $result);
+    }
+
+    /**
+     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
+     *
+     * @return void
+     */
+    protected function applyEnvironmentToHostShell(ShellProviderInterface $shell): void
+    {
+        $environment = $this->getArgument('environment', []);
+        $environment['USER_ID'] = $this->getArgument(
+            'user',
+            $shell->run('id -u', true, true)->getTrimmedOutput()
+        );
+        $environment['GROUP_ID'] = $this->getArgument(
+            'group',
+            $shell->run('id -g', true, true)->getTrimmedOutput()
+        );
+        $shell->applyEnvironment($environment);
     }
 }
