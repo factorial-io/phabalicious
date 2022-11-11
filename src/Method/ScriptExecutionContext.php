@@ -105,8 +105,17 @@ class ScriptExecutionContext
         switch ($this->currentContextName) {
             case self::DOCKER_COMPOSE_RUN:
                 $this->dockerComposeRootDir = $this->getArgument('rootFolder');
-                $shell->applyEnvironment($this->getArgument('environment', []));
                 $shell->cd($this->dockerComposeRootDir);
+                $environment = $this->getArgument('environment', []);
+                $environment['USER_ID'] = $this->getArgument(
+                    'user',
+                    $shell->run('id -u', true, true)->getTrimmedOutput()
+                );
+                $environment['GROUP_ID'] = $this->getArgument(
+                    'group',
+                    $shell->run('id -g', true, true)->getTrimmedOutput()
+                );
+                $shell->applyEnvironment($environment);
                 if ($this->getArgument('pullLatestImage', true)) {
                     $shell->run($this->getDockerComposeCmd('pull'), false, true);
                 }

@@ -183,7 +183,9 @@ These script execution-contexts are available
 
  * `docker-compose-run`
 
-   the script will be executed in a specific service of a docker-compose-setup. This will give you greater control when your app needs specific services running. When setting the context to `docker-compose-run` you need to provide the path to the `docker-compose.yml` file, the name of the service phab should use to execute the commands in and some other, optional parameters. Here's a full-fledge example:
+   the script will be executed in a specific service of a docker-compose-setup. This will give you greater control when your app needs specific services running. When setting the context to `docker-compose-run` you need to provide the path to the `docker-compose.yml` file, the name of the service phab should use to execute the commands in and some other, optional parameters.  Phab will autopopulate the environment variables `USER_ID` and `GROUP_ID` with the current user- and group-id, so you can workaround permission issues.
+
+   Here's a full-fledge example:
 
    ```yaml
    scripts:
@@ -194,6 +196,7 @@ These script execution-contexts are available
          - vendor/bin/phpunit
        context: docker-compose-run
        rootFolder: ./hosting/tests
+       workingDir: /app
        pullLatestImage: true
        shellExecutable: /bin/bash # defaults to /bin/sh
        service: php

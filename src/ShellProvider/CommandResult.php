@@ -37,6 +37,11 @@ class CommandResult
         return $this->lines;
     }
 
+    public function getTrimmedOutput(): string
+    {
+        return trim(implode("\n", $this->lines));
+    }
+
     public function getExitCode()
     {
         return $this->exitCode;
