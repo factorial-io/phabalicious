@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.15](https://github.com/factorial-io/phabalicious/compare/3.8.14...3.8.15) (2022-11-11)
+
+
+### Bug Fixes
+
+* Apply environment correctly when using script execution context ([3890447](https://github.com/factorial-io/phabalicious/commit/3890447051c887cfec2595f77638bee289eb8e6e))
+
 ### [3.8.14](https://github.com/factorial-io/phabalicious/compare/3.8.13...3.8.14) (2022-11-11)
 
 
