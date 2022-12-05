@@ -175,19 +175,19 @@ class ScriptExecutionContext
         return $this->getShell();
     }
 
-    public function exit()
+    public function exit(): void
     {
-        if ($this->currentContextName != self::HOST) {
+        if ($this->currentContextName !== self::HOST) {
             $this->shell->terminate();
         }
 
-        if ($this->currentContextName == self::DOCKER_COMPOSE_RUN) {
+        if ($this->currentContextName === self::DOCKER_COMPOSE_RUN) {
             $this->shell->cd($this->initialWorkingDir);
             $this->shell->cd($this->dockerComposeRootDir);
 
             $this->applyEnvironmentToHostShell($this->shell);
 
-            $this->shell->run($this->getDockerComposeCmd('down', '-v'));
+            $this->shell->run($this->getDockerComposeCmd('down', '-v --rmi=local'));
         }
     }
 
