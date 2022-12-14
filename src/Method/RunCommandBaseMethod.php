@@ -78,8 +78,8 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $mapping = parent::getDeprecationMapping();
         $prefix = $this->getConfigPrefix();
         return array_merge($mapping, [
-            "${prefix}RootFolder" => "${prefix}.rootFolder",
-            "${prefix}RunContext" => "${prefix}.context",
+            "{$prefix}RootFolder" => "{$prefix}.rootFolder",
+            "{$prefix}RunContext" => "{$prefix}.context",
         ]);
     }
 
@@ -88,8 +88,8 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $mapping = parent::getDeprecatedValuesMapping();
         $prefix = $this->getConfigPrefix();
         return array_merge($mapping, [
-            new DeprecatedValueMapping("${prefix}RunContext", 'dockerHost', 'docker-host'),
-            new DeprecatedValueMapping("${prefix}.context", 'dockerHost', 'docker-host'),
+            new DeprecatedValueMapping("{$prefix}RunContext", 'dockerHost', 'docker-host'),
+            new DeprecatedValueMapping("{$prefix}.context", 'dockerHost', 'docker-host'),
         ]);
     }
 
@@ -98,8 +98,8 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $validation = new ValidationService($config, $errors, 'host-config');
         $prefix = $this->getConfigPrefix();
         $validation->deprecate([
-            "${prefix}RootFolder" => "please change to `${prefix}.rootFolder`",
-            "${prefix}RunContext" => "please change to `${prefix}.context`",
+            "{$prefix}RootFolder" => "please change to `{$prefix}.rootFolder`",
+            "{$prefix}RunContext" => "please change to `{$prefix}.context`",
         ]);
         $args = $this->getRootFolderKey();
         $validation->hasKey($args, sprintf('%s should point to your root folder for %s.', $args, $this->getName()));

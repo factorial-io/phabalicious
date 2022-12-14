@@ -73,9 +73,9 @@ class RunCommandBaseMethodTest extends PhabTestCase
     public function testDeprecatedConfig($method_name, $has_build_command)
     {
         $host_config = [
-            "${method_name}BuildCommand" => 'build',
-            "${method_name}RunContext" => 'host',
-            "${method_name}RootFolder" => '/foo/bar',
+            "{$method_name}BuildCommand" => 'build',
+            "{$method_name}RunContext" => 'host',
+            "{$method_name}RootFolder" => '/foo/bar',
         ];
 
         $errors = new ValidationErrorBag();
@@ -83,10 +83,10 @@ class RunCommandBaseMethodTest extends PhabTestCase
         $method = new $class_name($this->logger);
         $method->validateConfig(new Node($host_config, 'test'), $errors);
         if ($has_build_command) {
-            $this->assertArrayHasKey("${method_name}BuildCommand", $errors->getWarnings());
+            $this->assertArrayHasKey("{$method_name}BuildCommand", $errors->getWarnings());
         }
-        $this->assertArrayHasKey("${method_name}RunContext", $errors->getWarnings());
-        $this->assertArrayHasKey("${method_name}RootFolder", $errors->getWarnings());
+        $this->assertArrayHasKey("{$method_name}RunContext", $errors->getWarnings());
+        $this->assertArrayHasKey("{$method_name}RootFolder", $errors->getWarnings());
     }
 
     /**
@@ -97,11 +97,11 @@ class RunCommandBaseMethodTest extends PhabTestCase
         $host_config = $this->configurationService->getHostConfig($method_name . '-deprecated');
 
         if ($has_build_command) {
-            $this->assertEquals('build:prod', $host_config->getProperty("${method_name}.buildCommand"));
+            $this->assertEquals('build:prod', $host_config->getProperty("{$method_name}.buildCommand"));
         }
-        $this->assertEquals('docker-image', $host_config->getProperty("${method_name}.context"));
+        $this->assertEquals('docker-image', $host_config->getProperty("{$method_name}.context"));
         $this->assertEquals($docker_image, $host_config->getProperty("image"));
-        $this->assertEquals('/foo/bar', $host_config->getProperty("${method_name}.rootFolder"));
+        $this->assertEquals('/foo/bar', $host_config->getProperty("{$method_name}.rootFolder"));
     }
 
     /**

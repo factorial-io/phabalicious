@@ -154,14 +154,14 @@ class LocalShellProviderTest extends PhabTestCase
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('echo "XX${VAR_B}XX"', true, false);
+            ->run('echo "XX{$VAR_B}XX"', true, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertStringContainsString('XXvariable_bXX', $output);
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('echo "XX${VAR_C}XX"', true, false);
+            ->run('echo "XX{$VAR_C}XX"', true, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertStringContainsString('XXvariable_cXX', $output);

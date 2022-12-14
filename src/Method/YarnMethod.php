@@ -20,7 +20,7 @@ class YarnMethod extends RunCommandBaseMethod
         $mapping = parent::getDeprecationMapping();
         $prefix = $this->getConfigPrefix();
         return array_merge($mapping, [
-            "${prefix}BuildCommand" => "${prefix}.buildCommand",
+            "{$prefix}BuildCommand" => "{$prefix}.buildCommand",
         ]);
     }
 
@@ -41,6 +41,7 @@ class YarnMethod extends RunCommandBaseMethod
 
         return $command;
     }
+
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
@@ -62,7 +63,7 @@ class YarnMethod extends RunCommandBaseMethod
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        if ($current_stage == 'installDependencies') {
+        if ($current_stage === 'installDependencies') {
             $this->resetPrepare($host_config, $context);
         }
     }

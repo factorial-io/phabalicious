@@ -20,7 +20,7 @@ class NpmMethod extends RunCommandBaseMethod
         $mapping = parent::getDeprecationMapping();
         $prefix = $this->getConfigPrefix();
         return array_merge($mapping, [
-            "${prefix}BuildCommand" => "${prefix}.buildCommand",
+            "{$prefix}BuildCommand" => "{$prefix}.buildCommand",
         ]);
     }
 
