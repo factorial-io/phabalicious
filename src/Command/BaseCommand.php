@@ -91,7 +91,7 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     public function completeOptionValues($optionName, CompletionContext $context)
     {
-        if ($optionName == 'config') {
+        if ($optionName === 'config') {
             $config = new ConfigurationService($this->getApplication(), new NullLogger());
             $config->setOffline(true);
             try {
@@ -99,9 +99,16 @@ abstract class BaseCommand extends BaseOptionsCommand
             } catch (\Exception $e) {
                 return [];
             }
-            return $config->getAllHostConfigs()->getKeys();
+            $hosts = [];
+            foreach ($config->getAllHostConfigs() as $key => $hostConfig) {
+                if ($hostConfig->get('hidden') || $hostConfig->get('inheritOnly')) {
+                    continue;
+                }
+                $hosts[] = $key;
+            }
+            return $hosts;
         }
-        if ($optionName == 'set' && $context instanceof FishShellCompletionContext) {
+        if ($optionName === 'set' && $context instanceof FishShellCompletionContext) {
             $dotted = [];
             if ($host_config = $context->getHostConfig()) {
                 Utilities::pushKeysAsDotNotation($host_config->asArray(), $dotted, ['host']);
