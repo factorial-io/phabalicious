@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.16](https://github.com/factorial-io/phabalicious/compare/3.8.15...3.8.16) (2023-02-17)
+
+
+### Bug Fixes
+
+* config autocomplete won't autocomplete hidden configs anymore ([9d2dc2b](https://github.com/factorial-io/phabalicious/commit/9d2dc2b7576c4a627cfa40b8d6ebe62c27be304d))
+* Fix some deprecation warnings for PHP 8.2 ([0419a0e](https://github.com/factorial-io/phabalicious/commit/0419a0e56b9781be6dce77a3764540fe22bc7124))
+* Remove local docker images for script-execution-context docker-compose-run ([49fc651](https://github.com/factorial-io/phabalicious/commit/49fc651c6859f0dc1e45530a6be63f516622a61f))
+
 ### [3.8.15](https://github.com/factorial-io/phabalicious/compare/3.8.14...3.8.15) (2022-11-11)
 
 
