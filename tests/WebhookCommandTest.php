@@ -97,7 +97,8 @@ class WebhookCommandTest extends PhabTestCase
 
         $output = $commandTester->getDisplay();
 
-        $this->assertStringContainsString('"args":{"q":"hello-from-commandline"}', $output);
+        $json = json_decode($output);
+        $this->assertEquals("hello-from-commandline", $json->args->q);
     }
 
     public function testTaskSpecificWebhooks()
