@@ -14,9 +14,6 @@
     "doctrine/instantiator": {
         "version": "1.1.0"
     },
-    "drupal/coder": {
-        "version": "8.3.12"
-    },
     "graze/data-structure": {
         "version": "2.1.0"
     },
@@ -85,9 +82,6 @@
     },
     "phpspec/prophecy-phpunit": {
         "version": "v2.0.1"
-    },
-    "phpstan/phpdoc-parser": {
-        "version": "1.2.0"
     },
     "phpstan/phpstan": {
         "version": "0.11.9"
@@ -184,12 +178,6 @@
     },
     "sebastian/version": {
         "version": "2.0.1"
-    },
-    "sirbrillig/phpcs-variable-analysis": {
-        "version": "v2.11.0"
-    },
-    "slevomat/coding-standard": {
-        "version": "7.0.18"
     },
     "squizlabs/php_codesniffer": {
         "version": "3.6",
