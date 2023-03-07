@@ -12,12 +12,12 @@ use Phabalicious\Validation\ValidationService;
 
 class ScriptExecutionContext
 {
-    const DOCKER_IMAGE = 'docker-image';
-    const DOCKER_COMPOSE_RUN = 'docker-compose-run';
-    const HOST = 'host';
-    const KUBE_CTL = 'kubectl';
+    public const DOCKER_IMAGE = 'docker-image';
+    public const DOCKER_COMPOSE_RUN = 'docker-compose-run';
+    public const HOST = 'host';
+    public const KUBE_CTL = 'kubectl';
 
-    const VALID_CONTEXTS = [
+    public const VALID_CONTEXTS = [
         self::DOCKER_IMAGE,
         self::DOCKER_COMPOSE_RUN,
         self::HOST,
@@ -108,9 +108,9 @@ class ScriptExecutionContext
                 $shell->cd($this->dockerComposeRootDir);
                 $this->applyEnvironmentToHostShell($shell);
                 if ($this->getArgument('pullLatestImage', true)) {
-                    $shell->run($this->getDockerComposeCmd('pull'), false, true);
+                    $shell->run($this->getDockerComposeCmd('pull', '--quiet'), false, true);
                 }
-                $shell->run($this->getDockerComposeCmd('build'), false, true);
+                $shell->run($this->getDockerComposeCmd('build', '--quiet'), false, true);
                 $this->shell = $shell->startSubShell($this->getDockerComposeCmdAsArray(
                     'run',
                     $this->getArgument('service'),
