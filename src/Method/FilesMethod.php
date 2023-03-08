@@ -7,6 +7,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\Utilities;
 
 class FilesMethod extends BaseMethod implements MethodInterface
 {
@@ -57,6 +58,9 @@ class FilesMethod extends BaseMethod implements MethodInterface
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($config, $context);
         $target_file_path = $context->get('destinationFile', false) ?: $config['rootFolder'] . '/' . basename($source);
+        if ($target_file_path[0] !== '/') {
+            $target_file_path = Utilities::resolveRelativePaths($config['rootFolder'] . '/' . $target_file_path);
+        }
         $shell->putFile($source, $target_file_path, $context, true);
         $context->setResult('targetFile', $target_file_path);
     }
@@ -64,6 +68,9 @@ class FilesMethod extends BaseMethod implements MethodInterface
     public function getFile(HostConfig $config, TaskContextInterface $context)
     {
         $source = $context->get('sourceFile', false);
+        if ($source[0] !== '/') {
+            $source = Utilities::resolveRelativePaths($config['rootFolder'] . '/' . $source);
+        }
         $dest = $context->get('destFile', false);
         if (!$source || !$dest) {
             $context->setResult('exitCode', 1);
@@ -72,6 +79,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($config, $context);
         $shell->getFile($source, $dest, $context, true);
+        $context->setResult('sourceFile', $source);
         $context->setResult('targetFile', $dest);
     }
 

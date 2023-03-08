@@ -1,0 +1,15 @@
+name: files-tests
+
+
+hosts:
+  base:
+    type: dev
+    needs:
+      - local
+      - files
+
+  hostA:
+    rootFolder: /var/www/html
+    inheritsFrom: base
+    branch: master
+
