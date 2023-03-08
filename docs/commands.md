@@ -357,7 +357,14 @@ phab --config=<config> put:file <path-to-local-file>
 phab --config=<config> put:file <path-to-local-file> --destination <remote-destination>
 ```
 
-Copy a local file to the configured root-folder of a remote configuration, if `remote-destination` is not given as an option.
+Copies a local `path-to-local-file` to a remote instance specified by the configuration. You can
+specify the full path and filename by providing the `--destination` option,
+relative paths are relative to the rootFolder-config of the remote instance.
+
+Per default phab copies the file to the specified `rootFolder` from the given
+configuration and it keeps the filename.
+
+Existing files will be overridden without warning.
 
 **Configuration**
 

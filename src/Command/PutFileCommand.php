@@ -17,7 +17,7 @@ class PutFileCommand extends BaseCommand
         parent::configure();
         $this
             ->setName('put:file')
-            ->setDescription('Put a file to a remote instance')
+            ->setDescription('Put a file into a remote instance')
             ->setHelp('Copies a local file to a remote instance');
         $this->addArgument(
             'file',
@@ -29,10 +29,29 @@ class PutFileCommand extends BaseCommand
             'destination',
             'd',
             InputOption::VALUE_OPTIONAL,
-            'The target destination to copy the file to'
+            'The target destination to copy the file to, provide a full path including the filename.'
         );
 
         $this->setAliases(['putFile']);
+        $this->setHelp('
+Copies a local <info>file</info> to a remote instance specified by the configuration. You can
+specify the full path and filename by providing the <info>--destination</info> option,
+relative paths are relative to the rootFolder-config of the remote instance.
+
+Per default phab copies the file to the specified <info>rootFolder</info> from the given
+configuration and it keeps the filename.
+
+Existing files will be overridden without warning.
+
+Examples:
+<info>phab -cconfig put:file foobar.txt</info>
+  Will copy foobar.txt to the root folder as described in the config of the
+  remote instance
+
+<info>phab -cconfig put:file foobar.txt --destination=/var/www/html/index.html</info>
+  Will copy foobar.txt to /var/ww/html/index.html on the remote instance
+  described by the given config.
+        ');
     }
 
     /**
