@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.17](https://github.com/factorial-io/phabalicious/compare/3.8.16...3.8.17) (2023-03-14)
+
+
+### Bug Fixes
+
+* put/getFile will resolve relative paths before copying the actual file ([98a7be2](https://github.com/factorial-io/phabalicious/commit/98a7be2ca45b186500617f261bab057233c08c6f))
+* Run docker-compose in quiet mode for script execution context ([ab76c83](https://github.com/factorial-io/phabalicious/commit/ab76c83a3b60b7ac31c94f25043e8d9b716d8f4a))
+
 ### [3.8.16](https://github.com/factorial-io/phabalicious/compare/3.8.15...3.8.16) (2023-02-17)
 
 
