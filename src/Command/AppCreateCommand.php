@@ -125,7 +125,7 @@ Examples:
         $context->set('installDir', $context->getResult('installDir'));
         $context->clearResults();
 
-        if ($app_exists) {
+        if ($app_exists && !$this->hasForceOption($input)) {
             $this->configuration->getLogger()->notice('Existing app found, deploying instead!');
 
             $stages = $this->configuration->getSetting(

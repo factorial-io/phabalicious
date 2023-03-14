@@ -202,13 +202,12 @@ class GitMethod extends BaseMethod implements MethodInterface
             $shell
         );
 
-        $shell->run(sprintf(
-            '#!git clone -b %s %s %s',
-            $host_config['branch'],
-            $repository,
-            $install_dir
-        ));
-
+        $shell->run(sprintf('mkdir -p "%s"', $install_dir));
+        $shell->cd($install_dir);
+        $shell->run('#!git init .');
+        $shell->run(sprintf('#!git remote add origin %s', $repository));
+        $shell->run('#!git fetch origin');
+        $shell->run(sprintf('#!git checkout -f -t origin/%s', $host_config['branch']));
 
         if (!$host_config['ignoreSubmodules']) {
             $shell->cd($install_dir);
