@@ -222,8 +222,6 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $get_structure_cmd[] = "--opt";
         $get_structure_cmd[] = "-Q";
         $get_structure_cmd[] = "--no-data";
-        $get_structure_cmd[] = ">";
-        $get_structure_cmd[] = $backup_file_name;
 
         $get_data_cmd = $this->getMysqlCommand($host_config, $context, 'mysqlDump', $data, true);
         $get_data_cmd[] = "--no-autocommit";
@@ -235,8 +233,6 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         foreach ($context->getConfigurationService()->getSetting('sqlSkipTables', []) as $table_name) {
             $get_data_cmd[] = sprintf("--ignore-table %s.%s", $data['name'], $table_name);
         }
-        $get_data_cmd[] = ">>";
-        $get_data_cmd[] = $backup_file_name;
 
         if (!$shell->exists(dirname($backup_file_name))) {
             $shell->run(sprintf('mkdir -p %s', dirname($backup_file_name)));
@@ -245,12 +241,24 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $shell->run(sprintf('rm -f %s', $backup_file_name));
 
 
-        $shell->run(implode(" ", $get_structure_cmd), false, true);
-        $shell->run(implode(" ", $get_data_cmd), false, true);
+        $get_structure_cmd_str = implode(" ", $get_structure_cmd);
+        $get_data_cmd_str = implode(" ", $get_data_cmd);
 
         if ($zipped_backup) {
-            $shell->run(sprintf('#!gzip -f %s', $backup_file_name));
             $backup_file_name .= '.gz';
+            $shell->run(sprintf(
+                '( %s && %s ) | #!gzip > %s',
+                $get_structure_cmd_str,
+                $get_data_cmd_str,
+                $backup_file_name
+            ));
+        } else {
+            $shell->run(sprintf(
+                '( %s && %s ) > %s',
+                $get_structure_cmd_str,
+                $get_data_cmd_str,
+                $backup_file_name
+            ));
         }
         $shell->run('set +o pipefail');
         $shell->popWorkingDir();
