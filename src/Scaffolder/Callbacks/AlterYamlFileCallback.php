@@ -49,7 +49,7 @@ class AlterYamlFileCallback extends BaseCallback implements CallbackInterface
             function ($file_name, $data) use ($context) {
                 $context->getShell()->putFileContents(
                     $file_name,
-                    Yaml::dump($data, 10, 2),
+                    Yaml::dump($data, 10, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE),
                     $context
                 );
             }
