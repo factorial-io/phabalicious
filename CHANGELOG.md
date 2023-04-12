@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.18](https://github.com/factorial-io/phabalicious/compare/3.8.17...3.8.18) (2023-04-12)
+
+
+### Bug Fixes
+
+* Allow to disable configuration management for drupal based projects ([36b18c7](https://github.com/factorial-io/phabalicious/commit/36b18c7196375be38564ed190d1c18beff2a5883))
+* alter_yaml_file respects empty arrays in yaml ([10d8540](https://github.com/factorial-io/phabalicious/commit/10d854053525ac0f27ee52a0f20469982bb6aeea))
+* use shell-piping to get rid of temporary files when getting a dump ([9abb2d1](https://github.com/factorial-io/phabalicious/commit/9abb2d1724d3abc7c59088802c6f2040da0d4e0c))
+
 ### [3.8.17](https://github.com/factorial-io/phabalicious/compare/3.8.16...3.8.17) (2023-03-14)
 
 
