@@ -625,12 +625,15 @@ class DrushMethod extends BaseMethod implements MethodInterface
         HostConfig $host_config,
         TaskContextInterface $context
     ) {
+        $config_management_enabled = !empty($host_config['configurationManagement']);
         $shell->pushWorkingDir($host_config['siteFolder']);
         $settings_file_exists = $shell->exists($host_config['siteFolder'] . '/settings.php');
-        $config_dir_exists = $shell->exists($this->getConfigSyncDirectory($host_config) . '/core.extension.yml');
+        $config_dir_exists =
+            $config_management_enabled
+            && $shell->exists($this->getConfigSyncDirectory($host_config) . '/core.extension.yml');
         $config_used = false;
 
-        if ($settings_file_exists) {
+        if ($config_management_enabled && $settings_file_exists) {
             $result = $shell->run(
                 sprintf(
                     '#!grep -q "^\$settings\[\'config_sync_directory\'] = \'%s/" settings.php',
@@ -646,12 +649,18 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         $supported_by_drush = $host_config['drushVersion'] >= 9;
 
-        $this->logger->debug(sprintf("Settings file exists: %s", $settings_file_exists ? "TRUE" : "FALSE"));
         $this->logger->debug(sprintf(
-            "Configuration dir %s exists: %s",
-            $this->getConfigSyncDirectory($host_config),
-            $config_dir_exists ? "TRUE" : "FALSE"
+            "Configuration management disabled: %s",
+            $config_management_enabled ? "TRUE" : "FALSE"
         ));
+        $this->logger->debug(sprintf("Settings file exists: %s", $settings_file_exists ? "TRUE" : "FALSE"));
+        if ($config_management_enabled) {
+            $this->logger->debug(sprintf(
+                "Configuration dir %s exists: %s",
+                $this->getConfigSyncDirectory($host_config),
+                $config_dir_exists ? "TRUE" : "FALSE"
+            ));
+        }
         $this->logger->debug(sprintf("Configuration used: %s", $config_used ? "TRUE" : "FALSE"));
         $this->logger->debug(sprintf("Drush supports config import: %s", $supported_by_drush ? "TRUE" : "FALSE"));
 
