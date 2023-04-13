@@ -42,8 +42,8 @@ class QuestionFactory
         }
 
         if (is_null($value)) {
-            if (!empty($question_data['help'])) {
-                $io->comment($question_data['help']);
+            if ($help_msg = $question_wrapper->getHelp()) {
+                $io->comment($help_msg);
             }
             $value = $question_wrapper->ask($io);
         }

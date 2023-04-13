@@ -229,6 +229,10 @@ class Scaffolder
             $tokens = Utilities::mergeData($this->readTokens($root_folder, $tokens['name']), $tokens);
         }
 
+        if ($data['about']) {
+            $io->block($data['about'], null, 'fg=yellow', '  ', true);
+        }
+
         $questions = !empty($data['questions']) ? $data['questions'] : [];
         $tokens = $this->askQuestions($questions, $context, $tokens, $options);
         if (!empty($data['variables'])) {

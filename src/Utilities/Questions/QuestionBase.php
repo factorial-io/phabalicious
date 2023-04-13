@@ -31,4 +31,9 @@ abstract class QuestionBase implements QuestionInterface
         }
         return $value;
     }
+
+    public function getHelp()
+    {
+        return $this->data['help'] ?? false;
+    }
 }

@@ -12,6 +12,8 @@ interface QuestionInterface
     public function setData($question_data): ValidationService;
 
     public function ask(SymfonyStyle $io);
-    
+
     public function validate($value);
+
+    public function getHelp();
 }
