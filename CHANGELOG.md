@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.19](https://github.com/factorial-io/phabalicious/compare/3.8.18...3.8.19) (2023-04-13)
+
+
+### Features
+
+* Allow an about section for scaffolding files ([8db3f69](https://github.com/factorial-io/phabalicious/commit/8db3f690cf86552cbc69f98df4cd5584368e5981))
+
+
+### Bug Fixes
+
+* Do not validate empty values for questions ([77f5190](https://github.com/factorial-io/phabalicious/commit/77f519092410d24b88ed070797bc674c11b31b53))
+
 ### [3.8.18](https://github.com/factorial-io/phabalicious/compare/3.8.17...3.8.18) (2023-04-12)
 
 
