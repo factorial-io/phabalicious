@@ -24,7 +24,7 @@ abstract class QuestionBase implements QuestionInterface
 
     public function validate($value)
     {
-        if (!empty($this->data['validation'])) {
+        if (!empty($value) && !empty($this->data['validation'])) {
             if (!preg_match($this->data['validation'], $value)) {
                 throw new \InvalidArgumentException($this->data['error'] . ': ' . $value);
             }

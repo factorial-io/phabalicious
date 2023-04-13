@@ -229,7 +229,7 @@ class Scaffolder
             $tokens = Utilities::mergeData($this->readTokens($root_folder, $tokens['name']), $tokens);
         }
 
-        if ($data['about']) {
+        if ($data->has('about')) {
             $io->block($data['about'], null, 'fg=yellow', '  ', true);
         }
 
