@@ -334,8 +334,12 @@ class K8sMethod extends BaseMethod implements MethodInterface
 
         $root_folder = $this->ensureShell($host_config, $context);
         $scaffold_url = $kube_config['scaffolder']['baseUrl'] . '/' . $kube_config['scaffolder']['template'];
-        if ($scaffold_url[0] == '.') {
+        if ($scaffold_url[0] === '.') {
+            $orig_scaffold_url = $scaffold_url;
             $scaffold_url = realpath($scaffold_url);
+            if (!$scaffold_url) {
+                throw new \RuntimeException(sprintf('Could not find scaffold file at `%s`!', $orig_scaffold_url));
+            }
         }
         $scaffolder = new Scaffolder($configuration);
 

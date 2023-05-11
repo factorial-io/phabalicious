@@ -95,6 +95,7 @@ class Scaffolder
         $is_remote = false;
         $root_path = $options->getRootPath();
         if (!$data = $options->getScaffoldDefinition()) {
+            $orig_url = $url;
             $root_path = dirname($url);
             try {
                 if (!Utilities::isHttpUrl($url)) {
@@ -111,7 +112,12 @@ class Scaffolder
                     $is_remote = true;
                 }
             } catch (ParseException $e) {
-                throw new YamlParseException(sprintf("Could not parse %s! Working dir: %s", $url, getcwd()), 0, $e);
+                throw new YamlParseException(sprintf(
+                    "Could not parse `%s` (%s)! Working dir: %s",
+                    $orig_url,
+                    $url,
+                    getcwd()
+                ), 0, $e);
             }
             if (!$data) {
                 throw new InvalidArgumentException('Could not read yaml from ' . $url);
