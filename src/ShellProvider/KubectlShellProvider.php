@@ -46,9 +46,27 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
     {
         parent::validateConfig($config, $errors);
 
+        if (!$config->has('kubectlVersion')) {
+            $version = $this->getKubectlClientVersion(
+                $config,
+                $config->get('kubectlExecutable', 'kubectl')->getValue()
+            );
+            $this->logger->info(sprintf("Found kubectl with version %d.%d", $version['major'], $version['minor']));
+            $config->set('kubectlVersion', new Node($version, 'kubectl version info'));
+        }
+
+
         $validation = new ValidationService($config, $errors, 'host-config');
         $validation->hasKeys(['kube' => 'The kubernetes config to use']);
         $validation->isArray('kubectlOptions', 'A set of key value pairs to pass as options to kubectl');
+
+        if ($validation->hasKey('kubectlVersion', 'kubectl version info missing')) {
+            $version_validation = new ValidationService($config['kubectlVersion'], $errors, 'host.kubectlVersion');
+            $version_validation->hasKeys([
+                'minor' => 'minor version number of kubectl',
+                'major' => 'major version number of kubectl'
+                ]);
+        }
 
         if (!$errors->hasErrors()) {
             $validation = new ValidationService($config['kube'], $errors, 'host:kube');
@@ -152,6 +170,17 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         return $command;
     }
 
+    private function kubectlCpSupportsRetries(): bool
+    {
+
+        if ($this->hostConfig->getProperty('kubectlVersion.major', 1)  >= 1 &&
+            ($this->hostConfig->getProperty('kubectlVersion.minor', 0)  >= 23)) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @param string $source
      * @param string $dest
@@ -164,6 +193,9 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         }
         $command = $this->getKubeCmd();
         $command[] = 'cp';
+        if ($this->kubectlCpSupportsRetries()) {
+            $command[] = '--retries=999';
+        }
         $command[] = trim($source);
         $command[] = $this->hostConfig['kube']['podForCli'] . ':' . trim($dest);
 
@@ -183,6 +215,9 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         }
         $command = $this->getKubeCmd();
         $command[] = 'cp';
+        if ($this->kubectlCpSupportsRetries()) {
+            $command[] = '--retries=999';
+        }
         $command[] = $this->hostConfig['kube']['podForCli'] . ':' . trim($source);
         $command[] = trim($dest);
 
@@ -233,5 +268,26 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         $command[] = sprintf('%d:%d', $public_port, $port);
 
         return $this->runProcess($command, $context, true, true);
+    }
+
+    private function getKubectlClientVersion(Node $config, string $kubectl_command): array
+    {
+        $fallback_version = [ "major" => 1, "minor" => 0 ];
+        $command = self::getKubectlCmd($config, $kubectl_command);
+        $command[] = 'version';
+        $command[] = '--output=json';
+
+        $process = new Process($command);
+        $process->setTimeout(60*60);
+        $process->run();
+        if ($process->getExitCode() !== 0) {
+            $this->logger->log($this->errorLogLevel->get(), $process->getErrorOutput());
+            return $fallback_version;
+        }
+
+        $output = $process->getOutput();
+
+        $client_version = json_decode($output, true, 512, JSON_THROW_ON_ERROR);
+        return $client_version['clientVersion'] ?? $fallback_version;
     }
 }
