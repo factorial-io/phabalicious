@@ -34,17 +34,16 @@ class YarnMethod extends RunCommandBaseMethod
         $service->hasKey('yarn.buildCommand', 'build command to run with yarn');
     }
 
-    protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command): string
-    {
-        $production = !in_array($host_config['type'], array('dev', 'test'));
-        $command .= ' --no-interaction  --silent';
-
-        return $command;
-    }
-
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
+     *
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     public function resetPrepare(HostConfig $host_config, TaskContextInterface $context)
     {
