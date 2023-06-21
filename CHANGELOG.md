@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.21](https://github.com/factorial-io/phabalicious/compare/3.8.20...3.8.21) (2023-06-21)
+
+
+### Bug Fixes
+
+* Add support for kubectl --retries flag to circumvent failing filetransfers ([a0d1ee1](https://github.com/factorial-io/phabalicious/commit/a0d1ee1c79b5ed8b835b220647f4c05900cda7b9))
+* Do not add command line args for yarn and npm to increase compatibility ([1c5821a](https://github.com/factorial-io/phabalicious/commit/1c5821afe37eb643a13954a0fdfd3343fe21e1fb))
+
 ### [3.8.20](https://github.com/factorial-io/phabalicious/compare/3.8.19...3.8.20) (2023-05-12)
 
 
