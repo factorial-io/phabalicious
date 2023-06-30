@@ -459,20 +459,28 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     public function isContainerRunning(HostConfig $docker_config, $container_name): bool
     {
+        $this->logger->debug(sprintf('Checking if container %s is running...', $container_name));
         $shell = $docker_config->shell();
         $scoped_loglevel = new ScopedLogLevel($shell, LogLevel::DEBUG);
-        $result = $shell->run(sprintf(
-            '#!docker inspect -f {{.State.Running}} %s',
-            $container_name
-        ), true);
+        $timeout = time() + 2;
+        $is_running = false;
+        while ($timeout > time() && !$is_running) {
+            $result = $shell->run(sprintf(
+                '#!docker inspect -f {{.State.Running}} %s',
+                $container_name
+            ), true);
 
-        $output = $result->getOutput();
-        $last_line = array_pop($output);
-        if (strtolower(trim($last_line)) !== 'true') {
-            return false;
+            $output = $result->getOutput();
+            $last_line = array_pop($output);
+            if (strtolower(trim($last_line)) === 'true') {
+                $is_running = true;
+            }
+            if (!$is_running) {
+                usleep(10 * 1000); // sleep for 0.1s
+            }
         }
 
-        return true;
+        return $is_running;
     }
 
     /**
