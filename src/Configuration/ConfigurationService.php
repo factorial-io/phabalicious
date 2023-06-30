@@ -646,7 +646,7 @@ class ConfigurationService
    * @throws BlueprintTemplateNotFoundException
    * @throws FabfileNotReadableException
    */
-    public function getHostConfigFromBlueprint(string $blueprint, string $identifier)
+    public function getHostConfigFromBlueprint(string $blueprint, string $identifier, $skip_host_validation = false)
     {
         $cid = 'blueprint:' . $blueprint . ':' . $identifier;
 
@@ -664,7 +664,9 @@ class ConfigurationService
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
         }
-        $data = $this->validateHostConfig($data['configName'], $data);
+        if (!$skip_host_validation) {
+            $data = $this->validateHostConfig($data['configName'], $data);
+        }
 
         $this->cache['host:' . $data['configName']] = $data;
         $this->cache[$cid] = $data;
@@ -699,7 +701,7 @@ class ConfigurationService
             'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
-            'supportsInstalls' => $type != HostType::PROD,
+            'supportsInstalls' => $type !== HostType::PROD,
             'supportsCopyFrom' => true,
             'backupBeforeDeploy' => in_array($type, [HostType::STAGE, HostType::PROD]),
             'tmpFolder' => '/tmp',
@@ -1011,11 +1013,12 @@ class ConfigurationService
         }
         $add_data = $this->getHostConfigFromBlueprint(
             $data['inheritFromBlueprint']['config'],
-            $data['inheritFromBlueprint']['variant']
+            $data['inheritFromBlueprint']['variant'],
+            true
         );
         unset($data['inheritFromBlueprint']);
 
-        $data = $data->baseOntop($add_data->getData());
+        $data = $data->baseOntop($add_data);
         $data['configName'] = $config_name;
 
         return $data;
