@@ -169,6 +169,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $this->runTaskImpl($host_config, $context, $task, false);
         $this->runTaskImpl($host_config, $context, $task . 'Finished', true);
 
+        // As docker methods might kill the current running application we need to
+        // make sure that we terminate the shell.
+        if ($host_config->shell()) {
+            $host_config->shell()->terminate();
+        }
+
+
         $context->io()->success(sprintf('Task `%s` executed successfully!', $task));
     }
 
