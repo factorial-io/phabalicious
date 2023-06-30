@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.22](https://github.com/factorial-io/phabalicious/compare/3.8.21...3.8.22) (2023-06-30)
+
+
+### Bug Fixes
+
+* Remove double validation for inheritFromBlueprint ([f767d2a](https://github.com/factorial-io/phabalicious/commit/f767d2a73c71f3301110f1f1bdbaf6d06074f5c2))
+* Terminate host shell after a docker command to fix some edge cases ([6ec2247](https://github.com/factorial-io/phabalicious/commit/6ec2247eedad700ccfc530364506b9143e30244c))
+* Wait up to 2 secs until docker container is available ([a16fcfd](https://github.com/factorial-io/phabalicious/commit/a16fcfd90f9b27f590ff1f7117a3466c6af92089))
+
 ### [3.8.21](https://github.com/factorial-io/phabalicious/compare/3.8.20...3.8.21) (2023-06-21)
 
 
