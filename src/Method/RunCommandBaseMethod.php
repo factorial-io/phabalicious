@@ -208,6 +208,9 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $context->setCommandResult($result);
 
         $shell->popWorkingDir();
+        if ($result && $result->failed()) {
+            $result->throwException(sprintf('Command `%s` failed!', implode(' ', $commands)));
+        }
     }
 
     protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command): string
