@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [3.8.23](https://github.com/factorial-io/phabalicious/compare/3.8.22...3.8.23) (2023-07-14)
 
+### Bug fixes
+
+ * Throw an exception, when runCommand (npm, yarn or php artisan) returns an error. Fixes #309
+
 ### [3.8.22](https://github.com/factorial-io/phabalicious/compare/3.8.21...3.8.22) (2023-06-30)
 
 
