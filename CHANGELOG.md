@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.24](https://github.com/factorial-io/phabalicious/compare/3.8.23...3.8.24) (2023-07-17)
+
+
+### Bug Fixes
+
+* Fix faulty test for additionalNeeds ([2892675](https://github.com/factorial-io/phabalicious/commit/28926756898acf6b5234b59b33f1ab449d244ce8))
+* Merge `additional_needs` properly with `needs` (fixes [#311](https://github.com/factorial-io/phabalicious/issues/311)) ([606202e](https://github.com/factorial-io/phabalicious/commit/606202e2c643ce5493b5ddf111d6e4cd804df345))
+
 ### [3.8.23](https://github.com/factorial-io/phabalicious/compare/3.8.22...3.8.23) (2023-07-14)
 
 ### Bug fixes
