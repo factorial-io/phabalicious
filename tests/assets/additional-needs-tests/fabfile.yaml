@@ -2,7 +2,7 @@ name: additional-needs-test
 
 
 needs:
-  - scripts
+  - script
 
 hosts:
   test:

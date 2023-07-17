@@ -719,8 +719,11 @@ class ConfigurationService
             }
         }
         if ($data->has('additionalNeeds')) {
-            $data->get('additionalNeeds')->ensureArray();
-            $data->get('needs')->merge($data->get('additionalNeeds'));
+            $additional_needs = $data->get('additionalNeeds');
+            $additional_needs->ensureArray();
+            foreach ($additional_needs as $item) {
+                $data->get('needs')->push($item);
+            }
         }
 
         $data = $this->applyDefaults($data, new Node($defaults, 'host defaults'), $this->disallowDeepMergeForKeys);
