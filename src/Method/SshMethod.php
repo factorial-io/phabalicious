@@ -37,7 +37,9 @@ class SshMethod extends BaseMethod implements MethodInterface
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
     {
-        // Implementation found in SShSellProvider.
+        // Reuse implementation found in SShSellProvider.
+        $provider = new SshShellProvider($this->logger);
+        $provider->validateConfig($config, $errors);
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
