@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.25](https://github.com/factorial-io/phabalicious/compare/3.8.24...3.8.25) (2023-07-19)
+
+
+### Bug Fixes
+
+* Validate ssh config properly, even when not using a SshShellProvider ([2995bf5](https://github.com/factorial-io/phabalicious/commit/2995bf57dd671514c9d2a14dc8f11071500ed5ed))
+
 ### [3.8.24](https://github.com/factorial-io/phabalicious/compare/3.8.23...3.8.24) (2023-07-17)
 
 
