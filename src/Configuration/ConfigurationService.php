@@ -170,10 +170,6 @@ class ConfigurationService
 
         $data = $this->applyDefaults($data, new Node($defaults, 'global defaults'), $disallow_deep_merge_for_keys);
 
-        /**
-         * @var \Phabalicious\Method\MethodInterface $method
-         */
-
         if ($this->methods) {
             foreach ($this->methods->all() as $method) {
                 $disallow_deep_merge_for_keys = array_merge(
@@ -675,16 +671,17 @@ class ConfigurationService
         return $data;
     }
 
-  /**
-   * @param string $config_name
-   * @param array $data
-   *
-   * @return HostConfig
-   * @throws MismatchedVersionException
-   * @throws ShellProviderNotFoundException
-   * @throws ValidationFailedException
-   * @throws FabfileNotReadableException
-   */
+    /**
+     * @param string $config_name
+     * @param \Phabalicious\Configuration\Storage\Node $data
+     *
+     * @return HostConfig
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws \Phabalicious\Exception\ValidationFailedException
+     */
     private function validateHostConfig($config_name, Node $data)
     {
         $data = $this->resolveInheritance($data, $this->hosts);
@@ -727,9 +724,6 @@ class ConfigurationService
         }
 
         $data = $this->applyDefaults($data, new Node($defaults, 'host defaults'), $this->disallowDeepMergeForKeys);
-        /**
-         * @var \Phabalicious\Method\MethodInterface $method
-         */
         $used_methods = $this->methods->getSubset($data->get('needs')->asArray());
 
         // Give the referenced methods a chance to declare dependencies to
@@ -784,7 +778,7 @@ class ConfigurationService
         // Validate data against used methods.
 
         foreach ($used_methods as $method) {
-            $method->validateConfig($data, $validation_errors);
+            $method->validateConfig($this, $data, $validation_errors);
         }
 
 
@@ -995,13 +989,14 @@ class ConfigurationService
 
     /**
      * @param string $config_name
-     * @param array $data
-     * @return array
-     * @throws BlueprintTemplateNotFoundException
-     * @throws FabfileNotReadableException
-     * @throws MismatchedVersionException
-     * @throws ShellProviderNotFoundException
-     * @throws ValidationFailedException
+     * @param \Phabalicious\Configuration\Storage\Node $data
+     *
+     * @return \Phabalicious\Configuration\Storage\Node
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
     protected function inheritFromBlueprint(string $config_name, Node $data): Node
     {
@@ -1125,7 +1120,7 @@ class ConfigurationService
     }
 
     /**
-     * @param string|bool $inheritanceBaseUrl
+     * @param string $inheritanceBaseUrl
      *
      * @return ConfigurationService
      */

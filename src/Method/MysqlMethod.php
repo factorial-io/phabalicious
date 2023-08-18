@@ -39,7 +39,9 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
     }
 
     /**
-     * @return string[][]
+     * @param \Phabalicious\Configuration\ConfigurationService $configuration
+     *
+     * @return \Phabalicious\Configuration\Storage\Node
      */
     public function getGlobalSettings(ConfigurationService $configuration): Node
     {

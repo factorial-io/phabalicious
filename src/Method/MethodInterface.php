@@ -27,7 +27,11 @@ interface MethodInterface
 
     public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors);
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors);
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    );
 
     public function alterConfig(ConfigurationService $configuration_service, Node $data);
 

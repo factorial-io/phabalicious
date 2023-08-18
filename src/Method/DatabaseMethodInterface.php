@@ -16,7 +16,7 @@ interface DatabaseMethodInterface
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
      *
-     * @return mixed
+     * @return ?CommandResult
      */
     public function install(HostConfig $host_config, TaskContextInterface $context): ?CommandResult;
 
@@ -64,7 +64,7 @@ interface DatabaseMethodInterface
      * @param ShellProviderInterface $shell
      * @param array $data
      *
-     * @return mixed
+     * @return CommandResult
      */
     public function dropDatabase(
         HostConfig $host_config,

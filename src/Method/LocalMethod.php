@@ -36,12 +36,16 @@ class LocalMethod extends BaseMethod implements MethodInterface
         return new Node($result, $this->getName() . ' method defaults');
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
+
         $validation = new ValidationService($config, $errors, 'host-config');
         $validation->checkForValidFolderName('rootFolder');
         $validation->deprecate([
-            'runLocally' => 'Please add `local` to your `needs`!'
+        'runLocally' => 'Please add `local` to your `needs`!'
         ]);
     }
 

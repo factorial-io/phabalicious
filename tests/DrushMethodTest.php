@@ -96,7 +96,7 @@ class DrushMethodTest extends PhabTestCase
             'configName' => 'test'
         ];
         $errors = new ValidationErrorBag();
-        $this->method->validateConfig(new Node($host_config, ''), $errors);
+        $this->method->validateConfig($this->configurationService, new Node($host_config, ''), $errors);
 
         $this->assertEquals(1, count($errors->getWarnings()));
         $this->assertStringContainsString('drush7', $errors->getWarnings()['needs']);

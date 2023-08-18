@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Method;
 
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -24,14 +25,19 @@ class NpmMethod extends RunCommandBaseMethod
         ]);
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
-        parent::validateConfig($config, $errors);
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
+
+        parent::validateConfig($configuration_service, $config, $errors);
+
 
         $service = new ValidationService($config, $errors, 'NPM');
         $service->hasKey('npm.buildCommand', 'build command to run with npm');
         $service->deprecate([
-            "npmBuildCommand" => "please change to `npm.buildCommand`",
+        "npmBuildCommand" => "please change to `npm.buildCommand`",
         ]);
     }
 

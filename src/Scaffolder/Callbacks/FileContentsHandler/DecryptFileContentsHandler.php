@@ -14,8 +14,8 @@ class DecryptFileContentsHandler extends BaseFileContentsHandler
     private $secret;
 
     /**
-   * @param \Twig\Environment $twig
-   */
+     * @param string $secret
+     */
     public function __construct(string $secret)
     {
         $this->secret = $secret;

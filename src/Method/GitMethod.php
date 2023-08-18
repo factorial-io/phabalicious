@@ -50,8 +50,12 @@ class GitMethod extends BaseMethod implements MethodInterface
         ], $this->getName() . ' method defaults');
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
+
         $validation = new ValidationService($config, $errors, sprintf('host-config: `%s`', $config['configName']));
         $validation->hasKey('gitRootFolder', 'gitRootFolder should point to your gits root folder.');
         $validation->checkForValidFolderName('gitRootFolder');

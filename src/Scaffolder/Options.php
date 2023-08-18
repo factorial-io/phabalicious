@@ -32,7 +32,7 @@ class Options extends CallbackOptions
     /** @var ShellProviderInterface */
     protected $shell = null;
 
-    /** @var array */
+    /** @var Node */
     protected $definition = null;
 
     protected $rootPath = null;
@@ -105,7 +105,7 @@ class Options extends CallbackOptions
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getSkipSubfolder() : bool
     {
@@ -245,7 +245,7 @@ class Options extends CallbackOptions
     }
 
     /**
-     * @return null|array
+     * @return null|Node
      */
     public function getScaffoldDefinition(): ?Node
     {
@@ -253,7 +253,7 @@ class Options extends CallbackOptions
     }
 
     /**
-     * @param array $definition
+     * @param Node $definition
      *
      * @return Options
      */
@@ -269,7 +269,7 @@ class Options extends CallbackOptions
     }
 
     /**
-     * @param mixed $twigLoaderBase
+     * @param $root_path
      *
      * @return Options
      */

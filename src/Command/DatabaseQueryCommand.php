@@ -46,5 +46,6 @@ class DatabaseQueryCommand extends DatabaseSubCommand
                 $output->writeln($line);
             }
         }
+        return $this->getContext()->getResult('exitCode', 0);
     }
 }

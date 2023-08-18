@@ -37,7 +37,7 @@ class TunnelData implements TunnelDataInterface
     }
 
     /**
-     * @param mixed $state
+     * @param string $state
      * @return TunnelData
      */
     public function setState(string $state)

@@ -23,6 +23,8 @@ interface PasswordManagerInterface
 
     public function setSecret($secret_name, $value);
 
+    public function getSecret($secret_name);
+
     public function getFileContentFrom1Password($token_id, $vault_id, $item_id);
 
     public function obfuscateSecrets(string $message): string;

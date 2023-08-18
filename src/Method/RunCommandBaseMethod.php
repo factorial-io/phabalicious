@@ -93,13 +93,17 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         ]);
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
+
         $validation = new ValidationService($config, $errors, 'host-config');
         $prefix = $this->getConfigPrefix();
         $validation->deprecate([
-            "{$prefix}RootFolder" => "please change to `{$prefix}.rootFolder`",
-            "{$prefix}RunContext" => "please change to `{$prefix}.context`",
+        "{$prefix}RootFolder" => "please change to `{$prefix}.rootFolder`",
+        "{$prefix}RunContext" => "please change to `{$prefix}.context`",
         ]);
         $args = $this->getRootFolderKey();
         $validation->hasKey($args, sprintf('%s should point to your root folder for %s.', $args, $this->getName()));
@@ -109,15 +113,15 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         $validation->isOneOf(
             $run_context_key,
             [
-                self::HOST_CONTEXT,
-                self::DOCKER_HOST_CONTEXT,
-                self::DOCKER_IMAGE_CONTEXT,
-                self::DOCKER_IMAGE_ON_DOCKER_HOST_CONTEXT
+            self::HOST_CONTEXT,
+            self::DOCKER_HOST_CONTEXT,
+            self::DOCKER_IMAGE_CONTEXT,
+            self::DOCKER_IMAGE_ON_DOCKER_HOST_CONTEXT
             ]
         );
 
         if ($config->getProperty($run_context_key) == self::DOCKER_HOST_CONTEXT
-            && !in_array('docker', $config['needs'])
+        && !in_array('docker', $config['needs'])
         ) {
             $errors->addError($run_context_key, sprintf(
                 '`%s` is set to `%s`, this requires `docker` as part of hosts.%s.needs',

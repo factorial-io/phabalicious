@@ -20,7 +20,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
      */
     private $configuration;
 
-    public function __construct(ConfigurationService $configuration, $name = null)
+    public function __construct(ConfigurationService $configuration)
     {
         $this->configuration = $configuration;
 

@@ -83,13 +83,19 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
     }
 
-    /**
-     * @param array $config
-     * @param ValidationErrorBagInterface $errors
-     */
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
-        parent::validateConfig($config, $errors);
+  /**
+   * @param \Phabalicious\Configuration\ConfigurationService $configuration_service
+   * @param \Phabalicious\Configuration\Storage\Node $config
+   * @param ValidationErrorBagInterface $errors
+   */
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
+
+        parent::validateConfig($configuration_service, $config, $errors);
+
 
         if (in_array('drush', $config['needs'])) {
             $errors->addError(

@@ -53,8 +53,11 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         ], $this->getName() . ' method defaults');
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
         $service = new ValidationService($config, $errors, 'host-config');
         $service->hasKey('rootFolder', 'The root-folder of your configuration.');
         $service->checkForValidFolderName('rootFolder');

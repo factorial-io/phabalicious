@@ -239,10 +239,11 @@ abstract class BaseCommand extends BaseOptionsCommand
     }
 
     /**
-     * @param SymfonyStyle $io
+     * @param \Phabalicious\Method\TaskContextInterface $context
      * @param ShellProviderInterface $shell
      * @param array $command
      * @param ShellOptions|null $options
+     *
      * @return Process
      */
     protected function startInteractiveShell(
@@ -262,7 +263,6 @@ abstract class BaseCommand extends BaseOptionsCommand
             $options = new ShellOptions();
         }
 
-        /** @var Process $process */
         if (!empty($command)) {
             $options->setShellExecutableProvided(true);
             $command = $shell->wrapCommandInLoginShell($command);
@@ -331,61 +331,59 @@ abstract class BaseCommand extends BaseOptionsCommand
                 ));
             }
         }
-        if (!empty($variants)) {
-            $cmd_lines = [];
-            $rows = [];
-            foreach ($variants as $v) {
-                $cmd = [];
-                $cmd[] = $executable;
 
-                foreach ($input->getArguments() as $a) {
-                    if (is_array($a)) {
-                        $cmd[] = implode(' ', $a);
-                    } else {
-                        $cmd[] = $a;
+        $cmd_lines = [];
+        $rows = [];
+        foreach ($variants as $v) {
+            $cmd = [];
+            $cmd[] = $executable;
+
+            foreach ($input->getArguments() as $a) {
+                if (is_array($a)) {
+                    $cmd[] = implode(' ', $a);
+                } else {
+                    $cmd[] = $a;
+                }
+            }
+            foreach ($input->getOptions() as $name => $value) {
+                if ($value && !in_array($name, ['verbose', 'variants', 'blueprint', 'fabfile', 'num-threads'])) {
+                    if (!is_array($value)) {
+                        $value = [$value];
+                    }
+                    foreach ($value as $vv) {
+                        $cmd[] = '--' . $name;
+                        if (!in_array($name, ['no-interaction', 'no-ansi'])) {
+                            $cmd[] = $vv;
+                        }
                     }
                 }
-                foreach ($input->getOptions() as $name => $value) {
-                    if ($value && !in_array($name, ['verbose', 'variants', 'blueprint', 'fabfile', 'num-threads'])) {
-                        if (!is_array($value)) {
-                            $value = [$value];
-                        }
-                        foreach ($value as $vv) {
-                            $cmd[] = '--' . $name;
-                            if (!in_array($name, ['no-interaction', 'no-ansi'])) {
-                                $cmd[] = $vv;
-                            }
-                        }
-                    }
-                }
-                $cmd[] = '--no-interaction';
-                $cmd[] = '--fabfile';
-                $cmd[] = Utilities::getRelativePath($base_path, $this->configuration->getFabfileLocation());
-                $cmd[] = '--blueprint';
-                $cmd[] = $v;
+            }
+            $cmd[] = '--no-interaction';
+            $cmd[] = '--fabfile';
+            $cmd[] = Utilities::getRelativePath($base_path, $this->configuration->getFabfileLocation());
+            $cmd[] = '--blueprint';
+            $cmd[] = $v;
 
-                if ($output->isVeryVerbose()) {
-                    $cmd[] = '-vv';
-                } elseif ($output->isVerbose()) {
-                    $cmd[] = '-v';
-                }
-
-                $cmd_lines[] = $cmd;
-
-                $rows[] = [$v, implode(' ', $cmd)];
+            if ($output->isVeryVerbose()) {
+                $cmd[] = '-vv';
+            } elseif ($output->isVerbose()) {
+                $cmd[] = '-v';
             }
 
-            $io = new SymfonyStyle($input, $output);
-            $io->table(['variant', 'command'], $rows);
+            $cmd_lines[] = $cmd;
 
-            if ($input->getOption('force') !== false || $io->confirm('Do you want to run these commands? ', false)) {
-                $io->comment('Running ...');
-                $executor = new ParallelExecutor($cmd_lines, $output, $input->getOption('num-threads'));
-                return $executor->execute($input, $output);
-            }
-
-            return 1;
+            $rows[] = [$v, implode(' ', $cmd)];
         }
+
+        $io = new SymfonyStyle($input, $output);
+        $io->table(['variant', 'command'], $rows);
+
+        if ($input->getOption('force') !== false || $io->confirm('Do you want to run these commands? ', false)) {
+            $io->comment('Running ...');
+            $executor = new ParallelExecutor($cmd_lines, $output, $input->getOption('num-threads'));
+            return $executor->execute($input, $output);
+        }
+
 
         return 1;
     }

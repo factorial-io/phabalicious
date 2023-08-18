@@ -11,10 +11,10 @@ use Phabalicious\Validation\ValidationService;
 class BlueprintTemplate
 {
 
-    /** @var array */
+    /** @var Node */
     private $template;
 
-    /** @var array */
+    /** @var Node */
     private $parent;
 
     /** @var ConfigurationService  */
