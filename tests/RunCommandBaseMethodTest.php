@@ -81,7 +81,7 @@ class RunCommandBaseMethodTest extends PhabTestCase
         $errors = new ValidationErrorBag();
         $class_name = "Phabalicious\\Method\\" . ucwords($method_name) . "Method";
         $method = new $class_name($this->logger);
-        $method->validateConfig(new Node($host_config, 'test'), $errors);
+        $method->validateConfig($this->configurationService, new Node($host_config, 'test'), $errors);
         if ($has_build_command) {
             $this->assertArrayHasKey("{$method_name}BuildCommand", $errors->getWarnings());
         }

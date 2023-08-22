@@ -70,8 +70,8 @@ class ScriptAction extends ActionBase
         $script->setBreakOnFirstError(true);
 
         $script->runScript($host_config, $cloned_context);
-        /** @var CommandResult $cr */
         if ($cr = $cloned_context->getResult('commandResult')) {
+            /** @var CommandResult $cr */
             if ($cr->failed()) {
                 $cr->throwException('Script action failed with an error!');
             }

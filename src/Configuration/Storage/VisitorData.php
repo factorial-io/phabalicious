@@ -16,7 +16,7 @@ class VisitorData
     protected $stack;
 
     /**
-     * @param array|mixed $stack
+     * @param array $stack
      * @param \Phabalicious\Configuration\Storage\Node $value
      */
     public function __construct(array $stack, Node $value)

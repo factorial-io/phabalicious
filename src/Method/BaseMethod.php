@@ -46,8 +46,11 @@ abstract class BaseMethod implements MethodInterface
         return [];
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
     }
 
     public function getKeysForDisallowingDeepMerge(): array
@@ -109,15 +112,14 @@ abstract class BaseMethod implements MethodInterface
     /**
      * @param TaskContext $context
      * @param string $command_name
-     * @param array $args
+     * @param array $in_args
      *
      * @return int
-     * @throws \Exception
+     * @throws \Symfony\Component\Console\Exception\ExceptionInterface
      */
-    public function executeCommand(TaskContextInterface $context, $command_name, $in_args)
+    public function executeCommand(TaskContext $context, string $command_name, array $in_args): int
     {
         $args = [];
-        /** @var Command $command */
         $command = $context->getCommand()->getApplication()->find($command_name);
         if (isset($in_args[0])) {
             $args[$command_name] = $in_args[0];

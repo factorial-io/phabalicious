@@ -9,5 +9,5 @@ grumphp:
           - PSR2
       phpunit:
         group: ['default']
-      phpstan: ~
-
+      phpstan:
+        memory_limit: "2G"

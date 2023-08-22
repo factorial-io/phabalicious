@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\ShellProvider\BaseShellProvider;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Utilities\Utilities;
@@ -56,9 +57,14 @@ class ResticMethod extends BaseMethod implements MethodInterface
         return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
-        parent::validateConfig($config, $errors);
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
+
+        parent::validateConfig($configuration_service, $config, $errors);
+
 
         $validation = new ValidationService(
             $config,
@@ -327,7 +333,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
     /**
      * @param HostConfig $host_config
      * @param TaskContextInterface $context
-     * @param ShellProviderInterface|null $shell
+     * @param ShellProviderInterface $shell
      * @throws \Phabalicious\Exception\FailedShellCommandException
      */
     protected function ensureKnownHosts(
@@ -336,7 +342,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
         ShellProviderInterface $shell
     ): void {
         $repository = $host_config['restic']['repository'];
-        if (substr($repository, 0, 5) == 'sftp:') {
+        if (substr($repository, 0, 5) === 'sftp:') {
             $a = Utilities::parseUrl($repository);
             $known_hosts = [
                 sprintf("%s:%d", $a['host'], $a['port'] ?? 22)
@@ -348,6 +354,9 @@ class ResticMethod extends BaseMethod implements MethodInterface
     public function restic(HostConfig $host_config, TaskContextInterface $context)
     {
         $shell = $this->getShellForRestic($host_config, $context);
+        if (!$shell || !$shell instanceof BaseShellProvider) {
+            throw new \RuntimeException("Could not get a shell for restic");
+        }
 
         $repository = $host_config['restic']['repository'];
         $this->ensureKnownHosts($host_config, $context, $shell);

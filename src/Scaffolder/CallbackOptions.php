@@ -23,7 +23,7 @@ class CallbackOptions implements AlterableDataInterface
 {
     protected $callbacks = [];
 
-    public function addDefaultCallbacks(): CallbackOptions
+    public function addDefaultCallbacks(): self
     {
         $this
             ->addCallback(new ConfirmCallback())
@@ -43,7 +43,7 @@ class CallbackOptions implements AlterableDataInterface
         return $this;
     }
 
-    public function addCallback(CallbackInterface $callback): CallbackOptions
+    public function addCallback(CallbackInterface $callback): self
     {
         $this->callbacks[$callback::getName()] = $callback;
         return $this;

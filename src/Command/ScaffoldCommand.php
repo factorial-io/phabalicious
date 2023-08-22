@@ -79,7 +79,6 @@ class ScaffoldCommand extends ScaffoldBaseCommand
             ->setSkipSubfolder(true)
             ->setUseCacheTokens(Utilities::hasBoolOptionSet($input, 'use-cached-tokens'))
             ->setDryRun(Utilities::hasBoolOptionSet($input, 'dry-run'))
-            ->addCallback(new TransformCallback())
             ->setPluginRegistrationCallback(
                 function ($paths) use ($callback) {
                     $callback->setTransformers(PluginDiscovery::discover(
@@ -90,7 +89,9 @@ class ScaffoldCommand extends ScaffoldBaseCommand
                         $this->getConfiguration()->getLogger()
                     ));
                 }
-            );
+            )
+            ->addCallback(new TransformCallback());
+
 
         $context->mergeAndSet('dataOverrides', [
             'questions' => [],

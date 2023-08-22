@@ -24,6 +24,8 @@ interface TaskContextInterface
 
     public function setInput(InputInterface $input);
 
+    public function setIo(SymfonyStyle $io);
+
     public function getInput(): InputInterface;
 
     public function setOutput(OutputInterface $output);

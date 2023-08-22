@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Method;
 
+use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -24,12 +25,17 @@ class YarnMethod extends RunCommandBaseMethod
         ]);
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
-        parent::validateConfig($config, $errors);
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
+
+        parent::validateConfig($configuration_service, $config, $errors);
+
         $service = new ValidationService($config, $errors, 'Yarn');
         $service->deprecate([
-            "yarnBuildCommand" => "please change to `yarn.buildCommand`",
+        "yarnBuildCommand" => "please change to `yarn.buildCommand`",
         ]);
         $service->hasKey('yarn.buildCommand', 'build command to run with yarn');
     }

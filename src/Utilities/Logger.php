@@ -119,7 +119,7 @@ class Logger extends ConsoleLogger
     }
 
     /**
-     * @param mixed $passwordManager
+     * @param \Phabalicious\Utilities\PasswordManagerInterface $passwordManager
      *
      * @return Logger
      */

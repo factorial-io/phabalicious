@@ -395,16 +395,20 @@ class PasswordManager implements PasswordManagerInterface
 
         foreach ($fields as $field) {
             if (!empty($field->designation) && $field->designation === 'password') {
+                /** @phpstan-ignore-next-line */
                 return $field->value;
             }
             if (!empty($field->purpose) && $field->purpose === 'PASSWORD') {
+                /** @phpstan-ignore-next-line */
                 return $field->value;
             }
-            if (!empty($field->id) && $field->id == 'password') {
+            if (!empty($field->id) && $field->id === 'password') {
+                /** @phpstan-ignore-next-line */
                 return $field->value;
             }
             // Support for field in sections.
             if (!empty($field->n) && $field->n === 'password') {
+                /** @phpstan-ignore-next-line */
                 return $field->v;
             }
         }
@@ -441,8 +445,8 @@ class PasswordManager implements PasswordManagerInterface
 
     public function encrypt($data, $secret_name)
     {
-        $secret = $this->getSecret($secret_name, $binary = false);
-        return Crypto::encryptWithPassword($data, $secret, $binary);
+        $secret = $this->getSecret($secret_name);
+        return Crypto::encryptWithPassword($data, $secret);
     }
 
     public function decrypt($data, $secret_name)

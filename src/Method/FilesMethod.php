@@ -269,11 +269,8 @@ class FilesMethod extends BaseMethod implements MethodInterface
             return;
         }
 
-        /** @var HostConfig $from_config */
-        /** @var ShellProviderInterface $shell */
-        /** @var ShellProviderInterface $from_shell */
         $from_config = $context->get('from', false);
-        $shell = $this->getShell($host_config, $context);
+        /** @var HostConfig $from_config */
 
         $keys = ['filesFolder', 'privateFilesFolder'];
         foreach ($keys as $key) {

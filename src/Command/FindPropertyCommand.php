@@ -124,5 +124,7 @@ Examples:
                 ]);
             }
         } while (!empty($key));
+
+        return 0;
     }
 }

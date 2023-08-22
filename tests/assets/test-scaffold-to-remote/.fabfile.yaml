@@ -28,5 +28,5 @@ hosts:
   clients.factorial.io:
     inheritsFrom:
       - localhost
-    host: clients.factorial.io
+    host: oterma.factorial.io
     rootFolder: /home/stephan

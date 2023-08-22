@@ -266,7 +266,7 @@ class Scaffolder
         $tokens = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($tokens);
 
         $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
-        $tokens['rootFolder'] = $shell->realPath($root_folder, $context) . '/' . $tokens['projectFolder'];
+        $tokens['rootFolder'] = $shell->realPath($root_folder) . '/' . $tokens['projectFolder'];
 
 
         $context->set(ScriptMethod::SCRIPT_DATA, $data['scaffold']);
@@ -347,7 +347,7 @@ class Scaffolder
         $success_message = Utilities::expandStrings($success_message, $replacements);
         $io->success($success_message);
 
-        if ($options->isDryRun()) {
+        if ($options->isDryRun() && ($shell instanceof DryRunShellProvider)) {
             $result = new CommandResult(0, $shell->getCapturedCommands());
         }
         $in_context->mergeResults($context);

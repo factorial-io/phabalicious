@@ -104,6 +104,8 @@ class StartRemoteAccessCommand extends BaseCommand
             $config,
             $context
         );
+
+        return $this->getContext()->getResult('exitCode', 0);
     }
 
     private function getSchemeFromPort($port)

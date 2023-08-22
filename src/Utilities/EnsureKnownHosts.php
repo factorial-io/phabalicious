@@ -32,8 +32,9 @@ final class EnsureKnownHosts
             $shell->setHostConfig($host_config);
         }
         foreach ($known_hosts as $host) {
+            $h = false;
             if (strpos($host, ":") !== false) {
-                list($h, $p) = @explode(':', $host);
+                [$h, $p] = @explode(':', $host);
                 if ($p !== "22") {
                     $host_str = sprintf('[%s]:%d', $h, $p);
                 } else {

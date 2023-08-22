@@ -7,6 +7,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\Utilities\LogWithPrefix;
 use Phabalicious\Utilities\SetAndRestoreObjProperty;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -190,7 +191,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->process = null;
 
         // Reset prefix.
-        $this->logger->setPrefix(bin2hex(random_bytes(3)));
+        if ($this->logger instanceof LogWithPrefix) {
+            $this->logger->setPrefix(bin2hex(random_bytes(3)));
+        }
     }
 
     /**

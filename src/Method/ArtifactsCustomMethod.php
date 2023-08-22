@@ -48,12 +48,17 @@ class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterfa
     }
 
     /**
-     * @param array $config
+     * @param \Phabalicious\Configuration\ConfigurationService $configuration_service
+     * @param \Phabalicious\Configuration\Storage\Node $config
      * @param ValidationErrorBagInterface $errors
      */
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
-    {
-        parent::validateConfig($config, $errors);
+    public function validateConfig(
+        ConfigurationService $configuration_service,
+        Node $config,
+        ValidationErrorBagInterface $errors
+    ) {
+        parent::validateConfig($configuration_service, $config, $errors);
+
         $validation = new ValidationService($config[self::PREFS_KEY], $errors, "artifact settings");
         $validation->hasKey('stages', '`stages` is required.');
         $validation->isArray('stages', '`stages` should be an array');

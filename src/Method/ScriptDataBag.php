@@ -39,7 +39,7 @@ class ScriptDataBag
     }
 
     /**
-     * @param mixed $context
+     * @param \Phabalicious\Method\TaskContextInterface $context
      *
      * @return ScriptDataBag
      */
@@ -50,7 +50,7 @@ class ScriptDataBag
     }
 
     /**
-     * @param mixed $environment
+     * @param array $environment
      *
      * @return ScriptDataBag
      */
@@ -61,7 +61,7 @@ class ScriptDataBag
     }
 
     /**
-     * @param mixed $rootFolder
+     * @param string $rootFolder
      *
      * @return ScriptDataBag
      */
@@ -96,7 +96,7 @@ class ScriptDataBag
     }
 
     /**
-     * @return mixed
+     * @return \Phabalicious\Method\TaskContextInterface
      */
     public function getContext(): TaskContextInterface
     {
@@ -104,7 +104,7 @@ class ScriptDataBag
     }
 
     /**
-     * @return mixed
+     * @return array
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     public function getEnvironment(): array
@@ -146,7 +146,7 @@ class ScriptDataBag
         return $this->expandStrings($data);
     }
     /**
-     * @return mixed
+     * @return string
      */
     public function getRootFolder(): string
     {
@@ -154,7 +154,7 @@ class ScriptDataBag
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getVariables(): array
     {
@@ -162,7 +162,7 @@ class ScriptDataBag
     }
 
     /**
-     * @param mixed $variables
+     * @param array $variables
      *
      * @return ScriptDataBag
      */
@@ -192,7 +192,7 @@ class ScriptDataBag
     }
 
     /**
-     * @return mixed
+     * @return ShellProviderInterface
      */
     public function getShell(): ShellProviderInterface
     {

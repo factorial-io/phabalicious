@@ -83,6 +83,7 @@ Examples:
 
         $context = $this->getContext();
         $this->getMethods()->runTask('about', $this->getHostConfig(), $context);
+        return 0;
     }
 
     private function getRows(&$rows, Node $node, $verbose, $stack = [])
