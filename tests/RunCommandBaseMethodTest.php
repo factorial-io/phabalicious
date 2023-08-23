@@ -114,7 +114,9 @@ class RunCommandBaseMethodTest extends PhabTestCase
 
         $this->assertEquals($yarn_run_context, $host_config->getProperty('yarn.context'));
         $this->context->set('command', 'info react');
-        $this->methodFactory->getMethod('yarn')->yarn($host_config, $this->context);
+        $method = $this->methodFactory->getMethod('yarn');
+        /** @var YarnMethod $method */
+        $method->yarn($host_config, $this->context);
         $result = $this->context->getCommandResult();
 
         $this->assertEquals(0, $result->getExitCode());
