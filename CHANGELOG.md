@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.26](https://github.com/factorial-io/phabalicious/compare/3.8.25...3.8.26) (2023-08-23)
+
+
+### Bug Fixes
+
+* phpstan fixes, composer updates ([4c2dc00](https://github.com/factorial-io/phabalicious/commit/4c2dc003e0ba26db8ce9b364dc342109f778968b))
+
 ### [3.8.25](https://github.com/factorial-io/phabalicious/compare/3.8.24...3.8.25) (2023-07-19)
 
 
