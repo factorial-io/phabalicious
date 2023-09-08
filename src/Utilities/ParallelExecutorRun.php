@@ -17,8 +17,11 @@ class ParallelExecutorRun extends ProcessRun
     private $output;
     private $commandLine;
 
-    public function __construct($command_line, ConsoleSectionOutput $output = null)
+    protected $identifier;
+
+    public function __construct(string $identifier, $command_line, ConsoleSectionOutput $output = null)
     {
+        $this->identifier = $identifier;
         $this->output = $output;
         $this->commandLine = implode(' ', $command_line);
 
@@ -28,7 +31,7 @@ class ParallelExecutorRun extends ProcessRun
         }
     }
 
-    public function addListeners()
+    public function addListeners(): void
     {
         $this->writeln("<fg=blue>~ waiting</>");
 
@@ -52,13 +55,18 @@ class ParallelExecutorRun extends ProcessRun
         );
     }
 
-    public function writeln($message)
+    public function writeln($message): void
     {
         $this->output->overwrite($this->commandLine . ': ' . $message);
     }
 
-    public function getCommandLine()
+    public function getCommandLine(): string
     {
         return $this->commandLine;
+    }
+
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
     }
 }

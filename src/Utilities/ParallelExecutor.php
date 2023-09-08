@@ -25,8 +25,9 @@ class ParallelExecutor
         $this->pool = new PriorityPool();
         $this->pool->setMaxSimultaneous($max_simultaneous_processes);
 
-        foreach ($command_lines as $cmd) {
+        foreach ($command_lines as $identifier => $cmd) {
             $this->add(new ParallelExecutorRun(
+                $identifier,
                 $cmd,
                 $output instanceof ConsoleOutput
                     ? $output->section()
@@ -35,7 +36,7 @@ class ParallelExecutor
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output, ?string $save_as_json)
     {
 
         $progress_section = $output instanceof ConsoleOutput
@@ -60,9 +61,16 @@ class ParallelExecutor
         $progress->finish();
         $style = new SymfonyStyle($input, $output);
 
+        $data = [];
         foreach ($this->pool->getAll() as $run) {
             if ($run instanceof ParallelExecutorRun) {
                 $style->section(sprintf('Results of `%s`', $run->getCommandLine()));
+                $data[$run->getIdentifier()] = [
+                    'command' => $run->getCommandLine(),
+                    'exit_code' => $run->getProcess()->getExitCode(),
+                    'output' => $run->getProcess()->getOutput(),
+                    'error_output' => $run->getProcess()->getErrorOutput(),
+                ];
                 $style->writeln($run->getProcess()->getOutput());
                 $error = $run->getProcess()->getErrorOutput();
                 if (!empty($error)) {
@@ -70,6 +78,10 @@ class ParallelExecutor
                     $style->writeln($run->getProcess()->getErrorOutput());
                 }
             }
+        }
+
+        if ($save_as_json) {
+            file_put_contents($save_as_json, json_encode($data, JSON_PRETTY_PRINT));
         }
 
         return $this->pool->isSuccessful();

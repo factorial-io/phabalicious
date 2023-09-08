@@ -72,6 +72,13 @@ abstract class BaseCommand extends BaseOptionsCommand
                 null
             )
             ->addOption(
+                'json',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Save the output as json into given file. (Works only when using variants)',
+                null
+            )
+            ->addOption(
                 'set',
                 's',
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
@@ -370,7 +377,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $cmd[] = '-v';
             }
 
-            $cmd_lines[] = $cmd;
+            $cmd_lines[$v] = $cmd;
 
             $rows[] = [$v, implode(' ', $cmd)];
         }
@@ -381,7 +388,7 @@ abstract class BaseCommand extends BaseOptionsCommand
         if ($input->getOption('force') !== false || $io->confirm('Do you want to run these commands? ', false)) {
             $io->comment('Running ...');
             $executor = new ParallelExecutor($cmd_lines, $output, $input->getOption('num-threads'));
-            return $executor->execute($input, $output);
+            return $executor->execute($input, $output, $input->getOption('json'));
         }
 
 

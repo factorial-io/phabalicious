@@ -167,10 +167,12 @@ class PluginDiscovery
                 $methods = $config->getMethodFactory();
 
                 foreach ($result as $plugin) {
-                    $output->writeln(sprintf(
-                        "<fg=Blue>Registering found plugin <fg=yellow>%s</> ...</>",
-                        $plugin->getName()
-                    ));
+                    if ($output->isVerbose()) {
+                        $output->writeln(sprintf(
+                            "<fg=Blue>Registering found plugin <fg=yellow>%s</> ...</>",
+                            $plugin->getName()
+                        ));
+                    }
                     foreach ($plugin->getMethods() as $class_name) {
                         $methods->addMethod(new $class_name($logger));
                     }
