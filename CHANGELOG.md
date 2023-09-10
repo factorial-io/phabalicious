@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.27](https://github.com/factorial-io/phabalicious/compare/3.8.26...3.8.27) (2023-09-10)
+
+
+### Features
+
+* add option --json to save the output of parallel runs into a json file ([7bf1610](https://github.com/factorial-io/phabalicious/commit/7bf1610413407379d747bfd9775ca817f893c61b))
+
 ### [3.8.26](https://github.com/factorial-io/phabalicious/compare/3.8.25...3.8.26) (2023-08-23)
 
 
