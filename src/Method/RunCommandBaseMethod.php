@@ -7,6 +7,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ConfigurationService\DeprecatedValueMapping;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
@@ -200,8 +201,10 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
 
         $script_context->setShell($shell);
 
+        $variables = Utilities::buildVariablesFrom($host_config, $context);
         $bag = new ScriptDataBag();
         $bag->setContext($script_context)
+            ->setVariables($variables)
             ->setCommands($commands)
             ->setRootFolder($this->getConfig($host_config, self::ROOT_FOLDER_KEY));
 

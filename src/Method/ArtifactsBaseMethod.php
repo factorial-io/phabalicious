@@ -7,6 +7,7 @@ use Phabalicious\Artifact\Actions\ActionInterface;
 use Phabalicious\Artifact\Actions\Base\ConfirmAction;
 use Phabalicious\Artifact\Actions\Base\CopyAction;
 use Phabalicious\Artifact\Actions\Base\DeleteAction;
+use Phabalicious\Artifact\Actions\Base\DockerCopyAction;
 use Phabalicious\Artifact\Actions\Base\InstallScriptAction;
 use Phabalicious\Artifact\Actions\Base\LogAction;
 use Phabalicious\Artifact\Actions\Base\MessageAction;
@@ -34,6 +35,7 @@ abstract class ArtifactsBaseMethod extends BaseMethod
         parent::__construct($logger);
 
         ActionFactory::register('base', 'copy', CopyAction::class);
+        ActionFactory::register('base', 'docker-copy', DockerCopyAction::class);
         ActionFactory::register('base', 'delete', DeleteAction::class);
         ActionFactory::register('base', 'confirm', ConfirmAction::class);
         ActionFactory::register('base', 'script', ScriptAction::class);
