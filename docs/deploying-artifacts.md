@@ -166,7 +166,7 @@ You can customize the list of actions be run when deploying an artifact. Here's 
     to: .
 ```
 
-This action will copy the listed files from `from` inside the docker image `image` to `to`. If `from` is '*' phabalicious will ge the contents of the directory. As the copy is initiated from the container, make sure that the `imageRootPath` points to a valid directory inside the container. The `image`-property supports replacement patterns, in the example case it will get the image name from the gitlab settings and the branch from the host-config. Phab will try to pull the latest image before running the action. The action supports the `excludeFiles.gitSync` settings to skip certain files and folders (it defaults to `.git`).
+This action will copy the listed files from `from` inside the docker image `image` to `to`. If `from` is '*' phabalicious will get the contents of the directory. As the copy is initiated from the container, make sure that the `imageRootPath` points to a valid directory inside the container. The `image`-property supports replacement patterns, in the example case it will get the image name from the gitlab settings and the branch from the host-config. Phab will try to pull the latest image before running the action. The action supports the `excludeFiles.gitSync` settings to skip certain files and folders (it defaults to `.git`).
 
 ### copy
 
@@ -182,7 +182,7 @@ This action will copy the listed files from `from` inside the docker image `imag
 
 This will copy the three mentioned files and folders into the subfolder `targetsubfolder` of the target folder. Please be aware, that you might need to create subdirectories beforehand manually via the `script`-method. Also be aware that copy action deletes existing files and folders from target before doing the copy, if you want to combine files from multiple sources it is better to also use the `script`-method for that.
 
-The action supports the `excludeFiles.gitSync` settings to skip certain files and folders (it defaults to `.git`).
+The action supports the `excludeFiles.gitSync` settings to skip certain files and folders (it defaults to `.git`). If `from` is `*` phabalicious will get the contents of the directory.
 ### delete
 
 ```yaml
