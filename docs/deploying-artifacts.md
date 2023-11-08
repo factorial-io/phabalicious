@@ -126,12 +126,12 @@ hosts:
 
 the default actions for the git-artifact-method will copy all files to the target repo and remove the fabfile.
 
-| property              | default value | description                               |
-|-----------------------|---------------|-------------------------------------------|
-| `artifact.branch`     | `false`       | if set to false, the name of the source-branch is used, otherwise the value |
+| property              | default value | description                                                                                                                               |
+|-----------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `artifact.branch`     | `false`       | if set to false, the name of the source-branch is used, otherwise the value                                                               |
 | `artifact.baseBranch` | `master`      | If phabalicious needs to create a new branch, because it is missing from the target-repository, then start the branch from `masterBranch` |
-| `artifact.repository` |               | The url to the target-repository          |
-| `artifact.actions`    |               | Actions to perform                        |
+| `artifact.repository` |               | The url to the target-repository                                                                                                          |
+| `artifact.actions`    |               | Actions to perform                                                                                                                        |
 
 
 Phab will use a shallow clone for the target repository to keep resources low. If you need to use a deep copy for the target repository, you can adapt the gitOptions like:
@@ -155,11 +155,24 @@ You can force the artifact based deployment by adding the `--force`-option, or b
 
 You can customize the list of actions be run when deploying an artifact. Here's a list of available actions
 
+### docker-copy
+
+```yaml
+- action: docker-copy
+  arguments:
+    image: "%settings.gitlab.imageBaseTag%/builder:%host.branch%"
+    imageRootPath: /app
+    from: "*"
+    to: .
+```
+
+This action will copy the listed files from `from` inside the docker image `image` to `to`. If `from` is '*' phabalicious will get the contents of the directory. As the copy is initiated from the container, make sure that the `imageRootPath` points to a valid directory inside the container. The `image`-property supports replacement patterns, in the example case it will get the image name from the gitlab settings and the branch from the host-config. Phab will try to pull the latest image before running the action. The action supports the `excludeFiles.gitSync` settings to skip certain files and folders (it defaults to `.git`).
+
 ### copy
 
 ```yaml
 - action: copy
-  argumnents:
+  arguments:
     from:
       - file1
       - folder2
@@ -169,6 +182,7 @@ You can customize the list of actions be run when deploying an artifact. Here's 
 
 This will copy the three mentioned files and folders into the subfolder `targetsubfolder` of the target folder. Please be aware, that you might need to create subdirectories beforehand manually via the `script`-method. Also be aware that copy action deletes existing files and folders from target before doing the copy, if you want to combine files from multiple sources it is better to also use the `script`-method for that.
 
+The action supports the `excludeFiles.gitSync` settings to skip certain files and folders (it defaults to `.git`). If `from` is `*` phabalicious will get the contents of the directory.
 ### delete
 
 ```yaml
@@ -224,10 +238,10 @@ This action comes handy when degugging the build process, as it will stop the ex
 
 The `script`-action will run the script from the arguments section line by line. You can use the usual replacement patterns as for other scripts. Most helpful are:
 
-| Pattern | Description |
-|---------|-------------|
-| `%context.data.installDir%` | The installation dir, where the app got installed into |
-| `%context.data.targetDir%` | The targetdir, where the app got copied to, which gets committed or synced |
+| Pattern                     | Description                                                                |
+|-----------------------------|----------------------------------------------------------------------------|
+| `%context.data.installDir%` | The installation dir, where the app got installed into                     |
+| `%context.data.targetDir%`  | The targetdir, where the app got copied to, which gets committed or synced |
 
 If `arguments` contains a name, then this named script will be executed. It should be available under the global `scripts`-section or on the hosts' scripts section.
 

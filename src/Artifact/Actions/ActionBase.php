@@ -43,6 +43,9 @@ abstract class ActionBase implements ActionInterface
             $service->isArray('arguments', 'arguments need to be an array!');
         }
 
+        if (!isset($action_config['arguments'])) {
+            $action_config['arguments'] = [];
+        }
         if (!empty($action_config['action']) && is_array($action_config['arguments'])) {
             $service = new ValidationService(
                 $action_config['arguments'],
