@@ -19,8 +19,8 @@ use Symfony\Component\Process\Process;
 
 class SshShellProviderTest extends PhabTestCase
 {
-    /** @var \Phabalicious\ShellProvider\ShellProviderInterface */
-    private $shellProvider;
+    /** @var \Phabalicious\ShellProvider\SshShellProvider */
+    private SshShellProvider $shellProvider;
 
     private $config;
 
@@ -29,7 +29,7 @@ class SshShellProviderTest extends PhabTestCase
     /**
      * @var \Phabalicious\Method\TaskContext
      */
-    private $context;
+    private TaskContext $context;
 
     public function setup(): void
     {
@@ -37,7 +37,7 @@ class SshShellProviderTest extends PhabTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->config->method("getPasswordManager")->will($this->returnValue(new PasswordManager()));
+        $this->config->method("getPasswordManager")->willReturn(new PasswordManager());
 
         $logger = $this->logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 
@@ -51,13 +51,13 @@ class SshShellProviderTest extends PhabTestCase
         $this->context->setConfigurationService($this->config);
     }
 
-    public function testGetDefaultConfig()
+    public function testGetDefaultConfig(): void
     {
         $this->assertArrayHasKey('port', $this->shellProvider->getDefaultConfig($this->config, new Node([], '')));
         $this->assertArrayHasKey('rootFolder', $this->shellProvider->getDefaultConfig($this->config, new Node([], '')));
     }
 
-    public function testValidateConfig()
+    public function testValidateConfig(): void
     {
         $errors = new ValidationErrorBag();
         $this->shellProvider->validateConfig(new Node([], ''), $errors);
@@ -67,7 +67,7 @@ class SshShellProviderTest extends PhabTestCase
         );
     }
 
-    public function testValidateConfigRootFolder()
+    public function testValidateConfigRootFolder(): void
     {
         $errors = new ValidationErrorBag();
         $this->shellProvider->validateConfig(new Node([
@@ -80,14 +80,10 @@ class SshShellProviderTest extends PhabTestCase
         $this->assertEquals(
             ['rootFolder'],
             $errors->getKeysWithErrors(),
-            '',
-            0.0,
-            10,
-            true
         );
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertEquals('ssh', $this->shellProvider->getName());
     }
@@ -96,7 +92,7 @@ class SshShellProviderTest extends PhabTestCase
     /**
      * @group docker
      */
-    public function testRun()
+    public function testRun(): void
     {
         $shell_provider = $this->getDockerizedSshShell($this->logger, $this->config);
 
@@ -122,7 +118,7 @@ class SshShellProviderTest extends PhabTestCase
     /**
      * @group docker
      */
-    public function testFilePutContents()
+    public function testFilePutContents(): void
     {
         $shell = $this->getDockerizedSshShell($this->logger, $this->config);
 

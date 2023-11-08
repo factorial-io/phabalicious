@@ -18,7 +18,7 @@ use Prophecy\Argument;
 class UtilitiesTest extends PhabTestCase
 {
 
-    public function testMergeData()
+    public function testMergeData(): void
     {
 
         $a = [
@@ -85,7 +85,7 @@ class UtilitiesTest extends PhabTestCase
             )
         );
     }
-    public function testNodeMergeData()
+    public function testNodeMergeData(): void
     {
         $a = new Node([
             'a' => 1,
@@ -152,7 +152,7 @@ class UtilitiesTest extends PhabTestCase
         );
     }
 
-    public function testProtectedProperties()
+    public function testProtectedProperties(): void
     {
         $a = new Node([
             "protected" => [
@@ -205,7 +205,7 @@ class UtilitiesTest extends PhabTestCase
         Store::resetProtectedProperties();
     }
 
-    public function testNodeBaseOntop()
+    public function testNodeBaseOntop(): void
     {
         $a = new Node([
             'a' => [0, 1],
@@ -236,7 +236,7 @@ class UtilitiesTest extends PhabTestCase
         $this->assertEquals('1', $c['c']['1']);
     }
 
-    public function testExpandCommands()
+    public function testExpandCommands(): void
     {
         $replacements = [
             '%one.two%' => 'Example 1',
@@ -257,7 +257,7 @@ class UtilitiesTest extends PhabTestCase
         ], $result);
     }
 
-    public function testExpandVariables()
+    public function testExpandVariables(): void
     {
         $data = [
             'one' => [
@@ -289,21 +289,24 @@ class UtilitiesTest extends PhabTestCase
         ], $result);
     }
 
-    public function testExtractCallback()
+    public function testExtractCallback(): void
     {
         [$callback, $args] = Utilities::extractCallback('execute(docker, run)');
         $this->assertEquals('execute', $callback);
-        $this->assertEquals(['docker', 'run'], $args, '', 0.0, 10, true);
+        $this->assertEquals(['docker', 'run'], $args);
 
         [$callback, $args] = Utilities::extractCallback('execute(deploy)');
         $this->assertEquals('execute', $callback);
-        $this->assertEquals(['deploy'], $args, '', 0.0, 10, true);
+        $this->assertEquals(['deploy'], $args);
 
         $result = Utilities::extractCallback('something is going on');
         $this->assertFalse($result);
     }
 
-    public function testExtractArguments()
+    /**
+     * @throws \Phabalicious\Exception\ArgumentParsingException
+     */
+    public function testExtractArguments(): void
     {
         $this->assertEquals(["hello world"], Utilities::extractArguments('hello world'));
         $this->assertEquals(["hello world"], Utilities::extractArguments('"hello world"'));
@@ -316,25 +319,25 @@ class UtilitiesTest extends PhabTestCase
         );
     }
 
-    public function testExtractInvalidArguments()
+    public function testExtractInvalidArguments(): void
     {
         $this->expectException(ArgumentParsingException::class);
         $this->assertEquals(["hello world", "10"], Utilities::extractArguments('"hello world, 10'));
     }
 
-    public function testExtractInvalidArguments2()
+    public function testExtractInvalidArguments2(): void
     {
         $this->expectException(ArgumentParsingException::class);
         $this->assertEquals(["hello world", "10"], Utilities::extractArguments('"hello world", "10'));
     }
 
-    public function testSlugify()
+    public function testSlugify(): void
     {
         $this->assertEquals('asentencewithoutwords', Utilities::slugify('A sentence without Words'));
         $this->assertEquals('a-sentence-without-words', Utilities::slugify('A sentence without Words', '-'));
     }
 
-    public function testGetNextStableVersion()
+    public function testGetNextStableVersion(): void
     {
         $this->assertEquals("3.6.1", Utilities::getNextStableVersion("3.6.1"));
         $this->assertEquals("3.6", Utilities::getNextStableVersion("3.6"));
@@ -343,7 +346,7 @@ class UtilitiesTest extends PhabTestCase
         $this->assertEquals("3.7.10", Utilities::getNextStableVersion("3.7.10-alpha.5"));
     }
 
-    public function testCleanupString()
+    public function testCleanupString(): void
     {
         $mappings = [
             "1.0" => "1.0",
@@ -356,13 +359,16 @@ class UtilitiesTest extends PhabTestCase
         }
     }
 
-    public function testArgumentsParsing()
+    public function testArgumentsParsing(): void
     {
         $args = Utilities::parseArguments("password=aFQd=BDq_ys9j72frDgM");
         $this->assertEquals("aFQd=BDq_ys9j72frDgM", $args['password']);
     }
 
-    public function testRelativePharUrls()
+    /**
+     * @throws \Exception
+     */
+    public function testRelativePharUrls(): void
     {
         $url = 'phar:///usr/local/bin/phab/config/scaffold/mbb/./mbb-base.yml';
         $this->assertEquals(
@@ -371,7 +377,10 @@ class UtilitiesTest extends PhabTestCase
         );
     }
 
-    public function testRelativeFileUrls()
+    /**
+     * @throws \Exception
+     */
+    public function testRelativeFileUrls(): void
     {
         $url = 'file:///usr/local/bin/phab/config/scaffold/mbb/./mbb-base.yml';
         $this->assertEquals(

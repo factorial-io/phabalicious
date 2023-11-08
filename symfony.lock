@@ -206,9 +206,6 @@
             "ref": "e3868d2f4a5104f19f844fe551099a00c6562527"
         }
     },
-    "symfony/debug": {
-        "version": "v4.1.6"
-    },
     "symfony/dependency-injection": {
         "version": "v4.1.6"
     },
@@ -241,9 +238,6 @@
             "version": "1.0",
             "ref": "e921bdbfe20cdefa3b82f379d1cd36df1bc8d115"
         }
-    },
-    "symfony/http-client-contracts": {
-        "version": "v1.1.10"
     },
     "symfony/http-foundation": {
         "version": "v4.1.6"

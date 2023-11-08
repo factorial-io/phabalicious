@@ -52,5 +52,7 @@
        directory.
     -->
     <rule ref="PSR2"/>
-
+    <rule ref="Generic.Files.LineLength">
+      <severity>0</severity>
+    </rule>
 </ruleset>

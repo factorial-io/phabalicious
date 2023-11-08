@@ -3,13 +3,13 @@
     "description": "A deployment helper cli",
     "type": "project",
     "require": {
-        "php": "^7.3 || ^8.0",
-        "symfony/console": "^2.8|^3|^4.1",
+        "php": "^8.0",
+        "symfony/console": "^5",
         "psr/log": "^1.0",
-        "symfony/event-dispatcher": "^2.8|^3|^4.1",
-        "symfony/http-kernel": "^2.8|^3|^4.1",
-        "symfony/dependency-injection": "^2.8|^3|^4.1",
-        "symfony/config": "^2.8|^3|^4.1",
+        "symfony/event-dispatcher": "^5",
+        "symfony/http-kernel": "^5",
+        "symfony/dependency-injection": "^5",
+        "symfony/config": "^5",
         "symfony/yaml": "^2.8|^3|^4.1",
         "composer/semver": "^1.4||^3.2",
         "symfony/process": "^2.8|^3|^4.1",
@@ -23,7 +23,7 @@
         "ext-openssl": "*",
         "jakeasmith/http_build_url": "^1.0",
         "lesstif/php-jira-rest-client": "^1.35",
-        "graze/parallel-process": "^0.8.1",
+        "graze/parallel-process": "dev-master",
         "ext-posix": "*",
         "twig/string-extra": "^3.3",
         "defuse/php-encryption": "^2.3",
@@ -34,11 +34,12 @@
         "phpunit/phpunit": "^9.3",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "squizlabs/php_codesniffer": "^3.5",
-        "phpro/grumphp-shim": "^2",
         "dealerdirect/phpcodesniffer-composer-installer": "^1",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-symfony": "^1.0",
-        "phpspec/prophecy-phpunit": "^2.0"
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpro/grumphp-shim": "^2",
+        "jangregor/phpstan-prophecy": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -56,6 +57,12 @@
     "bin": [
         "bin/phab"
     ],
+    "repositories": {
+        "graze/parallel-process": {
+            "type": "vcs",
+            "url": "https://github.com/ARY112/parallel-process.git"
+        }
+    },
     "scripts": {
         "auto-scripts": {
 
@@ -65,7 +72,7 @@
     },
     "config": {
         "platform": {
-            "php": "7.3.31"
+            "php": "8.0.30"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
