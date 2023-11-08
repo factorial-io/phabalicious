@@ -1,0 +1,469 @@
+<!DOCTYPE html><html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Running phabalicious</title>
+                  <link rel="preconnect" href="https://BH4D9OD16A-dsn.algolia.net" crossorigin="">
+          <script>
+            window.fdocs = {
+              algolia: {
+                appId: "BH4D9OD16A",
+                apiKey: "69abc87124806b56252e00022c94f392",
+                indexName: "phab"
+              }
+            };
+          </script>
+                <link rel="stylesheet" href="/fdocs/css/common.css">
+          <link rel="stylesheet" href="/fdocs/css/docs.css">
+        <link rel="preload" href="/fdocs/fonts/SuisseWorks-Medium-WebS.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseSign-Regular-WebS.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseSign-Bold-WebS.woff2" as="font" crossorigin="">
+                <script src="/fdocs/js/search.js" defer=""></script>
+                <meta property="og:title" content=" Running phabalicious">
+        <meta name="twitter:title" content=" Running phabalicious">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://docs.phab.io/usage.html">
+                <meta property="og:site_name" content="Phabalicious">
+        <meta property="twitter:card" content="summary_large_image">
+                <meta property="og:image" content="https://docs.phab.io/assets/hero.png">
+        <meta property="twitter:image" content="https://docs.phab.io/assets/hero.png">
+                        <meta property="twitter:site" content="@phabalicious">
+                <meta property="twitter:creator" content="@factorial_io">
+    </head>
+    <body>
+        <header class="Header">
+  <a class="SkipToContentLink" href="#content">Jump to content</a>
+  <div class="Header-content u-container">
+          <a href="#nav" class="Header-navLink">
+      <svg class="Header-navLinkIcon" width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect y="12" width="17" height="2"></rect>
+          <rect y="6" width="17" height="2"></rect>
+          <rect width="17" height="2"></rect>
+        </svg>
+        <span class="u-hiddenVisually">Jump to navigation</span>
+      </a>
+              <a href="https://docs.phab.io" class="Header-logo">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Header-logoImage" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+              <div class="Header-meta">
+                  <div id="docsearch" class="Header-search Header-search--noscript">
+            <form action="https://duckduckgo.com/" method="get" role="search" class="Header-searchForm">
+              <input type="hidden" name="sites" value="https://docs.phab.io">
+              <label for="search-q" class="Header-searchLabel">
+                <svg class="Header-searchLabelIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 14.35L11.7094 10.0594C12.4219 9.025 12.8375 7.77187 12.8375 6.42188C12.8406 2.875 9.96562 0 6.41875 0C2.875 0 0 2.875 0 6.41875C0 9.96562 2.875 12.8375 6.41875 12.8375V12.8406C7.77187 12.8406 9.025 12.4219 10.0594 11.7094L14.35 16L16 14.35ZM6.41875 10.5063V10.5031C4.1625 10.5 2.3375 8.675 2.33437 6.41875C2.3375 4.1625 4.1625 2.3375 6.41875 2.33437C8.675 2.3375 10.5 4.1625 10.5031 6.41875C10.5 8.675 8.675 10.5 6.41875 10.5063Z"></path>
+                </svg>
+                <span class="u-hiddenVisually">Search</span>
+              </label>
+              <input type="text" class="Header-searchInput" name="q" id="search-q" value="">
+              <button type="submit" class="Header-searchSubmit">Search with DuckDuckGo</button>
+            </form>
+          </div>
+                          <div class="Header-githubLink">
+            <a href="https://github.com/factorial-io/phabalicious" rel="noopener" target="_blank">GitHub</a>
+          </div>
+              </div>
+      </div>
+</header>
+        <div class="Content">
+        <main class="Docs">
+      <div class="Docs-nav" id="nav">
+        
+<nav class="Nav">
+  <a href="#content" class="Nav-contentLink">
+    <svg class="Nav-contentLinkIcon" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2.19531" y="0.282471" width="17" height="2" transform="rotate(45 2.19531 0.282471)"></rect>
+      <rect x="0.78125" y="12.3033" width="17" height="2" transform="rotate(-45 0.78125 12.3033)"></rect>
+    </svg>
+    <span class="u-hiddenVisually">Jump to content</span>
+  </a>  <ul class="Nav-list">            <li class="Nav-listItem" style="--level: 0">
+            <a href="/documentation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel">Documentation</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/guide.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How does phabalicious work in two sentences</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/installation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Installation</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a aria-current="page" href="/usage.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running phabalicious</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 2">
+            <a href="/usage.html#list-of-available-commands" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> List of available commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/usage.html#command-line-options" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Command line options</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/usage.html#used-environment-variables%3A" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Used environment variables:</span>
+      </a></li>
+          </ul></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/configuration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Structure of the configuration file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/commands.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/inheritance.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/docker-integration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Docker integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/workspace.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Setup a local dev environment (multibasebox)</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scripts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scaffolder.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding arbitrary files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-scaffold.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding a new app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-create-destroy.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating/ destroying an app from existing configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/deploying-artifacts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Deploying artifacts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/kubernetes.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Kubernetes integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/offsite-backups.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Offsite backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/local-overrides.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Local overrides</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/passwords.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Passwords and secrets</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/contribute.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Contributing to Phabalicious</span>
+      </a></li>
+          </ul></li>            <li class="Nav-listItem" style="--level: 0">
+            <a href="/blog.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blog</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/introduction.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A short introduction into phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/architecture.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Introduction and overall architecture</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-7.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.7?</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-secrets.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Handling secrets with phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-phab-beta-in-parallel.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How to test a beta version of phabalicious in parallel</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-8.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.8?</span>
+      </a></li>
+          </ul></li>  </ul>
+  <script>
+    const nav = document.querySelector("#nav");
+    const activeLink = document.querySelector('nav [aria-current="page"]');
+
+    if (nav && activeLink) {
+      if (activeLink.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom) {
+        activeLink.scrollIntoView();
+      }
+    }
+  </script>
+</nav>
+      </div>
+      <div class="Docs-content" id="content">
+          <div class="RichText">
+    <h1 id="running-phabalicious" tabindex="-1"><a class="header-anchor" href="#running-phabalicious">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Running phabalicious</h1>
+<p>To execute a command with the help of phabalicious, just</p>
+<pre class="language-bash"><code class="language-bash"><span class="token builtin class-name">cd</span> <span class="token operator">&lt;</span>your-project-folder<span class="token operator">&gt;</span><br>phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config-key<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>command<span class="token operator">&gt;</span></code></pre>
+<p>This will read your fabfile.yaml, look for <code>&lt;your-config-key&gt;</code> in the host-section and run the command <code>&lt;command&gt;</code></p>
+<p>Add <code>-v</code> ... <code>-vvv</code> to increase the verbosity of phabalicious. You can get a list of all available options by running</p>
+<pre class="language-shell"><code class="language-shell">phab <span class="token builtin class-name">help</span> <span class="token operator">&lt;</span>command<span class="token operator">&gt;</span></code></pre>
+<h2 id="list-of-available-commands" tabindex="-1"><a class="header-anchor" href="#list-of-available-commands">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> List of available commands</h2>
+<p>You can get a list of <a href="./commands.html">available commands</a> with</p>
+<pre class="language-bash"><code class="language-bash">phab list</code></pre>
+<h2 id="command-line-options" tabindex="-1"><a class="header-anchor" href="#command-line-options">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Command line options</h2>
+<h3 id="-v%2F--vv%2F--vvv%2F--vvvv" tabindex="-1"><a class="header-anchor" href="#-v%2F--vv%2F--vvv%2F--vvvv">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> -v/ -vv/ -vvv/ -vvvv</h3>
+<p>Setting this option will increase the verbosity of phabalicious. Without this settings you'll get only warnings and errors and some informational stuff. If you encounter a problem try increasing the verbosity-level.</p>
+<h3 id="--config" tabindex="-1"><a class="header-anchor" href="#--config">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> --config</h3>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span></code></pre>
+<p>Most of the phabalicious commands need the option <code>config</code>. Setting the option will lookup <code>&lt;your-config&gt;</code> in the <code>hosts</code>-section of your <code>fabfile.yaml</code> and the data will be used to run your command with the correct environment.</p>
+<h3 id="--offline" tabindex="-1"><a class="header-anchor" href="#--offline">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> --offline</h3>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--offline</span><span class="token operator">=</span><span class="token number">1</span> <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>command<span class="token operator">&gt;</span></code></pre>
+<p>This command will disable remote configuration files. As phabalicious keeps copies of remote configuration-files in <code>~/.phabalicious</code> it will try to load the configuration-file from there.</p>
+<h3 id="--fabfile" tabindex="-1"><a class="header-anchor" href="#--fabfile">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> --fabfile</h3>
+<pre class="language-bash"><code class="language-bash">Phab <span class="token parameter variable">--fabfile</span><span class="token operator">=</span><span class="token operator">&lt;</span>path-to-your-fabfile <span class="token punctuation">..</span>.</code></pre>
+<p>This will try to load the <code>fabfile.yaml</code> from a different location: <code>path-to-your-fabfile</code></p>
+<h3 id="--blueprint" tabindex="-1"><a class="header-anchor" href="#--blueprint">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> --blueprint</h3>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> <span class="token parameter variable">--blueprint</span><span class="token operator">=</span><span class="token operator">&lt;</span>branch-name<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>command<span class="token operator">&gt;</span></code></pre>
+<p><code>blueprint</code> will try to load a blueprint-template from the fabfile.yaml and apply the input given as <code>&lt;branch-name&gt;</code> to the template. This is helpful if you want to create/ use a new configuration which has some dynamic parts like the name of the database, the name of the docker-container, etc.</p>
+<p>The command will look first in the host-config for the property <code>blueprint</code>, afterwards in the dockerHost-configuration <code>&lt;config-name&gt;</code> and eventually in the global namespace. If you want to print the generated configuration as yaml, then use the <code>output</code>-command. The computed configuration is used as the current configuration, that means, you can run other commands against the generated configuration.</p>
+<p><strong>Available replacement-patterns</strong> and what they do.</p>
+<p><em>Input is <code>feature/XY-123-my_Branch-name</code>, the project-name is <code>Example project</code></em></p>
+<table>
+<thead>
+<tr>
+<th>Replacement Pattern</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>%slug.with-hyphens.without-feature%</strong></td>
+<td>xy-123-my-branch-name</td>
+</tr>
+<tr>
+<td><strong>%slug.with-hyphens%</strong></td>
+<td>feature-xy-123-my-branch-name</td>
+</tr>
+<tr>
+<td><strong>%project-slug.with-hypens%</strong></td>
+<td>example-project</td>
+</tr>
+<tr>
+<td><strong>%slug%</strong></td>
+<td>featurexy123mybranchname</td>
+</tr>
+<tr>
+<td><strong>%project-slug%</strong></td>
+<td>exampleproject</td>
+</tr>
+<tr>
+<td><strong>%project-identifier%</strong></td>
+<td>Example project</td>
+</tr>
+<tr>
+<td><strong>%identifier%</strong></td>
+<td>feature/XY-123-my_Branch-name</td>
+</tr>
+<tr>
+<td><strong>%slug.without-feature%</strong></td>
+<td>xy123mybranchname</td>
+</tr>
+</tbody>
+</table>
+<p>Here's an example blueprint:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">blueprint</span><span class="token punctuation">:</span><br>  <span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span> http<span class="token punctuation">:</span>//some.host/data.yaml<br>  <span class="token key atrule">configName</span><span class="token punctuation">:</span> <span class="token string">'%project-slug%-%slug.with-hyphens.without-feature%.some.host.tld'</span><br>  <span class="token key atrule">branch</span><span class="token punctuation">:</span> <span class="token string">'%identifier%'</span><br>  <span class="token key atrule">database</span><span class="token punctuation">:</span><br>    <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token string">'%slug.without-feature%_mysql'</span><br>  <span class="token key atrule">docker</span><span class="token punctuation">:</span><br>    <span class="token key atrule">projectFolder</span><span class="token punctuation">:</span> <span class="token string">'%project-slug%--%slug.with-hyphens.without-feature%'</span><br>    <span class="token key atrule">vhost</span><span class="token punctuation">:</span> <span class="token string">'%project-slug%-%slug.without-feature%.some.host.tld'</span><br>    <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token string">'%project-slug%%slug.without-feature%_web_1'</span></code></pre>
+<p>And the output of <code>phab --blueprint=feature/XY-123-my_Branch-name --config=&lt;config-name&gt; output</code> is</p>
+<pre class="language-yaml"><code class="language-yaml">  <span class="token key atrule">phbackend-xy-123-my-branch-name.some.host.tld</span><span class="token punctuation">:</span><br>    <span class="token key atrule">branch</span><span class="token punctuation">:</span> feature/XY<span class="token punctuation">-</span>123<span class="token punctuation">-</span>my_Branch<span class="token punctuation">-</span>name<br>    <span class="token key atrule">configName</span><span class="token punctuation">:</span> phbackend<span class="token punctuation">-</span>xy<span class="token punctuation">-</span>123<span class="token punctuation">-</span>my<span class="token punctuation">-</span>branch<span class="token punctuation">-</span>name.some.host.tld<br>    <span class="token key atrule">database</span><span class="token punctuation">:</span><br>      <span class="token key atrule">name</span><span class="token punctuation">:</span> xy123mybranchname_mysql<br>    <span class="token key atrule">docker</span><span class="token punctuation">:</span><br>      <span class="token key atrule">name</span><span class="token punctuation">:</span> phbackendxy123mybranchname_web_1<br>      <span class="token key atrule">projectFolder</span><span class="token punctuation">:</span> phbackend<span class="token punctuation">-</span><span class="token punctuation">-</span>xy<span class="token punctuation">-</span>123<span class="token punctuation">-</span>my<span class="token punctuation">-</span>branch<span class="token punctuation">-</span>name<br>      <span class="token key atrule">vhost</span><span class="token punctuation">:</span> phbackend<span class="token punctuation">-</span>xy123mybranchname.some.host.tld<br>    <span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span> http<span class="token punctuation">:</span>//some.host/data.yaml</code></pre>
+<p><strong>Note</strong></p>
+<p>You can create new configurations via the global <code>blueprints</code>-settings:</p>
+<pre><code>blueprints:
+  - configName: mbb
+    variants:
+      - de
+      - en
+      - it
+      - fr
+</code></pre>
+<p>will create 4 new configurations using the blueprint-config <code>mbb</code>.</p>
+<p><strong>Note</strong></p>
+<p>You can even create a new host-config from a blueprint and override some of its setting:</p>
+<pre><code>hosts:
+  myHost:
+    inheritFromBluePrint:
+      config: my-blueprint-config
+      variant: my-variable
+    otherSettings...
+</code></pre>
+<h3 id="--variants" tabindex="-1"><a class="header-anchor" href="#--variants">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> --variants</h3>
+<p>When using <code>blueprint</code>, you can run one command on multiple variants Just pass the <code>--variants</code>-flag with the wanted variants.</p>
+<pre><code>phab --config=my-blueprinted-config --variants=all  about
+phab --config=my-blueprinted-config --variants=de,it,fr  about
+
+</code></pre>
+<p>This will prompt you with a list of commands which phab will run and ask for confirmation.</p>
+<h3 id="-s-%2F---set" tabindex="-1"><a class="header-anchor" href="#-s-%2F---set">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> -s / --set</h3>
+<p>You can override existing configuration using the dot notation and pass arbitrary values to phabalicious. Currently this is supported for host configs and dockerhost configs.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">hosts</span><span class="token punctuation">:</span><br>  <span class="token key atrule">example</span><span class="token punctuation">:</span><br>    <span class="token key atrule">host</span><span class="token punctuation">:</span> example.test<br>    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">2222</span><br>    <span class="token punctuation">...</span></code></pre>
+<p>To set a value from command line just pass it via the <code>--set</code>-option:</p>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-cexample</span> about <span class="token parameter variable">--set</span> <span class="token assign-left variable">host.host</span><span class="token operator">=</span>overriden.test <span class="token parameter variable">--set</span> <span class="token assign-left variable">host.port</span><span class="token operator">=</span><span class="token number">22</span></code></pre>
+<h3 id="-a-%2F---arguments" tabindex="-1"><a class="header-anchor" href="#-a-%2F---arguments">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> -a / --arguments</h3>
+<p>Pass arbitrary arguments to scripts or other parts. Passed arguments can be consumed by scripts using <code>%arguments.&lt;name&gt;%</code> syntax. An example:</p>
+<pre><code>scripts:
+  test-arguments:
+    - echo %arguments.message%
+</code></pre>
+<pre class="language-bash"><code class="language-bash">phab -c<span class="token operator">&lt;</span>yourconfig<span class="token operator">&gt;</span> script test-arguments <span class="token parameter variable">--arguments</span> <span class="token assign-left variable">message</span><span class="token operator">=</span><span class="token string">"hello world"</span></code></pre>
+<h3 id="--offline-1" tabindex="-1"><a class="header-anchor" href="#--offline-1">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> --offline</h3>
+<p>Prevent loading of additional data from remote. Helpful when you do not have an internet connection.</p>
+<h3 id="--skip-cache" tabindex="-1"><a class="header-anchor" href="#--skip-cache">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> --skip-cache</h3>
+<p>Phab caches remote files in <code>~/.phabalicious</code> and will use the cached version if it not older than an hour. If you think you get outdated information, pass this flag. It makes sure, that all remote data is read from remote and updates the file-cache.</p>
+<h2 id="used-environment-variables%3A" tabindex="-1"><a class="header-anchor" href="#used-environment-variables%3A">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Used environment variables:</h2>
+<ul>
+<li><code>PHABALICIOUS_EXECUTABLE</code> allows to override the phab executable when using variants</li>
+<li><code>PHABALICIOUS_DEFAULT_CONFIG</code> sets the default config name to use, when no config name was given via the <code>--config</code> flag</li>
+<li><code>PHABALICIOUS_FORCE_GIT_ARTIFACT_DEPLOYMENT</code> forces the git artifact deployment.</li>
+<li><code>PHAB_OP_FILE_PATH</code> file path to <a href="./passwords.html">1password</a> executable.</li>
+<li><code>PHAB_OP_JWT_TOKEN__&lt;TOKEN_ID&gt;</code> token for <a href="./passwords.html">1password</a> connect</li>
+</ul>
+
+  </div>
+        <nav aria-label="article" class="Pagination">
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--prev">
+      <a class="Pagination-link" rel="prev" href="/installation.html"> Installation</a>
+    </div>
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--next">
+      <a class="Pagination-link" rel="next" href="/configuration.html"> Structure of the configuration file</a>
+    </div>
+  </nav>
+      </div>
+    </main>
+  </div>
+      <footer class="Footer">
+  <div class="PreFooter">
+  <div class="PreFooter-content u-container">
+        <a href="https://docs.phab.io" class="PreFooter-logoLink" aria-label="">
+      <span class="u-hiddenVisually">Go to homepage</span>
+      <img class="PreFooter-logo" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+    </a>
+        <p>An open source project by <a href="https://www.factorial.io" rel="noopener" target="_blank">Factorial</a></p>
+  </div>
+</div>
+  <div class="Footer-content">
+    <h2 class="u-hiddenVisually">Additional information</h2>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-contact">
+      <h3 class="FooterList-heading FooterList-heading--contact" id="footer-nav-contact">contact</h3>
+      <ul class="FooterList">
+                <li>
+          <a href="mailto:hello@factorial.io" class="FooterList-link FooterList-link--contact">
+                          hello@factorial.io
+                      </a>
+        </li>
+              </ul>
+    </nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-links">
+      <h3 class="FooterList-heading FooterList-heading--links" id="footer-nav-links">links</h3>
+      <ul class="FooterList">
+                <li>
+          <a href="https://www.factorial.io/en/imprint" class="FooterList-link FooterList-link--links">
+                          Imprint
+                      </a>
+        </li>
+                <li>
+          <a href="https://www.factorial.io/en/privacy-policy" class="FooterList-link FooterList-link--links">
+                          Privacy
+                      </a>
+        </li>
+              </ul>
+    </nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-social">
+      <h3 class="FooterList-heading FooterList-heading--social" id="footer-nav-social">follow us</h3>
+      <ul class="FooterList">
+                <li>
+          <a href="https://github.com/factorial-io" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at github</span>
+            <img src="/fdocs/icons/social/github.svg" aria-hidden="true" alt="Logo of github" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+                <li>
+          <a href="https://www.drupal.org/factorial-gmbh" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at drupal</span>
+            <img src="/fdocs/icons/social/drupal.svg" aria-hidden="true" alt="Logo of drupal" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+                <li>
+          <a href="https://twitter.com/factorial_io" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at twitter</span>
+            <img src="/fdocs/icons/social/twitter.svg" aria-hidden="true" alt="Logo of twitter" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+                <li>
+          <a href="https://www.facebook.com/factorial.io" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at facebook</span>
+            <img src="/fdocs/icons/social/facebook.svg" aria-hidden="true" alt="Logo of facebook" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+                <li>
+          <a href="https://www.instagram.com/factorial.io/" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at instagram</span>
+            <img src="/fdocs/icons/social/instagram.svg" aria-hidden="true" alt="Logo of instagram" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+              </ul>
+    </nav>
+      </div>
+      </div>
+</footer>
+    
+
+</body></html>

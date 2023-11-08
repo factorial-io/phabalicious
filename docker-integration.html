@@ -1,0 +1,410 @@
+<!DOCTYPE html><html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Docker integration</title>
+                  <link rel="preconnect" href="https://BH4D9OD16A-dsn.algolia.net" crossorigin="">
+          <script>
+            window.fdocs = {
+              algolia: {
+                appId: "BH4D9OD16A",
+                apiKey: "69abc87124806b56252e00022c94f392",
+                indexName: "phab"
+              }
+            };
+          </script>
+                <link rel="stylesheet" href="/fdocs/css/common.css">
+          <link rel="stylesheet" href="/fdocs/css/docs.css">
+        <link rel="preload" href="/fdocs/fonts/SuisseWorks-Medium-WebS.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseSign-Regular-WebS.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseSign-Bold-WebS.woff2" as="font" crossorigin="">
+                <script src="/fdocs/js/search.js" defer=""></script>
+                <meta property="og:title" content=" Docker integration">
+        <meta name="twitter:title" content=" Docker integration">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://docs.phab.io/docker-integration.html">
+                <meta property="og:site_name" content="Phabalicious">
+        <meta property="twitter:card" content="summary_large_image">
+                <meta property="og:image" content="https://docs.phab.io/assets/hero.png">
+        <meta property="twitter:image" content="https://docs.phab.io/assets/hero.png">
+                        <meta property="twitter:site" content="@phabalicious">
+                <meta property="twitter:creator" content="@factorial_io">
+    </head>
+    <body>
+        <header class="Header">
+  <a class="SkipToContentLink" href="#content">Jump to content</a>
+  <div class="Header-content u-container">
+          <a href="#nav" class="Header-navLink">
+      <svg class="Header-navLinkIcon" width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect y="12" width="17" height="2"></rect>
+          <rect y="6" width="17" height="2"></rect>
+          <rect width="17" height="2"></rect>
+        </svg>
+        <span class="u-hiddenVisually">Jump to navigation</span>
+      </a>
+              <a href="https://docs.phab.io" class="Header-logo">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Header-logoImage" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+              <div class="Header-meta">
+                  <div id="docsearch" class="Header-search Header-search--noscript">
+            <form action="https://duckduckgo.com/" method="get" role="search" class="Header-searchForm">
+              <input type="hidden" name="sites" value="https://docs.phab.io">
+              <label for="search-q" class="Header-searchLabel">
+                <svg class="Header-searchLabelIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 14.35L11.7094 10.0594C12.4219 9.025 12.8375 7.77187 12.8375 6.42188C12.8406 2.875 9.96562 0 6.41875 0C2.875 0 0 2.875 0 6.41875C0 9.96562 2.875 12.8375 6.41875 12.8375V12.8406C7.77187 12.8406 9.025 12.4219 10.0594 11.7094L14.35 16L16 14.35ZM6.41875 10.5063V10.5031C4.1625 10.5 2.3375 8.675 2.33437 6.41875C2.3375 4.1625 4.1625 2.3375 6.41875 2.33437C8.675 2.3375 10.5 4.1625 10.5031 6.41875C10.5 8.675 8.675 10.5 6.41875 10.5063Z"></path>
+                </svg>
+                <span class="u-hiddenVisually">Search</span>
+              </label>
+              <input type="text" class="Header-searchInput" name="q" id="search-q" value="">
+              <button type="submit" class="Header-searchSubmit">Search with DuckDuckGo</button>
+            </form>
+          </div>
+                          <div class="Header-githubLink">
+            <a href="https://github.com/factorial-io/phabalicious" rel="noopener" target="_blank">GitHub</a>
+          </div>
+              </div>
+      </div>
+</header>
+        <div class="Content">
+        <main class="Docs">
+      <div class="Docs-nav" id="nav">
+        
+<nav class="Nav">
+  <a href="#content" class="Nav-contentLink">
+    <svg class="Nav-contentLinkIcon" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2.19531" y="0.282471" width="17" height="2" transform="rotate(45 2.19531 0.282471)"></rect>
+      <rect x="0.78125" y="12.3033" width="17" height="2" transform="rotate(-45 0.78125 12.3033)"></rect>
+    </svg>
+    <span class="u-hiddenVisually">Jump to content</span>
+  </a>  <ul class="Nav-list">            <li class="Nav-listItem" style="--level: 0">
+            <a href="/documentation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel">Documentation</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/guide.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How does phabalicious work in two sentences</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/installation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Installation</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/usage.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/configuration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Structure of the configuration file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/commands.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/inheritance.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a aria-current="page" href="/docker-integration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Docker integration</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 2">
+            <a href="/docker-integration.html#a-docker-configuration" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A docker-configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/docker-integration.html#the-docker-specific-host-configuration" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> the docker-specific host-configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/docker-integration.html#a-simple-example%3A" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A simple example:</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/docker-integration.html#built-in-docker-commands" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Built-in docker commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/docker-integration.html#predefined-docker-tasks" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Predefined docker-tasks</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/docker-integration.html#conclusion" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Conclusion</span>
+      </a></li>
+          </ul></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/workspace.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Setup a local dev environment (multibasebox)</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scripts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scaffolder.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding arbitrary files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-scaffold.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding a new app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-create-destroy.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating/ destroying an app from existing configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/deploying-artifacts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Deploying artifacts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/kubernetes.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Kubernetes integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/offsite-backups.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Offsite backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/local-overrides.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Local overrides</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/passwords.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Passwords and secrets</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/contribute.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Contributing to Phabalicious</span>
+      </a></li>
+          </ul></li>            <li class="Nav-listItem" style="--level: 0">
+            <a href="/blog.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blog</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/introduction.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A short introduction into phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/architecture.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Introduction and overall architecture</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-7.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.7?</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-secrets.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Handling secrets with phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-phab-beta-in-parallel.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How to test a beta version of phabalicious in parallel</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-8.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.8?</span>
+      </a></li>
+          </ul></li>  </ul>
+  <script>
+    const nav = document.querySelector("#nav");
+    const activeLink = document.querySelector('nav [aria-current="page"]');
+
+    if (nav && activeLink) {
+      if (activeLink.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom) {
+        activeLink.scrollIntoView();
+      }
+    }
+  </script>
+</nav>
+      </div>
+      <div class="Docs-content" id="content">
+          <div class="RichText">
+    <h1 id="docker-integration" tabindex="-1"><a class="header-anchor" href="#docker-integration">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Docker integration</h1>
+<p>The docker-integration is quite simple, but very powerful. In a fabfile, there are host-configuration under the key <code>hosts</code> and docker-configs under the key <code>dockerHosts</code>. A <code>host</code> can reference a docker-configuration, multiple hosts can use one docker-config.</p>
+<h2 id="a-docker-configuration" tabindex="-1"><a class="header-anchor" href="#a-docker-configuration">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> A docker-configuration</h2>
+<p>A docker configuration must contain these keys:</p>
+<ul>
+<li><code>rootFolder</code> the rootFolder, where the projectFolder can be found</li>
+<li><code>shellProvider</code>: <code>local</code> or <code>ssh</code>; in which shell the tasks-commands should be run. The shell-provider might require more information e.g. <code>user</code>, <code>host</code> and <code>port</code>.</li>
+<li><code>tasks</code>: a keyed list of scripts to use. The key is the name of the script, which you can trigger via the <code>docker command</code></li>
+<li><code>environment</code>: a key-value list of environment-variables to set before running a docker-command. This helps to modularize docker-compose-files, for example.</li>
+</ul>
+<p>The tasks can use the pattern-replacement used in other parts of phabalicious to get data from the docker-config or from the host-config into the tasks. Here's a small example:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">tasks</span><span class="token punctuation">:</span><br>  <span class="token key atrule">run</span><span class="token punctuation">:</span><br>    <span class="token punctuation">-</span> echo "running container %host.docker.name% for config %host.configName% in %dockerHost.rootFolder%</code></pre>
+<p>If you want to use some host-config, use <code>host.</code> as a prefix, if you want to use sth from the docker-config, use <code>dockerHost.</code> as prefix.</p>
+<h2 id="the-docker-specific-host-configuration" tabindex="-1"><a class="header-anchor" href="#the-docker-specific-host-configuration">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> the docker-specific host-configuration</h2>
+<p>All docker-configuration is stored inside the <code>docker</code>-group. It has only 2 required keys:</p>
+<ul>
+<li><code>configuration</code> this links to a key under <code>dockerHosts</code></li>
+<li><code>projectFolder</code> the folder, where this project is stored in relation to the <code>rootFolder</code></li>
+<li><code>name</code> or <code>service</code>. Some commands need to know with which container you want to interact. Provide the name of the docker-container via the <code>name</code>-property, if you are using docker-compose you can set the <code>service</code> accordingly, then phabalicious will try to compute the docker-name automatically.</li>
+</ul>
+<p>You can add as many data to the yams file and reference it via the replacement-mechanism described earlier.</p>
+<h2 id="a-simple-example%3A" tabindex="-1"><a class="header-anchor" href="#a-simple-example%3A">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> A simple example:</h2>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">dockerHosts</span><span class="token punctuation">:</span><br>  <span class="token key atrule">test</span><span class="token punctuation">:</span><br>    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> /root/folder<br>    <span class="token key atrule">shellProvider</span><span class="token punctuation">:</span> local<br>    <span class="token key atrule">environment</span><span class="token punctuation">:</span><br>      <span class="token key atrule">VHOST</span><span class="token punctuation">:</span> %host.configName%.test<br>    <span class="token key atrule">tasks</span><span class="token punctuation">:</span><br>      <span class="token key atrule">run</span><span class="token punctuation">:</span><br>        <span class="token punctuation">-</span> echo "docker run"<br>      <span class="token key atrule">build</span><span class="token punctuation">:</span><br>        <span class="token punctuation">-</span> echo "docker build"<br>      <span class="token key atrule">all</span><span class="token punctuation">:</span><br>        <span class="token punctuation">-</span> <span class="token key atrule">echo "current config</span><span class="token punctuation">:</span> %host.configName%"<br>        <span class="token punctuation">-</span> execute(docker<span class="token punctuation">,</span> build)<br>        <span class="token punctuation">-</span> execute(docker<span class="token punctuation">,</span> run)<br><br><span class="token key atrule">hosts</span><span class="token punctuation">:</span><br>  <span class="token key atrule">testHostA</span><span class="token punctuation">:</span><br>    <span class="token punctuation">...</span><br>    <span class="token key atrule">docker</span><span class="token punctuation">:</span><br>      <span class="token key atrule">configuration</span><span class="token punctuation">:</span> test<br>      <span class="token key atrule">projectFolder</span><span class="token punctuation">:</span> test<span class="token punctuation">-</span>host<span class="token punctuation">-</span>a<br>      <span class="token key atrule">name</span><span class="token punctuation">:</span> testhosta</code></pre>
+<p>This snippet will expose 3 docker-commands for the host <code>testHostA</code>, you can execute them via</p>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span>testHostA <span class="token function">docker</span> run<span class="token operator">|</span>build<span class="token operator">|</span>all</code></pre>
+<p>The output for <code>phab -ctestHostA docker all</code> will be:</p>
+<pre><code>current config: testHostA
+docker build
+docker run
+</code></pre>
+<p>The inheritance mechanism allows you to store the docker-config in a central location and reuse it in your fabfile:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">dockerHosts</span><span class="token punctuation">:</span><br>  <span class="token key atrule">testB</span><span class="token punctuation">:</span><br>    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> /some/other/folder<br>    <span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span><br>      <span class="token punctuation">-</span> https<span class="token punctuation">:</span>//some.host/docker.yml<br>      <span class="token punctuation">-</span> https<span class="token punctuation">:</span>//some.host/docker<span class="token punctuation">-</span>compose.yml</code></pre>
+<h2 id="built-in-docker-commands" tabindex="-1"><a class="header-anchor" href="#built-in-docker-commands">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Built-in docker commands</h2>
+<p>There are two commands builtin, because they are hard to implement in a script-only version:</p>
+<ul>
+<li>waitForServices</li>
+<li>copySSHKeysToDocker</li>
+<li>scaffoldDockerFiles</li>
+</ul>
+<h3 id="waitforservices" tabindex="-1"><a class="header-anchor" href="#waitforservices">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> waitForServices</h3>
+<p>This will try to run <code>supervisorctl status</code> every 10 seconds, and wait until all services are up and running. If you want to disable this command, set the executable to false with</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">executables</span><span class="token punctuation">:</span><br>  <span class="token key atrule">supervisorctl</span><span class="token punctuation">:</span> <span class="token boolean important">false</span></code></pre>
+<h3 id="copysshkeystodocker" tabindex="-1"><a class="header-anchor" href="#copysshkeystodocker">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> copySSHKeysToDocker</h3>
+<p>This command will copy the referenced files from your local computer into the docker container and set the permissions so ssh can use the copied data.</p>
+<p>These are the needed global settings in the fabfile:</p>
+<ul>
+<li><code>dockerKeyFile</code> will copy the referenced private key and its public key into the container</li>
+<li><code>dockerAuthorizedKeysFile</code>, the <code>authorized_keys</code>-file, can be a path to a file or an url</li>
+<li><code>dockerKnownHostsFile</code>, the <code>known_hosts</code>-file</li>
+<li><code>dockerNetRcFile</code>, will copy a <code>.netrc</code>-file into the container (suitable for authenticating against https repositories)</li>
+</ul>
+<p>Obviously a ssh-demon should be running inside your docker-container.</p>
+<h3 id="scaffolddockerfiles" tabindex="-1"><a class="header-anchor" href="#scaffolddockerfiles">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> scaffoldDockerFiles</h3>
+<p>This command will scaffold all files necessary for docker when executed. (It will also executed before any other docker command). Make sure, your host-config contains a <code>scaffold</code>-section. Here's an example:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">hosts</span><span class="token punctuation">:</span><br>  <span class="token key atrule">example</span><span class="token punctuation">:</span><br>    <span class="token key atrule">docker</span><span class="token punctuation">:</span><br>      <span class="token key atrule">scaffold</span><span class="token punctuation">:</span><br>        <span class="token key atrule">assets</span><span class="token punctuation">:</span><br>          <span class="token punctuation">-</span> hosting/mbb/docker<span class="token punctuation">-</span>compose.yml<br>          <span class="token punctuation">-</span> hosting/mbb/docker<span class="token punctuation">-</span>compose.override.yml<br>        <span class="token key atrule">questions</span><span class="token punctuation">:</span><br>          <span class="token punctuation">...</span><br>        <span class="token key atrule">scaffold</span><span class="token punctuation">:</span><br>          <span class="token punctuation">-</span> copy_assets(%rootFolder%)<br>          <span class="token punctuation">-</span> <span class="token punctuation">...</span><br></code></pre>
+<h2 id="predefined-docker-tasks" tabindex="-1"><a class="header-anchor" href="#predefined-docker-tasks">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Predefined docker-tasks</h2>
+<p>Phabalicious is running some predefined docker-tasks if set in the fabfile and when using the commands <code>app:create</code> or <code>app:destroy</code></p>
+<ul>
+<li><code>spinUp</code>: get all needed container running</li>
+<li><code>spinDown</code>: stop all app-containers</li>
+<li><code>deleteContainer</code>: remove and delete all app container</li>
+</ul>
+<p>If you want to support this in your configuration, add the tasks to the fabfile and its corresponding commands.</p>
+<h2 id="conclusion" tabindex="-1"><a class="header-anchor" href="#conclusion">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Conclusion</h2>
+<p>As you can see, there's not much docker-specific besides the naming. So in theory you can control something else like <code>rancher</code> or maybe even <code>kubectl</code>. All you have is the referencing between a host and a dockerHost and the possibility to run tasks locally or via SSH on a remote instance, and pass data from the host-config or docker-config to your scripts.</p>
+
+  </div>
+        <nav aria-label="article" class="Pagination">
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--prev">
+      <a class="Pagination-link" rel="prev" href="/inheritance.html"> Inheritance</a>
+    </div>
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--next">
+      <a class="Pagination-link" rel="next" href="/workspace.html"> Setup a local dev environment (multibasebox)</a>
+    </div>
+  </nav>
+      </div>
+    </main>
+  </div>
+      <footer class="Footer">
+  <div class="PreFooter">
+  <div class="PreFooter-content u-container">
+        <a href="https://docs.phab.io" class="PreFooter-logoLink" aria-label="">
+      <span class="u-hiddenVisually">Go to homepage</span>
+      <img class="PreFooter-logo" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+    </a>
+        <p>An open source project by <a href="https://www.factorial.io" rel="noopener" target="_blank">Factorial</a></p>
+  </div>
+</div>
+  <div class="Footer-content">
+    <h2 class="u-hiddenVisually">Additional information</h2>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-contact">
+      <h3 class="FooterList-heading FooterList-heading--contact" id="footer-nav-contact">contact</h3>
+      <ul class="FooterList">
+                <li>
+          <a href="mailto:hello@factorial.io" class="FooterList-link FooterList-link--contact">
+                          hello@factorial.io
+                      </a>
+        </li>
+              </ul>
+    </nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-links">
+      <h3 class="FooterList-heading FooterList-heading--links" id="footer-nav-links">links</h3>
+      <ul class="FooterList">
+                <li>
+          <a href="https://www.factorial.io/en/imprint" class="FooterList-link FooterList-link--links">
+                          Imprint
+                      </a>
+        </li>
+                <li>
+          <a href="https://www.factorial.io/en/privacy-policy" class="FooterList-link FooterList-link--links">
+                          Privacy
+                      </a>
+        </li>
+              </ul>
+    </nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-social">
+      <h3 class="FooterList-heading FooterList-heading--social" id="footer-nav-social">follow us</h3>
+      <ul class="FooterList">
+                <li>
+          <a href="https://github.com/factorial-io" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at github</span>
+            <img src="/fdocs/icons/social/github.svg" aria-hidden="true" alt="Logo of github" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+                <li>
+          <a href="https://www.drupal.org/factorial-gmbh" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at drupal</span>
+            <img src="/fdocs/icons/social/drupal.svg" aria-hidden="true" alt="Logo of drupal" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+                <li>
+          <a href="https://twitter.com/factorial_io" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at twitter</span>
+            <img src="/fdocs/icons/social/twitter.svg" aria-hidden="true" alt="Logo of twitter" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+                <li>
+          <a href="https://www.facebook.com/factorial.io" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at facebook</span>
+            <img src="/fdocs/icons/social/facebook.svg" aria-hidden="true" alt="Logo of facebook" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+                <li>
+          <a href="https://www.instagram.com/factorial.io/" class="FooterList-link FooterList-link--social">
+                        <span class="u-hiddenVisually">Factorial at instagram</span>
+            <img src="/fdocs/icons/social/instagram.svg" aria-hidden="true" alt="Logo of instagram" width="30" height="30" loading="lazy" decoding="async">
+                      </a>
+        </li>
+              </ul>
+    </nav>
+      </div>
+      </div>
+</footer>
+    
+
+</body></html>
