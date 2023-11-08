@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.28](https://github.com/factorial-io/phabalicious/compare/3.8.27...3.8.28) (2023-11-08)
+
+
+### Features
+
+* new `docker-copy` action for artifact based deployments ([a036353](https://github.com/factorial-io/phabalicious/commit/a0363537dc409e16846951121ceec1b6cee78a01))
+
 ### [3.8.27](https://github.com/factorial-io/phabalicious/compare/3.8.26...3.8.27) (2023-09-10)
 
 
