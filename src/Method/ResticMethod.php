@@ -287,7 +287,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
      *
      * @return array|mixed
      */
-    protected function getResticOptions(HostConfig $host_config, TaskContextInterface $context, $include_host)
+    protected function getResticOptions(HostConfig $host_config, TaskContextInterface $context, $include_host): mixed
     {
         $options = $host_config['restic']['options'] ?? [];
         $options[] = '-r';

@@ -175,7 +175,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
     /**
      * {@inheritdoc}
      */
-    public function wrapCommandInLoginShell(array $command)
+    public function wrapCommandInLoginShell(array $command): array
     {
         return [
             '/bin/sh',

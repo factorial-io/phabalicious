@@ -175,7 +175,7 @@ class Options extends CallbackOptions
     /**
      * @return ShellProviderInterface
      */
-    public function getShell(): ?ShellProviderInterface
+    public function getShell(): ShellProviderInterface
     {
         return $this->shell;
     }
@@ -187,7 +187,7 @@ class Options extends CallbackOptions
      *
      * @return $this
      */
-    public function setDryRun(bool $flag): Options
+    public function setDryRun(bool $flag): static
     {
         $this->dryRun = $flag;
         return $this;
@@ -214,7 +214,7 @@ class Options extends CallbackOptions
      *
      * @return \Phabalicious\Scaffolder\Options
      */
-    public function setQuiet(bool $quiet): Options
+    public function setQuiet(bool $quiet): \Phabalicious\Scaffolder\Options
     {
         $this->quiet = $quiet;
         return $this;
@@ -223,7 +223,7 @@ class Options extends CallbackOptions
     /**
      * @return string
      */
-    public function getBaseUrl()
+    public function getBaseUrl(): string
     {
         return $this->baseUrl;
     }
@@ -273,7 +273,7 @@ class Options extends CallbackOptions
      *
      * @return Options
      */
-    public function setRootPath($root_path)
+    public function setRootPath($root_path): Options
     {
         $this->rootPath = $root_path;
         return $this;

@@ -14,7 +14,7 @@ class AppKernel extends Kernel
     /**
      * @return BundleInterface[]
      */
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         return [];
     }
@@ -25,7 +25,7 @@ class AppKernel extends Kernel
     /**
      * Unique cache path for this Kernel
      */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return sys_get_temp_dir() . '/phabalicious' . Utilities::FALLBACK_VERSION . md5(self::class);
     }

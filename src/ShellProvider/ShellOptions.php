@@ -54,7 +54,7 @@ class ShellOptions
      * @param mixed $shellExecutableProvided
      * @return ShellOptions
      */
-    public function setShellExecutableProvided($shellExecutableProvided)
+    public function setShellExecutableProvided($shellExecutableProvided): ShellOptions
     {
         $this->shellExecutableProvided = $shellExecutableProvided;
         return $this;

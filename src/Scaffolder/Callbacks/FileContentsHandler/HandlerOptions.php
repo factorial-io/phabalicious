@@ -65,7 +65,7 @@ class HandlerOptions
     /**
      * @return mixed
      */
-    public function getTokens()
+    public function getTokens(): mixed
     {
         return $this->tokens;
     }
@@ -95,7 +95,7 @@ class HandlerOptions
     /**
      * @return mixed
      */
-    public function getApplyTwigToFileExtension()
+    public function getApplyTwigToFileExtension(): mixed
     {
         return $this->apply_twig_to_file_w_extension;
     }
@@ -113,7 +113,7 @@ class HandlerOptions
     /**
      * @return mixed
      */
-    public function getBasePath()
+    public function getBasePath(): mixed
     {
         return $this->basePath;
     }

@@ -107,7 +107,7 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
         throw new \RuntimeException("createTunnelProcess not implemented!");
     }
 
-    public function wrapCommandInLoginShell(array $command)
+    public function wrapCommandInLoginShell(array $command): array
     {
         return $command;
     }

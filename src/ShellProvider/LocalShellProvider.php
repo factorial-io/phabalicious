@@ -331,7 +331,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     /**
      * {@inheritdoc}
      */
-    public function wrapCommandInLoginShell(array $command)
+    public function wrapCommandInLoginShell(array $command): array
     {
         array_unshift(
             $command,
@@ -360,7 +360,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      *
      * @return false|string
      */
-    protected function sendCommandToShell(string $command, bool $include_result_identifier = true)
+    protected function sendCommandToShell(string $command, bool $include_result_identifier = true): false|string
     {
         $this->setup();
         $this->process->clearErrorOutput();

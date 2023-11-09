@@ -40,7 +40,7 @@ class WebhookCommand extends BaseCommand
             ->setHelp('Invokes a webhook from the global section.');
     }
 
-    public function completeArgumentValues($argumentName, CompletionContext $context)
+    public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
         if (($argumentName == 'webhook') && ($context instanceof FishShellCompletionContext)) {
             $scripts = $this->getConfiguration()->getSetting('webhooks', []);
@@ -52,17 +52,18 @@ class WebhookCommand extends BaseCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null
-     * @throws BlueprintTemplateNotFoundException
-     * @throws FabfileNotFoundException
-     * @throws FabfileNotReadableException
-     * @throws MethodNotFoundException
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws TaskNotFoundInMethodException
-     * @throws ShellProviderNotFoundException
+     *
+     * @return int
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;

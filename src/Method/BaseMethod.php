@@ -168,7 +168,7 @@ abstract class BaseMethod implements MethodInterface
      * @param TaskContextInterface $context
      * @return ShellProviderInterface|null
      */
-    public function getShell(HostConfig $host_config, TaskContextInterface $context)
+    public function getShell(HostConfig $host_config, TaskContextInterface $context): ?ShellProviderInterface
     {
         return $context->get('shell', $host_config->shell());
     }

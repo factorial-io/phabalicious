@@ -35,7 +35,7 @@ class FishShellCompletionDescriptor extends Descriptor
         /** @var Command $command */
         $command = $options['command'];
         if (!$command instanceof CompletionAwareInterface) {
-            return;
+            return null;
         }
         $this->output->write(
             "complete -c phab -n '__fish_seen_subcommand_from " . $command->getName() .
@@ -193,7 +193,7 @@ class FishShellCompletionDescriptor extends Descriptor
         $this->output->writeln('	return 1');
         $this->output->writeln('end');
 
-        $describedNamespace = isset($options['namespace']) ? $options['namespace'] : null;
+        $describedNamespace = $options['namespace'] ?? null;
         $description = new ApplicationDescription($application, $describedNamespace);
         foreach ($description->getCommands() as $command) {
             $this->describe($this->output, $command);

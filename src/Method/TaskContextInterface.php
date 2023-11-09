@@ -53,7 +53,7 @@ interface TaskContextInterface
      * @param mixed $default
      * @return mixed
      */
-    public function getResult($key, $default = null);
+    public function getResult($key, $default = null): mixed;
 
     public function getResults(): array;
 
@@ -75,10 +75,10 @@ interface TaskContextInterface
     /**
      * @return PasswordManagerInterface
      */
-    public function getPasswordManager();
+    public function getPasswordManager(): PasswordManagerInterface;
 
     /**
      * @return SymfonyStyle
      */
-    public function io();
+    public function io(): SymfonyStyle;
 }

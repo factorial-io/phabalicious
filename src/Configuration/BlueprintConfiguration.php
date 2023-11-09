@@ -133,7 +133,7 @@ class BlueprintConfiguration
      * @param string $config_name
      * @return bool|array
      */
-    public function getVariants($config_name)
+    public function getVariants($config_name): bool|array
     {
         $data = $this->configuration->getSetting('blueprints', []);
         foreach ($data as $b) {

@@ -28,7 +28,7 @@ class VisitorData
     /**
      * @return \Phabalicious\Configuration\Storage\Node
      */
-    public function getValue(): Node
+    public function getValue(): \Phabalicious\Configuration\Storage\Node
     {
         return $this->value;
     }
@@ -36,7 +36,7 @@ class VisitorData
     /**
      * @return array|mixed
      */
-    public function getStack()
+    public function getStack(): mixed
     {
         return $this->stack;
     }

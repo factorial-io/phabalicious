@@ -264,7 +264,7 @@ class ConfigurationService
      * @return mixed
      * @throws MismatchedVersionException
      */
-    protected function readFile(string $file)
+    protected function readFile(string $file): mixed
     {
         $cid = 'yaml:' . $file;
         if (isset($this->cache[$cid])) {
@@ -608,7 +608,7 @@ class ConfigurationService
    * @throws \Phabalicious\Exception\ShellProviderNotFoundException
    * @throws \Phabalicious\Exception\ValidationFailedException
    */
-    public function getHostConfig(string $config_name)
+    public function getHostConfig(string $config_name): HostConfig
     {
         $cid = 'host:' . $config_name;
 
@@ -642,7 +642,7 @@ class ConfigurationService
    * @throws BlueprintTemplateNotFoundException
    * @throws FabfileNotReadableException
    */
-    public function getHostConfigFromBlueprint(string $blueprint, string $identifier, $skip_host_validation = false)
+    public function getHostConfigFromBlueprint(string $blueprint, string $identifier, $skip_host_validation = false): HostConfig
     {
         $cid = 'blueprint:' . $blueprint . ':' . $identifier;
 
@@ -682,7 +682,7 @@ class ConfigurationService
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    private function validateHostConfig($config_name, Node $data)
+    private function validateHostConfig($config_name, Node $data): HostConfig
     {
         $data = $this->resolveInheritance($data, $this->hosts);
         $this->reportDeprecations(sprintf('hosts.%s', $config_name));
@@ -856,7 +856,7 @@ class ConfigurationService
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    public function getDockerConfig(string $config_name)
+    public function getDockerConfig(string $config_name): DockerConfig
     {
         $cid = 'dockerhost:' . $config_name;
 
@@ -998,7 +998,7 @@ class ConfigurationService
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    protected function inheritFromBlueprint(string $config_name, Node $data): Node
+    protected function inheritFromBlueprint(string $config_name, Node $data): \Phabalicious\Configuration\Storage\Node
     {
         $errors = new ValidationErrorBag();
         $validation = new ValidationService($data['inheritFromBlueprint'], $errors, 'inheritFromBlueprint');
@@ -1085,7 +1085,7 @@ class ConfigurationService
     /**
      * @return PasswordManagerInterface
      */
-    public function getPasswordManager(): ?PasswordManagerInterface
+    public function getPasswordManager(): PasswordManagerInterface
     {
         if (!$this->passwordManager) {
             $this->setPasswordManager(new PasswordManager());
@@ -1112,7 +1112,7 @@ class ConfigurationService
      *
      * @return bool|string
      */
-    public function getInheritanceBaseUrl()
+    public function getInheritanceBaseUrl(): bool|string
     {
         return !empty($this->inheritanceBaseUrl)
             ? $this->inheritanceBaseUrl

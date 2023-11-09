@@ -32,7 +32,7 @@ class InstallFromCommand extends BaseCommand
         $this->setAliases(['installFrom']);
     }
 
-    public function completeArgumentValues($argumentName, CompletionContext $context)
+    public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
         if ($argumentName == 'from') {
             return $this->configuration->getAllHostConfigs()->getKeys();
@@ -49,7 +49,8 @@ class InstallFromCommand extends BaseCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|null
+     * @return int
+
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -57,7 +58,7 @@ class InstallFromCommand extends BaseCommand
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;

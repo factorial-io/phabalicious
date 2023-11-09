@@ -29,7 +29,8 @@ class JiraCommand extends BaseOptionsCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|null
+     * @return int
+
      * @throws ValidationFailedException
      * @throws \JiraRestApi\JiraException
      * @throws \JsonMapper_Exception
@@ -38,7 +39,7 @@ class JiraCommand extends BaseOptionsCommand
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->checkAllRequiredOptionsAreNotEmpty($input);
         $this->readConfiguration($input);

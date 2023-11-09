@@ -82,7 +82,7 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
             );
     }
 
-    public function completeOptionValues($optionName, CompletionContext $context)
+    public function completeOptionValues($optionName, CompletionContext $context): array
     {
         if ($optionName == 'offline') {
             return ['1', '0'];
@@ -93,7 +93,7 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         return [];
     }
 
-    public function completeArgumentValues($argumentName, CompletionContext $context)
+    public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
         return [];
     }
@@ -182,7 +182,7 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
      * @param array $default_arguments
      * @return TaskContext
      */
-    protected function createContext(InputInterface $input, OutputInterface $output, $default_arguments = [])
+    protected function createContext(InputInterface $input, OutputInterface $output, $default_arguments = []): TaskContext
     {
         $context =  $this->context ?: new TaskContext($this, $input, $output);
         $arguments = $this->parseScriptArguments($default_arguments, $input->getOption('arguments'));

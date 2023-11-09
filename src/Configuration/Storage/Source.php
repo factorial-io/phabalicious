@@ -18,7 +18,7 @@ class Source
       /**
        * @return mixed
        */
-    public function getSource()
+    public function getSource(): mixed
     {
         return $this->source;
     }

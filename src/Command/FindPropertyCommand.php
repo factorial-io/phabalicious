@@ -39,18 +39,19 @@ Examples:
             ');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+  /**
+   * @param InputInterface $input
+   * @param OutputInterface $output
+   *
+   * @return int
+   * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+   * @throws \Phabalicious\Exception\FabfileNotFoundException
+   * @throws \Phabalicious\Exception\FabfileNotReadableException
+   * @throws \Phabalicious\Exception\MismatchedVersionException
+   * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+   * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+   */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $context = $this->createContext($input, $output);
 

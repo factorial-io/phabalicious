@@ -93,11 +93,9 @@ interface DatabaseMethodInterface
      *
      * @param array $data
      * @param ValidationErrorBag $errors
-     * @param false $validate_working_dir
-     *
-     * @return mixed
+     * @param bool $validate_working_dir
      */
-    public function validateCredentials(array $data, ValidationErrorBag $errors, bool $validate_working_dir = false);
+    public function validateCredentials(array $data, ValidationErrorBag $errors, bool $validate_working_dir = false): void;
 
     /**
      * Get an url encoding the database credentials for drupal.

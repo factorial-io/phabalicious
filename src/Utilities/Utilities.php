@@ -190,7 +190,7 @@ class Utilities
      * @param string[] $strings
      * @return true|ReplacementValidationError
      */
-    public static function validateReplacements(array $strings)
+    public static function validateReplacements(array $strings): true|ReplacementValidationError
     {
         foreach ($strings as $ndx => $line) {
             if (!is_string($line)) {
@@ -262,7 +262,7 @@ class Utilities
      *
      * @throws ArgumentParsingException
      */
-    public static function extractArguments($str)
+    public static function extractArguments($str): array
     {
         // If only one argument return early.
         if (strpos($str, ',') === false) {

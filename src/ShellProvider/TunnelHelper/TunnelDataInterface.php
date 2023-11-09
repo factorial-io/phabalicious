@@ -14,13 +14,13 @@ interface TunnelDataInterface
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
 
     /**
      * @return mixed
      */
-    public function getState();
+    public function getState(): mixed;
 
     public function setState(string $state);
 

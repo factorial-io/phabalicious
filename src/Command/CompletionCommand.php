@@ -67,7 +67,7 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->configuration->setLogger(new NullLogger());
         $this->handler = new CompletionHandler($this->getApplication());

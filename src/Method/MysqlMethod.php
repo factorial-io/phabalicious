@@ -342,7 +342,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
      * @param ValidationErrorBag $errors
      * @param false $validate_working_dir
      */
-    public function validateCredentials(array $data, ValidationErrorBag $errors, bool $validate_working_dir = false)
+    public function validateCredentials(array $data, ValidationErrorBag $errors, bool $validate_working_dir = false): void
     {
         $service = new ValidationService($data, $errors, 'database');
         $service->hasKeys([

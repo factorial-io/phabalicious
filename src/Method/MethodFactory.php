@@ -255,7 +255,7 @@ class MethodFactory
      *
      * @return MethodInterface[]
      */
-    public function all()
+    public function all(): array
     {
         return $this->methods;
     }

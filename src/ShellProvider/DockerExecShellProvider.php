@@ -78,7 +78,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
      * @return bool
      * @throws \Exception
      */
-    public function exists($dir):bool
+    public function exists($dir): bool
     {
         $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $dir), false, false);
         return $result->succeeded();
@@ -100,7 +100,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     /**
      * {@inheritdoc}
      */
-    public function wrapCommandInLoginShell(array $command)
+    public function wrapCommandInLoginShell(array $command): array
     {
         return array_merge([
             '/bin/bash',

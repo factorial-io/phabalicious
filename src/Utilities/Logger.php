@@ -101,7 +101,7 @@ class Logger extends ConsoleLogger
     /**
      * {@inheritdoc}
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = array()): void
     {
         if ($this->output->getVerbosity() < $this->verbosityLevelMapOverride[$level]) {
             return;
@@ -123,7 +123,7 @@ class Logger extends ConsoleLogger
      *
      * @return Logger
      */
-    public function setPasswordManager(PasswordManagerInterface $passwordManager)
+    public function setPasswordManager(PasswordManagerInterface $passwordManager): Logger
     {
         $this->passwordManager = $passwordManager;
         return $this;

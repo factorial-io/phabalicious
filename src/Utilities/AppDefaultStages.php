@@ -67,7 +67,7 @@ class AppDefaultStages
      *
      * @return bool
      */
-    public static function stageNeedsRunningApp($stage)
+    public static function stageNeedsRunningApp($stage): bool
     {
         return in_array($stage, self::$stagesNeedingARunningApp);
     }

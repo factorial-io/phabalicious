@@ -155,7 +155,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
      * @return bool
      * @throws \Exception
      */
-    public function exists($dir):bool
+    public function exists($dir): bool
     {
         $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $dir), false, false);
         return $result->succeeded();
@@ -235,7 +235,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
      * @return Process
      * @throws SshTunnelFailedException
      */
-    public function createTunnelProcess(HostConfig $target_config, array $prefix = [])
+    public function createTunnelProcess(HostConfig $target_config, array $prefix = []): Process
     {
         $tunnel = $target_config['sshTunnel'];
         $bridge = [
@@ -318,7 +318,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
     /**
      * {@inheritdoc}
      */
-    public function wrapCommandInLoginShell(array $command)
+    public function wrapCommandInLoginShell(array $command): array
     {
         return [
             '/bin/bash',

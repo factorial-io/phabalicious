@@ -502,7 +502,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
      */
-    public function getIpAddress(HostConfig $host_config, TaskContextInterface $context)
+    public function getIpAddress(HostConfig $host_config, TaskContextInterface $context): bool|string
     {
         if (!empty($this->cache[$host_config->getConfigName()])) {
             return $this->cache[$host_config->getConfigName()];

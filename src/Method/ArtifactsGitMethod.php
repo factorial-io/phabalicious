@@ -80,7 +80,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
      *
      * @return \Phabalicious\Configuration\Storage\Node
      */
-    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): \Phabalicious\Configuration\Storage\Node
     {
         $parent = parent::getDefaultConfig($configuration_service, $host_config);
         $return = [];
@@ -170,7 +170,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
      * @return GitMethod
      * @throws MethodNotFoundException
      */
-    private function getGitMethod(TaskContextInterface $context)
+    private function getGitMethod(TaskContextInterface $context): GitMethod
     {
         return $context->getConfigurationService()->getMethodFactory()->getMethod('git');
     }

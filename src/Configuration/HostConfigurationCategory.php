@@ -46,7 +46,7 @@ class HostConfigurationCategory
     /**
      * @return mixed
      */
-    public function getId()
+    public function getId(): mixed
     {
         return $this->id;
     }
@@ -54,7 +54,7 @@ class HostConfigurationCategory
     /**
      * @return mixed
      */
-    public function getLabel()
+    public function getLabel(): mixed
     {
         return $this->label;
     }

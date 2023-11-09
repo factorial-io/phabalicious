@@ -41,7 +41,7 @@ class GetSqlDumpCommand extends BaseCommand
      * @throws ShellProviderNotFoundException
      * @throws TaskNotFoundInMethodException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;

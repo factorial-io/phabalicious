@@ -83,7 +83,7 @@ class PasswordManager implements PasswordManagerInterface
      *
      * @return PasswordManager
      */
-    public function setContext(TaskContextInterface $context): PasswordManagerInterface
+    public function setContext(TaskContextInterface $context): PasswordManager
     {
         $this->context = $context;
         return $this;

@@ -23,7 +23,7 @@ class CopyAction extends ActionBase
      * @param $install_dir
      * @return array
      */
-    private function getDirectoryContents(ShellProviderInterface $shell, $install_dir)
+    private function getDirectoryContents(ShellProviderInterface $shell, $install_dir): array
     {
         $contents = $shell->run('ls -1a ' . $install_dir, true);
         return array_filter($contents->getOutput(), function ($elem) {

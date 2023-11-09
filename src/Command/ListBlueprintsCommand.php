@@ -42,7 +42,7 @@ class ListBlueprintsCommand extends BaseOptionsCommand
      * @throws MismatchedVersionException
      * @throws ValidationFailedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fabfile = !empty($input->getOption('fabfile')) ? $input->getOption('fabfile') : '';
         $this->configuration->readConfiguration(getcwd(), $fabfile);
