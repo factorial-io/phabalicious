@@ -18,7 +18,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
     /**
      * @var \Phabalicious\Configuration\ConfigurationService
      */
-    private $configuration;
+    private ConfigurationService $configuration;
 
     public function __construct(ConfigurationService $configuration)
     {
@@ -38,7 +38,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
     /**
      * Get all releases from Github.
      */
-    protected function getReleasesFromGithub()
+    protected function getReleasesFromGithub(): array
     {
         $version_parser = new VersionParser();
 
@@ -71,7 +71,7 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
         return $sorted_releases;
     }
 
-    public function isUpdateAvailable()
+    public function isUpdateAvailable(): bool|array
     {
         try {
             $version = $this->getApplication()->getVersion();
@@ -109,33 +109,32 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
         return false;
     }
 
-    public static function registerListener(EventDispatcher $dispatcher)
+    public static function registerListener(EventDispatcher $dispatcher): void
     {
         $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
 
             $input = $event->getInput();
             $output = $event->getOutput();
 
-            /** @var \Phabalicious\Command\SelfUpdateCommand command */
+            /** @var \Phabalicious\Command\SelfUpdateCommand $command */
             $command = $event->getCommand()->getApplication()->find('self-update');
 
             if ($output->isDecorated()
                 && !$output->isQuiet()
                 && !$event->getCommand()->isHidden()
-                &&  $event->getCommand()->getName() !== 'self:update'
+                && $event->getCommand()->getName() !== 'self:update'
                 && !$command->getConfiguration()->isOffline()
                 && !$input->hasParameterOption(['--offline'])
                 && !$input->hasParameterOption(['--no-interaction'])
+                && $version = $command->isUpdateAvailable()
             ) {
-                if ($version = $command->isUpdateAvailable()) {
-                    $style = new SymfonyStyle($input, $output);
-                    $style->block([
-                        'Version ' . $version['new_version'] . ' of phabalicious is available. Run `phab self-update'
-                        . ($version['preview'] ? ' --preview' : '')
-                        . '` to update your local installation.',
-                        'Visit https://github.com/factorial-io/phabalicious/releases for more info.',
-                    ], null, 'fg=white;bg=blue', ' ', true);
-                }
+                $style = new SymfonyStyle($input, $output);
+                $style->block([
+                    'Version ' . $version['new_version'] . ' of phabalicious is available. Run `phab self-update'
+                    . ($version['preview'] ? ' --preview' : '')
+                    . '` to update your local installation.',
+                    'Visit https://github.com/factorial-io/phabalicious/releases for more info.',
+                ], null, 'fg=white;bg=blue', ' ', true);
             }
         });
     }
