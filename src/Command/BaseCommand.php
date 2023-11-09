@@ -302,7 +302,7 @@ abstract class BaseCommand extends BaseOptionsCommand
      * @param OutputInterface $output
      * @return bool|int
      */
-    private function handleVariants($variants, InputInterface $input, OutputInterface $output)
+    private function handleVariants(string $variants, InputInterface $input, OutputInterface $output)
     {
         global $argv;
         $executable = $argv[0];
@@ -323,7 +323,7 @@ abstract class BaseCommand extends BaseOptionsCommand
             ));
         }
 
-        if ($variants == 'all') {
+        if ($variants === 'all') {
             $variants = $available_variants;
         } else {
             $variants = explode(',', $variants);

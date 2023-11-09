@@ -137,7 +137,7 @@ class BlueprintConfiguration
     {
         $data = $this->configuration->getSetting('blueprints', []);
         foreach ($data as $b) {
-            if ($b['configName'] == $config_name) {
+            if ($b['configName'] === $config_name) {
                 return $b['variants'];
             }
         }
