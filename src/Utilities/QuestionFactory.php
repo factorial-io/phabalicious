@@ -86,7 +86,6 @@ class QuestionFactory
                 throw new \InvalidArgumentException(sprintf("Missing question data for `%s`", $key));
             }
 
-            $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
             $value = null;
             if (isset($tokens[$key])) {
                 $value = $tokens[$key];

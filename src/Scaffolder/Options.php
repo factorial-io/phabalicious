@@ -173,9 +173,9 @@ class Options extends CallbackOptions
     }
 
     /**
-     * @return ShellProviderInterface
+     * @return ?ShellProviderInterface
      */
-    public function getShell(): ShellProviderInterface
+    public function getShell(): ?ShellProviderInterface
     {
         return $this->shell;
     }
@@ -221,9 +221,9 @@ class Options extends CallbackOptions
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getBaseUrl(): string
+    public function getBaseUrl(): ?string
     {
         return $this->baseUrl;
     }

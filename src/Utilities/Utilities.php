@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 class Utilities
 {
 
-    const FALLBACK_VERSION = '3.8.28';
+    const FALLBACK_VERSION = '4.0.0';
     const COMBINED_ARGUMENTS = 'combined';
     const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
@@ -549,6 +549,9 @@ class Utilities
      */
     public static function hasBoolOptionSet(InputInterface $input, string $name): bool
     {
+        if (!$input->hasOption($name)) {
+            return false;
+        }
         $option = $input->getOption($name);
 
         // Testing for valueless options is tricky in symfony. That is why we test for
