@@ -188,9 +188,9 @@ class Utilities
      * Validate for any remaining replacement strings.
      *
      * @param string[] $strings
-     * @return true|ReplacementValidationError
+     * @return bool|ReplacementValidationError
      */
-    public static function validateReplacements(array $strings): true|ReplacementValidationError
+    public static function validateReplacements(array $strings): bool|ReplacementValidationError
     {
         foreach ($strings as $ndx => $line) {
             if (!is_string($line)) {
