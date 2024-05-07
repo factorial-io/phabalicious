@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.29](https://github.com/factorial-io/phabalicious/compare/3.8.28...3.8.29) (2024-05-07)
+
+
+### Bug Fixes
+
+* Delete container after run when using script execution context docker-compose-run ([882df1e](https://github.com/factorial-io/phabalicious/commit/882df1ec907f93782bab3e09f19beaa1408a444c))
+
 ### [3.8.28](https://github.com/factorial-io/phabalicious/compare/3.8.27...3.8.28) (2023-11-08)
 
 
