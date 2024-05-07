@@ -113,6 +113,7 @@ class ScriptExecutionContext
                 $shell->run($this->getDockerComposeCmd('build', '--quiet'), false, true);
                 $this->shell = $shell->startSubShell($this->getDockerComposeCmdAsArray(
                     'run',
+                    '--rm',
                     $this->getArgument('service'),
                     $this->getArgument('shellExecutable', '/bin/sh')
                 ));
