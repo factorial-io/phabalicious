@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.30](https://github.com/factorial-io/phabalicious/compare/3.8.28...3.8.30) (2024-05-07)
+
+
+### Features
+
+* Expose settings and host-config when executing scaffold from a script ([b58efb4](https://github.com/factorial-io/phabalicious/commit/b58efb484b81385478db01d20c87d8fdf905a875))
+
+
+### Bug Fixes
+
+* Delete container after run when using script execution context docker-compose-run ([882df1e](https://github.com/factorial-io/phabalicious/commit/882df1ec907f93782bab3e09f19beaa1408a444c))
+
 ### [3.8.29](https://github.com/factorial-io/phabalicious/compare/3.8.28...3.8.29) (2024-05-07)
 
 
