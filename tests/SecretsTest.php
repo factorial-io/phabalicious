@@ -172,6 +172,27 @@ class SecretsTest extends PhabTestCase
         $this->assertStringNotContainsString('%secret.op-password', $output);
     }
 
+    /**
+     * @group docker
+     * @group 1password
+     */
+    public function testSecretReferenceFrom1Password()
+    {
+
+        $command = $this->application->find('output');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command' => $command->getName(),
+            '--what' => 'host',
+            '--config' => 'test1PasswordRef',
+        ));
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('iamsosecretref', $output);
+        $this->assertStringContainsString('123--iamsosecretref--321', $output);
+        $this->assertStringNotContainsString('%secret.op-password-reference', $output);
+    }
+
     public function testUnknownSecret()
     {
 
