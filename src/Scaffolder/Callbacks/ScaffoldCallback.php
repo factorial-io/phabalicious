@@ -41,7 +41,7 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
             $scaffold_url = $base_path . substr($scaffold_url, 1);
         }
         $scaffold_root_folder = array_shift($arguments);
-        $tokens = Utilities::mergeData($context->get('tokens', []), $this->getTokens($arguments));
+        $tokens = Utilities::mergeData($context->get('tokens', []), $this->getTokens($context, $arguments));
         $this->scaffold($context, $scaffold_url, $scaffold_root_folder, $tokens);
     }
 
@@ -73,9 +73,14 @@ class ScaffoldCallback extends BaseCallback implements CallbackInterface
         $scaffolder->scaffold($scaffold_url, dirname($scaffold_root_folder), $cloned_context, $tokens, $options);
     }
 
-    private function getTokens(array $arguments):array
+    private function getTokens(TaskContextInterface  $context, array $arguments):array
     {
         $result = [];
+        if ($config = $context->getConfigurationService()) {
+            $result['settings'] = $config->getAllSettings();
+            $shell = $context->getShell();
+            $result['host'] = $shell && $shell->getHostConfig() ? $shell->getHostConfig()->asArray() : [];
+        }
         foreach ($arguments as $arg) {
             if (strpos($arg, "=") === false) {
                 throw new \RuntimeException(sprintf("Can't parse argument %s", $arg));

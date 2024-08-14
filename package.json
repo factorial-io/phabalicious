@@ -1,6 +1,6 @@
 {
   "name": "phabalicious",
-  "version": "3.8.28",
+  "version": "3.8.30",
   "main": "index.js",
   "repository": "https://github.com/factorial-io/phabalicious.git",
   "author": "Stephan Huber <stephan@factorial.io>",
@@ -9,7 +9,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.1",
     "@commitlint/config-conventional": "^17.0.0",
-    "@factorial/docs": "^0.3.0",
+    "@factorial/docs": "^0.4.1",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "3.3.0",
     "cz-customizable": "^7.0.0",

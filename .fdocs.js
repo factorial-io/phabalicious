@@ -18,6 +18,11 @@ module.exports = function (defaultConfig) {
             width: 115,
             height: 30,
         },
+        footerLogo: {
+            src: "/assets/logo-white.svg",
+            width: 115,
+            height: 30,
+        },
         algolia: {
             appId: "BH4D9OD16A",
             apiKey: "69abc87124806b56252e00022c94f392",

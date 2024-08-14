@@ -286,5 +286,5 @@ Additionally these filters are available:
 
 * `md5` e.g. `{{ "hello world" | md5 }}` will result in `f0ef7081e1539ac00ef5b761b4fb01b3`
 * `slug` e.g. `{{ "a string with ümlauts" }}` will result in `a-string-with-umlauts`
-* `decrypt` e.g. `{{ "def50200e2013402c4c4440412f94d68044078577b07d67d32d59e5befb2870335de767120081a3be2dc03ddc9781b1e61a7b8ba39f25f7dad88c5be653526a17b6c2dc35ed53397da12d84c327b0f05fb7ac66600fa057b72c5084684aeea" | decrypt('my-secret-name') }} will result in a decrypted string.
-* `encrypt` e.g. `{{ "hello world" | encrypt('my-secret-name') }} will result in an encrypted string.
+* `decrypt` e.g. `{{ "def50200e2013402c4c4440412f94d68044078577b07d67d32d59e5befb2870335de767120081a3be2dc03ddc9781b1e61a7b8ba39f25f7dad88c5be653526a17b6c2dc35ed53397da12d84c327b0f05fb7ac66600fa057b72c5084684aeea" | decrypt('my-secret-name') }}` will result in a decrypted string.
+* `encrypt` e.g. `{{ "hello world" | encrypt('my-secret-name') }}` will result in an encrypted string.
