@@ -11,9 +11,12 @@ use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
+use Webmozart\Assert\Assert;
 
-class ResticMethod extends BaseMethod implements MethodInterface
+class ResticMethod extends BaseMethod
 {
+    // phpcs:ignore
+    public const RESTIC_DOWNLOAD_URL = "https://github.com/restic/restic/releases/download/v0.12.0/restic_0.12.0_linux_amd64.bz2";
 
     public function getName(): string
     {
@@ -22,7 +25,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
 
     public function supports(string $method_name): bool
     {
-        return $method_name == $this->getName();
+        return $method_name === $this->getName();
     }
 
     public function getGlobalSettings(ConfigurationService $configuration): Node
@@ -39,8 +42,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
                 ],
                 'allowInstallation' => true,
                 'environment' => [],
-                'downloadUrl' =>
-                    'https://github.com/restic/restic/releases/download/v0.12.0/restic_0.12.0_linux_amd64.bz2',
+                'downloadUrl' => self::RESTIC_DOWNLOAD_URL,
             ],
         ], $this->getName() . ' global settings');
     }
@@ -61,10 +63,9 @@ class ResticMethod extends BaseMethod implements MethodInterface
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors
-    ) {
+    ): void {
 
         parent::validateConfig($configuration_service, $config, $errors);
-
 
         $validation = new ValidationService(
             $config,
@@ -100,7 +101,7 @@ class ResticMethod extends BaseMethod implements MethodInterface
             ]);
     }
 
-    public function backup(HostConfig $host_config, TaskContextInterface $context)
+    public function backup(HostConfig $host_config, TaskContextInterface $context): void
     {
         if ($host_config->get('fileBackupStrategy', 'files') !== 'restic') {
             return;
@@ -150,9 +151,16 @@ class ResticMethod extends BaseMethod implements MethodInterface
         }
 
         $this->backupFilesOrFolders($host_config, $context, $shell, $restic_path, $files);
+
+        // lets delete the db backup files, as they are in the restic backup now.
+        foreach ($context->getResult('files', []) as $file) {
+            if ($file['type'] === 'db') {
+                $shell->run(sprintf('rm "%s"', $file['file']));
+            }
+        }
     }
 
-    public function restorePrepare(HostConfig $host_config, TaskContextInterface $context)
+    public function restorePrepare(HostConfig $host_config, TaskContextInterface $context): void
     {
         $what = $context->get('what', []);
         if (!in_array('restic', $what)) {
@@ -315,13 +323,14 @@ class ResticMethod extends BaseMethod implements MethodInterface
      * @param \Phabalicious\Configuration\HostConfig $host_config
      * @param \Phabalicious\Method\TaskContextInterface $context
      *
-     * @return \Phabalicious\ShellProvider\ShellProviderInterface|null
+     * @return \Phabalicious\ShellProvider\ShellProviderInterface
      */
     protected function getShellForRestic(
         HostConfig $host_config,
         TaskContextInterface $context
-    ): ?ShellProviderInterface {
+    ): ShellProviderInterface {
         $shell = $this->getShell($host_config, $context);
+        Assert::isInstanceOf($shell, ShellProviderInterface::class);
         $environment = $host_config['restic']['environment'];
         if ($context->getPasswordManager()) {
             $environment = $context->getPasswordManager()->resolveSecrets($environment);

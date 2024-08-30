@@ -34,6 +34,7 @@ class AppCreateCommand extends AppBaseCommand
             InputOption::VALUE_OPTIONAL,
             false
         );
+        // @phpcs:disable
         $this->setHelp('
 Creates a new application from an existing config. Phabalicious executes a list
 of socalled stages, e.g.
@@ -59,6 +60,7 @@ Examples:
 <info>phab -cconfig app:create</info>
 <info>phab --blueprint=some-blueprint --config=config app:create</info>
         ');
+        // @phpcs:enable
     }
 
     /**
@@ -83,7 +85,7 @@ Examples:
             return $result;
         }
 
-        if ($copy_from = $input->getOption('copy-from')) {
+        if ($copy_from = $input->getOption("copy-from")) {
             // Make sure config exists.
             $copy_from = $this->getConfiguration()->getHostConfig($copy_from);
         }
@@ -92,63 +94,93 @@ Examples:
         $context = $this->getContext();
         $host_config = $this->getHostConfig();
 
-        $this->configuration->getMethodFactory()->runTask('appCheckExisting', $host_config, $context);
+        $this->configuration
+            ->getMethodFactory()
+            ->runTask("appCheckExisting", $host_config, $context);
         $outer_shell = false;
 
-        $install_dir = $context->getResult('installDir', false);
+        $install_dir = $context->getResult("installDir", false);
         if ($install_dir) {
-
             /** @var ShellProviderInterface $outer_shell */
-            $outer_shell = $context->getResult('outerShell', $host_config->shell());
-            if ($outer_shell->exists($install_dir) && $input->getOption('force') === false) {
-                $continue = $context->io()
-                    ->confirm('Target directory exists', false);
+            $outer_shell = $context->getResult(
+                "outerShell",
+                $host_config->shell()
+            );
+            if ($outer_shell->exists($install_dir) &&
+                $input->getOption("force") === false
+            ) {
+                $continue = $context
+                    ->io()
+                    ->confirm("Target directory exists", false);
                 if (!$continue) {
-                    $context->io()->warning(sprintf(
-                        'Stopping, as target-folder `%s` already exists on `%s`.',
-                        $install_dir,
-                        $host_config->getConfigName()
-                    ));
+                    $context
+                        ->io()
+                        ->warning(
+                            sprintf(
+                                "Stopping, as target-folder `%s` already exists on `%s`.",
+                                $install_dir,
+                                $host_config->getConfigName()
+                            )
+                        );
                     return 1;
                 }
             }
-            $lock_file = $install_dir . '/.projectCreated';
+            $lock_file = $install_dir . "/.projectCreated";
             $app_exists = $outer_shell->exists($lock_file);
         } else {
-            $app_exists = $context->getResult('appExists', null);
+            $app_exists = $context->getResult("appExists", null);
             if (is_null($app_exists)) {
-                throw new \InvalidArgumentException("No result for `appExists`, stopping execution!");
+                throw new \InvalidArgumentException(
+                    "No result for `appExists`, stopping execution!"
+                );
             }
         }
 
-        $context->set('outerShell', $outer_shell);
-        $context->set('installDir', $context->getResult('installDir'));
+        $context->set("outerShell", $outer_shell);
+        $context->set("installDir", $context->getResult("installDir"));
         $context->clearResults();
 
         if ($app_exists && !$this->hasForceOption($input)) {
-            $this->configuration->getLogger()->notice('Existing app found, deploying instead!');
+            $this->configuration
+                ->getLogger()
+                ->notice("Existing app found, deploying instead!");
 
             $stages = $this->configuration->getSetting(
-                'appStages.deploy',
+                "appStages.deploy",
                 AppDefaultStages::DEPLOY
             );
-            $this->executeStages($stages, 'appCreate', $context, 'Creating app');
-            $this->runCommand('deploy', [], $input, $output);
+            $this->executeStages(
+                $stages,
+                "appCreate",
+                $context,
+                "Creating app"
+            );
+            $this->runCommand("deploy", [], $input, $output);
         } else {
             $stages = $this->configuration->getSetting(
-                'appStages.create',
+                "appStages.create",
                 AppDefaultStages::CREATE
             );
 
-            $this->executeStages($stages, 'appCreate', $context, 'Creating app');
+            $this->executeStages(
+                $stages,
+                "appCreate",
+                $context,
+                "Creating app"
+            );
 
             if ($copy_from) {
-                $this->runCommand('copy-from', [ 'from' => $copy_from->getConfigName() ], $input, $output);
+                $this->runCommand(
+                    "copy-from",
+                    ["from" => $copy_from->getConfigName()],
+                    $input,
+                    $output
+                );
             } else {
-                $this->runCommand('reset', [], $input, $output);
+                $this->runCommand("reset", [], $input, $output);
             }
         }
 
-        return $context->getResult('exitCode', 0);
+        return $context->getResult("exitCode", 0);
     }
 }
