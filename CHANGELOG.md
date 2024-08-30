@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.31](https://github.com/factorial-io/phabalicious/compare/3.8.30...3.8.31) (2024-08-30)
+
+
+### Features
+
+* Add option `output` to command `get:sql-dump` to set output file ([9414624](https://github.com/factorial-io/phabalicious/commit/94146244032eb1da5d4be1100c93fe0faf94df33))
+
+
+### Bug Fixes
+
+* Delete db backups from local, when restic backup is finished. Fixes [#332](https://github.com/factorial-io/phabalicious/issues/332) ([04c9617](https://github.com/factorial-io/phabalicious/commit/04c96170560c6b9e53776f7d40f56b9ef76a08dc))
+
 ### [3.8.30](https://github.com/factorial-io/phabalicious/compare/3.8.28...3.8.30) (2024-05-07)
 
 
