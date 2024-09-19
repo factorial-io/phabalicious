@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class PasswordManagerTest extends PhabTestCase
 {
 
-    protected TaskContext $context;
+    protected $context;
 
     public function setup(): void
     {
@@ -49,7 +49,8 @@ JSON;
         $this->assertEquals("my-very-special-secret", $mng->extractSecretFrom1PasswordPayload($payload, 1, 'password'));
     }
 
-    public function test1PasswordCustomPropName() {
+    public function test1PasswordCustomPropName()
+    {
         $payload = <<<JSON
 {
   "additionalInformation": "bearer",
@@ -118,9 +119,10 @@ JSON;
 
         $this->assertEquals("zackbummpeng", $mng->extractSecretFrom1PasswordPayload($payload, 0, 'credential'));
         $this->assertEquals("MM_ACCESS_TOKEN", $mng->extractSecretFrom1PasswordPayload($payload, 0, 'username'));
-}
+    }
 
-    public function test1PasswordCliCustomPropName() {
+    public function test1PasswordCliCustomPropName()
+    {
         $payload = <<<JSON
 {
   "id": "SOME_UUID_WHATEVER",
@@ -199,5 +201,4 @@ JSON;
         $this->assertEquals("zackbummpeng", $mng->extractSecretFrom1PasswordPayload($payload, 2, 'credential'));
         $this->assertEquals("MM_ACCESS_TOKEN", $mng->extractSecretFrom1PasswordPayload($payload, 2, 'username'));
     }
-
 }

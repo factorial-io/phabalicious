@@ -197,7 +197,6 @@ class PasswordManager implements PasswordManagerInterface
         $exceptions = [];
 
         try {
-
             // Check onepassword connect ...
             if (!empty($secret_data['onePasswordVaultId']) && !empty($secret_data['onePasswordId'])) {
                 $configuration_service->getLogger()->debug(sprintf(
@@ -231,7 +230,10 @@ class PasswordManager implements PasswordManagerInterface
                     "Trying to get secret `%s` from 1password cli",
                     $secret
                 ));
-                $pw = $this->getSecretFrom1PasswordCli($secret_data['onePasswordId'], $secret_data['propName'] ?? 'password');
+                $pw = $this->getSecretFrom1PasswordCli(
+                    $secret_data['onePasswordId'],
+                    $secret_data['propName'] ?? 'password'
+                );
                 if ($pw) {
                     return $pw;
                 }
@@ -392,7 +394,8 @@ class PasswordManager implements PasswordManagerInterface
         return false;
     }
 
-    private function extractFieldsHelper($fields, $prop_name) {
+    private function extractFieldsHelper($fields, $prop_name)
+    {
 
         foreach ($fields as $field) {
             if (!empty($field->id) && $field->id === $prop_name) {
