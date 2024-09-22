@@ -10,7 +10,11 @@ secrets:
   op-password:
     question: What password is op using
     onePasswordId: n42hkvghk2onwnyugf6k2etdra
-
+  op-secret-reference:
+    question: What password is being used via 1Password secret reference?
+    # 1Password Reference is of following format.
+    # op://<vault-name>/<item-name>/[section-name/]<field-name>
+    onePasswordReference: "op://Developer/PHAB.test_reference/text"
 scripts:
   test:secrets:1:
     - echo mysql-password is //%secret.mysql-password%//
@@ -55,6 +59,12 @@ hosts:
     smtp:
       password: "%secret.op-password%"
       password_combined: "123--%secret.op-password%--321"
+
+  test1PasswordRef:
+    inheritsFrom: base
+    smtp:
+      password: "%secret.op-secret-reference%"
+      password_combined: "123--%secret.op-secret-reference%--321"
 
   testUnknownSecret:
     inheritsFrom: base

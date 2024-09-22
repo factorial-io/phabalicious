@@ -221,6 +221,22 @@ class PasswordManager implements PasswordManagerInterface
             $exceptions[] = $e;
             // Give the user the chance to input the secret.
         }
+        try {
+            // Check onepassword cli ...
+            if (isset($secret_data['onePasswordReference'])) {
+                $configuration_service->getLogger()->debug(sprintf(
+                    "Trying to get secret `%s` from 1password cli",
+                    $secret
+                ));
+                $pw = $this->getSecretFrom1PasswordCli($secret_data['onePasswordReference']);
+                if ($pw) {
+                    return $pw;
+                }
+            }
+        } catch (\Exception $e) {
+            $exceptions[] = $e;
+            // Give the user the chance to input the secret.
+        }
 
         try {
             // Check onepassword cli ...
@@ -312,6 +328,20 @@ class PasswordManager implements PasswordManagerInterface
         $this->context->getConfigurationService()->getLogger()->info(sprintf("Running 1password cli with `%s`", $cmd));
         $result = exec($cmd, $output, $result_code);
         return new CommandResult($result_code, $output);
+    }
+
+
+    private function getSecretReferenceFrom1PasswordCli($reference)
+    {
+        $result = $this->exec1PasswordCli(
+            sprintf("op read %s", $reference),
+            sprintf("op read %s", $reference)
+        );
+
+        if ($result && $result->succeeded()) {
+            return $result->getOutput();
+        }
+        $result->throwException("1Password returned an error, are you logged in?");
     }
 
     private function getSecretFrom1PasswordCli($item_id)
