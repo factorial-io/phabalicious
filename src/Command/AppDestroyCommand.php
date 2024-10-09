@@ -13,13 +13,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AppDestroyCommand extends AppBaseCommand
 {
-
     protected function configure()
     {
         parent::configure();
         $this
             ->setName('app:destroy')
             ->setDescription('Destroys an existing app and removes it completely')
+            // @phpcs:disable
             ->setHelp('
 Destroys an existing application. Phabalicious executes a list
 of socalled stages, e.g.
@@ -40,6 +40,7 @@ Examples:
 <info>phab -cconfig app:destroy</info>
 <info>phab --blueprint=some-blueprint --config=config app:destroy</info>
         ');
+        // @phpcs:enable
     }
 
     /**
