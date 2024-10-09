@@ -208,7 +208,8 @@ class PasswordManager implements PasswordManagerInterface
                     $secret_data['onePasswordVaultId'],
                     $secret_data['onePasswordId'],
                     $secret_data['tokenId'] ?? 'default',
-                    $secret
+                    $secret,
+                    $secret_data['propName'] ?? 'password'
                 )) {
                     return $pw;
                 } else {
@@ -229,7 +230,10 @@ class PasswordManager implements PasswordManagerInterface
                     "Trying to get secret `%s` from 1password cli",
                     $secret
                 ));
-                $pw = $this->getSecretFrom1PasswordCli($secret_data['onePasswordId']);
+                $pw = $this->getSecretFrom1PasswordCli(
+                    $secret_data['onePasswordId'],
+                    $secret_data['propName'] ?? 'password'
+                );
                 if ($pw) {
                     return $pw;
                 }
@@ -314,7 +318,7 @@ class PasswordManager implements PasswordManagerInterface
         return new CommandResult($result_code, $output);
     }
 
-    private function getSecretFrom1PasswordCli($item_id)
+    private function getSecretFrom1PasswordCli($item_id, $prop_name)
     {
         $result = $this->exec1PasswordCli(
             sprintf("get item %s", $item_id),
@@ -323,7 +327,7 @@ class PasswordManager implements PasswordManagerInterface
 
         if ($result && $result->succeeded()) {
             $payload = implode("\n", $result->getOutput());
-            return $this->extractSecretFrom1PasswordPayload($payload, $this->get1PasswordCliVersion());
+            return $this->extractSecretFrom1PasswordPayload($payload, $this->get1PasswordCliVersion(), $prop_name);
         }
         $result->throwException("1Password returned an error, are you logged in?");
     }
@@ -372,12 +376,12 @@ class PasswordManager implements PasswordManagerInterface
         return false;
     }
 
-    private function getSecretFrom1PasswordConnect($vault_id, $item_id, $token_id, $secret_name)
+    private function getSecretFrom1PasswordConnect($vault_id, $item_id, $token_id, $secret_name, $prop_name)
     {
         try {
             $response = $this->get1PasswordConnectResponse($token_id, "/v1/vaults/$vault_id/items/$item_id");
             if ($response) {
-                return $this->extractSecretFrom1PasswordPayload((string) $response->getBody(), false);
+                return $this->extractSecretFrom1PasswordPayload((string) $response->getBody(), false, $prop_name);
             }
         } catch (\Exception $exception) {
             throw new \RuntimeException(
@@ -390,10 +394,19 @@ class PasswordManager implements PasswordManagerInterface
         return false;
     }
 
-    private function extractFieldsHelper($fields)
+    private function extractFieldsHelper($fields, $prop_name)
     {
 
         foreach ($fields as $field) {
+            if (!empty($field->id) && $field->id === $prop_name) {
+                /** @phpstan-ignore-next-line */
+                return $field->value;
+            }
+            // Support for field in sections.
+            if (!empty($field->n) && $field->n === $prop_name) {
+                /** @phpstan-ignore-next-line */
+                return $field->v;
+            }
             if (!empty($field->designation) && $field->designation === 'password') {
                 /** @phpstan-ignore-next-line */
                 return $field->value;
@@ -402,38 +415,29 @@ class PasswordManager implements PasswordManagerInterface
                 /** @phpstan-ignore-next-line */
                 return $field->value;
             }
-            if (!empty($field->id) && $field->id === 'password') {
-                /** @phpstan-ignore-next-line */
-                return $field->value;
-            }
-            // Support for field in sections.
-            if (!empty($field->n) && $field->n === 'password') {
-                /** @phpstan-ignore-next-line */
-                return $field->v;
-            }
         }
         return false;
     }
 
-    public function extractSecretFrom1PasswordPayload($payload, $cli_version)
+    public function extractSecretFrom1PasswordPayload($payload, $cli_version, $prop_name)
     {
         $json = json_decode($payload);
         if ($json) {
             if ($cli_version === 1) {
                 $json = $json->details;
             }
-            if (!empty($json->password)) {
-                return $json->password;
+            if (!empty($json->{$prop_name})) {
+                return $json->{$prop_name};
             }
             if (!empty($json->sections)) {
                 foreach ($json->sections as $section) {
-                    if (isset($section->fields) && $result = $this->extractFieldsHelper($section->fields)) {
+                    if (isset($section->fields) && $result = $this->extractFieldsHelper($section->fields, $prop_name)) {
                         return $result;
                     }
                 }
             }
             if (!empty($json->fields)) {
-                return $this->extractFieldsHelper($json->fields);
+                return $this->extractFieldsHelper($json->fields, $prop_name);
             }
         }
 

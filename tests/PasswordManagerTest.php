@@ -3,14 +3,8 @@
 namespace Phabalicious\Tests;
 
 use Phabalicious\Command\BaseCommand;
-use Phabalicious\Configuration\Storage\Node;
-use Phabalicious\Configuration\Storage\Store;
-use Phabalicious\Exception\ArgumentParsingException;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\PasswordManager;
-use Phabalicious\Utilities\Utilities;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -52,6 +46,159 @@ JSON;
         $mng = new PasswordManager();
         $mng->setContext($this->context);
 
-        $this->assertEquals("my-very-special-secret", $mng->extractSecretFrom1PasswordPayload($payload, 1));
+        $this->assertEquals("my-very-special-secret", $mng->extractSecretFrom1PasswordPayload($payload, 1, 'password'));
+    }
+
+    public function test1PasswordCustomPropName()
+    {
+        $payload = <<<JSON
+{
+  "additionalInformation": "bearer",
+  "category": "API_CREDENTIAL",
+  "createdAt": "2024-09-09T09:19:04Z",
+  "fields": [
+    {
+      "id": "notesPlain",
+      "label": "notesPlain",
+      "purpose": "NOTES",
+      "type": "STRING"
+    },
+    {
+      "id": "username",
+      "label": "Benutzername",
+      "type": "STRING",
+      "value": "MM_ACCESS_TOKEN"
+    },
+    {
+      "id": "credential",
+      "label": "Anmeldedaten",
+      "type": "CONCEALED",
+      "value": "zackbummpeng"
+    },
+    {
+      "id": "type",
+      "label": "Typ",
+      "type": "MENU",
+      "value": "bearer"
+    },
+    {
+      "id": "filename",
+      "label": "Dateiname",
+      "type": "STRING"
+    },
+    {
+      "id": "validFrom",
+      "label": "Gültig ab",
+      "type": "DATE"
+    },
+    {
+      "id": "expires",
+      "label": "Gültig bis",
+      "type": "DATE"
+    },
+    {
+      "id": "hostname",
+      "label": "Host-Name",
+      "type": "STRING",
+      "value": "a.simple.domain.name"
+    }
+  ],
+  "id": "lajdlahdldjh",
+  "lastEditedBy": "jjhkjhk",
+  "title": "Mattermost DEV: API Admin Access Token",
+  "updatedAt": "2024-09-09T09:19:41Z",
+  "vault": {
+    "id": "lakjdladkj",
+    "name": "Some Vault"
+  },
+  "version": 2
+}
+JSON;
+        $mng = new PasswordManager();
+        $mng->setContext($this->context);
+
+        $this->assertEquals("zackbummpeng", $mng->extractSecretFrom1PasswordPayload($payload, 0, 'credential'));
+        $this->assertEquals("MM_ACCESS_TOKEN", $mng->extractSecretFrom1PasswordPayload($payload, 0, 'username'));
+    }
+
+    public function test1PasswordCliCustomPropName()
+    {
+        $payload = <<<JSON
+{
+  "id": "SOME_UUID_WHATEVER",
+  "title": "Mattermost DEV: API Admin Access Token",
+  "version": 2,
+  "vault": {
+    "id": "bvjl7wmmyqdw37vkt7ldoixovm",
+    "name": "FooBar Name"
+  },
+  "category": "API_CREDENTIAL",
+  "last_edited_by": "GIQ64YLYRZECLEBAEJ6GF25G74",
+  "created_at": "2024-09-09T09:19:04Z",
+  "updated_at": "2024-09-09T09:19:41Z",
+  "additional_information": "bearer",
+  "fields": [
+    {
+      "id": "notesPlain",
+      "type": "STRING",
+      "purpose": "NOTES",
+      "label": "notesPlain",
+      "reference": "op://FooBar Name/SOME_UUID_WHATEVER/notesPlain"
+    },
+    {
+      "id": "username",
+      "type": "STRING",
+      "label": "Benutzername",
+      "value": "MM_ACCESS_TOKEN",
+      "reference": "op://FooBar Name/SOME_UUID_WHATEVER/Benutzername"
+    },
+    {
+      "id": "credential",
+      "type": "CONCEALED",
+      "label": "Anmeldedaten",
+      "value": "zackbummpeng",
+      "reference": "op://FooBar Name/SOME_UUID_WHATEVER/Anmeldedaten"
+    },
+    {
+      "id": "type",
+      "type": "MENU",
+      "label": "Typ",
+      "value": "bearer",
+      "reference": "op://FooBar Name/SOME_UUID_WHATEVER/Typ"
+    },
+    {
+      "id": "filename",
+      "type": "STRING",
+      "label": "Dateiname",
+      "reference": "op://FooBar Name/SOME_UUID_WHATEVER/Dateiname"
+    },
+    {
+      "id": "validFrom",
+      "type": "DATE",
+      "label": "Gültig ab",
+      "reference": "op://FooBar Name/SOME_UUID_WHATEVER/validFrom"
+    },
+    {
+      "id": "expires",
+      "type": "DATE",
+      "label": "Gültig bis",
+      "reference": "op://FooBar Name/SOME_UUID_WHATEVER/expires"
+    },
+    {
+      "id": "hostname",
+      "type": "STRING",
+      "label": "Host-Name",
+      "value": "a.simple.domain.name",
+      "reference": "op://FooBar Name/SOME_UUID_WHATEVER/Host-Name"
+    }
+  ]
+}
+JSON;
+
+        $mng = new PasswordManager();
+        $mng->setContext($this->context);
+
+        $this->assertEquals("zackbummpeng", $mng->extractSecretFrom1PasswordPayload($payload, 2, 'credential'));
+        $this->assertEquals("MM_ACCESS_TOKEN", $mng->extractSecretFrom1PasswordPayload($payload, 2, 'username'));
     }
 }

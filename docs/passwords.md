@@ -30,6 +30,7 @@ secrets:
     env: DB_PASSWORD
     onePasswordId: 1234418718212s121
     onePasswordVaultId: 768131213124
+    propName: credential # default propName is password
 ````
 
 
@@ -106,6 +107,21 @@ secrets:
 ````
 
 Then just run your command as usual, phab will try to resolve the secret from 1password connect and use it.
+
+### Different propnames than password
+
+1Password allows to store more than a password, e.g. usernames, hostnames, etc. Per default phab will return `password`, but you can customize the returned propname:
+
+```
+secrets:
+  mysql-username:
+    question: Please provide the Mysql username for the cluster
+    onePasswordId: 1234418718212s121
+    onePasswordVaultId: 768131213124
+    tokenId: client-a
+    propName: username
+```
+
 
 ## FTP-passwords
 
