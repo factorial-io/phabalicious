@@ -12,11 +12,12 @@ use Phabalicious\Utilities\Utilities;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use Phabalicious\Exception\UnknownSecretException;
 
 class SecretsTest extends PhabTestCase
 {
     /** @var Application */
-    protected $application;
+    protected Application $application;
 
     public function setup(): void
     {
@@ -41,7 +42,7 @@ class SecretsTest extends PhabTestCase
     }
 
 
-    public function testSecretsBlueprintAsArguments()
+    public function testSecretsBlueprintAsArguments(): void
     {
 
         $command = $this->application->find('output');
@@ -61,7 +62,7 @@ class SecretsTest extends PhabTestCase
         $this->assertStringNotContainsString('%secret.mysql-password', $output);
     }
 
-    public function testSecretsAsArguments()
+    public function testSecretsAsArguments(): void
     {
 
         $command = $this->application->find('output');
@@ -80,7 +81,7 @@ class SecretsTest extends PhabTestCase
         $this->assertStringNotContainsString('%secret.mysql-password', $output);
     }
 
-    public function testSecretsAsCustomEnvironmentVar()
+    public function testSecretsAsCustomEnvironmentVar(): void
     {
 
         putenv("SMTP_PASSWORD=top_Secret");
@@ -100,7 +101,7 @@ class SecretsTest extends PhabTestCase
         $this->assertStringNotContainsString('%secret.mysql-password', $output);
     }
 
-    public function testSecretsAsEnvironmentVar()
+    public function testSecretsAsEnvironmentVar(): void
     {
 
         putenv("SMTP_PASSWORD=top_Secret");
@@ -122,7 +123,7 @@ class SecretsTest extends PhabTestCase
     /**
      * @dataProvider provideTestScriptNames
      */
-    public function testSecretsInScripts($script_name)
+    public function testSecretsInScripts($script_name): void
     {
 
         $command = $this->application->find('script');
@@ -142,7 +143,7 @@ class SecretsTest extends PhabTestCase
         $this->assertStringNotContainsString('%secret.mysql-password', $output);
     }
 
-    public function provideTestScriptNames()
+    public function provideTestScriptNames(): array
     {
         return [
             ['test:secrets:1'],
@@ -152,10 +153,15 @@ class SecretsTest extends PhabTestCase
     }
 
     /**
+     * If you run this test from within phpstorm, make sure that you
+     * added the env var OP_SESSION_ accordingly.
+     *
+     * If you run it in your shell, please log into 1p first.
+     *
      * @group docker
      * @group 1password
      */
-    public function testSecretsFrom1Password()
+    public function testSecretsFrom1Password(): void
     {
 
         $command = $this->application->find('output');
@@ -172,10 +178,10 @@ class SecretsTest extends PhabTestCase
         $this->assertStringNotContainsString('%secret.op-password', $output);
     }
 
-    public function testUnknownSecret()
+    public function testUnknownSecret(): void
     {
 
-        $this->expectException("Phabalicious\Exception\UnknownSecretException");
+        $this->expectException(UnknownSecretException::class);
         $command = $this->application->find('output');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(

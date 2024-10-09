@@ -69,9 +69,9 @@ class FilesMethodTest extends PhabTestCase
         $this->context->set('sourceFile', 'foobar.txt');
         $this->context->set('destinationFile', '../../foobaz.txt');
         $mocked_shell = $this->prophesize(ShellProviderInterface::class);
-        $mocked_shell->putFile(Argument::any(), Argument::any(), $this->context)->willReturn(true);
+        $mocked_shell->putFile(Argument::any(), Argument::any(), Argument::any(), Argument::any())->willReturn(true);
 
-        $this->context->set('shell', $mocked_shell);
+        $this->context->set('shell', $mocked_shell->reveal());
         $this->method->putFile($host_config, $this->context);
 
         $this->assertEquals('/var/foobaz.txt', $this->context->getResult('targetFile'));
@@ -84,9 +84,9 @@ class FilesMethodTest extends PhabTestCase
         $this->context->set('sourceFile', 'foobar.txt');
         $this->context->set('destinationFile', '/var/www/foobaz.txt');
         $mocked_shell = $this->prophesize(ShellProviderInterface::class);
-        $mocked_shell->putFile(Argument::any(), Argument::any(), $this->context)->willReturn(true);
+        $mocked_shell->putFile(Argument::any(), Argument::any(), Argument::any(), Argument::any())->willReturn(true);
 
-        $this->context->set('shell', $mocked_shell);
+        $this->context->set('shell', $mocked_shell->reveal());
         $this->method->putFile($host_config, $this->context);
 
         $this->assertEquals('/var/www/foobaz.txt', $this->context->getResult('targetFile'));
@@ -99,9 +99,9 @@ class FilesMethodTest extends PhabTestCase
         $this->context->set('sourceFile', '../foobar.txt');
         $this->context->set('destFile', 'foobaz.txt');
         $mocked_shell = $this->prophesize(ShellProviderInterface::class);
-        $mocked_shell->getFile(Argument::any(), Argument::any(), $this->context)->willReturn(true);
+        $mocked_shell->getFile(Argument::any(), Argument::any(), Argument::any(), Argument::any())->willReturn(true);
 
-        $this->context->set('shell', $mocked_shell);
+        $this->context->set('shell', $mocked_shell->reveal());
         $this->method->getFile($host_config, $this->context);
 
         $this->assertEquals('/var/www/foobar.txt', $this->context->getResult('sourceFile'));

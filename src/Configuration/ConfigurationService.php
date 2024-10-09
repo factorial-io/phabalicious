@@ -1083,9 +1083,9 @@ class ConfigurationService
     }
 
     /**
-     * @return PasswordManagerInterface
+     * @return PasswordManagerInterface|null
      */
-    public function getPasswordManager(): PasswordManagerInterface
+    public function getPasswordManager(): ?PasswordManagerInterface
     {
         if (!$this->passwordManager) {
             $this->setPasswordManager(new PasswordManager());
