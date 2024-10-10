@@ -21,6 +21,7 @@ use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
@@ -28,22 +29,20 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Yaml;
+use Phabalicious\Exception\MismatchedVersionException;
 
 class ScaffoldTest extends PhabTestCase
 {
 
-    const PASSWORD = 'my-secret-#21';
+    public const PASSWORD = 'my-secret-#21';
 
     /** @var Application */
-    protected $application;
+    protected Application $application;
 
     /** @var ConfigurationService  */
-    protected $configuration;
+    protected ConfigurationService $configuration;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Psr\Log\LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function setup(): void
     {
@@ -62,7 +61,7 @@ class ScaffoldTest extends PhabTestCase
         $this->configuration->getPasswordManager()->setSecret('test-encryption', self::PASSWORD);
     }
 
-    private function createContext()
+    private function createContext(): TaskContext
     {
         $context = new TaskContext(
             null,
@@ -75,9 +74,9 @@ class ScaffoldTest extends PhabTestCase
     }
 
 
-    public function testVersionCheck()
+    public function testVersionCheck(): void
     {
-        $this->expectException('Phabalicious\Exception\MismatchedVersionException');
+        $this->expectException(MismatchedVersionException::class);
         $scaffolder = new Scaffolder($this->configuration);
         $options = new Options();
         $options->setCompabilityVersion("2.0");
@@ -92,7 +91,7 @@ class ScaffoldTest extends PhabTestCase
         );
     }
 
-    public function testDataOverride()
+    public function testDataOverride(): void
     {
         $scaffolder = new Scaffolder($this->configuration);
         $context = $this->createContext();
@@ -117,7 +116,7 @@ class ScaffoldTest extends PhabTestCase
         $this->assertEquals(0, $result->getExitCode());
     }
 
-    public function testAlterFile()
+    public function testAlterFile(): void
     {
 
         $scaffolder = new Scaffolder($this->configuration);
@@ -138,7 +137,7 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
 
-        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-alter/output.json'));
+        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-alter/output.json'), false, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals("b-overridden", $json->b);
         $this->assertEquals("d-overridden", $json->c->d);
@@ -147,7 +146,7 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals("b-overridden", $yaml['b']);
         $this->assertEquals("d-overridden", $yaml['c']['d']);
-        $this->assertEquals(true, $yaml['c']['test_bool']);
+        $this->assertTrue($yaml['c']['test_bool']);
         $this->assertIsBool($yaml['c']['test_bool']);
         $this->assertEquals(123, $yaml['c']['test_int']);
         $this->assertIsInt($yaml['c']['test_int']);
@@ -159,7 +158,7 @@ class ScaffoldTest extends PhabTestCase
     /**
      * @group docker
      */
-    public function testScaffoldCallback()
+    public function testScaffoldCallback(): void
     {
         $scaffolder = new Scaffolder($this->configuration);
         $context = $this->createContext();
@@ -179,22 +178,19 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
 
-        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-scaffold-callback/composer.json'), true);
+        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-scaffold-callback/composer.json'), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals('phabalicious/helloworld', $json['name']);
         $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
         $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
 
-        $json = json_decode(
-            file_get_contents($this->getTmpDir() . '/test-scaffold-callback/second/composer.json'),
-            true
-        );
+        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-scaffold-callback/second/composer.json'), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
         $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
     }
 
-    public function runTestTwigExtensions(ShellProviderInterface $shell, TaskContextInterface $context, $dir)
+    public function runTestTwigExtensions(ShellProviderInterface $shell, TaskContextInterface $context, $dir): void
     {
         $scaffolder = new Scaffolder($this->configuration);
         $options = new Options();
@@ -215,16 +211,16 @@ class ScaffoldTest extends PhabTestCase
         $this->assertEquals(0, $result->getExitCode());
 
         $content = $shell->getFileContents($dir . '/test-scaffold-twig/test-twig.json', $context);
-        $json = json_decode($content, true);
+        $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals('A-test-string-to-be-slugified', $json['slug']);
         $this->assertEquals('db42607fd51c90a4d9c49130f1fe98a8', $json['md5']);
         $decrypted = Crypto::decryptWithPassword($json['encrypted'], self::PASSWORD);
-        $this->assertEquals($decrypted, 'hello world');
+        $this->assertEquals('hello world', $decrypted);
         $this->assertEquals('hello world', $json['decrypted']);
     }
 
-    public function testLocalTwigExtension()
+    public function testLocalTwigExtension(): void
     {
 
         $context = $this->createContext();
@@ -238,7 +234,7 @@ class ScaffoldTest extends PhabTestCase
         $this->runTestTwigExtensions($shell, $context, $this->getTmpDir());
     }
 
-    public function testRemoteScaffolding()
+    public function testRemoteScaffolding(): void
     {
         $shell = $this->getDockerizedSshShell($this->logger, $this->configuration);
         $context = $this->createContext();
@@ -247,7 +243,7 @@ class ScaffoldTest extends PhabTestCase
         $this->runTestTwigExtensions($shell, $context, '/app');
     }
 
-    public function testScaffoldLocalFiles()
+    public function testScaffoldLocalFiles(): void
     {
         $scaffolder = new Scaffolder($this->configuration);
         $context = $this->createContext();
@@ -273,7 +269,7 @@ class ScaffoldTest extends PhabTestCase
         );
     }
 
-    public function testScaffoldLocalEncryptedFiles()
+    public function testScaffoldLocalEncryptedFiles(): void
     {
         $scaffolder = new Scaffolder($this->configuration);
         $context = $this->createContext();
@@ -300,22 +296,22 @@ class ScaffoldTest extends PhabTestCase
         );
     }
 
-    private function compareScaffoldedFiles($source_dir, $target_dir)
+    private function compareScaffoldedFiles($source_dir, $target_dir): void
     {
 
         for ($i = 1; $i < 4; $i++) {
             $filename = sprintf('test_%d.txt', $i);
-            $this->assertEquals(
-                file_get_contents($source_dir . '/files/' . $filename),
-                file_get_contents($target_dir . $filename)
+            $this->assertFileEquals(
+                $source_dir . '/files/' . $filename,
+                $target_dir . $filename
             );
         }
 
         for ($i = 1; $i < 4; $i++) {
             $filename = sprintf('test_%d.bin', $i);
-            $this->assertEquals(
-                file_get_contents($source_dir . '/binary/' . $filename),
-                file_get_contents($target_dir . $filename)
+            $this->assertFileEquals(
+                $source_dir . '/binary/' . $filename,
+                $target_dir . $filename
             );
         }
     }

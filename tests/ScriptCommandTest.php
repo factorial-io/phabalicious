@@ -20,7 +20,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class ScriptCommandTest extends PhabTestCase
 {
     /** @var Application */
-    protected $application;
+    protected Application $application;
 
     public function setup(): void
     {
@@ -39,7 +39,7 @@ class ScriptCommandTest extends PhabTestCase
     }
 
 
-    public function testRunScript()
+    public function testRunScript(): void
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
@@ -58,7 +58,7 @@ class ScriptCommandTest extends PhabTestCase
     /**
      * @group docker
      */
-    public function testRunScriptInDockerImageContext()
+    public function testRunScriptInDockerImageContext(): void
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
@@ -75,7 +75,7 @@ class ScriptCommandTest extends PhabTestCase
     /**
      * @group docker
      */
-    public function testRunScriptInDockerImageContext2()
+    public function testRunScriptInDockerImageContext2(): void
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
@@ -90,7 +90,7 @@ class ScriptCommandTest extends PhabTestCase
         $this->assertStringContainsString('PHAB_SUB_SHELL=1', $output);
     }
 
-    public function testEncryptDecryptCallback()
+    public function testEncryptDecryptCallback(): void
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
@@ -129,7 +129,7 @@ class ScriptCommandTest extends PhabTestCase
     /**
      * @dataProvider provideTestScriptNames
      */
-    public function testRunScriptArguments($scriptName, $expected)
+    public function testRunScriptArguments($scriptName, $expected): void
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
@@ -144,7 +144,7 @@ class ScriptCommandTest extends PhabTestCase
         $this->assertStringContainsString("Foo is //$expected//", $output);
     }
 
-    public function provideTestScriptNames()
+    public function provideTestScriptNames(): array
     {
         return [
             ['testArgumentsBase', 'bar'],

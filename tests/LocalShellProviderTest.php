@@ -8,6 +8,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
@@ -18,14 +19,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class LocalShellProviderTest extends PhabTestCase
 {
     /** @var \Phabalicious\ShellProvider\ShellProviderInterface */
-    private $shellProvider;
+    private ShellProviderInterface $shellProvider;
 
-    private $config;
+    private ConfigurationService $config;
 
     /**
      * @var \Phabalicious\Method\TaskContext
      */
-    private $context;
+    private TaskContext $context;
 
     public function setUp(): void
     {
@@ -33,7 +34,10 @@ class LocalShellProviderTest extends PhabTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->config->method("getPasswordManager")->will($this->returnValue(new PasswordManager()));
+        $this
+            ->config
+            ->method("getPasswordManager")
+            ->willReturn(new PasswordManager());
 
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 
@@ -47,13 +51,13 @@ class LocalShellProviderTest extends PhabTestCase
         $this->context->setConfigurationService($this->config);
     }
 
-    public function testGetDefaultConfig()
+    public function testGetDefaultConfig(): void
     {
         $config = $this->shellProvider->getDefaultConfig($this->config, new Node([], ''));
         $this->assertArrayHasKey('rootFolder', $config);
     }
 
-    public function testValidateConfig()
+    public function testValidateConfig(): void
     {
         $errors = new ValidationErrorBag();
         $this->shellProvider->validateConfig(new Node([], ''), $errors);
@@ -63,7 +67,7 @@ class LocalShellProviderTest extends PhabTestCase
         );
     }
 
-    public function testValidateConfigRootFolder()
+    public function testValidateConfigRootFolder(): void
     {
         $errors = new ValidationErrorBag();
         $config = new Node(['rootFolder' => '/var/www/', 'shellExecutable' => '/bin/bash'], '');
@@ -74,19 +78,19 @@ class LocalShellProviderTest extends PhabTestCase
         );
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertEquals('local', $this->shellProvider->getName());
     }
 
-    public function testRun()
+    public function testRun(): void
     {
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/sh',
-            'rootFolder' => dirname(__FILE__)
+            'rootFolder' => __DIR__
         ], $this->shellProvider, $this->config);
 
-        $test_dir = dirname(__FILE__) . '/assets/local-shell-provider';
+        $test_dir = __DIR__ . '/assets/local-shell-provider';
 
         $this->shellProvider->setHostConfig($host_config);
 
@@ -106,14 +110,14 @@ class LocalShellProviderTest extends PhabTestCase
         $this->assertEquals($test_dir, trim($result->getOutput()[0]));
     }
 
-    public function testFailedRun()
+    public function testFailedRun(): void
     {
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/bash',
-            'rootFolder' => dirname(__FILE__)
+            'rootFolder' => __DIR__
         ], $this->shellProvider, $this->config);
 
-        $test_dir = dirname(__FILE__) . '/assets/local-shell-providerxxx';
+        $test_dir = __DIR__ . '/assets/local-shell-providerxxx';
 
         $this->shellProvider->setHostConfig($host_config);
 
@@ -126,11 +130,11 @@ class LocalShellProviderTest extends PhabTestCase
         $this->assertStringNotContainsString(LocalShellProvider::RESULT_IDENTIFIER, $output);
     }
 
-    public function testHostEnvironment()
+    public function testHostEnvironment(): void
     {
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/bash',
-            'rootFolder' => dirname(__FILE__),
+            'rootFolder' => __DIR__,
             'varC' => 'variable_c',
             'environment' => [
                 'VAR_A' => 'variable_a',
@@ -139,7 +143,7 @@ class LocalShellProviderTest extends PhabTestCase
             ],
         ], $this->shellProvider, $this->config);
 
-        $test_dir = dirname(__FILE__) . '/assets/local-shell-provider';
+        $test_dir = __DIR__ . '/assets/local-shell-provider';
 
         $this->shellProvider->setHostConfig($host_config);
 
@@ -167,7 +171,7 @@ class LocalShellProviderTest extends PhabTestCase
         $this->assertStringContainsString('XXvariable_cXX', $output);
     }
 
-    public function testFileGetContents()
+    public function testFileGetContents(): void
     {
         $file = __FILE__;
         $test = $this->shellProvider->getFileContents($file, $this->context);
@@ -175,7 +179,7 @@ class LocalShellProviderTest extends PhabTestCase
         $this->assertEquals($original, $test);
     }
 
-    public function testFilePutContents()
+    public function testFilePutContents(): void
     {
         $content = 'helloworld';
         $result = $this->shellProvider->putFileContents('/tmp/test_put_file_content', $content, $this->context);

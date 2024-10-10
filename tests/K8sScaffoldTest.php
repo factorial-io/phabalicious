@@ -15,6 +15,7 @@ use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Utilities\Utilities;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -24,21 +25,16 @@ use Symfony\Component\Yaml\Yaml;
 class K8sScaffoldTest extends PhabTestCase
 {
     /** @var Application */
-    protected $application;
+    protected Application $application;
 
     /** @var ConfigurationService  */
-    protected $configuration;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Psr\Log\LoggerInterface
-     */
-    private $logger;
+    protected ConfigurationService $configuration;
 
     public function setup(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
-        $this->logger = $logger = new ConsoleLogger(new ConsoleOutput());
+        $logger = new ConsoleLogger(new ConsoleOutput());
 
         $this->configuration = new ConfigurationService($this->application, $logger);
         $method_factory = new MethodFactory($this->configuration, $logger);
@@ -52,7 +48,7 @@ class K8sScaffoldTest extends PhabTestCase
     }
 
 
-    public function testK8sScaffold()
+    public function testK8sScaffold(): void
     {
         chdir($this->configuration->getFabfilePath());
         system('echo "hello world" > kube/should-not-exist.yml');
@@ -67,10 +63,10 @@ class K8sScaffoldTest extends PhabTestCase
         $this->assertEquals('foo', $yaml['data']['valueA']);
         $this->assertEquals('bar', $yaml['data']['valueB']);
 
-        $this->assertFalse(file_exists('kube/should-not-exist.yml'));
+        $this->assertFileDoesNotExist('kube/should-not-exist.yml');
     }
 
-    public function testK8sScaffoldOverridden()
+    public function testK8sScaffoldOverridden(): void
     {
         chdir($this->configuration->getFabfilePath());
         $command = $this->application->find('k8s');
@@ -86,7 +82,7 @@ class K8sScaffoldTest extends PhabTestCase
     }
 
 
-    public function testK8sScaffoldWithNameiInQuestion()
+    public function testK8sScaffoldWithNameiInQuestion(): void
     {
         chdir($this->configuration->getFabfilePath());
         $command = $this->application->find('k8s');
