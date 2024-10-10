@@ -10,6 +10,7 @@ use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,13 +18,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GitMethodTest extends PhabTestCase
 {
     /** @var GitMethod */
-    private $method;
+    private GitMethod $method;
 
     /** @var ConfigurationService */
-    private $configurationService;
+    private ConfigurationService $configurationService;
 
     /** @var TaskContext */
-    private $context;
+    private TaskContext $context;
 
     /**
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
@@ -54,7 +55,7 @@ class GitMethodTest extends PhabTestCase
         $this->context->setConfigurationService($this->configurationService);
     }
 
-    private function setupRepo(HostConfig $host_config)
+    private function setupRepo(HostConfig $host_config): ShellProviderInterface
     {
         $shell = $host_config->shell();
         $shell->cd($host_config['gitRootFolder']);
@@ -68,14 +69,14 @@ class GitMethodTest extends PhabTestCase
         return $shell;
     }
 
-    private function cleanupRepo(HostConfig $host_config)
+    private function cleanupRepo(HostConfig $host_config): void
     {
         $shell = $host_config->shell();
         $shell->cd($host_config['gitRootFolder']);
         $shell->run('rm -rf .git');
     }
 
-    public function testGetVersion()
+    public function testGetVersion(): void
     {
         $host_config = $this->configurationService->getHostConfig('hostA');
         $this->setupRepo($host_config);
@@ -84,7 +85,7 @@ class GitMethodTest extends PhabTestCase
         $this->assertTrue($this->method->isWorkingcopyClean($host_config, $this->context));
     }
 
-    public function testDirtyWorkingCopy()
+    public function testDirtyWorkingCopy(): void
     {
         $host_config = $this->configurationService->getHostConfig('hostA');
         $shell = $this->setupRepo($host_config);

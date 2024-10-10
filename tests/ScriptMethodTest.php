@@ -29,13 +29,13 @@ class ScriptMethodTest extends PhabTestCase
 {
 
     /** @var ScriptMethod */
-    private $method;
+    private ScriptMethod $method;
 
     /** @var ConfigurationService */
-    private $configurationService;
+    private ConfigurationService $configurationService;
 
     /** @var TaskContext */
-    private $context;
+    private TaskContext $context;
 
     /**
      * @throws BlueprintTemplateNotFoundException
@@ -75,7 +75,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws ValidationFailedException
      * @throws UnknownReplacementPatternException
      */
-    public function testRunScript()
+    public function testRunScript(): void
     {
         $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo "hello"',
@@ -100,7 +100,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
-    public function testExitOnExitCode()
+    public function testExitOnExitCode(): void
     {
         $this->context->set(ScriptMethod::SCRIPT_DATA, [
             '(exit 42)',
@@ -123,7 +123,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
-    public function testIgnoreExitCode()
+    public function testIgnoreExitCode(): void
     {
         $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'break_on_first_error(0)',
@@ -150,7 +150,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
-    public function testEnvironmentVariables()
+    public function testEnvironmentVariables(): void
     {
         $this->context->set('environment', [
             'TEST_VAR' => '42',
@@ -177,7 +177,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
-    public function testExpandedEnvironmentVariables()
+    public function testExpandedEnvironmentVariables(): void
     {
         $this->context->set('environment', [
             'TEST_VAR' => '%host.testEnvironmentVar%',
@@ -204,7 +204,7 @@ class ScriptMethodTest extends PhabTestCase
      * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException
      */
-    public function testExpandedEnvironmentVariablesFromHostConfig()
+    public function testExpandedEnvironmentVariablesFromHostConfig(): void
     {
         $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo "$ROOT_FOLDER"',
@@ -222,7 +222,7 @@ class ScriptMethodTest extends PhabTestCase
     }
 
 
-    public function testMissingCallbackImplementation()
+    public function testMissingCallbackImplementation(): void
     {
         $this->expectException(MissingScriptCallbackImplementation::class);
 
@@ -238,7 +238,7 @@ class ScriptMethodTest extends PhabTestCase
         $this->method->runScript($host_config, $this->context);
     }
 
-    public function testParsingCallbackParameters()
+    public function testParsingCallbackParameters(): void
     {
         $callback = new DebugCallback(true);
         $this->context->set(ScriptMethod::SCRIPT_CALLBACKS, [
@@ -263,7 +263,7 @@ class ScriptMethodTest extends PhabTestCase
         $this->assertEquals(["hello, world", "Foo, bar"], $callback->debugOutput[3]);
     }
 
-    public function testTaskSpecificScripts()
+    public function testTaskSpecificScripts(): void
     {
         $callback = new DebugCallback(false);
         $this->context->set(ScriptMethod::SCRIPT_CALLBACKS, [
@@ -287,16 +287,16 @@ class ScriptMethodTest extends PhabTestCase
     }
 
 
-    public function testValidateReplacements()
+    public function testValidateReplacements(): void
     {
 
-        $this->assertEquals(true, Utilities::validateReplacements([
+        $this->assertTrue(Utilities::validateReplacements([
             "kjhdakadjh\%blaa\%bla"
         ]));
-        $this->assertEquals(true, Utilities::validateReplacements([
+        $this->assertTrue(Utilities::validateReplacements([
             "\%blaa\%bla"
         ]));
-        $this->assertEquals(true, Utilities::validateReplacements([
+        $this->assertTrue(Utilities::validateReplacements([
             "bla\%blaa\%"
         ]));
 
@@ -338,7 +338,7 @@ class ScriptMethodTest extends PhabTestCase
         ]);
 
         $this->assertNotTrue($error);
-        $this->assertEquals(false, $error->getMissingArgument());
+        $this->assertFalse($error->getMissingArgument());
         $this->assertEquals(1, $error->getLineNumber());
         $this->assertEquals('e%%', $error->getFailedPattern());
         $this->assertEquals('%here%%huhu%', $error->getFailedLine());
@@ -354,19 +354,19 @@ class ScriptMethodTest extends PhabTestCase
         $this->assertEquals(1, $error->getLineNumber());
         $this->assertEquals(' %arguments.foobar%', $error->getFailedPattern());
 
-        $this->assertEquals(true, Utilities::validateReplacements([
+        $this->assertTrue(Utilities::validateReplacements([
             "lhkjdhkadhj",
             "echo %secret.googlemaps_api_dev_key%",
             "khjkhjkjhkjh",
         ]));
 
-        $this->assertEquals(true, Utilities::validateReplacements([
+        $this->assertTrue(Utilities::validateReplacements([
             "lhkjdhkadhj",
             "echo smtp-password is //%secret.smtp-password%//",
             "khjkhjkjhkjh",
         ]));
 
-        $this->assertEquals(true, Utilities::validateReplacements([
+        $this->assertTrue(Utilities::validateReplacements([
             "lhkjdhkadhj",
             "echo smtp-password is //\%secret.smtp-password%//",
             "khjkhjkjhkjh",
@@ -376,7 +376,7 @@ class ScriptMethodTest extends PhabTestCase
     /**
      * @group docker
      */
-    public function testScriptRunInDockerContext()
+    public function testScriptRunInDockerContext(): void
     {
         $this->context->set(ScriptMethod::SCRIPT_CONTEXT, ScriptExecutionContext::DOCKER_IMAGE);
         $this->context->set(ScriptMethod::SCRIPT_CONTEXT_DATA, ['image' => 'busybox']);
@@ -394,7 +394,7 @@ class ScriptMethodTest extends PhabTestCase
     }
 
 
-    public function testCleanupScriptSection()
+    public function testCleanupScriptSection(): void
     {
         $this->context->set(ScriptMethod::SCRIPT_DATA, [
             '(exit 42)',
