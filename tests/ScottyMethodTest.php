@@ -7,6 +7,8 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
+use Phabalicious\Method\ScottyCtlCreateOptions;
+use Phabalicious\Method\ScottyCtlOptions;
 use Phabalicious\Method\ScottyMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
@@ -54,7 +56,16 @@ class ScottyMethodTest extends PhabTestCase
         $this->expectException(ValidationFailedException::class);
         $host_config = $this->configurationService->getHostConfig('invalid');
     }
-    public function testDeploy(): void
+
+    public function testConfigInheritance(): void
+    {
+        $host_config = $this->configurationService->getHostConfig('hostA');
+        $this->assertEquals('http://localhost:21342', $host_config['scotty']['server']);
+
+        $host_config = $this->configurationService->getHostConfig('hostB');
+        $this->assertEquals('http://scotty:21342', $host_config['scotty']['server']);
+    }
+    public function testScaffold(): void
     {
         $base_dir = $this->getTmpDir('scotty-tests');
         $this->context->set('installDir', $base_dir);
@@ -64,5 +75,34 @@ class ScottyMethodTest extends PhabTestCase
         $docker_compose = Yaml::parseFile($base_dir . '/docker-compose.yaml');
 
         $this->assertEquals('my-deepest-secret', $docker_compose['services']['web']['environment']['APP_SECRET']);
+    }
+
+    public function testScottyCtlOptions(): void
+    {
+        $host_config = $this->configurationService->getHostConfig('hostA');
+
+        $options = new ScottyCtlCreateOptions($host_config, $this->context);
+        $result = $options->build('create', ['app_folder' => '/app/folder']);
+        $this->assertEquals([
+            '--server',
+            'http://localhost:21342',
+            '--access-token',
+            'my-secret',
+            'create',
+            'hostA',
+            '--folder',
+            '/app/folder',
+            '--service',
+            'nginx:8080',
+            '--service',
+            'component-library:80',
+            '--env',
+            'APP_SECRET=my-deepest-secret',
+            '--basic-auth',
+            'admin:admin',
+            '--app-blueprint',
+            'my-app-blueprint',
+            '--registry',
+            'factorial'], $result);
     }
 }

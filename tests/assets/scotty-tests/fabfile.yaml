@@ -1,6 +1,19 @@
 name: scotty-tests
 
 
+scotty:
+  app-blueprint: my-app-blueprint
+  basic-auth:
+    username: admin
+    password: admin
+  registry: factorial
+  server: http://localhost:21342
+  access-token: my-secret
+  services:
+    nginx: 8080
+    component-library: 80
+
+
 hosts:
   invalid:
     needs:
@@ -14,7 +27,13 @@ hosts:
     secrets:
       APP_SECRET: my-deepest-secret
     scotty:
+      environment:
+        APP_SECRET: "%host.secrets.APP_SECRET%"
       scaffold:
         assets:
           - ./assets/docker-compose.yaml
           - ./assets/index.html
+  hostB:
+    inheritsFrom: hostA
+    scotty:
+      server: http://scotty:21342

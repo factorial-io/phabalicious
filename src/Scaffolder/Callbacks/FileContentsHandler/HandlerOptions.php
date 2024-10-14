@@ -12,26 +12,26 @@ class HandlerOptions
     /**
      * @var bool
      */
-    private $ignoreSubfolders;
+    private bool $ignoreSubfolders;
 
     private $tokens;
 
     /**
      * @var bool
      */
-    private $isRemote;
+    private bool $isRemote;
 
     /**
      * @var array
      */
-    private $replacements;
+    private array $replacements;
 
     private $apply_twig_to_file_w_extension;
 
     /**
      * @var array
      */
-    private $data;
+    private array $data;
 
     /**
      * @var mixed
@@ -46,7 +46,7 @@ class HandlerOptions
         $this->ignoreSubfolders = $context->get(
             'scaffoldStrategy',
             'default'
-        ) == CopyAssetsBaseCallback::IGNORE_SUBFOLDERS_STRATEGY;
+        ) === CopyAssetsBaseCallback::IGNORE_SUBFOLDERS_STRATEGY;
         $this->data = $data;
         $this->tokens = $context->get('tokens');
         $this->isRemote = Utilities::isHttpUrl($data['base_path']);
@@ -105,8 +105,7 @@ class HandlerOptions
         return $this->data[$data_key] ?? null;
     }
 
-    public function count($data_key)
-    {
+    public function count($data_key): ?int {
         return count($this->data[$data_key]);
     }
 

@@ -212,11 +212,10 @@ class Utilities
         return true;
     }
 
-    public static function buildVariablesFrom(HostConfig $host_config, TaskContextInterface $context)
-    {
+    public static function buildVariablesFrom(HostConfig $host_config, TaskContextInterface $context): array {
         $variables = $context->get('variables', []);
 
-        $variables = Utilities::mergeData($variables, [
+        $variables = self::mergeData($variables, [
             'context' => [
                 'data' => $context->getData(),
                 'results' => $context->getResults(),
@@ -237,8 +236,7 @@ class Utilities
         return $variables;
     }
 
-    public static function extractCallback($line)
-    {
+    public static function extractCallback($line): false|array {
         $p1 = strpos($line, '(');
         $p2 = strrpos($line, ')');
 
@@ -265,7 +263,7 @@ class Utilities
     public static function extractArguments($str): array
     {
         // If only one argument return early.
-        if (strpos($str, ',') === false) {
+        if (!str_contains($str, ',')) {
             return [ str_replace('"', '', $str) ];
         }
         $result = [];
@@ -276,9 +274,9 @@ class Utilities
             while ($pos < strlen($str) && ctype_space($str[$pos])) {
                 $pos++;
             }
-            if ($pos == strlen($str)) {
+            if ($pos === strlen($str)) {
                 $done = true;
-            } elseif ($str[$pos] == '"') {
+            } elseif ($str[$pos] === '"') {
                 // Quoted string ahead, extract.
                 $end_p = strpos($str, '"', $pos+1);
                 if ($end_p === false) {
@@ -294,7 +292,7 @@ class Utilities
                 } else {
                     $pos = $comma_p;
                 }
-            } elseif ($str[$pos] == ',') {
+            } elseif ($str[$pos] === ',') {
                 // Comma, move one char forward.
                 $pos++;
                 continue;
@@ -339,8 +337,7 @@ class Utilities
         return $value;
     }
 
-    public static function setProperty(&$data, string $dotted_key, $new_value)
-    {
+    public static function setProperty(&$data, string $dotted_key, $new_value): void {
         $keys = explode('.', $dotted_key);
 
         foreach ($keys as $key) {
@@ -353,8 +350,7 @@ class Utilities
         $data = $new_value;
     }
 
-    public static function slugify($str, $replacement = '')
-    {
+    public static function slugify($str, $replacement = ''): array|string|null {
         return preg_replace('/\s|\.|\,|_|\-|:|\//', $replacement, strtolower($str));
     }
 
@@ -375,7 +371,7 @@ class Utilities
 
     public static function prependRootFolder($rootFolder, $subfolder): string
     {
-        if (strpos($subfolder, $rootFolder) === false) {
+        if (!str_contains($subfolder, $rootFolder)) {
             return $rootFolder . $subfolder;
         }
 
@@ -447,11 +443,11 @@ class Utilities
     {
         $args = is_array($arguments_string) ? $arguments_string : explode(' ', $arguments_string);
 
-        $unnamed_args = array_filter($args, function ($elem) {
-            return strpos($elem, '=') === false;
+        $unnamed_args = array_filter($args, static function ($elem) {
+            return !str_contains($elem, '=');
         });
-        $temp = array_filter($args, function ($elem) {
-            return strpos($elem, '=') !== false;
+        $temp = array_filter($args, static function ($elem) {
+            return str_contains($elem, '=');
         });
         $named_args = [];
         foreach ($temp as $value) {
@@ -459,7 +455,7 @@ class Utilities
             $named_args[$a[0]] = $a[1];
         }
 
-        $named_args = Utilities::mergeData($named_args, [
+        $named_args = self::mergeData($named_args, [
             self::COMBINED_ARGUMENTS => implode(' ', $unnamed_args),
             self::UNNAMED_ARGUMENTS => $unnamed_args,
         ]);
@@ -513,8 +509,7 @@ class Utilities
         return $replacements;
     }
 
-    public static function pushKeysAsDotNotation(array $data, &$return, $levels = [])
-    {
+    public static function pushKeysAsDotNotation(array $data, &$return, $levels = []): void {
         foreach ($data as $key => $value) {
             $new_levels = $levels;
             $new_levels[] = $key;
@@ -559,21 +554,18 @@ class Utilities
         return is_null($option) || !empty($option);
     }
 
-    public static function camel2dashed($string)
-    {
+    public static function camel2dashed($string): string {
         return strtolower(preg_replace('/([A-Z])/', '-$1', $string));
     }
 
-    public static function toUpperSnakeCase($string)
-    {
+    public static function toUpperSnakeCase($string): string {
         return strtoUpper(str_replace('-', '_', self::camel2dashed($string)));
     }
 
     /**
      * Remove any beta or alpha string from a version string.
      */
-    public static function getNextStableVersion(string $version)
-    {
+    public static function getNextStableVersion(string $version): string {
         $exploded = explode(".", $version);
         if (count($exploded) < 3) {
             return $version;

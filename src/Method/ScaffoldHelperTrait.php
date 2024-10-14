@@ -9,6 +9,7 @@ use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
+use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
 trait ScaffoldHelperTrait
@@ -30,7 +31,7 @@ trait ScaffoldHelperTrait
         return $config[$key]['scaffold'];
     }
 
-    protected function validateScaffoldConfig($config, $key, ValidationErrorBag $errors): void
+    protected function validateScaffoldConfig($config, $key, ValidationErrorBagInterface $errors): void
     {
         if ($config[$key]['scaffold']) {
             $validation = new ValidationService(

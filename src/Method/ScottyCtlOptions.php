@@ -2,54 +2,56 @@
 
 namespace Phabalicious\Method;
 
-use http\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Utilities\Utilities;
 
 class ScottyCtlOptions
 {
 
     protected array $data;
 
-    public function __construct(HostConfig $host_config)
-    {
+    public function __construct(
+        protected readonly HostConfig $hostConfig,
+        protected readonly TaskContextInterface $context
+    ) {
         $this->data = [];
-        $scotty_data = $host_config->getData()->get('scotty');
+        $scotty_data = $hostConfig->getData()->get('scotty');
         if (!$scotty_data) {
             throw new InvalidArgumentException('Missing scotty configuration');
         }
-        foreach (['server', 'app-blueprint', 'access-token', 'basic-auth', 'registry', ] as $key) {
+
+        foreach (['server', 'access-token'] as $key) {
             if ($scotty_data->has($key)) {
                 $this->data[$key] = $scotty_data->get($key)->getValue();
             }
         }
 
-        if ($basic_auth = $scotty_data->get('basic-auth')) {
-            $this->data['basic-auth'] = sprintf(
-                '%s:%s',
-                $basic_auth->get('username')->getValue(),
-                $basic_auth->get('password')->getValue()
-            );
-        }
-
-        $this->data['appName'] = $host_config['configName'];
+        $this->data['appName'] = $hostConfig['configName'];
     }
 
-    public function build($app_folder): string
-    {
+    public function build($command, $additional_data = []): array {
+        $variables = Utilities::buildVariablesFrom($this->hostConfig, $this->context);
+        $replacements = Utilities::expandVariables($variables);
+
+        $data = Utilities::expandStrings(array_merge($this->data, $additional_data), $replacements);
+
+        return $this->buildImpl($data, $command);
+    }
+
+    protected function buildImpl(array $data, string $command): array {
+
         $options = [
           '--server',
           $this->data['server'],
-          'create',
-          '--folder',
-          $app_folder,
-          $this->data['appName'],
         ];
-        foreach (['access-token', 'app-blueprint', 'basic-auth', 'registry', ] as $key) {
-            if (isset($this->data[$key])) {
-                $options[] = '--' . $key;
-                $options[] = $this->data[$key];
-            }
+        if ($data['access-token']) {
+            $options[] = '--access-token';
+            $options[] = $data['access-token'];
         }
-        return implode(' ', $options);
+        $options[] = $command;
+        $options[] = $data['appName'];
+
+        return $options;
     }
 }

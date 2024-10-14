@@ -46,23 +46,29 @@ class ScottyMethod extends BaseMethod
         $validation_service->hasKey('server', 'The scotty configuration needs a `server` key');
     }
 
-    public function scaffoldApp(HostConfig $host_config, TaskContext $context)
+    public function scaffoldApp(HostConfig $host_config, TaskContext $context): string
     {
         $project_folder = $context->get('installDir', Utilities::getTempFolder($host_config, 'scotty'));
         $shell = $host_config->shell();
         $this->runScaffolder($host_config, $context, $shell, $project_folder, 'scotty');
+        return $project_folder;
     }
 
-    public function deploy(HostConfig $host_config, TaskContext $context)
+    public function deploy(HostConfig $host_config, TaskContext $context): void
     {
-        $this->scaffoldApp($host_config, $context);
-        $this->runScottyCtl($host_config, $context, 'deploy');
+        $app_folder = $this->scaffoldApp($host_config, $context);
+        $this->runScottyCtl($host_config, $context, 'create', $app_folder);
     }
 
-    protected function runScottyCtl(HostConfig $host_config, TaskContext $context, string $command)
+    /**
+     * @throws \Phabalicious\Exception\FailedShellCommandException
+     */
+    protected function runScottyCtl(HostConfig $host_config, TaskContext $context, string $command, string $app_folder): void
     {
-        $shell = $host_config->shell();
-        $options = new ScottyCtlOptions($host_config, $context);
-        $shell->run(sprintf('#!scottyctl %s', $options->build()));
+        $options = new ScottyCtlCreateOptions($host_config, $context);
+        $result = $options->runInShell($host_config->shell(), $command, ['app_folder' => $app_folder]);
+        if ($result->failed()) {
+            $result->throwException('Failed to run scottyctl ' . $command);
+        }
     }
 }
