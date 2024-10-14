@@ -30,14 +30,14 @@ class BlueprintConfiguration
         }
 
         foreach ($this->configuration->getAllDockerConfigs() as $key => $data) {
-            $data = $this->configuration->getDockerConfig($key);
+            $data = $this->configuration->getDockerConfigData($key);
             if (!empty($data['blueprint'])) {
                 $this->templates['docker:'  . $key] =
                     new BlueprintTemplate(
                         'docker:key',
                         $this->configuration,
-                        $data->getData()->get('blueprint'),
-                        $data->getData()
+                        $data->get('blueprint'),
+                        $data
                     );
             }
         }

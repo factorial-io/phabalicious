@@ -1,0 +1,20 @@
+name: scotty-tests
+
+
+hosts:
+  invalid:
+    needs:
+      - local
+      - scotty
+
+  hostA:
+    needs:
+      - local
+      - scotty
+    secrets:
+      APP_SECRET: my-deepest-secret
+    scotty:
+      scaffold:
+        assets:
+          - ./assets/docker-compose.yaml
+          - ./assets/index.html

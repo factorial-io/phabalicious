@@ -850,19 +850,14 @@ class ConfigurationService
     /**
      * @param string $config_name
      *
-     * @return DockerConfig
+     * @return Node
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    public function getDockerConfig(string $config_name): DockerConfig
+    public function getDockerConfigData(string $config_name): Node
     {
-        $cid = 'dockerhost:' . $config_name;
-
-        if (!empty($this->cache[$cid])) {
-            return $this->cache[$cid];
-        }
 
         if (empty($this->dockerHosts[$config_name])) {
             throw new MissingDockerHostConfigException('Could not find docker host configuration for ' . $config_name);
@@ -879,7 +874,24 @@ class ConfigurationService
             return $data;
         }
 
-        $data = $this->validateDockerConfig($data, $config_name);
+        return $this->validateDockerConfig($data, $config_name);
+    }
+
+    /**
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     */
+    public function getDockerConfig(string $config_name): DockerConfig
+    {
+        $cid = 'dockerhost:' . $config_name;
+
+        if (!empty($this->cache[$cid])) {
+            return $this->cache[$cid];
+        }
+        $data = $this->getDockerConfigData($config_name);
+
         $shell_provider = ShellProviderFactory::create($data['shellProvider'], $this->logger);
 
 
@@ -918,7 +930,7 @@ class ConfigurationService
         return $this->hosts;
     }
 
-    public function addHost($host_data)
+    public function addHost($host_data): void
     {
         if (empty($this->hosts)) {
             $this->hosts = new Node([], 'configuration');

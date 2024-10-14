@@ -74,7 +74,7 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
         $shell_type = $input->getOption('shell-type') ?: $this->getShellType();
 
         if ($input->getOption('generate-hook')) {
-            if ($shell_type == 'fish') {
+            if ($shell_type === 'fish') {
                 return $this->handleFishShellCompletions($output);
             }
         }
@@ -106,9 +106,11 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
         return parent::execute($input, $output);
     }
 
-    private function handleFishShellCompletions(OutputInterface $output)
+    private function handleFishShellCompletions(OutputInterface $output): int
     {
         $helper = new FishShellCompletionDescriptor();
         $helper->describe($output, $this->getApplication());
+
+        return 0;
     }
 }

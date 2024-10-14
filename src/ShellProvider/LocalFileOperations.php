@@ -17,7 +17,7 @@ class LocalFileOperations implements FileOperationsInterface
         return file_put_contents($filename, $data);
     }
 
-    public function realPath($filename)
+    public function realPath($filename): string|false
     {
         return realpath($filename);
     }

@@ -266,7 +266,11 @@ class Scaffolder
         $tokens = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($tokens);
 
         $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
-        $tokens['rootFolder'] = $shell->realPath($root_folder) . '/' . $tokens['projectFolder'];
+        $real_root_folder = $shell->realPath($root_folder);
+        if ($real_root_folder === false) {
+            throw new \RuntimeException('Could not resolve root-folder '. $root_folder);
+        }
+        $tokens['rootFolder'] = $real_root_folder. '/' . $tokens['projectFolder'];
 
 
         $context->set(ScriptMethod::SCRIPT_DATA, $data['scaffold']);

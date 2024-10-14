@@ -603,9 +603,21 @@ class Utilities
     public static function getTempFileName(HostConfig $host_config, $str): string
     {
         return
-            $host_config->get('tmpFolder', '/tmp') . '/' .
+            $host_config->get('tmpFolder', sys_get_temp_dir()) . '/' .
             bin2hex(random_bytes(8)) . '--' .
             basename($str);
+    }
+
+    public static function getTempFolder(HostConfig $hostConfig, string $name): string
+    {
+        $tempDir = $hostConfig->get('tmpFolder', sys_get_temp_dir());
+        $uniqueFolderName = uniqid($name, true);
+        $uniqueFolderPath = $tempDir . DIRECTORY_SEPARATOR . $uniqueFolderName;
+        if (mkdir($uniqueFolderPath, 0777, true) || is_dir($uniqueFolderPath)) {
+            return $uniqueFolderPath;
+        }
+
+        throw new \RuntimeException('Could not create temporary folder ' . $uniqueFolderPath);
     }
 
     /**
@@ -651,12 +663,12 @@ class Utilities
 
         array_unshift($path, $root);
 
-        $result['path'] = join('/', $path);
+        $result['path'] = implode('/', $path);
 
         return self::buildUrl($result);
     }
 
-    public static function buildUrl($components)
+    public static function buildUrl($components): string
     {
         $url = '';
         if (!empty($components['scheme'])) {
@@ -688,7 +700,7 @@ class Utilities
      */
     public static function isHttpUrl($url): bool
     {
-        return (substr($url, 0, 4) === 'http')  && (strpos($url, '://') !== false);
+        return (str_starts_with($url, 'http'))  && (str_contains($url, '://'));
     }
 
     /**
@@ -696,6 +708,6 @@ class Utilities
      */
     public static function isPharUrl($url): bool
     {
-        return (substr($url, 0, 4) === 'phar')  && (strpos($url, '://') !== false);
+        return (str_starts_with($url, 'phar'))  && (str_contains($url, '://'));
     }
 }

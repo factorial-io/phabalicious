@@ -47,7 +47,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     /**
      * @var \Phabalicious\ShellProvider\FileOperationsInterface
      */
-    protected $fileOperationsHandler;
+    protected FileOperationsInterface $fileOperationsHandler;
 
     public function __construct(LoggerInterface $logger)
     {
@@ -292,7 +292,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $this->fileOperationsHandler->putFileContents($filename, $data, $context);
     }
 
-    public function realPath($filename)
+    public function realPath($filename): string|false
     {
         return $this->fileOperationsHandler->realPath($filename);
     }

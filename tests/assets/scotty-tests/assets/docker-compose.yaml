@@ -1,0 +1,6 @@
+services:
+  web:
+    image: nginx
+    environment:
+      APP_OTHER_SECRET: my-other-secret
+      APP_SECRET: {{host.secrets.APP_SECRET}}
