@@ -27,7 +27,7 @@ class MethodFactory
      */
     protected LoggerInterface $logger;
 
-    protected ?TunnelHelperFactory $tunnelHelperFactory;
+    protected ?TunnelHelperFactory $tunnelHelperFactory = null;
 
     protected array $lookupCache = [];
 
