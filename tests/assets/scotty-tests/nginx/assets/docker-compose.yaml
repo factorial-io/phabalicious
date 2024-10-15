@@ -1,5 +1,5 @@
 services:
-  web:
+  nginx:
     image: nginx
     environment:
       APP_OTHER_SECRET: my-other-secret

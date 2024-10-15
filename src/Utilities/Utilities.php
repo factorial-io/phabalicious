@@ -212,7 +212,8 @@ class Utilities
         return true;
     }
 
-    public static function buildVariablesFrom(HostConfig $host_config, TaskContextInterface $context): array {
+    public static function buildVariablesFrom(HostConfig $host_config, TaskContextInterface $context): array
+    {
         $variables = $context->get('variables', []);
 
         $variables = self::mergeData($variables, [
@@ -236,7 +237,8 @@ class Utilities
         return $variables;
     }
 
-    public static function extractCallback($line): false|array {
+    public static function extractCallback($line): false|array
+    {
         $p1 = strpos($line, '(');
         $p2 = strrpos($line, ')');
 
@@ -337,7 +339,8 @@ class Utilities
         return $value;
     }
 
-    public static function setProperty(&$data, string $dotted_key, $new_value): void {
+    public static function setProperty(&$data, string $dotted_key, $new_value): void
+    {
         $keys = explode('.', $dotted_key);
 
         foreach ($keys as $key) {
@@ -350,7 +353,8 @@ class Utilities
         $data = $new_value;
     }
 
-    public static function slugify($str, $replacement = ''): array|string|null {
+    public static function slugify($str, $replacement = ''): array|string|null
+    {
         return preg_replace('/\s|\.|\,|_|\-|:|\//', $replacement, strtolower($str));
     }
 
@@ -509,7 +513,8 @@ class Utilities
         return $replacements;
     }
 
-    public static function pushKeysAsDotNotation(array $data, &$return, $levels = []): void {
+    public static function pushKeysAsDotNotation(array $data, &$return, $levels = []): void
+    {
         foreach ($data as $key => $value) {
             $new_levels = $levels;
             $new_levels[] = $key;
@@ -554,18 +559,21 @@ class Utilities
         return is_null($option) || !empty($option);
     }
 
-    public static function camel2dashed($string): string {
+    public static function camel2dashed($string): string
+    {
         return strtolower(preg_replace('/([A-Z])/', '-$1', $string));
     }
 
-    public static function toUpperSnakeCase($string): string {
+    public static function toUpperSnakeCase($string): string
+    {
         return strtoUpper(str_replace('-', '_', self::camel2dashed($string)));
     }
 
     /**
      * Remove any beta or alpha string from a version string.
      */
-    public static function getNextStableVersion(string $version): string {
+    public static function getNextStableVersion(string $version): string
+    {
         $exploded = explode(".", $version);
         if (count($exploded) < 3) {
             return $version;

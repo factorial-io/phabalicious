@@ -39,7 +39,7 @@ class ScottyMethodTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/scotty-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__ . '/assets/scotty-tests/nginx/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)
@@ -74,7 +74,7 @@ class ScottyMethodTest extends PhabTestCase
 
         $docker_compose = Yaml::parseFile($base_dir . '/docker-compose.yaml');
 
-        $this->assertEquals('my-deepest-secret', $docker_compose['services']['web']['environment']['APP_SECRET']);
+        $this->assertEquals('my-deepest-secret', $docker_compose['services']['nginx']['environment']['APP_SECRET']);
     }
 
     public function testScottyCtlOptions(): void
@@ -93,15 +93,13 @@ class ScottyMethodTest extends PhabTestCase
             '--folder',
             '/app/folder',
             '--service',
-            'nginx:8080',
-            '--service',
-            'component-library:80',
+            'nginx:80',
             '--env',
             'APP_SECRET=my-deepest-secret',
             '--basic-auth',
             'admin:admin',
             '--app-blueprint',
-            'my-app-blueprint',
+            'nginx-lagoon',
             '--registry',
             'factorial'], $result);
     }

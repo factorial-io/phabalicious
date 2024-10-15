@@ -26,6 +26,8 @@ class PasswordManager implements PasswordManagerInterface
 
     private ?QuestionFactory $questionFactory = null;
 
+    private array $registeredSecrets = [];
+
     public function __construct()
     {
         $this->readPasswords();
@@ -497,9 +499,14 @@ class PasswordManager implements PasswordManagerInterface
     public function obfuscateSecrets(string $message): string
     {
         $replacements = [];
-        foreach ($this->passwords as $password) {
+        $passwords = array_merge($this->passwords, $this->registeredSecrets);
+        foreach ($passwords as $password) {
             $replacements[$password] = str_repeat('*', 10);
         }
         return strtr($message, $replacements);
+    }
+
+    public function registerCustomSecretToObfuscate(string $secret): void {
+        $this->registeredSecrets[] = $secret;
     }
 }

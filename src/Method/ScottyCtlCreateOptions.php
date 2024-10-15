@@ -8,7 +8,8 @@ use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Webmozart\Assert\Assert;
 
-class ScottyCtlCreateOptions extends ScottyCtlOptions {
+class ScottyCtlCreateOptions extends ScottyCtlOptions
+{
 
     public function __construct(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -36,18 +37,18 @@ class ScottyCtlCreateOptions extends ScottyCtlOptions {
                 $basic_auth->get('password')->getValue()
             );
         }
-
     }
 
-    public function runInShell(ShellProviderInterface $shell, string $command, array $add_data): CommandResult {
-       return $shell->run(sprintf(
-           '#!scittyctl %s %s',
-           $command,
-           implode(' ', $this->build($command, $add_data))
+    public function runInShell(ShellProviderInterface $shell, string $command, array $add_data): CommandResult
+    {
+        return $shell->run(sprintf(
+            '#!scottyctl %s',
+            implode(' ', $this->build($command, $add_data))
         ));
     }
 
-    protected function buildImpl(array $data, string $command): array{
+    protected function buildImpl(array $data, string $command): array
+    {
         $options = [
         '--folder',
           $data['app_folder'],

@@ -105,7 +105,8 @@ class HandlerOptions
         return $this->data[$data_key] ?? null;
     }
 
-    public function count($data_key): ?int {
+    public function count($data_key): ?int
+    {
         return count($this->data[$data_key]);
     }
 

@@ -28,4 +28,6 @@ interface PasswordManagerInterface
     public function getFileContentFrom1Password($token_id, $vault_id, $item_id);
 
     public function obfuscateSecrets(string $message): string;
+
+    public function registerCustomSecretToObfuscate(string $secret): void;
 }

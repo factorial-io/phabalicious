@@ -15,21 +15,21 @@ class MethodFactory
     /**
      * @var MethodInterface[]
      */
-    protected $methods = [];
+    protected array $methods = [];
 
     /**
      * @var ConfigurationService
      */
-    protected $configuration;
+    protected ConfigurationService $configuration;
 
     /**
      * @var LoggerInterface
      */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    protected $tunnelHelperFactory;
+    protected ?TunnelHelperFactory $tunnelHelperFactory;
 
-    protected $lookupCache = [];
+    protected array $lookupCache = [];
 
     /**
      * MethodFactory constructor.
@@ -88,7 +88,7 @@ class MethodFactory
      *
      * @param string $task_name
      * @param HostConfig $configuration
-     * @param TaskContextInterface|NULL $context
+     * @param TaskContextInterface $context
      * @param array $nextTasks
      *
      * @return TaskContextInterface
@@ -98,9 +98,9 @@ class MethodFactory
     public function runTask(
         string $task_name,
         HostConfig $configuration,
-        TaskContextInterface $context = null,
+        TaskContextInterface $context,
         array $nextTasks = []
-    ) {
+    ): TaskContextInterface {
         $saved_next_tasks = $context->getResult('runNextTasks', []);
         $context->setResult('runNextTasks', $nextTasks);
         $this->preflight('preflight', $task_name, $configuration, $context);
@@ -135,8 +135,8 @@ class MethodFactory
         string $task_name,
         HostConfig $configuration,
         TaskContextInterface $context,
-        $fallback_allowed
-    ) {
+        bool $fallback_allowed
+    ): void {
         $fn_called = false;
 
         if (!$context->get('quiet')) {
@@ -175,7 +175,7 @@ class MethodFactory
         HostConfig $configuration,
         TaskContextInterface $in_context,
         bool $optional
-    ) {
+    ): void {
         $context = clone $in_context;
         $overrides = [];
         foreach ($configuration['needs'] as $method_name) {
@@ -293,7 +293,7 @@ class MethodFactory
         }, $needs));
     }
 
-    public function alter(array $needs, $func_name, AlterableDataInterface $data)
+    public function alter(array $needs, $func_name, AlterableDataInterface $data): void
     {
         $fn = 'alter' . ucwords($func_name);
         foreach ($this->getSubset($needs) as $method) {

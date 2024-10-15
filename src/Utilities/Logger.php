@@ -13,18 +13,18 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Logger extends ConsoleLogger
 {
-    const WARNING = 'warning';
-    const NOTICE = 'notice';
-    const INFO = 'info';
-    const DEBUG = 'debug';
+    public const WARNING = 'warning';
+    public const NOTICE = 'notice';
+    public const INFO = 'info';
+    public const DEBUG = 'debug';
 
-    private $io;
-    private $output;
+    private SymfonyStyle $io;
+    private OutputInterface $output;
 
     /**
-     * @var \Phabalicious\Utilities\PasswordManagerInterface
+     * @var \Phabalicious\Utilities\PasswordManagerInterface|null
      */
-    protected $passwordManager;
+    protected ?PasswordManagerInterface $passwordManager = null;
 
     /**
      * Overrides $verbosityLevelMap in the parent class.
@@ -34,7 +34,7 @@ class Logger extends ConsoleLogger
      *
      * @var array
      */
-    private $verbosityLevelMapOverride = array(
+    private array $verbosityLevelMapOverride = array(
         LogLevel::EMERGENCY => OutputInterface::VERBOSITY_NORMAL,
         LogLevel::ALERT => OutputInterface::VERBOSITY_NORMAL,
         LogLevel::CRITICAL => OutputInterface::VERBOSITY_NORMAL,
@@ -109,9 +109,9 @@ class Logger extends ConsoleLogger
         if ($this->passwordManager) {
             $message = $this->passwordManager->obfuscateSecrets($message);
         }
-        if ($level == LogLevel::WARNING) {
+        if ($level === LogLevel::WARNING) {
             $this->io->block($message, 'Warning', 'fg=black;bg=yellow', '   ', true);
-        } elseif ($level == LogLevel::ERROR) {
+        } elseif ($level === LogLevel::ERROR) {
             $this->io->error($message);
         } else {
             parent::log($level, $message, $context);

@@ -54,10 +54,15 @@ class ScottyMethod extends BaseMethod
         return $project_folder;
     }
 
-    public function deploy(HostConfig $host_config, TaskContext $context): void
+    protected function createApp(HostConfig $host_config, TaskContext $context): void
     {
         $app_folder = $this->scaffoldApp($host_config, $context);
         $this->runScottyCtl($host_config, $context, 'create', $app_folder);
+    }
+
+    public function deploy(HostConfig $host_config, TaskContext $context): void
+    {
+        $this->createApp($host_config, $context);
     }
 
     /**

@@ -26,11 +26,15 @@ class ScottyCtlOptions
                 $this->data[$key] = $scotty_data->get($key)->getValue();
             }
         }
+        if ($this->data['access-token']) {
+            $this->context->getPasswordManager()->registerCustomSecretToObfuscate($this->data['access-token']);
+        }
 
         $this->data['appName'] = $hostConfig['configName'];
     }
 
-    public function build($command, $additional_data = []): array {
+    public function build($command, $additional_data = []): array
+    {
         $variables = Utilities::buildVariablesFrom($this->hostConfig, $this->context);
         $replacements = Utilities::expandVariables($variables);
 
@@ -39,7 +43,8 @@ class ScottyCtlOptions
         return $this->buildImpl($data, $command);
     }
 
-    protected function buildImpl(array $data, string $command): array {
+    protected function buildImpl(array $data, string $command): array
+    {
 
         $options = [
           '--server',

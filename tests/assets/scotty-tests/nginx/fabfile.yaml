@@ -1,8 +1,10 @@
 name: scotty-tests
 
+executables:
+  scottyctl: /Users/stephan/dev/rust/scotty/target/debug/scottyctl
 
 scotty:
-  app-blueprint: my-app-blueprint
+  app-blueprint: nginx-lagoon
   basic-auth:
     username: admin
     password: admin
@@ -10,8 +12,7 @@ scotty:
   server: http://localhost:21342
   access-token: my-secret
   services:
-    nginx: 8080
-    component-library: 80
+    nginx: 80
 
 
 hosts:
