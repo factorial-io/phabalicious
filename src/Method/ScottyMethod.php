@@ -54,10 +54,23 @@ class ScottyMethod extends BaseMethod
         return $project_folder;
     }
 
+    protected function destroyApp(HostConfig $host_config, TaskContext $context): void
+    {
+        $options = new ScottyCtlOptions($host_config, $context);
+        $result = $options->runInShell($host_config->shell(), 'destroy');
+        if ($result->failed()) {
+            $result->throwException('Failed to run scottyctl destroy');
+        }
+    }
+
     protected function createApp(HostConfig $host_config, TaskContext $context): void
     {
         $app_folder = $this->scaffoldApp($host_config, $context);
-        $this->runScottyCtl($host_config, $context, 'create', $app_folder);
+        $options = new ScottyCtlCreateOptions($host_config, $context);
+        $result = $options->runInShell($host_config->shell(), 'create', ['app_folder' => $app_folder]);
+        if ($result->failed()) {
+            $result->throwException('Failed to run scottyctl create');
+        }
     }
 
     public function deploy(HostConfig $host_config, TaskContext $context): void
@@ -65,15 +78,33 @@ class ScottyMethod extends BaseMethod
         $this->createApp($host_config, $context);
     }
 
-    /**
-     * @throws \Phabalicious\Exception\FailedShellCommandException
-     */
-    protected function runScottyCtl(HostConfig $host_config, TaskContext $context, string $command, string $app_folder): void
+    public function appCheckExisting(HostConfig $host_config, TaskContext $context): bool
     {
-        $options = new ScottyCtlCreateOptions($host_config, $context);
-        $result = $options->runInShell($host_config->shell(), $command, ['app_folder' => $app_folder]);
-        if ($result->failed()) {
-            $result->throwException('Failed to run scottyctl ' . $command);
+        $options = new ScottyCtlOptions($host_config, $context);
+        $result =  $options->runInShell($host_config->shell(), 'info')->succeeded();
+        $context->setResult('appExists', $result);
+        return $result;
+    }
+
+    public function appCreate(HostConfig $host_config, TaskContext $context): void
+    {
+        $stage = $context->get('currentStage');
+        if (!$stage) {
+            throw new \InvalidArgumentException('Missing current stage');
+        }
+        if ($stage === 'installCode') {
+            $this->createApp($host_config, $context);
+        }
+    }
+
+    public function appDestroy(HostConfig $host_config, TaskContext $context): void
+    {
+        $stage = $context->get('currentStage');
+        if (!$stage) {
+            throw new \InvalidArgumentException('Missing current stage');
+        }
+        if ($stage === 'deleteCode') {
+            $this->destroyApp($host_config, $context);
         }
     }
 }

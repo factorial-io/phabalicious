@@ -4,12 +4,15 @@ namespace Phabalicious\Method;
 
 use InvalidArgumentException;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 
 class ScottyCtlOptions
 {
 
     protected array $data;
+
 
     public function __construct(
         protected readonly HostConfig $hostConfig,
@@ -30,7 +33,7 @@ class ScottyCtlOptions
             $this->context->getPasswordManager()->registerCustomSecretToObfuscate($this->data['access-token']);
         }
 
-        $this->data['appName'] = $hostConfig['configName'];
+        $this->data['app-name'] = $scotty_data['app-name'] ?? '%host.configName%';
     }
 
     public function build($command, $additional_data = []): array
@@ -55,8 +58,17 @@ class ScottyCtlOptions
             $options[] = $data['access-token'];
         }
         $options[] = $command;
-        $options[] = $data['appName'];
+        $options[] = $data['app-name'];
 
         return $options;
     }
+
+    public function runInShell(ShellProviderInterface $shell, string $command, array $add_data = []): CommandResult
+    {
+        return $shell->run(sprintf(
+            '#!scottyctl %s',
+            implode(' ', $this->build($command, $add_data))
+        ), true, false);
+    }
+
 }

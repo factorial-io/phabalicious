@@ -10,7 +10,7 @@ scotty:
     password: admin
   registry: factorial
   server: http://localhost:21342
-  access-token: my-secret
+  access-token: hello-world
   services:
     nginx: 80
 
@@ -28,12 +28,17 @@ hosts:
     secrets:
       APP_SECRET: my-deepest-secret
     scotty:
+      app-name: phab-scotty-test
       environment:
         APP_SECRET: "%host.secrets.APP_SECRET%"
       scaffold:
+        html:
+          - ./assets/html/index.html
         assets:
           - ./assets/docker-compose.yaml
-          - ./assets/index.html
+        scaffold:
+          - copy_assets(%rootFolder%)
+          - copy_assets(%rootFolder%/html, html)
   hostB:
     inheritsFrom: hostA
     scotty:
