@@ -263,6 +263,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
             $lines = explode("\n", trim($this->process->getErrorOutput()));
         }
 
+        # Remove any empty lines from the end.
+        while (count($lines) > 0 && empty($lines[count($lines) - 1])) {
+            array_pop($lines);
+        }
+
         $cr = new CommandResult($exit_code, $lines);
         if ($cr->failed() && !$capture_output && $throw_exception_on_error) {
             $cr->throwException(sprintf('`%s` failed!', $command));
