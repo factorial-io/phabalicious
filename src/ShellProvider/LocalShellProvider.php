@@ -374,14 +374,14 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
 
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
-        if (substr($command, -1) == ';') {
+        if (substr($command, -1) === ';') {
             $command = substr($command, 0, -1);
         }
         $this->logger->log($this->loglevel->get(), $command);
 
         // Send to shell.
         $input = $include_result_identifier
-            ? $command . '; echo \n"' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL
+            ? $command . '; printf "\n' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL
             : $command . PHP_EOL;
 
         $this->input->write($input);
