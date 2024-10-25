@@ -27,14 +27,22 @@ class AppKernel extends Kernel
      */
     public function getCacheDir(): string
     {
-        return sys_get_temp_dir() . '/phabalicious' . Utilities::FALLBACK_VERSION . md5(self::class);
+
+        $dir = implode('-', [
+            sys_get_temp_dir() . '/phabalicious',
+            Utilities::FALLBACK_VERSION,
+            getmyuid() ,
+            md5(self::class)
+        ]);
+
+        return $dir;
     }
     /**
      * Unique logs path for this Kernel
      */
     public function getLogDir(): string
     {
-        return sys_get_temp_dir() . '/phabalicious' . Utilities::FALLBACK_VERSION . md5(self::class);
+        return $this->getCacheDir();
     }
 
     protected function build(ContainerBuilder $containerBuilder)
