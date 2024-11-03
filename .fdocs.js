@@ -1,6 +1,6 @@
-const config = require("@factorial/docs/config");
+import config from "@factorial/docs/config.js";
 
-module.exports = function (defaultConfig) {
+export default function (defaultConfig) {
     return config(defaultConfig, {
         projectName: "Phabalicious",
         input: "docs",
@@ -66,4 +66,4 @@ module.exports = function (defaultConfig) {
             "changelog",
         ],
     });
-};
+}
