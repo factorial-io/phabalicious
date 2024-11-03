@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.33](https://github.com/factorial-io/phabalicious/compare/3.8.32...3.8.33) (2024-10-25)
+
+
+### Bug Fixes
+
+* temp dir is different per user now to provide permission issues ([5f44bfe](https://github.com/factorial-io/phabalicious/commit/5f44bfe692e99e875fc4828c34e3bad4346f421c))
+
+### [3.8.32](https://github.com/factorial-io/phabalicious/compare/3.8.30...3.8.32) (2024-10-25)
+
+
+### Features
+
+* Add option `output` to command `get:sql-dump` to set output file ([9414624](https://github.com/factorial-io/phabalicious/commit/94146244032eb1da5d4be1100c93fe0faf94df33))
+* Add support for custom propnames to retrieve secrets from other props than `password` ([7e9b4be](https://github.com/factorial-io/phabalicious/commit/7e9b4beec7af85607d38d53851399d111bfe43c7))
+
+
+### Bug Fixes
+
+* Delete db backups from local, when restic backup is finished. Fixes [#332](https://github.com/factorial-io/phabalicious/issues/332) ([04c9617](https://github.com/factorial-io/phabalicious/commit/04c96170560c6b9e53776f7d40f56b9ef76a08dc))
+* Fix shell execution for commands which do not print a final EOL ([58f81ba](https://github.com/factorial-io/phabalicious/commit/58f81ba7427663019d146be4562ea361189dd8c1))
+* Fix shell execution for commands which do not print a final EOL ([25578a1](https://github.com/factorial-io/phabalicious/commit/25578a160e1ddebd1b7d3c48805b6b01ab883fb1))
+
 ### [3.8.31](https://github.com/factorial-io/phabalicious/compare/3.8.30...3.8.31) (2024-08-30)
 
 
