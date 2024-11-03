@@ -43,3 +43,10 @@ hosts:
     inheritsFrom: hostA
     scotty:
       server: http://scotty:21342
+  hostC:
+    inheritsFrom: hostA
+    scotty:
+      ttl: 1h
+      allow-robots: true
+      custom-domains:
+        example.com: nginx

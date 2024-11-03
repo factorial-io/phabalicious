@@ -8,7 +8,9 @@ use Webmozart\Assert\Assert;
 
 class ScottyCtlCreateOptions extends ScottyCtlOptions
 {
-
+    public const VALUE_PARAMS = ['basic-auth', 'app-blueprint', 'registry', 'ttl'];
+    public const BOOL_PARAMS = ['allow-robots'];
+    public const COMPLEX_PARAMS = ['services', 'environment', 'custom-domains'];
     public function __construct(HostConfig $host_config, TaskContextInterface $context)
     {
         parent::__construct($host_config, $context);
@@ -16,13 +18,13 @@ class ScottyCtlCreateOptions extends ScottyCtlOptions
         $scotty_data = $host_config->getData()->get('scotty');
         Assert::isInstanceOf($scotty_data, Node::class);
 
-        foreach (['app-blueprint', 'basic-auth', 'registry'] as $key) {
+        foreach (array_merge(self::VALUE_PARAMS, self::BOOL_PARAMS) as $key) {
             if ($scotty_data->has($key)) {
                 $this->data[$key] = $scotty_data->get($key)->getValue();
             }
         }
 
-        foreach (['services', 'environment'] as $key) {
+        foreach (self::COMPLEX_PARAMS as $key) {
             if ($scotty_data->has($key)) {
                 $this->data[$key] = $scotty_data->get($key)->asArray();
             }
@@ -44,8 +46,17 @@ class ScottyCtlCreateOptions extends ScottyCtlOptions
         '--folder',
           $data['app_folder'],
         ];
-        $mapping = ['services' => 'service', 'environment' => 'env'];
-        foreach (['services' => ':', 'environment' => '='] as $key => $separator) {
+        $mapping = [
+            'services' => 'service',
+            'environment' => 'env',
+            'custom-domains' => 'custom-domain'
+        ];
+        $separators = [
+            'services' => ':',
+            'environment' => '=',
+            'custom-domains' => ':',
+        ];
+        foreach ($separators as $key => $separator) {
             if (isset($data[$key])) {
                 foreach ($data[$key] as $subkey => $value) {
                     $options[] = '--' . $mapping[$key];
@@ -53,13 +64,18 @@ class ScottyCtlCreateOptions extends ScottyCtlOptions
                 }
             }
         }
-        foreach (['basic-auth', 'app-blueprint', 'registry', ] as $key) {
+        foreach (self::VALUE_PARAMS as $key) {
             if (isset($data[$key])) {
                 $options[] = '--' . $key;
                 $options[] = $this->data[$key];
             }
         }
 
+        foreach (self::BOOL_PARAMS as $key) {
+            if (!empty($data[$key])) {
+                $options[] = '--' . $key;
+            }
+        }
         return array_merge(parent::buildImpl($data, $command), $options);
     }
 }

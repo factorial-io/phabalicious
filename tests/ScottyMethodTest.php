@@ -8,7 +8,6 @@ use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScottyCtlCreateOptions;
-use Phabalicious\Method\ScottyCtlOptions;
 use Phabalicious\Method\ScottyMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
@@ -77,7 +76,7 @@ class ScottyMethodTest extends PhabTestCase
         $this->assertEquals('my-deepest-secret', $docker_compose['services']['nginx']['environment']['APP_SECRET']);
     }
 
-    public function testScottyCtlOptions(): void
+    public function testScottyCtlCreateOptions(): void
     {
         $host_config = $this->configurationService->getHostConfig('hostA');
 
@@ -102,5 +101,36 @@ class ScottyMethodTest extends PhabTestCase
             'nginx-lagoon',
             '--registry',
             'factorial'], $result);
+    }
+    public function testScottyCtlCreateOptions2(): void
+    {
+        $host_config = $this->configurationService->getHostConfig('hostC');
+
+        $options = new ScottyCtlCreateOptions($host_config, $this->context);
+        $result = $options->build('create', ['app_folder' => '/app/folder']);
+        $this->assertEquals([
+            '--server',
+            'http://localhost:21342',
+            '--access-token',
+            'hello-world',
+            'create',
+            'phab-scotty-test',
+            '--folder',
+            '/app/folder',
+            '--service',
+            'nginx:80',
+            '--env',
+            'APP_SECRET=my-deepest-secret',
+            '--custom-domain',
+            'example.com:nginx',
+            '--basic-auth',
+            'admin:admin',
+            '--app-blueprint',
+            'nginx-lagoon',
+            '--registry',
+            'factorial',
+            '--ttl',
+            '1h',
+            '--allow-robots'], $result);
     }
 }
