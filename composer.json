@@ -27,7 +27,7 @@
         "ext-posix": "*",
         "twig/string-extra": "^3.3",
         "defuse/php-encryption": "^2.3",
-        "consolidation/self-update": "^2.0",
+        "consolidation/self-update": "^3.0",
         "webmozart/assert": "^1.11"
     },
     "require-dev": {
