@@ -9,61 +9,61 @@
 name: Create phar and release
 
 on:
-  push:
-    tags:
-      - '*'
+    push:
+        tags:
+            - "*"
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          extensions: intl, zip, zlib
-          coverage: none
-          ini-values: memory_limit=1G, phar.readonly=0
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: "8.2"
+                  extensions: intl, zip, zlib
+                  coverage: none
+                  ini-values: memory_limit=1G, phar.readonly=0
 
-      - name: Install Project Dependencies
-        run: composer install --prefer-dist --no-interaction --no-ansi --no-progress --no-suggest
+            - name: Install Project Dependencies
+              run: composer install --prefer-dist --no-interaction --no-ansi --no-progress --no-suggest
 
-      - name: Install Box
-        run: |
-          wget \
-            "https://github.com/humbug/box/releases/download/3.16.0/box.phar" \
-            --quiet \
-            -O ./box
-          chmod +x ./box
-          sudo mv ./box /usr/local/bin
-      - name: Build Application PHAR
-        run: git describe && composer build-phar
+            - name: Install Box
+              run: |
+                  wget \
+                    "https://github.com/humbug/box/releases/download/4.6.2/box.phar" \
+                    --quiet \
+                    -O ./box
+                  chmod +x ./box
+                  sudo mv ./box /usr/local/bin
+            - name: Build Application PHAR
+              run: git describe && composer build-phar
 
-      - name: Geting Tag Name
-        id: get-version
-        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
+            - name: Getting Tag Name
+              id: get-version
+              run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
 
-      - name: Self-Test
-        run: ./build/phabalicious.phar --version
+            - name: Self-Test
+              run: ./build/phabalicious.phar --version
 
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          # This token is provided by GitHub Actions.
-          # You DO NOT need to create your own token.
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ steps.get-version.outputs.version }}
-          tag: ${{ steps.get-version.outputs.version }}
-          body: 'Next stable release.'
-          # This will update existing tags if any
-          allowUpdates: true
-          artifacts: ./build/phabalicious.phar
-          artifactContentType: application/x-php
+            - name: Create Release
+              uses: ncipollo/release-action@v1
+              with:
+                  # This token is provided by GitHub Actions.
+                  # You DO NOT need to create your own token.
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  name: ${{ steps.get-version.outputs.version }}
+                  tag: ${{ steps.get-version.outputs.version }}
+                  body: "Next stable release."
+                  # This will update existing tags if any
+                  allowUpdates: true
+                  artifacts: ./build/phabalicious.phar
+                  artifactContentType: application/x-php
