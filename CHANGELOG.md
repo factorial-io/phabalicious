@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [4.0.0-alpha.1](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.0...4.0.0-alpha.1) (2024-11-05)
 
-## [4.0.0-alpha.0](https://github.com/factorial-io/phabalicious/compare/1.0.0...4.0.0-alpha.0) (2024-11-05)
+## [4.0.0-alpha.0](https://github.com/factorial-io/phabalicious/compare/3.8.33...4.0.0-alpha.0) (2024-11-05)
+
+### Breaking changes
+
+* Requires 8.1 or higher
+* Uses Symfony 5.x
+* Upgrade dependencies
+* Remove deprecated code
 
 ### [3.8.33](https://github.com/factorial-io/phabalicious/compare/3.8.32...3.8.33) (2024-10-25)
 
