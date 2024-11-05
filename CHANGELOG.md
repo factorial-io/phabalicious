@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0-alpha.4](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.2...4.0.0-alpha.4) (2024-11-05)
+
+
+### Bug Fixes
+
+* autocompletion for fish ([1aa027c](https://github.com/factorial-io/phabalicious/commit/1aa027c2f69cbb6b75ac14f0d1437b482989f905))
+
+## [4.0.0-alpha.3](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.2...4.0.0-alpha.3) (2024-11-05)
+
+
+### Bug Fixes
+
+* autocompletion for fish ([1aa027c](https://github.com/factorial-io/phabalicious/commit/1aa027c2f69cbb6b75ac14f0d1437b482989f905))
+
 ## [4.0.0-alpha.2](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.1...4.0.0-alpha.2) (2024-11-05)
 
 

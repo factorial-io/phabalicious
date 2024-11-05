@@ -1,6 +1,6 @@
 {
   "name": "phabalicious",
-  "version": "4.0.0-alpha.2",
+  "version": "4.0.0-alpha.4",
   "main": "index.js",
   "repository": "https://github.com/factorial-io/phabalicious.git",
   "author": "Stephan Huber <stephan@factorial.io>",
