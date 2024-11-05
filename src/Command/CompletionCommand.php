@@ -74,12 +74,13 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
         $shell_type = $input->getOption('shell-type') ?: $this->getShellType();
 
         if ($input->getOption('generate-hook')) {
-            if ($shell_type == 'fish') {
-                return $this->handleFishShellCompletions($output);
+            if ($shell_type === 'fish') {
+                $this->handleFishShellCompletions($output);
+                return 0;
             }
         }
 
-        if ($shell_type == 'fish') {
+        if ($shell_type === 'fish') {
             $command_line = $input->getOption('command-line');
             $option = $input->getOption('complete-option');
             $command_name =$input->getOption('complete-command');
