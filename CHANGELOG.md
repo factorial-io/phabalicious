@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0-alpha.2](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.1...4.0.0-alpha.2) (2024-11-05)
+
+
+### Bug Fixes
+
+* Fix crahs doing blueprint resolution ([35b02ce](https://github.com/factorial-io/phabalicious/commit/35b02ce42175eafde6346998189506869e114142))
+
+## [4.0.0-alpha.1](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.0...4.0.0-alpha.1) (2024-11-05)
+
+## [4.0.0-alpha.0](https://github.com/factorial-io/phabalicious/compare/3.8.33...4.0.0-alpha.0) (2024-11-05)
+
+### Breaking changes
+
+* Requires 8.1 or higher
+* Uses Symfony 5.x
+* Upgrade dependencies
+* Remove deprecated code
+
 ### [3.8.33](https://github.com/factorial-io/phabalicious/compare/3.8.32...3.8.33) (2024-10-25)
 
 

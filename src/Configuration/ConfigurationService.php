@@ -642,7 +642,7 @@ class ConfigurationService
    * @throws BlueprintTemplateNotFoundException
    * @throws FabfileNotReadableException
    */
-    public function getHostConfigFromBlueprint(string $blueprint, string $identifier, $skip_host_validation = false): HostConfig
+    public function getHostConfigFromBlueprint(string $blueprint, string $identifier, $skip_host_validation = false): HostConfig|Node
     {
         $cid = 'blueprint:' . $blueprint . ':' . $identifier;
 
