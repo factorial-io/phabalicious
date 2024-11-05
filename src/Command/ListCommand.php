@@ -46,7 +46,7 @@ class ListCommand extends BaseOptionsCommand
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->readConfiguration($input);
 
@@ -141,7 +141,7 @@ class ListCommand extends BaseOptionsCommand
      * @throws \Phabalicious\Exception\MissingHostConfigException
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      */
-    protected function getHostsByCategories(array $host_config_names)
+    protected function getHostsByCategories(array $host_config_names): array
     {
         $categories = [];
         foreach ($host_config_names as $ndx => $config_name) {

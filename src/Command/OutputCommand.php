@@ -48,17 +48,18 @@ class OutputCommand extends BaseCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null
-     * @throws BlueprintTemplateNotFoundException
-     * @throws FabfileNotFoundException
-     * @throws FabfileNotReadableException
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws MissingHostConfigException
-     * @throws ShellProviderNotFoundException
-     * @throws ValidationFailedException
+     *
+     * @return int
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\MissingHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $config = $input->getOption('config');
         $blueprint = $input->getOption('blueprint');

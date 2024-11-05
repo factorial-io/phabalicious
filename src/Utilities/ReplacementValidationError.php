@@ -10,21 +10,18 @@ class ReplacementValidationError
     /**
      * @var array
      */
-    protected $context;
+    protected array $context;
 
-    protected $lineNumber;
+    protected int $lineNumber;
 
-    /**
-     * @var string[]
-     */
-    protected $failedPattern;
+    protected string $failedPattern;
 
     /**
      * @param array $context
-     * @param $line_number
+     * @param int $line_number
      * @param string $failed_pattern
      */
-    public function __construct(array $context, $line_number, string $failed_pattern)
+    public function __construct(array $context, int $line_number, string $failed_pattern)
     {
         $this->context = $context;
         $this->lineNumber = $line_number;
@@ -40,17 +37,17 @@ class ReplacementValidationError
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getLineNumber()
+    public function getLineNumber(): int
     {
         return $this->lineNumber;
     }
 
     /**
-     * @return array|string[]
+     * @return string
      */
-    public function getFailedPattern()
+    public function getFailedPattern(): string
     {
         return $this->failedPattern;
     }
@@ -59,17 +56,17 @@ class ReplacementValidationError
     {
         $return = [];
         foreach ($this->context as $ndx => $line) {
-            $return[] = (($ndx == $this->lineNumber) ? ">  " : "   ") . $ndx . ": " . Yaml::dump($line, 0);
+            $return[] = (($ndx === $this->lineNumber) ? ">  " : "   ") . $ndx . ": " . Yaml::dump($line, 0);
         }
         return implode("\n", $return);
     }
 
-    public function getFailedLine()
+    public function getFailedLine(): string
     {
         return $this->context[$this->getLineNumber()];
     }
 
-    public function getMissingArgument()
+    public function getMissingArgument(): bool|string
     {
         $failedLine = $this->getFailedLine();
         $p = strpos($failedLine, "%arguments.");

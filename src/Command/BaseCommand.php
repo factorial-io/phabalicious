@@ -96,7 +96,7 @@ abstract class BaseCommand extends BaseOptionsCommand
         parent::configure();
     }
 
-    public function completeOptionValues($optionName, CompletionContext $context)
+    public function completeOptionValues($optionName, CompletionContext $context): array
     {
         if ($optionName === 'config') {
             $config = new ConfigurationService($this->getApplication(), new NullLogger());
@@ -139,7 +139,7 @@ abstract class BaseCommand extends BaseOptionsCommand
      * @throws ShellProviderNotFoundException
      * @throws BlueprintTemplateNotFoundException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->createContext($input, $output);
         $io = $this->getContext()->io();
@@ -190,7 +190,7 @@ abstract class BaseCommand extends BaseOptionsCommand
      *
      * @return HostConfig
      */
-    protected function getHostConfig()
+    protected function getHostConfig(): HostConfig
     {
         return $this->hostConfig;
     }
@@ -302,7 +302,7 @@ abstract class BaseCommand extends BaseOptionsCommand
      * @param OutputInterface $output
      * @return bool|int
      */
-    private function handleVariants($variants, InputInterface $input, OutputInterface $output)
+    private function handleVariants(string $variants, InputInterface $input, OutputInterface $output): bool|int
     {
         global $argv;
         $executable = $argv[0];
@@ -323,7 +323,7 @@ abstract class BaseCommand extends BaseOptionsCommand
             ));
         }
 
-        if ($variants == 'all') {
+        if ($variants === 'all') {
             $variants = $available_variants;
         } else {
             $variants = explode(',', $variants);
@@ -435,7 +435,7 @@ abstract class BaseCommand extends BaseOptionsCommand
      * @param array|string[] $input_arguments
      * @return string
      */
-    protected function prepareArguments(array $input_arguments)
+    protected function prepareArguments(array $input_arguments): string
     {
         $arguments = array_map(function ($elem) {
             if (strpos($elem, ' ') !== false) {

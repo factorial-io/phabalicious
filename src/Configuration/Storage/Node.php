@@ -34,7 +34,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
     /**
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->isArray() ? $this->asArray() : $this->value;
     }
@@ -42,7 +42,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
     /**
      * @return Source
      */
-    public function getSource():Source
+    public function getSource(): Source
     {
         return $this->source;
     }
@@ -183,7 +183,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
     }
 
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->get($offset)->getValue();
     }
@@ -194,7 +194,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
     }
 
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (!$value instanceof Node) {
             $value = new Node($value, $this->getSource());
@@ -203,7 +203,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
     }
 
     #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->value[$offset]);
     }

@@ -98,7 +98,7 @@ class ScriptDataBag
     /**
      * @return \Phabalicious\Method\TaskContextInterface
      */
-    public function getContext(): TaskContextInterface
+    public function getContext(): \Phabalicious\Method\TaskContextInterface
     {
         return $this->context;
     }

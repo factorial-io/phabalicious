@@ -21,7 +21,7 @@ class TunnelData implements TunnelDataInterface
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -40,7 +40,7 @@ class TunnelData implements TunnelDataInterface
      * @param string $state
      * @return TunnelData
      */
-    public function setState(string $state)
+    public function setState(string $state): TunnelData
     {
         $this->state = $state;
         return $this;
@@ -49,7 +49,7 @@ class TunnelData implements TunnelDataInterface
     /**
      * @return mixed
      */
-    public function getState()
+    public function getState(): mixed
     {
         return $this->state;
     }

@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class K8sCommand extends BaseCommand
 {
-    public function completeArgumentValues($argumentName, CompletionContext $context)
+    public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
         if ($argumentName == 'k8s') {
             return K8sMethod::AVAILABLE_SUB_COMMANDS;
@@ -45,7 +45,8 @@ class K8sCommand extends BaseCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|null
+     * @return int
+
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -55,7 +56,7 @@ class K8sCommand extends BaseCommand
      * @throws ShellProviderNotFoundException
      * @throws TaskNotFoundInMethodException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;

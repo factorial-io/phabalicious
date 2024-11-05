@@ -4,6 +4,7 @@ namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\LaravelMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\MysqlMethod;
@@ -13,11 +14,11 @@ use Symfony\Component\Console\Application;
 
 class LaravelMethodTest extends PhabTestCase
 {
-    /** @var \Phabalicious\Method\DrushMethod */
-    private $method;
+    /** @var \Phabalicious\Method\LaravelMethod */
+    private LaravelMethod $method;
 
     /** @var ConfigurationService */
-    private $configurationService;
+    private ConfigurationService $configurationService;
 
     public function setup(): void
     {
@@ -34,7 +35,7 @@ class LaravelMethodTest extends PhabTestCase
         $this->configurationService->readConfiguration(__DIR__ . '/assets/laravel-tests/fabfile.yaml');
     }
 
-    public function testGetDefaultConfig()
+    public function testGetDefaultConfig(): void
     {
         $host_config = [
             'rootFolder' => '.',
@@ -50,7 +51,7 @@ class LaravelMethodTest extends PhabTestCase
         $this->assertEquals(['mycustomresettask'], $result['artisanTasks']['reset']);
     }
 
-    public function testCustomArtisanTasks()
+    public function testCustomArtisanTasks(): void
     {
         $result = $this->configurationService->getHostConfig('test-custom-artisan-tasks');
         $this->assertArrayHasKey('reset', $result['artisanTasks']);
@@ -59,7 +60,7 @@ class LaravelMethodTest extends PhabTestCase
         $this->assertEquals(['mycustominstalltask'], $result['artisanTasks']['install']);
     }
 
-    public function testDefaultCustomArtisanTasks()
+    public function testDefaultCustomArtisanTasks(): void
     {
         $result = $this->configurationService->getHostConfig('test-default-custom-artisan-tasks');
         $this->assertArrayHasKey('reset', $result['artisanTasks']);

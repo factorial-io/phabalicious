@@ -61,7 +61,7 @@ class CopyFromCommand extends BaseCommand
         $this->setAliases(['copyFrom']);
     }
 
-    public function completeArgumentValues($argumentName, CompletionContext $context)
+    public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
         if ($argumentName == 'from') {
             return $this->configuration->getAllHostConfigs()->getKeys();
@@ -78,7 +78,8 @@ class CopyFromCommand extends BaseCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|null
+     * @return int
+
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -90,7 +91,7 @@ class CopyFromCommand extends BaseCommand
      * @throws TaskNotFoundInMethodException
      * @throws ValidationFailedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;

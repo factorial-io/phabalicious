@@ -34,17 +34,18 @@ class VariablePush extends BaseCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null
-     * @throws BlueprintTemplateNotFoundException
-     * @throws FabfileNotFoundException
-     * @throws FabfileNotReadableException
-     * @throws MethodNotFoundException
-     * @throws MismatchedVersionException
-     * @throws MissingDockerHostConfigException
-     * @throws ShellProviderNotFoundException
-     * @throws TaskNotFoundInMethodException
+     *
+     * @return int
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;

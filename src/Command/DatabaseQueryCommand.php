@@ -31,7 +31,7 @@ class DatabaseQueryCommand extends DatabaseSubCommand
         return [DatabaseMethod::SQL_QUERY => 'query to execute'];
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->createContext($input, $output);
         $this->getContext()->io()->comment('Querying database ...');

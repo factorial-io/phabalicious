@@ -34,7 +34,8 @@ abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubComm
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|null
+     * @return int
+
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -44,7 +45,7 @@ abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubComm
      * @throws ShellProviderNotFoundException
      * @throws TaskNotFoundInMethodException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;

@@ -40,9 +40,13 @@ class EncryptCommand extends BaseOptionsCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null
+     *
+     * @return int
+     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $source = realpath(dirname($input->getArgument('source'))) . '/' . basename($input->getArgument('source'));

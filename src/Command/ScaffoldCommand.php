@@ -62,7 +62,7 @@ class ScaffoldCommand extends ScaffoldBaseCommand
      * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $url  = $input->getArgument('scaffold-path');
         $root_folder = getcwd();

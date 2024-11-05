@@ -3,7 +3,7 @@ parent: documentation
 ---
 # Setup a local dev environment (multibasebox)
 
-## This functionality is deprecated.
+## This functionality is deprecated. Phabablicious integrates nicely with [ddev](http://ddev.readthedocs.io)
 
 Multibasebox is deprecated, but still supported. The commands mentioned below might get removed from a future phab release. But phab 3.8 has now a [neat integration](./blog/whats-new-in-phab-3-8.md#experimental-integration-with-ddev) with [ddev](https://ddev.readthedocs.io/en/stable/)! It should also work with other tools like lando.
 

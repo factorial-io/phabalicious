@@ -8,7 +8,7 @@ class HostConfig extends HostConfigAbstract
 {
 
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->data->offsetGet($offset);
     }

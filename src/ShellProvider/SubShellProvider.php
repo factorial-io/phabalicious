@@ -80,7 +80,7 @@ class SubShellProvider extends BaseShellProvider implements ShellProviderInterfa
         throw new \LogicException("createTunnelProcess not implemented");
     }
 
-    public function wrapCommandInLoginShell(array $command)
+    public function wrapCommandInLoginShell(array $command): array
     {
         throw new \LogicException("wrapCommandInLoginShell not implemented");
     }

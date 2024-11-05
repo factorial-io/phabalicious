@@ -12,6 +12,7 @@ use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Yaml\Yaml;
 
@@ -19,11 +20,11 @@ class PasswordManager implements PasswordManagerInterface
 {
 
     /** @var TaskContextInterface  */
-    private $context;
+    private TaskContextInterface $context;
 
-    private $passwords = [];
+    private array $passwords = [];
 
-    private $questionFactory = null;
+    private ?QuestionFactory $questionFactory = null;
 
     public function __construct()
     {
@@ -54,7 +55,7 @@ class PasswordManager implements PasswordManagerInterface
         return $this->questionFactory;
     }
 
-    private function readPasswords()
+    private function readPasswords(): void
     {
         $file = getenv("HOME"). '/.phabalicious-credentials';
         if (!file_exists($file)) {
@@ -83,7 +84,7 @@ class PasswordManager implements PasswordManagerInterface
      *
      * @return PasswordManager
      */
-    public function setContext(TaskContextInterface $context): PasswordManagerInterface
+    public function setContext(TaskContextInterface $context): PasswordManager
     {
         $this->context = $context;
         return $this;
@@ -102,9 +103,9 @@ class PasswordManager implements PasswordManagerInterface
         return $was_array ? $data : $data[0];
     }
 
-    private function resolveSecretsImpl(array $data, array &$replacements)
+    private function resolveSecretsImpl(array $data, array &$replacements): void
     {
-        foreach ($data as $key => $value) {
+        foreach ($data as $value) {
             if (is_array($value)) {
                 $this->resolveSecretsImpl($value, $replacements);
             } elseif (is_string($value) && ($secret_keys = $this->containsSecrets($value))) {
@@ -124,23 +125,23 @@ class PasswordManager implements PasswordManagerInterface
         return false;
     }
 
-    public function getSecret($secret)
+    public function getSecret($secret_name)
     {
         $configuration_service = $this->getContext()->getConfigurationService();
         $secrets = $configuration_service
             ->getSetting('secrets', []);
-        if (!isset($secrets[$secret])) {
-            throw new UnknownSecretException("Could not find secret `$secret` in config!");
+        if (!isset($secrets[$secret_name])) {
+            throw new UnknownSecretException("Could not find secret `$secret_name` in config!");
         }
 
-        if (isset($this->passwords[$secret])) {
-            return $this->passwords[$secret];
+        if (isset($this->passwords[$secret_name])) {
+            return $this->passwords[$secret_name];
         }
 
-        $secret_data = $secrets[$secret];
+        $secret_data = $secrets[$secret_name];
 
-        $this->passwords[$secret] = $this->getSecretImpl($configuration_service, $secret, $secret_data);
-        return $this->passwords[$secret];
+        $this->passwords[$secret_name] = $this->getSecretImpl($configuration_service, $secret_name, $secret_data);
+        return $this->passwords[$secret_name];
     }
 
     private function getSecretImpl(ConfigurationService $configuration_service, $secret, $secret_data)
@@ -212,11 +213,11 @@ class PasswordManager implements PasswordManagerInterface
                     $secret_data['propName'] ?? 'password'
                 )) {
                     return $pw;
-                } else {
-                    $configuration_service->getLogger()->warning(
-                        'No configuration for onePassword-connect found, skipping ...'
-                    );
                 }
+
+                $configuration_service->getLogger()->warning(
+                    'No configuration for onePassword-connect found, skipping ...'
+                );
             }
         } catch (\Exception $e) {
             $exceptions[] = $e;
@@ -332,7 +333,7 @@ class PasswordManager implements PasswordManagerInterface
         $result->throwException("1Password returned an error, are you logged in?");
     }
 
-    private function getFileFrom1PasswordCli($item_id, $target_file_dir)
+    private function getFileFrom1PasswordCli($item_id, $target_file_dir): CommandResult
     {
         return $this->exec1PasswordCli(
             sprintf('get document %s > "%s"', $item_id, $target_file_dir),
@@ -340,7 +341,7 @@ class PasswordManager implements PasswordManagerInterface
         );
     }
 
-    private function get1PasswordConnectResponse($token_id, $url)
+    private function get1PasswordConnectResponse($token_id, $url): false|ResponseInterface
     {
         $configuration_service = $this->getContext()->getConfigurationService();
         $onepassword_connect = $configuration_service->getSetting("onePassword.$token_id", []);

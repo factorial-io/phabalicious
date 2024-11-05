@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Method;
 
+use Phabalicious\Utilities\PasswordManagerInterface;
 use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
@@ -137,7 +138,7 @@ class TaskContext implements TaskContextInterface
         $this->result[$key] = $value;
     }
 
-    public function getResult($key, $default = null)
+    public function getResult($key, $default = null): mixed
     {
         return $this->result[$key] ?? $default;
     }
@@ -179,7 +180,7 @@ class TaskContext implements TaskContextInterface
         return $question_helper->ask($this->input, $this->output, $question);
     }
 
-    public function getPasswordManager()
+    public function getPasswordManager(): PasswordManagerInterface
     {
         return $this->getConfigurationService()->getPasswordManager();
     }
@@ -187,7 +188,7 @@ class TaskContext implements TaskContextInterface
     /**
      * @return SymfonyStyle
      */
-    public function io()
+    public function io(): SymfonyStyle
     {
         if (!$this->io) {
             $output = $this->getOutput();

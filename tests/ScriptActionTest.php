@@ -26,12 +26,12 @@ class ScriptActionTest extends TestCase
     /**
      * @var \Phabalicious\Configuration\HostConfig
      */
-    private $hostConfig;
+    private HostConfig $hostConfig;
 
     /**
      * @var \Phabalicious\Method\TaskContext
      */
-    private $context;
+    private TaskContext $context;
 
     public function setup(): void
     {
@@ -80,7 +80,7 @@ class ScriptActionTest extends TestCase
         return $action;
     }
 
-    public function testSimpleScript()
+    public function testSimpleScript(): void
     {
         $action = $this->createAction([
             'echo "hello world"',
@@ -93,7 +93,7 @@ class ScriptActionTest extends TestCase
         $this->assertEquals("hello world", $output[0]);
     }
 
-    public function testSimpleScriptInHostContext()
+    public function testSimpleScriptInHostContext(): void
     {
         $action = $this->createAction([
             'script' => [
@@ -110,7 +110,7 @@ class ScriptActionTest extends TestCase
         $this->assertEquals("hello world", $output[0]);
     }
 
-    public function testScriptWithUnknownContext()
+    public function testScriptWithUnknownContext(): void
     {
         $this->expectException(ValidationFailedException::class);
 
@@ -126,7 +126,7 @@ class ScriptActionTest extends TestCase
     /**
      * @group docker
      */
-    public function testScriptInDockerContext()
+    public function testScriptInDockerContext(): void
     {
         $action = $this->createAction([
             "script" => [
@@ -145,7 +145,7 @@ class ScriptActionTest extends TestCase
     /**
      * @group docker
      */
-    public function testNodeVersionInDockerContext()
+    public function testNodeVersionInDockerContext(): void
     {
         $action = $this->createAction([
             "script" => [
@@ -164,7 +164,7 @@ class ScriptActionTest extends TestCase
     /**
      * @group docker
      */
-    public function testNpmInstallInDockerContext()
+    public function testNpmInstallInDockerContext(): void
     {
         $dir = __DIR__ . '/assets/script-action-npm-install';
 

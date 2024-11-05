@@ -15,10 +15,10 @@ use Symfony\Component\Console\Tester\CommandTester;
 class ScaffoldCommandTest extends PhabTestCase
 {
     /** @var Application */
-    protected $application;
+    protected Application $application;
 
     /** @var ConfigurationService  */
-    protected $configuration;
+    protected ConfigurationService $configuration;
 
     public function setup(): void
     {
@@ -34,7 +34,7 @@ class ScaffoldCommandTest extends PhabTestCase
         $this->application->add(new ScaffoldCommand($this->configuration, $method_factory));
     }
 
-    public function testScaffoldCommand()
+    public function testScaffoldCommand(): void
     {
         $command = $this->application->find('scaffold');
         $command_tester = new CommandTester($command);
@@ -49,7 +49,7 @@ class ScaffoldCommandTest extends PhabTestCase
         $this->assertStringContainsStringIgnoringCase("Location: Hamburg", $output);
     }
 
-    public function testScaffoldCommandWithOptions()
+    public function testScaffoldCommandWithOptions(): void
     {
         $command = $this->application->find('scaffold');
         $command_tester = new CommandTester($command);

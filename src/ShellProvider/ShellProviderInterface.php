@@ -78,7 +78,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
      * @param array $command
      * @return array
      */
-    public function wrapCommandInLoginShell(array $command);
+    public function wrapCommandInLoginShell(array $command): array;
 
     /**
      * Get the rsync options from the shell providers.

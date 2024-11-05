@@ -174,7 +174,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
      *
      * @return string
      */
-    protected function expandCmd(HostConfig $config, $arg = '', $exclude = [])
+    protected function expandCmd(HostConfig $config, $arg = '', $exclude = []): string
     {
         $cmd = implode(' ', KubectlShellProvider::getKubectlCmd($config->getData(), '#!kubectl', $exclude));
         return $cmd . ' ' . $arg;

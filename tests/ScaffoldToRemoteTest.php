@@ -19,7 +19,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class ScaffoldToRemoteTest extends PhabTestCase
 {
     /** @var Application */
-    protected $application;
+    protected Application $application;
 
     public function setup(): void
     {
@@ -42,7 +42,7 @@ class ScaffoldToRemoteTest extends PhabTestCase
      * @group docker
      * @group local-only
      */
-    public function testScaffoldToRemote()
+    public function testScaffoldToRemote(): void
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);

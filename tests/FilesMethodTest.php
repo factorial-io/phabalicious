@@ -11,8 +11,10 @@ use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,14 +22,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class FilesMethodTest extends PhabTestCase
 {
-    /** @var GitMethod */
-    private $method;
+    use ProphecyTrait;
+
+    /** @var FilesMethod */
+    private FilesMethod $method;
 
     /** @var ConfigurationService */
-    private $configurationService;
+    private ConfigurationService $configurationService;
 
     /** @var TaskContext */
-    private $context;
+    private TaskContext $context;
 
     /**
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
@@ -65,9 +69,9 @@ class FilesMethodTest extends PhabTestCase
         $this->context->set('sourceFile', 'foobar.txt');
         $this->context->set('destinationFile', '../../foobaz.txt');
         $mocked_shell = $this->prophesize(ShellProviderInterface::class);
-        $mocked_shell->putFile()->willReturn(true);
+        $mocked_shell->putFile(Argument::any(), Argument::any(), Argument::any(), Argument::any())->willReturn(true);
 
-        $this->context->set('shell', $mocked_shell);
+        $this->context->set('shell', $mocked_shell->reveal());
         $this->method->putFile($host_config, $this->context);
 
         $this->assertEquals('/var/foobaz.txt', $this->context->getResult('targetFile'));
@@ -80,9 +84,9 @@ class FilesMethodTest extends PhabTestCase
         $this->context->set('sourceFile', 'foobar.txt');
         $this->context->set('destinationFile', '/var/www/foobaz.txt');
         $mocked_shell = $this->prophesize(ShellProviderInterface::class);
-        $mocked_shell->putFile()->willReturn(true);
+        $mocked_shell->putFile(Argument::any(), Argument::any(), Argument::any(), Argument::any())->willReturn(true);
 
-        $this->context->set('shell', $mocked_shell);
+        $this->context->set('shell', $mocked_shell->reveal());
         $this->method->putFile($host_config, $this->context);
 
         $this->assertEquals('/var/www/foobaz.txt', $this->context->getResult('targetFile'));
@@ -95,9 +99,9 @@ class FilesMethodTest extends PhabTestCase
         $this->context->set('sourceFile', '../foobar.txt');
         $this->context->set('destFile', 'foobaz.txt');
         $mocked_shell = $this->prophesize(ShellProviderInterface::class);
-        $mocked_shell->getFile()->willReturn(true);
+        $mocked_shell->getFile(Argument::any(), Argument::any(), Argument::any(), Argument::any())->willReturn(true);
 
-        $this->context->set('shell', $mocked_shell);
+        $this->context->set('shell', $mocked_shell->reveal());
         $this->method->getFile($host_config, $this->context);
 
         $this->assertEquals('/var/www/foobar.txt', $this->context->getResult('sourceFile'));

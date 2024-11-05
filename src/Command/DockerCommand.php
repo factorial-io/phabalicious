@@ -36,7 +36,7 @@ class DockerCommand extends BaseCommand
             ->setHelp('Run one or more specific docker tasks');
     }
 
-    public function completeArgumentValues($argumentName, CompletionContext $context)
+    public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
         if (($argumentName == 'docker') && ($context instanceof FishShellCompletionContext)) {
             $host_config = $context->getHostConfig();
@@ -52,7 +52,8 @@ class DockerCommand extends BaseCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|null
+     * @return int
+
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -62,7 +63,7 @@ class DockerCommand extends BaseCommand
      * @throws \Phabalicious\Exception\ShellProviderNotFoundException
      * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;
@@ -116,7 +117,7 @@ class DockerCommand extends BaseCommand
      * @return array|mixed
      * @throws MethodNotFoundException
      */
-    private function getAllTasks(HostConfig $docker_config)
+    private function getAllTasks(HostConfig $docker_config): mixed
     {
         $tasks = $docker_config->get('tasks', []);
         /** @var DockerMethod $method */

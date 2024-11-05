@@ -34,7 +34,7 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
      * @return \Phabalicious\Configuration\Storage\Node
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): \Phabalicious\Configuration\Storage\Node
     {
         $config = $configuration_service->getSetting('mattermost', []);
         $errors = new ValidationErrorBag();

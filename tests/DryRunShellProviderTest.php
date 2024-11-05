@@ -50,6 +50,8 @@ class DryRunShellProviderTest extends PhabTestCase
             ->run('ls -la', true);
 
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertEquals(['cd /test-directory && ls -la',], $this->shellProvider->getCapturedCommands());
+        $shell_provider = $this->shellProvider;
+        $this->assertInstanceOf(DryRunShellProvider::class, $shell_provider);
+        $this->assertEquals(['cd /test-directory && ls -la',], $shell_provider->getCapturedCommands());
     }
 }

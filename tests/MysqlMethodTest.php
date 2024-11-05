@@ -17,7 +17,9 @@ use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Psr\Log\AbstractLogger;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -28,20 +30,19 @@ class MysqlMethodTest extends PhabTestCase
 {
 
     /** @var ConfigurationService */
-    private $config;
-    private $backgroundProcess;
+    private ConfigurationService $config;
 
-    private $method;
-    private $context;
-    private $shell;
-    private $hostConfig;
+    private MysqlMethod $method;
+    private TaskContext $context;
+    private ShellProviderInterface $shell;
+    private HostConfig $hostConfig;
 
     public function setup(): void
     {
 
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 
-        $app = $this->getMockBuilder(\Symfony\Component\Console\Application::class)->getMock();
+        $app = $this->getMockBuilder(Application::class)->getMock();
         $this->method = new MysqlMethod($logger);
 
         $this->config = new ConfigurationService($app, $logger);
@@ -101,35 +102,35 @@ class MysqlMethodTest extends PhabTestCase
         $this->method->waitForDatabase($this->hostConfig, $this->context);
     }
 
-    private function runDockerContainer($logger)
+    private function runDockerContainer($logger): void
     {
         $runDockerShell = new LocalShellProvider($logger);
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/sh',
-            'rootFolder' => dirname(__FILE__)
+            'rootFolder' => __DIR__
         ], $runDockerShell, $this->config);
 
-        $result = $runDockerShell->run('docker pull mariadb', true);
-        $result = $runDockerShell->run('docker stop phabalicious_test | true', true);
-        $result = $runDockerShell->run('docker rm phabalicious_test | true', true);
+        $runDockerShell->run('docker pull mysql', true);
+        $runDockerShell->run('docker stop phabalicious_test | true', true);
+        $runDockerShell->run('docker rm phabalicious_test | true', true);
 
 
-        $this->backgroundProcess = new Process([
+        $backgroundProcess = new Process([
             'docker',
             'run',
             '-i',
             '-e',
-            'MARIADB_ROOT_PASSWORD=admin',
+            'MYSQL_ROOT_PASSWORD=admin',
             '-p',
             '33060:3306',
             '--name',
             'phabalicious_test',
-            'mariadb',
+            'mysql',
         ]);
         $input = new InputStream();
-        $this->backgroundProcess->setInput($input);
-        $this->backgroundProcess->setTimeout(0);
-        $this->backgroundProcess->start(function ($type, $buffer) {
+        $backgroundProcess->setInput($input);
+        $backgroundProcess->setTimeout(0);
+        $backgroundProcess->start(function ($type, $buffer) {
             // fwrite(STDOUT, $buffer);
         });
         // Give the container some time to spin up
@@ -152,7 +153,7 @@ class MysqlMethodTest extends PhabTestCase
     /**
      * @group docker
      */
-    public function testInstallDb()
+    public function testInstallDb(): void
     {
         $result = $this->method->install($this->hostConfig, $this->context);
         $this->assertEquals(0, $result->getExitCode());
@@ -168,14 +169,14 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->shell->run(implode(' ', $cmd));
 
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertEquals(0, count($result->getOutput()));
+        $this->assertCount(0, $result->getOutput());
     }
 
     /**
      * @dataProvider providerSqlFiles
      * @group docker
      */
-    public function testImportExport($filename)
+    public function testImportExport($filename): void
     {
         $result = $this->method->install($this->hostConfig, $this->context);
         $this->assertEquals(0, $result->getExitCode());
@@ -196,10 +197,10 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->method->exportSqlToFile($this->hostConfig, $this->context, $this->shell, $export_file_name);
         $this->assertEquals($export_file_name, $result);
 
-        $this->assertEquals(true, file_exists($export_file_name));
+        $this->assertFileExists($export_file_name);
     }
 
-    public function providerSqlFiles()
+    public function providerSqlFiles(): array
     {
         return [
             [ __DIR__ . '/../tests/assets/mysqlsampledatabase.sql.gz' ],
@@ -210,7 +211,7 @@ class MysqlMethodTest extends PhabTestCase
     /**
      * @group docker
      */
-    public function testDatabaseInstallDrop()
+    public function testDatabaseInstallDrop(): void
     {
         $this->context->set('what', 'install');
         $result = $this->method->database($this->hostConfig, $this->context);
@@ -242,14 +243,14 @@ class MysqlMethodTest extends PhabTestCase
         $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
         $result = $this->shell->run(implode(' ', $cmd));
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertEquals(0, count($result->getOutput()));
+        $this->assertCount(0, $result->getOutput());
     }
 
     /**
      * @dataProvider providerSqlQueries
      * @group docker
      */
-    public function testSqlQuery($query, $expected)
+    public function testSqlQuery($query, $expected): void
     {
 
         $this->context->set('what', 'install');
@@ -267,7 +268,7 @@ class MysqlMethodTest extends PhabTestCase
 
 
 
-    public function providerSqlQueries()
+    public function providerSqlQueries(): array
     {
         return [
             [

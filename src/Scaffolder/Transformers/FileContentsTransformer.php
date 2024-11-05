@@ -18,7 +18,7 @@ abstract class FileContentsTransformer implements DataTransformerInterface, File
      * @return \Generator
      * @throws TransformFailedException
      */
-    protected function iterateOverFiles(TaskContextInterface $context, array $files)
+    protected function iterateOverFiles(TaskContextInterface $context, array $files): \Generator
     {
         if ($context->getShell()->getName() !== LocalShellProvider::PROVIDER_NAME) {
             throw new \RuntimeException('FileContentsTransformer can only work with local shells!');

@@ -122,7 +122,7 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
      *
      * @return false|string
      */
-    protected function getTargetFileName(string $file_name, bool $ignore_subfolders)
+    protected function getTargetFileName(string $file_name, bool $ignore_subfolders): false|string
     {
         if (strpos($file_name, '/') !== false) {
             if ($ignore_subfolders) {

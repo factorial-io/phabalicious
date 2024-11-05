@@ -18,7 +18,7 @@ class DatabaseShellCommand extends DatabaseSubCommand
         ];
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
 
         if ($result = BaseCommand::execute($input, $output)) {

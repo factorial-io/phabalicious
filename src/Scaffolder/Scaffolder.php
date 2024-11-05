@@ -389,7 +389,7 @@ class Scaffolder
      * @param $name
      * @return string
      */
-    public function getLocalScaffoldFile($name)
+    public function getLocalScaffoldFile($name): string
     {
         $rootFolder = Phar::running()
             ? Phar::running() . '/config/scaffold'
@@ -413,7 +413,7 @@ class Scaffolder
      *
      * @return array|mixed
      */
-    protected function readTokens(string $root_folder, $name)
+    protected function readTokens(string $root_folder, $name): mixed
     {
         $full_path = "$root_folder/$name/.phab-scaffold-tokens";
         if (!$this->shell->exists($full_path)) {

@@ -56,7 +56,7 @@ class UnknownReplacementPatternException extends \Exception
     /**
      * @return \Phabalicious\Utilities\ReplacementValidationError
      */
-    public function getError(): ReplacementValidationError
+    public function getError(): \Phabalicious\Utilities\ReplacementValidationError
     {
         return $this->error;
     }

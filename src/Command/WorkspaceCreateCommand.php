@@ -52,7 +52,7 @@ class WorkspaceCreateCommand extends ScaffoldBaseCommand
      * @throws MissingScriptCallbackImplementation
      * @throws UnknownReplacementPatternException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $context = $this->createContext($input, $output);
         $url  = $this->scaffolder->getLocalScaffoldFile('mbb/mbb.yml');
