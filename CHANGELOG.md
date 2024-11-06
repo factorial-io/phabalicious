@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0-alpha.5](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.4...4.0.0-alpha.5) (2024-11-06)
+
+
+### Bug Fixes
+
+* Fix crashing error with inheritOnly ([67c1510](https://github.com/factorial-io/phabalicious/commit/67c15104afa7a0515e19f2f48ec050dd160bcded))
+
 ## [4.0.0-alpha.4](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.2...4.0.0-alpha.4) (2024-11-05)
 
 
