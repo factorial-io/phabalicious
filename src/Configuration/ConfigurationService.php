@@ -856,7 +856,7 @@ class ConfigurationService
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
-    public function getDockerConfig(string $config_name): DockerConfig
+    public function getDockerConfig(string $config_name): DockerConfig | Node
     {
         $cid = 'dockerhost:' . $config_name;
 
