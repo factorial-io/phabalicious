@@ -41,6 +41,13 @@ All notable changes to this project will be documented in this file. See [standa
 * Upgrade dependencies
 * Remove deprecated code
 
+### [3.8.34](https://github.com/factorial-io/phabalicious/compare/3.8.33...3.8.34) (2024-11-11)
+
+### Bug Fixes
+
+* Fix temporary folder ([ea7a61d](https://github.com/factorial-io/phabalicious/commit/ea7a61d40050ec10f880802c4e0396fad64bcb28))
+
+
 ### [3.8.33](https://github.com/factorial-io/phabalicious/compare/3.8.32...3.8.33) (2024-10-25)
 
 

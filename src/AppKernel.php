@@ -18,7 +18,7 @@ class AppKernel extends Kernel
     {
         return [];
     }
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load(__DIR__ . '/../config/services.yml');
     }
@@ -27,11 +27,10 @@ class AppKernel extends Kernel
      */
     public function getCacheDir(): string
     {
-
         $dir = implode('-', [
             sys_get_temp_dir() . '/phabalicious',
             Utilities::FALLBACK_VERSION,
-            getmyuid() ,
+            posix_getuid(),
             md5(self::class)
         ]);
 
@@ -45,7 +44,7 @@ class AppKernel extends Kernel
         return $this->getCacheDir();
     }
 
-    protected function build(ContainerBuilder $containerBuilder)
+    protected function build(ContainerBuilder $containerBuilder): void
     {
         $containerBuilder->addCompilerPass(new CollectCommandsToApplicationCompilerPass());
         $containerBuilder->addCompilerPass(new CollectMethodsToFactoryCompilerPass());
