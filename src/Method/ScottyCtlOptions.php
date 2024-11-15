@@ -70,5 +70,4 @@ class ScottyCtlOptions
             implode(' ', $this->build($command, $add_data))
         ), true, false);
     }
-
 }

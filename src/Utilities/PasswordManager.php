@@ -506,7 +506,8 @@ class PasswordManager implements PasswordManagerInterface
         return strtr($message, $replacements);
     }
 
-    public function registerCustomSecretToObfuscate(string $secret): void {
+    public function registerCustomSecretToObfuscate(string $secret): void
+    {
         $this->registeredSecrets[] = $secret;
     }
 }

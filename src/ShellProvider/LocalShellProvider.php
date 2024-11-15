@@ -20,25 +20,25 @@ use Symfony\Component\Process\Process;
 class LocalShellProvider extends BaseShellProvider implements ShellProviderInterface
 {
 
-    const RESULT_IDENTIFIER = '##RESULT:';
-    const PROVIDER_NAME = 'local';
+    public const RESULT_IDENTIFIER = '##RESULT:';
+    public const PROVIDER_NAME = 'local';
 
     /** @var Process|null */
-    protected $process;
+    protected ?Process $process = null;
 
     /** @var InputStream */
-    protected $input;
+    protected InputStream $input;
 
-    protected $captureOutput = false;
+    protected bool $captureOutput = false;
 
-    protected $shellEnvironmentVars = [];
+    protected array $shellEnvironmentVars = [];
 
-    protected $preventTimeout = false;
+    protected bool $preventTimeout = false;
 
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
-        if ($this->getName() == 'local') {
+        if ($this->getName() === 'local') {
             $this->setFileOperationsHandler(new LocalFileOperations());
         }
     }
@@ -56,7 +56,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->preventTimeout = $preventTimeout;
     }
 
-    protected function setShellEnvironmentVars(array $vars)
+    protected function setShellEnvironmentVars(array $vars): void
     {
         $this->shellEnvironmentVars = $vars;
     }
@@ -109,7 +109,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     /**
      * Setup local shell.
      *
-     * @throws \RuntimeException
+     * @throws \RuntimeException|\Exception
      */
     public function setup()
     {
@@ -130,25 +130,12 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         $this->process->setInput($this->input);
 
         $this->process->start(function ($type, $buffer) {
-            $lines = explode(PHP_EOL, $buffer);
-            foreach ($lines as $line) {
-                if (empty(trim($line))) {
-                    continue;
-                }
-                if ($type == Process::ERR) {
-                    if (!$this->captureOutput) {
-                        fwrite(STDERR, $line . PHP_EOL);
-                    } else {
-                        $this->logger->debug(trim($line));
-                    }
-                } elseif ((!$this->captureOutput) && strpos($line, self::RESULT_IDENTIFIER) === false) {
-                    if ($this->output) {
-                        $this->output->writeln($line);
-                    } else {
-                        fwrite(STDOUT, $line . PHP_EOL);
-                    }
-                }
-            }
+            $buffer = preg_replace(
+                "/" . self::RESULT_IDENTIFIER . '(\d*)$/',
+                "",
+                $buffer
+            );
+            fwrite($type === Process::ERR ? STDERR : STDOUT, $buffer);
         });
         if ($this->process->isTerminated() && !$this->process->isSuccessful()) {
             throw new \RuntimeException(sprintf(
@@ -215,7 +202,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         // Get result.
         $result = '';
         $last_timestamp = time();
-        while ((strpos($result, self::RESULT_IDENTIFIER) === false) && !$this->process->isTerminated()) {
+        while ((!str_contains($result, self::RESULT_IDENTIFIER)) && !$this->process->isTerminated()) {
             $partial = $this->process->getIncrementalOutput();
             $result .=  $partial;
             if (empty($partial) && !$this->process->isTerminated()) {
@@ -257,7 +244,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
 
         $matches = [];
         if (preg_match('/##RESULT:(\d*)$/', $exit_code, $matches)) {
-            $exit_code = intval($matches[1]);
+            $exit_code = (int) $matches[1];
         }
         if ($exit_code && empty($lines)) {
             $lines = explode("\n", trim($this->process->getErrorOutput()));
