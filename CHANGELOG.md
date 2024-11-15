@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0-alpha.5](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.4...4.0.0-alpha.5) (2024-11-06)
+
+
+### Bug Fixes
+
+* Fix crashing error with inheritOnly ([67c1510](https://github.com/factorial-io/phabalicious/commit/67c15104afa7a0515e19f2f48ec050dd160bcded))
+
+## [4.0.0-alpha.4](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.2...4.0.0-alpha.4) (2024-11-05)
+
+
+### Bug Fixes
+
+* autocompletion for fish ([1aa027c](https://github.com/factorial-io/phabalicious/commit/1aa027c2f69cbb6b75ac14f0d1437b482989f905))
+
+## [4.0.0-alpha.3](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.2...4.0.0-alpha.3) (2024-11-05)
+
+
+### Bug Fixes
+
+* autocompletion for fish ([1aa027c](https://github.com/factorial-io/phabalicious/commit/1aa027c2f69cbb6b75ac14f0d1437b482989f905))
+
 ## [4.0.0-alpha.2](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.1...4.0.0-alpha.2) (2024-11-05)
 
 
@@ -19,6 +40,13 @@ All notable changes to this project will be documented in this file. See [standa
 * Uses Symfony 5.x
 * Upgrade dependencies
 * Remove deprecated code
+
+### [3.8.34](https://github.com/factorial-io/phabalicious/compare/3.8.33...3.8.34) (2024-11-11)
+
+### Bug Fixes
+
+* Fix temporary folder ([ea7a61d](https://github.com/factorial-io/phabalicious/commit/ea7a61d40050ec10f880802c4e0396fad64bcb28))
+
 
 ### [3.8.33](https://github.com/factorial-io/phabalicious/compare/3.8.32...3.8.33) (2024-10-25)
 

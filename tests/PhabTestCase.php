@@ -50,9 +50,13 @@ class PhabTestCase extends TestCase
         ], $runDockerShell, $config);
 
         $result = $runDockerShell->run('docker pull ghcr.io/linuxserver/openssh-server', true);
+        $this->assertEquals(0, $result->getExitCode());
         $result = $runDockerShell->run('docker stop phabalicious_ssh_test | true', true);
+        $this->assertEquals(0, $result->getExitCode());
         $result = $runDockerShell->run('docker rm phabalicious_ssh_test | true', true);
+        $this->assertEquals(0, $result->getExitCode());
         $result = $runDockerShell->run(sprintf('chmod 600 %s', $privateKeyFile));
+        $this->assertEquals(0, $result->getExitCode());
         $public_key = trim(file_get_contents($publicKeyFile));
 
         $backgroundProcess = new Process([
@@ -80,7 +84,7 @@ class PhabTestCase extends TestCase
             fwrite(STDOUT, $buffer);
         });
         // Give the container some time to spin up
-        sleep(5);
+        sleep(10);
 
         return $privateKeyFile;
     }

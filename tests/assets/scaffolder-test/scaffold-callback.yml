@@ -13,6 +13,7 @@ scaffold:
   - composer init --name phabalicious/helloworld -n
   - scaffold("https://config.factorial.io/scaffold/precommit-hooks/drupal/1.0/index.yml", %rootFolder%)
   - mkdir %secondFolder%
+  - cd %secondFolder% &&composer init --name phabalicious/helloworld-2 -n
   - scaffold("https://config.factorial.io/scaffold/precommit-hooks/drupal/1.0/index.yml", %secondFolder%)
 
 

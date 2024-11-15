@@ -891,7 +891,6 @@ class ConfigurationService
             return $this->cache[$cid];
         }
         $data = $this->getDockerConfigData($config_name);
-
         $shell_provider = ShellProviderFactory::create($data['shellProvider'], $this->logger);
 
 
