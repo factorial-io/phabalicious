@@ -135,7 +135,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
                 "",
                 $buffer
             );
-            fwrite($type === Process::ERR ? STDERR : STDOUT, $buffer);
+            if ($this->output && $type === Process::OUT) {
+                $this->output->write($buffer);
+            } else {
+                fwrite($type === Process::ERR ? STDERR : STDOUT, $buffer);
+            }
         });
         if ($this->process->isTerminated() && !$this->process->isSuccessful()) {
             throw new \RuntimeException(sprintf(
