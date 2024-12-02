@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\ShellProvider\RunOptions;
 use Symfony\Component\Dotenv\Dotenv;
 
 class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
@@ -99,7 +100,7 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
             /** @var \Phabalicious\ShellProvider\ShellProviderInterface $shell */
             $shell = $context->get('shell', $host_config->shell());
             $shell->pushWorkingDir($host_config['gitRootFolder']);
-            $result = $shell->run('cat .env', true, false);
+            $result = $shell->run('cat .env', RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
             if ($result->failed()) {
                 throw new \RuntimeException('Cant get database credentials from laravel installation!');
             }

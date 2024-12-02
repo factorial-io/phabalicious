@@ -29,7 +29,7 @@ class LocalShellProvider extends BaseShellProvider
     /** @var InputStream */
     protected InputStream $input;
 
-    protected bool $captureOutput = false;
+    protected RunOptions $runOptions = RunOptions::NONE;
 
     protected array $shellEnvironmentVars = [];
 
@@ -111,7 +111,7 @@ class LocalShellProvider extends BaseShellProvider
      *
      * @throws \RuntimeException|\Exception
      */
-    public function setup(): void
+    public function setup(RunOptions $run_options): void
     {
         if ($this->process) {
             return;
@@ -129,16 +129,18 @@ class LocalShellProvider extends BaseShellProvider
         $this->input = new InputStream();
         $this->process->setInput($this->input);
 
-        $this->process->start(function ($type, $buffer) {
+        $this->process->start(function ($type, $buffer) use ($run_options) {
             $buffer = preg_replace(
                 "/" . self::RESULT_IDENTIFIER . '(\d*)$/',
                 "",
                 $buffer
             );
-            if ($this->output && $type === Process::OUT) {
-                $this->output->write($buffer);
-            } else {
-                fwrite($type === Process::ERR ? STDERR : STDOUT, $buffer);
+            if (!$run_options->hideOutput()) {
+                if ($this->output && $type === Process::OUT) {
+                    $this->output->write($buffer);
+                } else {
+                    fwrite($type === Process::ERR ? STDERR : STDOUT, $buffer);
+                }
             }
         });
         if ($this->process->isTerminated() && !$this->process->isSuccessful()) {
@@ -191,17 +193,17 @@ class LocalShellProvider extends BaseShellProvider
      * Run a command in the shell.
      *
      * @param string $command
-     * @param bool $capture_output
+     * @param \Phabalicious\ShellProvider\RunOptions $run_options
      * @param bool $throw_exception_on_error
+     *
      * @return CommandResult
-     * @throws FailedShellCommandException
-     * @throws \RuntimeException
+     * @throws \Phabalicious\Exception\FailedShellCommandException
      */
-    public function run(string $command, $capture_output = false, $throw_exception_on_error = true): CommandResult
+    public function run(string $command, RunOptions $run_options = RunOptions::NONE, $throw_exception_on_error = true): CommandResult
     {
-        $scoped_capture_output = new SetAndRestoreObjProperty('captureOutput', $this, $capture_output);
+        $scoped_run_options = new SetAndRestoreObjProperty('runOptions', $this, $run_options);
 
-        $command = $this->sendCommandToShell($command);
+        $command = $this->sendCommandToShell($command, $run_options);
 
         // Get result.
         $result = '';
@@ -260,7 +262,7 @@ class LocalShellProvider extends BaseShellProvider
         }
 
         $cr = new CommandResult($exit_code, $lines);
-        if ($cr->failed() && !$capture_output && $throw_exception_on_error) {
+        if ($throw_exception_on_error && $cr->failed() && !$run_options->isCapturingOutput()) {
             $cr->throwException(sprintf('`%s` failed!', $command));
         }
         return $cr;
@@ -346,7 +348,7 @@ class LocalShellProvider extends BaseShellProvider
 
     public function startSubShell(array $cmd): ShellProviderInterface
     {
-        $this->sendCommandToShell(implode(' ', $cmd), false);
+        $this->sendCommandToShell(implode(' ', $cmd), RunOptions::NONE);
         return new SubShellProvider($this->logger, $this);
     }
 
@@ -356,9 +358,9 @@ class LocalShellProvider extends BaseShellProvider
      *
      * @return string
      */
-    protected function sendCommandToShell(string $command, bool $include_result_identifier = true): string
+    protected function sendCommandToShell(string $command, RunOptions $run_options, bool $include_result_identifier = true): string
     {
-        $this->setup();
+        $this->setup($run_options);
         $this->process->clearErrorOutput();
         $this->process->clearOutput();
 

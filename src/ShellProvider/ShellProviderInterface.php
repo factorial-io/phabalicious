@@ -33,7 +33,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function cd(string $dir): ShellProviderInterface;
 
-    public function run(string $command, $capture_output = false, $throw_exception_on_error = false): CommandResult;
+    public function run(string $command, RunOptions $run_options = RunOptions::NONE, $throw_exception_on_error = false): CommandResult;
 
     public function setupEnvironment(array $environment): void;
 

@@ -16,6 +16,7 @@ use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\KubectlShellProvider;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -291,7 +292,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $host_config,
             $context,
             $command,
-            true
+            RunOptions::CAPTURE_AND_HIDE_OUTPUT
         );
 
         $content = implode("\n", $result->getOutput());
@@ -380,7 +381,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
         HostConfig $host_config,
         TaskContextInterface $context,
         $command,
-        $capture_output = false
+        RunOptions $run_options = RunOptions::NONE
     ): CommandResult {
         $kube_config = $host_config['kube'];
         $project_folder = $this->ensureShell($host_config, $context);
@@ -391,7 +392,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
             $this->expandCmd($host_config),
             $command
         );
-        $result = $this->kubectlShell->run($cmd, $capture_output);
+        $result = $this->kubectlShell->run($cmd, $run_options);
         $this->kubectlShell->popWorkingDir();
         return $result;
     }
@@ -544,7 +545,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
             ["namespace"]
         );
 
-        $result = $this->kubectlShell->run($cmd, true);
+        $result = $this->kubectlShell->run($cmd, RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         if ($result->failed()) {
             $this->logger->info(implode(PHP_EOL, $result->getOutput()));

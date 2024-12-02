@@ -5,6 +5,7 @@ namespace Phabalicious\Tests;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\SshShellProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\InputStream;
@@ -49,11 +50,11 @@ class PhabTestCase extends TestCase
             'rootFolder' => __DIR__
         ], $runDockerShell, $config);
 
-        $result = $runDockerShell->run('docker pull ghcr.io/linuxserver/openssh-server', true);
+        $result = $runDockerShell->run('docker pull ghcr.io/linuxserver/openssh-server', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $this->assertEquals(0, $result->getExitCode());
-        $result = $runDockerShell->run('docker stop phabalicious_ssh_test | true', true);
+        $result = $runDockerShell->run('docker stop phabalicious_ssh_test | true', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $this->assertEquals(0, $result->getExitCode());
-        $result = $runDockerShell->run('docker rm phabalicious_ssh_test | true', true);
+        $result = $runDockerShell->run('docker rm phabalicious_ssh_test | true', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $this->assertEquals(0, $result->getExitCode());
         $result = $runDockerShell->run(sprintf('chmod 600 %s', $privateKeyFile));
         $this->assertEquals(0, $result->getExitCode());

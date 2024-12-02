@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\TunnelHelper\TunnelHelperFactory;
 use Phabalicious\Utilities\AppDefaultStages;
@@ -180,7 +181,7 @@ abstract class BaseMethod implements MethodInterface
 
         $result = [];
         foreach ($patterns as $pattern) {
-            $return = $shell->run('ls -l ' . $pattern . ' 2>/dev/null', true);
+            $return = $shell->run('ls -l ' . $pattern . ' 2>/dev/null', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
             foreach ($return->getOutput() as $line) {
                 $a = preg_split('/\s+/', $line);
                 if (count($a) >= 8) {

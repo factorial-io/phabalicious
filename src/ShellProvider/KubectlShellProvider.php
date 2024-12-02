@@ -139,7 +139,7 @@ class KubectlShellProvider extends LocalShellProvider
      */
     public function exists($file): bool
     {
-        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), false, false)
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::NONE, false)
             ->succeeded();
     }
 

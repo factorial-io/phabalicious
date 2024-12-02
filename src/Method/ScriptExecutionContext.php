@@ -3,6 +3,7 @@
 namespace Phabalicious\Method;
 
 use Phabalicious\Exception\ValidationFailedException;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\SubShellProvider;
 use Phabalicious\Utilities\Utilities;
@@ -108,9 +109,9 @@ class ScriptExecutionContext
                 $shell->cd($this->dockerComposeRootDir);
                 $this->applyEnvironmentToHostShell($shell);
                 if ($this->getArgument('pullLatestImage', true)) {
-                    $shell->run($this->getDockerComposeCmd('pull', '--quiet'), false, true);
+                    $shell->run($this->getDockerComposeCmd('pull', '--quiet'), RunOptions::NONE, true);
                 }
-                $shell->run($this->getDockerComposeCmd('build', '--quiet'), false, true);
+                $shell->run($this->getDockerComposeCmd('build', '--quiet'), RunOptions::NONE, true);
                 $this->shell = $shell->startSubShell($this->getDockerComposeCmdAsArray(
                     'run',
                     '--rm',
@@ -235,11 +236,11 @@ class ScriptExecutionContext
         $environment = $this->getArgument('environment', []);
         $environment['USER_ID'] = $this->getArgument(
             'user',
-            $shell->run('id -u', true, true)->getTrimmedOutput()
+            $shell->run('id -u', RunOptions::CAPTURE_AND_HIDE_OUTPUT, true)->getTrimmedOutput()
         );
         $environment['GROUP_ID'] = $this->getArgument(
             'group',
-            $shell->run('id -g', true, true)->getTrimmedOutput()
+            $shell->run('id -g', RunOptions::CAPTURE_AND_HIDE_OUTPUT, true)->getTrimmedOutput()
         );
         $shell->applyEnvironment($environment);
     }

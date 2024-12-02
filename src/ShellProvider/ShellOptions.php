@@ -5,9 +5,9 @@ namespace Phabalicious\ShellProvider;
 
 class ShellOptions
 {
-    protected $useTty = false;
-    protected $quiet = true;
-    protected $shellExecutableProvided = false;
+    protected bool $useTty = false;
+    protected bool $quiet = true;
+    protected bool $shellExecutableProvided = false;
 
     /**
      * @return bool
@@ -45,8 +45,7 @@ class ShellOptions
         return $this;
     }
 
-    public function isShellExecutableProvided()
-    {
+    public function isShellExecutableProvided(): bool {
         return $this->shellExecutableProvided;
     }
 

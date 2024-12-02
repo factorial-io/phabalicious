@@ -12,6 +12,7 @@ use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -365,7 +366,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         if (!$shell->exists($file)) {
             return;
         }
-        $content = $shell->run('cat ' . $file, true);
+        $content = $shell->run('cat ' . $file, RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         $modules = array_filter($content->getOutput(), 'trim');
         $key = $should_enable ? 'modulesEnabledIgnore' : 'modulesDisabledIgnore';
@@ -505,7 +506,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         }
 
         $shell->cd($install_dir);
-        $result = $shell->run('ls ', true);
+        $result = $shell->run('ls ', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $drupal_folder = trim($result->getOutput()[0]);
         $shell->run(sprintf('#!rsync -rav --no-o --no-g %s/* %s', $drupal_folder, $host_config['rootFolder']));
         $shell->run(sprintf('rm -rf %s', $install_dir));
@@ -591,7 +592,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
         $shell = $context->get('shell', $host_config->shell());
         if ($host_config['drupalVersion'] == 7) {
             $shell->pushWorkingDir($host_config['siteFolder']);
-            $output = $shell->run(sprintf('#!drush variable-get --format=json %s', $key), true, false);
+            $output = $shell->run(sprintf('#!drush variable-get --format=json %s', $key), RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
             $shell->popWorkingDir();
             if ($output->failed()) {
                 if (!empty($output->getOutput())) {
@@ -616,10 +617,10 @@ class DrushMethod extends BaseMethod implements MethodInterface
                 '#!drush variable-set --yes --format=json %s \'%s\'',
                 $key,
                 json_encode($value)
-            ), true);
+            ), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
             $shell->popWorkingDir();
             if ($output->failed()) {
-                throw new \RuntimeException($output->getOutput());
+                throw new \RuntimeException(implode(PHP_EOL, $output->getOutput()));
             }
             return;
         }
@@ -645,7 +646,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
                     '#!grep -q "^\$settings\[\'config_sync_directory\'] = \'%s/" settings.php',
                     $host_config["configBaseFolder"]
                 ),
-                true,
+                RunOptions::CAPTURE_AND_HIDE_OUTPUT,
                 false
             );
 
@@ -692,7 +693,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
             /** @var ShellProviderInterface $shell */
             $shell = $context->get('shell', $host_config->shell());
             $shell->pushWorkingDir($host_config['siteFolder']);
-            $result = $shell->run('#!drush --show-passwords --format=json ' . $sql_conf_cmd, true, false);
+            $result = $shell->run('#!drush --show-passwords --format=json ' . $sql_conf_cmd, RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
             if ($result->failed()) {
                 $result->throwException('Could not get database credentials from drush');
             }

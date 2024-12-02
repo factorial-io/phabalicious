@@ -11,6 +11,7 @@ use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -344,7 +345,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $install_dir = $context->get('installDir', false);
         $shell->pushWorkingDir($install_dir);
 
-        $log = $shell->run(sprintf('#!git log %s..%s --oneline', $last_commit_hash, $current_commit_hash), true);
+        $log = $shell->run(sprintf('#!git log %s..%s --oneline', $last_commit_hash, $current_commit_hash), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         $shell->popWorkingDir();
         return $log->getOutput();

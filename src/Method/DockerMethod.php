@@ -17,6 +17,7 @@ use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ScopedLogLevel\ScopedErrorLogLevel;
 use Phabalicious\ScopedLogLevel\ScopedLogLevel;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -257,7 +258,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         while ($tries < $max_tries) {
             $error_log_level = new ScopedErrorLogLevel($shell, LogLevel::NOTICE);
-            $result = $shell->run(sprintf('#!docker exec %s #!supervisorctl status', $container_name), true, false);
+            $result = $shell->run(sprintf('#!docker exec %s #!supervisorctl status', $container_name), RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
             $error_log_level = null;
 
             $count_running = 0;
@@ -458,7 +459,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $result = $shell->run(sprintf(
                 '#!docker inspect -f {{.State.Running}} %s',
                 $container_name
-            ), true);
+            ), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
             $output = $result->getOutput();
             $last_line = array_pop($output);
@@ -502,7 +503,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $result = $shell->run(sprintf(
             '#!docker inspect --format "{{range .NetworkSettings.Networks}}{{.IPAddress}}|{{end}}" %s',
             $container_name
-        ), true);
+        ), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         if ($result->getExitCode() === 0) {
             $ips = explode('|', $result->getOutput()[0]);
@@ -660,7 +661,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $shell = $docker_config->shell();
             $cwd = $shell->getWorkingDir();
             $shell->cd(self::getProjectFolder($docker_config, $host_config));
-            $result = $shell->run(sprintf('#!docker-compose ps -q %s', $composer_service), true);
+            $result = $shell->run(sprintf('#!docker-compose ps -q %s', $composer_service), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
             $shell->cd($cwd);
             $docker_name = false;
             if ($result->succeeded()) {

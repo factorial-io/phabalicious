@@ -5,7 +5,6 @@ namespace Phabalicious\ShellProvider;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
-use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Method\TaskContextInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,13 +38,13 @@ class DryRunShellProvider extends BaseShellProvider
      * Run a command in the shell.
      *
      * @param string $command
-     * @param bool $capture_output
+     * @param \Phabalicious\ShellProvider\RunOptions $run_options
      * @param bool $throw_exception_on_error
+     *
      * @return CommandResult
-     * @throws FailedShellCommandException
-     * @throws \RuntimeException
+     * @throws \Phabalicious\Exception\FailedShellCommandException
      */
-    public function run(string $command, $capture_output = false, $throw_exception_on_error = true): CommandResult
+    public function run(string $command, RunOptions $run_options = RunOptions::NONE, $throw_exception_on_error = true): CommandResult
     {
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
         if (str_ends_with($command, ';')) {
@@ -60,7 +59,7 @@ class DryRunShellProvider extends BaseShellProvider
         }
 
         $cr = new CommandResult(0, []);
-        if ($cr->failed() && !$capture_output && $throw_exception_on_error) {
+        if ($throw_exception_on_error && $cr->failed() && !$run_options->isCapturingOutput()) {
             $cr->throwException(sprintf('`%s` failed!', $command));
         }
         return $cr;

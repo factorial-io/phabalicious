@@ -2,19 +2,14 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Tests\Compiler\OptionalParameter;
 
 class StartRemoteAccessCommand extends BaseCommand
 {
 
-    protected function configure()
-    {
+    protected function configure(): void {
         $host= gethostname();
         $ip = false;
 
@@ -46,7 +41,7 @@ class StartRemoteAccessCommand extends BaseCommand
             null,
             InputOption::VALUE_OPTIONAL,
             'public ip on this computer to listen for',
-            $ip ? $ip : '0.0.0.0'
+            $ip ?: '0.0.0.0'
         )
         ->addOption(
             'public-port',
@@ -81,7 +76,7 @@ class StartRemoteAccessCommand extends BaseCommand
         $host_config = $this->getHostConfig();
         $this->getMethods()->runTask('startRemoteAccess', $host_config, $context);
 
-        $ip = $input->getOption('ip') ? $input->getOption('ip') : $context->getResult('ip', '127.0.0.1');
+        $ip = $input->getOption('ip') ?: $context->getResult('ip', '127.0.0.1');
         $port = $input->getOption('port');
         $config = $context->getResult('config', $host_config);
         $shell = $context->getShell() ?? $host_config->shell();
@@ -109,8 +104,7 @@ class StartRemoteAccessCommand extends BaseCommand
         return $this->getContext()->getResult('exitCode', 0);
     }
 
-    private function getSchemeFromPort($port)
-    {
+    private function getSchemeFromPort($port): string {
         $mapping = [
             '80' => 'http',
             '443' => 'https',

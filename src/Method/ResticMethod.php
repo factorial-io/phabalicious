@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\BaseShellProvider;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Utilities\Utilities;
@@ -199,7 +200,7 @@ class ResticMethod extends BaseMethod
             $restic_path,
             implode(' ', $options),
             implode(' ', $files)
-        ), false, true);
+        ), RunOptions::NONE, true);
 
         if ($result->failed()) {
             $result->throwException("Restic reported an error while trying to run the backup.");
@@ -220,7 +221,7 @@ class ResticMethod extends BaseMethod
             $restic_path,
             implode(' ', $options),
             $short_id
-        ), false);
+        ), RunOptions::NONE);
         if ($result->failed()) {
             $result->throwException("Restic reported an error while trying to restore files.");
         }
@@ -231,13 +232,13 @@ class ResticMethod extends BaseMethod
         HostConfig $host_config,
         TaskContextInterface $context
     ): string {
-        $result = $shell->run('#!restic --help', true);
+        $result = $shell->run('#!restic --help', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         if ($result->succeeded()) {
             return '#!restic';
         }
 
         $restic_path = $host_config['backupFolder'] . '/restic';
-        $result = $shell->run(sprintf('%s --help', $restic_path), true);
+        $result = $shell->run(sprintf('%s --help', $restic_path), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         if ($result->succeeded()) {
             return $restic_path;
         }
@@ -249,7 +250,7 @@ class ResticMethod extends BaseMethod
             $host_config['restic']['downloadUrl'],
             $restic_path
         ), true, true);
-        $shell->run(sprintf("chmod +x %s", $restic_path), false, true);
+        $shell->run(sprintf("chmod +x %s", $restic_path), RunOptions::NONE, true);
 
         return $restic_path;
     }
@@ -263,7 +264,7 @@ class ResticMethod extends BaseMethod
         $options = $this->getResticOptions($host_config, $context, true);
         $options[] = '--json';
 
-        $result = $shell->run(sprintf("%s %s snapshots", $restic_path, implode(' ', $options)), true);
+        $result = $shell->run(sprintf("%s %s snapshots", $restic_path, implode(' ', $options)), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         if ($result->failed()) {
             $result->throwException("Restic reported an error while trying to get the list of snapshots.");
         }

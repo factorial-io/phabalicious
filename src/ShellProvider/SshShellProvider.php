@@ -103,7 +103,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         }
     }
 
-    public function setup(): void
+    public function setup(RunOptions $run_options): void
     {
         if (empty(self::$cachedKnownHostsConfigs[$this->hostConfig->getConfigName()])) {
             EnsureKnownHosts::ensureKnownHosts($this->hostConfig->getConfigurationService(), [
@@ -112,7 +112,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             self::$cachedKnownHostsConfigs[$this->hostConfig->getConfigName()] = true;
         }
 
-        parent::setup();
+        parent::setup($run_options);
     }
 
     protected function addCommandOptions(&$command, $override = false): void
@@ -158,7 +158,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
      */
     public function exists($file): bool
     {
-        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), false, false)
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::NONE, false)
             ->succeeded();
     }
 
@@ -308,7 +308,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             $command[] = $from_host_config['user'] . '@' . $from_host_config['host'] . ':' .$source_file_name;
             $command[] = $target_file_name;
 
-            $cr = $this->run(implode(' ', $command), false, false);
+            $cr = $this->run(implode(' ', $command), RunOptions::NONE, false);
             if ($cr->succeeded()) {
                 return true;
             }

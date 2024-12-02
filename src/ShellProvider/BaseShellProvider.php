@@ -112,7 +112,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     public function cd(string $dir): ShellProviderInterface
     {
         if (empty($dir) || $dir[0] === '.') {
-            $result = $this->run(sprintf('cd %s; echo $PWD', $dir), true, true);
+            $result = $this->run(sprintf('cd %s; echo $PWD', $dir), RunOptions::CAPTURE_AND_HIDE_OUTPUT, true);
             $dir = $result->getOutput()[0];
         }
         $this->workingDir = $dir;
@@ -243,7 +243,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         ];
         foreach ($files as $file) {
             if ($this->exists($file)) {
-                $this->run(sprintf('. %s', $file), false, false);
+                $this->run(sprintf('. %s', $file), RunOptions::NONE, false);
             }
         }
         $this->applyEnvironment($environment);

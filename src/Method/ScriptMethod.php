@@ -11,6 +11,7 @@ use Phabalicious\Method\Callbacks\FailOnMissingDirectory;
 use Phabalicious\Scaffolder\CallbackOptions;
 use Phabalicious\Scaffolder\Callbacks\CallbackInterface;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
@@ -233,7 +234,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 );
             }
             if (!$callback_handled) {
-                $command_result = $shell->run($line, false, false);
+                $command_result = $shell->run($line, RunOptions::NONE, false);
                 $bag->getContext()->setCommandResult($command_result);
 
                 if ($command_result->failed() && $this->getBreakOnFirstError()) {
@@ -414,7 +415,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $computed_values = Utilities::expandStrings($computed_values, $replacements);
 
         foreach ($computed_values as $key => $cmd) {
-            $cmd_result = $shell->run($cmd, true);
+            $cmd_result = $shell->run($cmd, RunOptions::CAPTURE_OUTPUT);
             $output = '';
             if ($cmd_result->succeeded()) {
                 $output = trim(implode("\n", $cmd_result->getOutput()));

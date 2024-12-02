@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\EarlyTaskExitException;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Utilities\Utilities;
@@ -80,14 +81,14 @@ class GitMethod extends BaseMethod implements MethodInterface
     public function getTag(HostConfig $host_config, TaskContextInterface $context)
     {
         $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
-        $result = $host_config->shell()->run('#!git describe --exact-match', true);
+        $result = $host_config->shell()->run('#!git describe --exact-match', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $host_config->shell()->popWorkingDir();
         return $result->succeeded() ? str_replace('/', '-', $result->getOutput()[0]) : false;
     }
     public function getVersion(HostConfig $host_config, TaskContextInterface $context)
     {
         $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
-        $result = $host_config->shell()->run('#!git describe --always --tags', true);
+        $result = $host_config->shell()->run('#!git describe --always --tags', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $host_config->shell()->popWorkingDir();
         return $result->succeeded() ? str_replace('/', '-', $result->getOutput()[0]) : '';
     }
@@ -95,7 +96,7 @@ class GitMethod extends BaseMethod implements MethodInterface
     public function getCommitHash(HostConfig $host_config, TaskContextInterface $context)
     {
         $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
-        $result = $host_config->shell()->run('#!git rev-parse HEAD', true);
+        $result = $host_config->shell()->run('#!git rev-parse HEAD', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $host_config->shell()->popWorkingDir();
         return $result->getOutput()[0];
     }
@@ -103,7 +104,7 @@ class GitMethod extends BaseMethod implements MethodInterface
     public function isWorkingcopyClean(HostConfig $host_config, TaskContextInterface $context)
     {
         $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
-        $result = $host_config->shell()->run('#!git diff --exit-code --quiet', true);
+        $result = $host_config->shell()->run('#!git diff --exit-code --quiet', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $host_config->shell()->popWorkingDir();
         return $result->succeeded();
     }

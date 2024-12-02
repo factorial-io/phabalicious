@@ -27,14 +27,14 @@ class SubShellProvider extends BaseShellProvider
 
     public function exists($file): bool
     {
-        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), false, false)
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::NONE, false)
             ->succeeded();
     }
 
-    public function run(string $command, $capture_output = false, $throw_exception_on_error = false): CommandResult
+    public function run(string $command, RunOptions $run_options = RunOptions::NONE, $throw_exception_on_error = false): CommandResult
     {
         $this->parentShell->cd($this->getWorkingDir());
-        return $this->parentShell->run($command, $capture_output, $throw_exception_on_error);
+        return $this->parentShell->run($command, $run_options, $throw_exception_on_error);
     }
 
     public function cd(string $dir): ShellProviderInterface
@@ -85,8 +85,7 @@ class SubShellProvider extends BaseShellProvider
         throw new \LogicException("wrapCommandInLoginShell not implemented");
     }
 
-    public function terminate()
-    {
+    public function terminate(): void {
         $this->parentShell->terminate();
     }
 

@@ -6,6 +6,7 @@ namespace Phabalicious\Artifact\Actions\Base;
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationService;
@@ -89,14 +90,14 @@ class DockerCopyAction extends ActionBase
         $shell->run(sprintf('mkdir -p %s', $to));
 
         $docker_container = Utilities::getTempNamePrefixFromString('phab-docker-copy');
-        $shell->run(sprintf('docker create --name %s %s', $docker_container, $this->dockerImageName), false, true);
+        $shell->run(sprintf('docker create --name %s %s', $docker_container, $this->dockerImageName), RunOptions::NONE, true);
         foreach ($files_to_copy as $file) {
             if (!in_array($file, $files_to_skip)) {
                 $shell->run(sprintf('rm -rf %s', $to . '/' . basename($file)));
                 $shell->run(sprintf('docker cp -a %s:%s/%s %s', $docker_container, $image_root_path, $file, $to));
             }
         }
-        $shell->run(sprintf('docker rm %s', $docker_container), false, true);
+        $shell->run(sprintf('docker rm %s', $docker_container), RunOptions::NONE, true);
 
         $shell->popWorkingDir();
     }

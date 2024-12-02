@@ -8,6 +8,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -96,7 +97,7 @@ class LocalShellProviderTest extends PhabTestCase
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('ls -la', true);
+            ->run('ls -la', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->succeeded());
@@ -123,7 +124,7 @@ class LocalShellProviderTest extends PhabTestCase
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('ls -la', true, false);
+            ->run('ls -la', RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->failed());
@@ -149,7 +150,7 @@ class LocalShellProviderTest extends PhabTestCase
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('echo $VAR_A', true, false);
+            ->run('echo $VAR_A', RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->succeeded());
@@ -158,14 +159,14 @@ class LocalShellProviderTest extends PhabTestCase
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('echo "XX${VAR_B}XX"', true, false);
+            ->run('echo "XX${VAR_B}XX"', RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertStringContainsString('XXvariable_bXX', $output);
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('echo "XX${VAR_C}XX"', true, false);
+            ->run('echo "XX${VAR_C}XX"', RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertStringContainsString('XXvariable_cXX', $output);

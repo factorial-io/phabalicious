@@ -10,6 +10,7 @@ use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -125,7 +126,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
                 $mysql_cmd = $this->getMysqlCommand($host_config, $context, 'mysql', $o, false);
                 $mysql_cmd[] = '-e';
                 $mysql_cmd[] = escapeshellarg($cmd);
-                return $shell->run(implode(' ', $mysql_cmd), false, true);
+                return $shell->run(implode(' ', $mysql_cmd), RunOptions::NONE, true);
             } catch (Exception $e) {
                 $context->io()
                     ->error("Could not create database, or grant privileges!");
@@ -173,7 +174,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             ]
         );
 
-        $result = $shell->run(implode(' ', $cmd), true, true);
+        $result = $shell->run(implode(' ', $cmd), RunOptions::CAPTURE_AND_HIDE_OUTPUT, true);
         if ($result->failed()) {
             $context->io()->warning("Could not drop tables from db!");
         }
@@ -187,7 +188,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             $this->getMysqlCommand($host_config, $context, 'mysql', $data, true)
         );
 
-        $result = $shell->run(implode(" ", $cmd), false, true);
+        $result = $shell->run(implode(" ", $cmd), RunOptions::NONE, true);
         $shell->run(sprintf('rm %s', $filename));
         $shell->run('set +o pipefail');
 
@@ -333,7 +334,7 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
         $credentials = $this->getDatabaseCredentials($host_config, $context);
         $cmd = $this->getMysqlCommand($host_config, $context, 'mysqlAdmin', $credentials, false);
         $cmd[] = 'ping';
-        return $shell->run(implode(' ', $cmd), true, false);
+        return $shell->run(implode(' ', $cmd), RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
     }
 
 
@@ -436,6 +437,6 @@ class MysqlMethod extends DatabaseMethod implements MethodInterface
             !empty($data['name']),
             ['-e', escapeshellarg($query)]
         );
-        return $shell->run(implode(" ", $command), true, true);
+        return $shell->run(implode(" ", $command), RunOptions::CAPTURE_AND_HIDE_OUTPUT, true);
     }
 }

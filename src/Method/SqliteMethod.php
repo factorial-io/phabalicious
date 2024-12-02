@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
@@ -124,7 +125,7 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
         $cmd[] = ">";
         $cmd[] = $backup_file_name;
 
-        $shell->run(implode(" ", $cmd), false, true);
+        $shell->run(implode(" ", $cmd), RunOptions::NONE, true);
 
         $shell->popWorkingDir();
 

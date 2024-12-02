@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use InvalidArgumentException;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\CommandResult;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 
@@ -76,7 +77,7 @@ class ScottyCtlOptions
                 "#!scottyctl %s",
                 implode(" ", $this->build($command, $add_data))
             ),
-            true,
+            RunOptions::CAPTURE_AND_HIDE_OUTPUT,
             false
         );
     }

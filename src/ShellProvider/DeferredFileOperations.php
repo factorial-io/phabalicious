@@ -45,7 +45,7 @@ class DeferredFileOperations implements FileOperationsInterface
 
     public function realPath($filename): string|false
     {
-        $result = $this->shell->run(sprintf('realpath %s', $filename), true, false);
+        $result = $this->shell->run(sprintf('realpath %s', $filename), RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
         if ($result->failed() || count($result->getOutput()) < 1) {
             return false;
         }
