@@ -7,10 +7,10 @@ use Phabalicious\Method\TaskContextInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
-class SubShellProvider extends BaseShellProvider implements ShellProviderInterface
+class SubShellProvider extends BaseShellProvider
 {
 
-    protected $parentShell;
+    protected ShellProviderInterface $parentShell;
 
     public function __construct(LoggerInterface $logger, ShellProviderInterface $parent_shell)
     {
@@ -27,8 +27,8 @@ class SubShellProvider extends BaseShellProvider implements ShellProviderInterfa
 
     public function exists($file): bool
     {
-        $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $file), false, false);
-        return $result->succeeded();
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), false, false)
+            ->succeeded();
     }
 
     public function run(string $command, $capture_output = false, $throw_exception_on_error = false): CommandResult
@@ -61,7 +61,7 @@ class SubShellProvider extends BaseShellProvider implements ShellProviderInterfa
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context
-    ) {
+    ): int {
         throw new \LogicException("startRemoteAccess not implemented");
     }
 
@@ -75,7 +75,7 @@ class SubShellProvider extends BaseShellProvider implements ShellProviderInterfa
         throw new \LogicException("createShellProcess not implemented");
     }
 
-    public function createTunnelProcess(HostConfig $target_config, array $prefix = [])
+    public function createTunnelProcess(HostConfig $target_config, array $prefix = []): Process
     {
         throw new \LogicException("createTunnelProcess not implemented");
     }

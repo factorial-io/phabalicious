@@ -19,30 +19,30 @@ use Symfony\Component\Process\Process;
 abstract class BaseShellProvider implements ShellProviderInterface
 {
 
-    /** @var HostConfig */
-    protected $hostConfig;
+    /** @var null|HostConfig */
+    protected ?HostConfig $hostConfig = null;
 
     /** @var string */
-    private $workingDir = '';
+    private string $workingDir = '';
 
     /** @var \Psr\Log\LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /** @var OutputInterface|null */
-    protected $output;
+    protected ?OutputInterface $output = null;
 
     /** @var LogLevelStack */
-    protected $loglevel;
+    protected LogLevelStack $loglevel;
 
     /** @var LogLevelStack */
-    protected $errorLogLevel;
+    protected LogLevelStack $errorLogLevel;
 
     /** @var string */
-    protected $hash;
+    protected string $hash;
     /**
      * @var array
      */
-    private $workingDirStack = [];
+    private array $workingDirStack = [];
 
     /**
      * @var \Phabalicious\ShellProvider\FileOperationsInterface
@@ -58,7 +58,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         $this->setFileOperationsHandler(new DeferredFileOperations($this));
     }
 
-    protected function setFileOperationsHandler(FileOperationsInterface $handler)
+    protected function setFileOperationsHandler(FileOperationsInterface $handler): void
     {
         $this->fileOperationsHandler = $handler;
     }
@@ -80,14 +80,14 @@ abstract class BaseShellProvider implements ShellProviderInterface
         ], $this->getName() . ' shellprovider defaults');
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
     {
         $validator = new ValidationService($config, $errors, 'host-config');
         $validator->hasKey('rootFolder', 'Missing rootFolder, should point to the root of your application');
         $validator->checkForValidFolderName('rootFolder');
     }
 
-    public function setHostConfig(HostConfig $config)
+    public function setHostConfig(HostConfig $config): void
     {
         $this->hostConfig = $config;
         $this->workingDir = $config['rootFolder'];
@@ -104,14 +104,14 @@ abstract class BaseShellProvider implements ShellProviderInterface
     }
 
 
-    public function setOutput(OutputInterface $output)
+    public function setOutput(OutputInterface $output): void
     {
         $this->output = $output;
     }
 
     public function cd(string $dir): ShellProviderInterface
     {
-        if (empty($dir) || $dir[0] == '.') {
+        if (empty($dir) || $dir[0] === '.') {
             $result = $this->run(sprintf('cd %s; echo $PWD', $dir), true, true);
             $dir = $result->getOutput()[0];
         }
@@ -121,15 +121,15 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $this;
     }
 
-    public function pushWorkingDir(string $new_working_dir)
+    public function pushWorkingDir(string $new_working_dir): void
     {
         $this->workingDirStack[] = $this->getWorkingDir();
         $this->cd($new_working_dir);
     }
 
-    public function popWorkingDir()
+    public function popWorkingDir(): void
     {
-        if (count($this->workingDirStack) == 0) {
+        if (count($this->workingDirStack) === 0) {
             throw new \RuntimeException('Can\'t pop working dir, stack is empty');
         }
         $working_dir = array_pop($this->workingDirStack);
@@ -161,7 +161,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     public static function outputCallback($type, $buffer)
     {
-        if ($type == Process::ERR) {
+        if ($type === Process::ERR) {
             fwrite(STDERR, $buffer);
         } else {
             fwrite(STDOUT, $buffer);
@@ -171,9 +171,9 @@ abstract class BaseShellProvider implements ShellProviderInterface
     public function runProcess(array $cmd, TaskContextInterface $context, $interactive = false, $verbose = false):bool
     {
         $cb = ($verbose | $interactive)
-            ? [BaseShellProvider::Class, 'outputCallback']
+            ? [self::Class, 'outputCallback']
             : null;
-        $stdin = $interactive ? fopen('php://stdin', 'r') : null;
+        $stdin = $interactive ? fopen('php://stdin', 'rb') : null;
         $this->logger->log($this->loglevel->get(), 'running command: ' . implode(' ', $cmd));
         $process = new Process($cmd, $context->getConfigurationService()->getFabfilePath(), [], $stdin);
         if ($interactive) {
@@ -186,7 +186,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
             //$process->setTty($verbose);
             $process->run($cb);
         }
-        if ($process->getExitCode() != 0) {
+        if ($process->getExitCode() !== 0) {
             $this->logger->log($this->errorLogLevel->get(), $process->getErrorOutput());
             return false;
         }
@@ -235,7 +235,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
      * @param array $environment
      * @throws \Exception
      */
-    public function setupEnvironment(array $environment)
+    public function setupEnvironment(array $environment): void
     {
         $files = [
             '/etc/profile',
@@ -249,7 +249,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         $this->applyEnvironment($environment);
     }
 
-    public function getApplyEnvironmentCmds(array $environment)
+    public function getApplyEnvironmentCmds(array $environment): array
     {
 
         $cmds = [];
@@ -262,7 +262,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $cmds;
     }
 
-    public function applyEnvironment(array $environment)
+    public function applyEnvironment(array $environment): void
     {
         $cmds = $this->getApplyEnvironmentCmds($environment);
         if (!empty($cmds)) {
@@ -278,7 +278,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         HostConfig $from_host_config,
         string $to_path,
         string $from_path
-    ) {
+    ): false|array {
         return false;
     }
 

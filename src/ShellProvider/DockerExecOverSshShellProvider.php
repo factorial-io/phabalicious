@@ -12,21 +12,21 @@ use Phabalicious\Validation\ValidationErrorBagInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DockerExecOverSshShellProvider extends SshShellProvider implements ShellProviderInterface
+class DockerExecOverSshShellProvider extends SshShellProvider
 {
-    const PROVIDER_NAME = 'docker-exec-over-ssh';
+    public const PROVIDER_NAME = 'docker-exec-over-ssh';
 
     /**
      * @var DockerExecShellProvider
      */
-    protected $dockerExec;
+    protected DockerExecShellProvider $dockerExec;
 
     /**
      * Shell to run docker commands on host.
      *
      * @var ShellProviderInterface
      */
-    protected $sshShell;
+    protected ShellProviderInterface $sshShell;
 
     public function __construct(LoggerInterface $logger)
     {
@@ -39,13 +39,13 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         return self::PROVIDER_NAME;
     }
 
-    public function setHostConfig(HostConfig $config)
+    public function setHostConfig(HostConfig $config): void
     {
         parent::setHostConfig($config);
         $this->dockerExec->setHostConfig($config);
     }
 
-    public function setOutput(OutputInterface $output)
+    public function setOutput(OutputInterface $output): void
     {
         parent::setOutput($output);
         $this->dockerExec->setOutput($output);
@@ -59,13 +59,13 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         return $this;
     }
 
-    public function pushWorkingDir(string $new_working_dir)
+    public function pushWorkingDir(string $new_working_dir): void
     {
         parent::pushWorkingDir($new_working_dir);
         $this->dockerExec->pushWorkingDir($new_working_dir);
     }
 
-    public function popWorkingDir()
+    public function popWorkingDir(): void
     {
         parent::popWorkingDir();
         $this->dockerExec->popWorkingDir();
@@ -80,7 +80,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
     {
         parent::validateConfig($config, $errors);
         $this->dockerExec->validateConfig($config, $errors);
@@ -95,22 +95,20 @@ class DockerExecOverSshShellProvider extends SshShellProvider implements ShellPr
         if (count($program_to_call)) {
             $command[] = implode(' ', $program_to_call);
         }
-        $ssh_command = array_merge($ssh_command, $command);
-        // $ssh_command[] = implode(' ', $command);
 
-        return $ssh_command;
+        return array_merge($ssh_command, $command);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function exists($dir):bool
+    public function exists($file):bool
     {
-        $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $dir), false, false);
-        return $result->succeeded();
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), false, false)
+            ->succeeded();
     }
 
-    private function ensureSshShell()
+    private function ensureSshShell(): void
     {
         if ($this->sshShell) {
             return;

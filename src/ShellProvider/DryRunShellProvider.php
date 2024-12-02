@@ -11,12 +11,12 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-class DryRunShellProvider extends BaseShellProvider implements ShellProviderInterface
+class DryRunShellProvider extends BaseShellProvider
 {
 
-    const PROVIDER_NAME = 'dry-run';
+    public const PROVIDER_NAME = 'dry-run';
 
-    protected $captured = [];
+    protected array $captured = [];
 
     public function getName(): string
     {
@@ -48,7 +48,7 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
     public function run(string $command, $capture_output = false, $throw_exception_on_error = true): CommandResult
     {
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
-        if (substr($command, -1) == ';') {
+        if (str_ends_with($command, ';')) {
             $command = substr($command, 0, -1);
         }
         $this->captured[] = $command;
@@ -88,7 +88,7 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context
-    ) {
+    ): int {
         throw new \RuntimeException("startRemoteAccess not implemented!");
     }
 
@@ -102,7 +102,7 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
         throw new \RuntimeException("createShellProcess not implemented!");
     }
 
-    public function createTunnelProcess(HostConfig $target_config, array $prefix = [])
+    public function createTunnelProcess(HostConfig $target_config, array $prefix = []): Process
     {
         throw new \RuntimeException("createTunnelProcess not implemented!");
     }
@@ -120,7 +120,7 @@ class DryRunShellProvider extends BaseShellProvider implements ShellProviderInte
         return $this->captured;
     }
 
-    public function terminate()
+    public function terminate(): void
     {
         // Nothing to see here.
     }

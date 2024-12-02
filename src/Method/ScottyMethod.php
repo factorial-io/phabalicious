@@ -110,7 +110,7 @@ class ScottyMethod extends BaseMethod
         TaskContext $context
     ): void {
         $options = new ScottyCtlOptions($host_config, $context);
-        $result = $options->runInShell($host_config->shell(), "destroy");
+        $result = $options->runInShell($host_config->shell(), "app:destroy");
         if ($result->failed()) {
             $result->throwException("Failed to run scottyctl destroy");
         }
@@ -122,7 +122,7 @@ class ScottyMethod extends BaseMethod
     ): void {
         $app_folder = $this->scaffoldApp($host_config, $context);
         $options = new ScottyCtlCreateOptions($host_config, $context);
-        $result = $options->runInShell($host_config->shell(), "create", [
+        $result = $options->runInShell($host_config->shell(), "app:create", [
             "app_folder" => $app_folder,
         ]);
         if ($result->failed()) {

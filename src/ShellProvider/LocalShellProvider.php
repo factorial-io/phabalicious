@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
 
-class LocalShellProvider extends BaseShellProvider implements ShellProviderInterface
+class LocalShellProvider extends BaseShellProvider
 {
 
     public const RESULT_IDENTIFIER = '##RESULT:';
@@ -71,7 +71,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
     {
         parent::validateConfig($config, $errors);
 
@@ -111,7 +111,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      *
      * @throws \RuntimeException|\Exception
      */
-    public function setup()
+    public function setup(): void
     {
         if ($this->process) {
             return;
@@ -173,7 +173,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
     /**
      * Terminate current shell process.
      */
-    public function terminate()
+    public function terminate(): void
     {
         if ($this->process && !$this->process->isTerminated()) {
             $this->logger->info("Terminating current running shell ...");
@@ -315,11 +315,11 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context
-    ) {
+    ): int {
         throw new \InvalidArgumentException('Local shells cannot handle startRemoteAccess!');
     }
 
-    public function createTunnelProcess(HostConfig $target_config, array $prefix = [])
+    public function createTunnelProcess(HostConfig $target_config, array $prefix = []): Process
     {
         throw new \InvalidArgumentException('Local shells cannot handle tunnels!');
     }
@@ -338,7 +338,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         return $command;
     }
 
-    protected function overrideProcessInputAndOutput(Process $process, InputStream $input, OutputInterface $output)
+    protected function overrideProcessInputAndOutput(Process $process, InputStream $input, OutputInterface $output): void
     {
         $this->process = $process;
         $this->input = $input;
@@ -354,9 +354,9 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
      * @param string $command
      * @param bool $include_result_identifier
      *
-     * @return false|string
+     * @return string
      */
-    protected function sendCommandToShell(string $command, bool $include_result_identifier = true): false|string
+    protected function sendCommandToShell(string $command, bool $include_result_identifier = true): string
     {
         $this->setup();
         $this->process->clearErrorOutput();
@@ -370,7 +370,7 @@ class LocalShellProvider extends BaseShellProvider implements ShellProviderInter
         }
 
         $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
-        if (substr($command, -1) === ';') {
+        if (str_ends_with($command, ';')) {
             $command = substr($command, 0, -1);
         }
         $this->logger->log($this->loglevel->get(), $command);

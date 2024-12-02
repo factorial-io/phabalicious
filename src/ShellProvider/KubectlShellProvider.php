@@ -11,9 +11,9 @@ use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
-class KubectlShellProvider extends LocalShellProvider implements ShellProviderInterface
+class KubectlShellProvider extends LocalShellProvider
 {
-    const PROVIDER_NAME = 'kubectl';
+    public const PROVIDER_NAME = 'kubectl';
 
     public function __construct(LoggerInterface $logger)
     {
@@ -42,7 +42,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
     {
         parent::validateConfig($config, $errors);
 
@@ -82,7 +82,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         return parent::createShellProcess($command, $options);
     }
 
-    public static function getKubectlCmd(Node $config, $kubectl_cmd = '#!kubectl', $exclude = [])
+    public static function getKubectlCmd(Node $config, $kubectl_cmd = '#!kubectl', $exclude = []): array
     {
         $cmd = [ $kubectl_cmd ];
         if (!empty($config['kubectlOptions'])) {
@@ -103,7 +103,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
 
         return $cmd;
     }
-    protected function getKubeCmd()
+    protected function getKubeCmd(): array
     {
         return self::getKubectlCmd($this->getHostConfig()->getData(), 'kubectl');
     }
@@ -133,14 +133,14 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
     }
 
     /**
-     * @param string $dir
+     * @param string $file
      * @return bool
      * @throws \Exception
      */
-    public function exists($dir): bool
+    public function exists($file): bool
     {
-        $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $dir), false, false);
-        return $result->succeeded();
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), false, false)
+            ->succeeded();
     }
 
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
@@ -252,7 +252,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
      * @param HostConfig $config
      * @param TaskContextInterface $context
      *
-     * @return bool
+     * @return int
      */
     public function startRemoteAccess(
         string $ip,
@@ -261,7 +261,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context
-    ) {
+    ): int {
         $command = $this->getKubeCmd();
         $command[] = 'port-forward';
         $command[] = sprintf('pod/%s', $config['kube']['podForCli']);

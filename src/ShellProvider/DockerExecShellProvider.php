@@ -9,9 +9,9 @@ use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
-class DockerExecShellProvider extends LocalShellProvider implements ShellProviderInterface
+class DockerExecShellProvider extends LocalShellProvider
 {
-    const PROVIDER_NAME = 'docker-exec';
+    public const PROVIDER_NAME = 'docker-exec';
 
     public function getName(): string
     {
@@ -28,7 +28,7 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
         return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
     {
         parent::validateConfig($config, $errors);
 
@@ -74,14 +74,14 @@ class DockerExecShellProvider extends LocalShellProvider implements ShellProvide
     }
 
     /**
-     * @param string $dir
+     * @param string $file
      * @return bool
      * @throws \Exception
      */
-    public function exists($dir): bool
+    public function exists($file): bool
     {
-        $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $dir), false, false);
-        return $result->succeeded();
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), false, false)
+            ->succeeded();
     }
 
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool

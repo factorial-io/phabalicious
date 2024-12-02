@@ -17,17 +17,17 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node;
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors);
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void;
 
-    public function setHostConfig(HostConfig $config);
+    public function setHostConfig(HostConfig $config): void;
 
     public function getHostConfig(): ?HostConfig;
 
     public function getWorkingDir(): string;
 
-    public function pushWorkingDir(string $new_working_dir);
+    public function pushWorkingDir(string $new_working_dir): void;
 
-    public function popWorkingDir();
+    public function popWorkingDir(): void;
 
     public function exists($file): bool;
 
@@ -35,11 +35,11 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function run(string $command, $capture_output = false, $throw_exception_on_error = false): CommandResult;
 
-    public function setupEnvironment(array $environment);
+    public function setupEnvironment(array $environment): void;
 
-    public function applyEnvironment(array $environment);
+    public function applyEnvironment(array $environment): void;
 
-    public function setOutput(OutputInterface $output);
+    public function setOutput(OutputInterface $output): void;
 
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool;
 
@@ -60,7 +60,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context
-    );
+    ): int;
 
     public function expandCommand($line);
 
@@ -70,7 +70,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function createShellProcess(array $command = [], ShellOptions $options = null): Process;
 
-    public function createTunnelProcess(HostConfig $target_config, array $prefix = []);
+    public function createTunnelProcess(HostConfig $target_config, array $prefix = []): Process;
 
     /**
      * Wrap a command to execute into a login shell.
@@ -95,7 +95,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
         HostConfig $from_host_config,
         string $to_path,
         string $from_path
-    );
+    ): false|array;
 
     /**
      * Terminates a running shell, so that it gets recreated with the next command.

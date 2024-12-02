@@ -14,14 +14,15 @@ use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Symfony\Component\Process\Process;
+use Webmozart\Assert\Assert;
 
 class SshShellProvider extends LocalShellProvider implements TunnelSupportInterface
 {
-    const PROVIDER_NAME = 'ssh';
+    public const PROVIDER_NAME = 'ssh';
 
-    protected static $cachedSshPorts = [];
+    protected static array $cachedSshPorts = [];
 
-    protected static $cachedKnownHostsConfigs = [];
+    protected static array $cachedKnownHostsConfigs = [];
 
     public function getName(): string
     {
@@ -47,7 +48,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
                 if (!empty(self::$cachedSshPorts[$host_config['configName']])) {
                     $port = self::$cachedSshPorts[$host_config['configName']];
                 } else {
-                    $port = rand(1024, 49151);
+                    $port = random_int(1024, 49151);
                 }
                 self::$cachedSshPorts[$host_config['configName']] = $port;
                 $result['port'] = $port;
@@ -64,7 +65,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
     {
         parent::validateConfig($config, $errors);
 
@@ -102,7 +103,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         }
     }
 
-    public function setup()
+    public function setup(): void
     {
         if (empty(self::$cachedKnownHostsConfigs[$this->hostConfig->getConfigName()])) {
             EnsureKnownHosts::ensureKnownHosts($this->hostConfig->getConfigurationService(), [
@@ -114,7 +115,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         parent::setup();
     }
 
-    protected function addCommandOptions(&$command, $override = false)
+    protected function addCommandOptions(&$command, $override = false): void
     {
         if ($override || $this->hostConfig['disableKnownHosts']) {
             $command[] = '-o';
@@ -151,14 +152,14 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
     }
 
     /**
-     * @param string $dir
+     * @param string $file
      * @return bool
      * @throws \Exception
      */
-    public function exists($dir): bool
+    public function exists($file): bool
     {
-        $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $dir), false, false);
-        return $result->succeeded();
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), false, false)
+            ->succeeded();
     }
 
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
@@ -201,7 +202,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         string $public_ip,
         int $public_port,
         $config
-    ) {
+    ): array {
         $cmd = [
             '/usr/bin/ssh',
             '-A',
@@ -221,12 +222,13 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context
-    ) {
+    ): int {
         $this->runProcess(
             $this->getSshTunnelCommand($ip, $port, $public_ip, $public_port, $config),
             $context,
             true
         );
+        return 0;
     }
 
     /**
@@ -273,10 +275,10 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         });
 
         $result = '';
-        while ((strpos($result, 'Entering interactive session') === false) && !$process->isTerminated()) {
+        while ((!str_contains($result, 'Entering interactive session')) && !$process->isTerminated()) {
             $result .= $process->getIncrementalErrorOutput();
         }
-        if ($process->isTerminated() && $process->getExitCode() != 0) {
+        if ($process->isTerminated() && $process->getExitCode() !== 0) {
             throw new SshTunnelFailedException("SSH-Tunnel creation failed with \n" . $result);
         }
 
@@ -290,8 +292,9 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         TaskContextInterface $context,
         bool $verbose = false
     ): bool {
-        if ($from_shell->getName() == self::PROVIDER_NAME) {
+        if ($from_shell->getName() === self::PROVIDER_NAME) {
             $from_host_config = $from_shell->getHostConfig();
+            Assert::isInstanceOf($from_host_config, HostConfig::class);
             $command = [
                 '/usr/bin/scp',
                 '-o',
@@ -308,9 +311,9 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             $cr = $this->run(implode(' ', $command), false, false);
             if ($cr->succeeded()) {
                 return true;
-            } else {
-                $this->logger->warning('Could not copy file via SSH, try fallback');
             }
+
+            $this->logger->warning('Could not copy file via SSH, try fallback');
         }
         return parent::copyFileFrom($from_shell, $source_file_name, $target_file_name, $context, $verbose);
     }
@@ -341,15 +344,16 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         HostConfig $from_host_config,
         string $to_path,
         string $from_path
-    ) {
+    ): false|array {
         $supported_to_shells = [
             LocalShellProvider::PROVIDER_NAME,
             self::PROVIDER_NAME,
             KubectlShellProvider::PROVIDER_NAME
         ];
 
-        if ((!in_array($to_host_config->shell()->getName(), $supported_to_shells)) ||
-            ($from_host_config->shell()->getName() !== self::PROVIDER_NAME)) {
+        if (($from_host_config->shell()->getName() !== self::PROVIDER_NAME) || (!in_array($to_host_config->shell()
+                ->getName(), $supported_to_shells, true))
+            ) {
             return false;
         }
 
