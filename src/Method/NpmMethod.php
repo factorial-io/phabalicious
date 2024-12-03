@@ -55,7 +55,7 @@ class NpmMethod extends RunCommandBaseMethod
     public function resetPrepare(HostConfig $host_config, TaskContextInterface $context)
     {
         $this->runCommand($host_config, $context, 'install');
-        $this->runCommand($host_config, $context, $host_config->get('npmBuildCommand'));
+        $this->runCommand($host_config, $context, $host_config->getProperty('npm.buildCommand'));
     }
 
     public function installPrepare(HostConfig $host_config, TaskContextInterface $context)
