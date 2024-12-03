@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.35](https://github.com/factorial-io/phabalicious/compare/3.8.34...3.8.35) (2024-12-03)
+
+
+### Bug Fixes
+
+* Fix for npm-method for not picking up the build command setting (Fixes [#351](https://github.com/factorial-io/phabalicious/issues/351)) ([52c7250](https://github.com/factorial-io/phabalicious/commit/52c7250c431c10c3df36300869a1eb98dbf41a6d))
+
 ### [3.8.34](https://github.com/factorial-io/phabalicious/compare/3.8.33...3.8.34) (2024-11-11)
 
 
