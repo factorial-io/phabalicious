@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -142,9 +143,10 @@ class ScottyMethod extends BaseMethod
     ): bool {
         $options = new ScottyCtlOptions($host_config, $context);
         $result = $options
-            ->runInShell($host_config->shell(), 'info')
+            ->runInShell($host_config->shell(), 'app:info', [], RunOptions::CAPTURE_AND_HIDE_OUTPUT)
             ->succeeded();
         $context->setResult('appExists', $result);
+        $context->setResult('installName', $options->getRestEndpoint());
 
         return $result;
     }

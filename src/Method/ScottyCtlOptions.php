@@ -37,6 +37,16 @@ class ScottyCtlOptions
             $scotty_data['app-name'] ?? '%host.configName%';
     }
 
+    public function getAppName(): string
+    {
+        return $this->data['app-name'];
+    }
+
+    public function getRestEndpoint(): string
+    {
+        return $this->data['server'];
+    }
+
     public function build(string $command, array $additional_data = []): array
     {
         $variables = Utilities::buildVariablesFrom(
@@ -70,13 +80,14 @@ class ScottyCtlOptions
         ShellProviderInterface $shell,
         string $command,
         array $add_data = [],
+        RunOptions $run_options = RunOptions::CAPTURE_OUTPUT,
     ): CommandResult {
         return $shell->run(
             sprintf(
                 '#!scottyctl %s',
                 implode(' ', $this->build($command, $add_data))
             ),
-            RunOptions::CAPTURE_AND_HIDE_OUTPUT,
+            $run_options,
             false
         );
     }
