@@ -1,0 +1,111 @@
+/* src/css/homepage/features.css */
+.Features {
+  box-sizing: border-box;
+  display: grid;
+  list-style: none;
+  margin-inline: auto;
+  max-width: var(--u-max-width);
+  padding-inline: var(--u-page-spacing);
+}
+.Features-title {
+  font-size: var(--typo-h3-font-size);
+  font-weight: var(--typo-h3-font-weight);
+  line-height: var(--typo-h3-line-height);
+}
+.Features-details {
+  line-height: 1.875;
+  margin-block-start: 2em;
+}
+@media (max-width: 58.5em) {
+  .Features {
+    gap: 3rem;
+    padding-block: 3rem;
+  }
+  .Features-icon + .Features-title {
+    margin-block-start: 1em;
+  }
+}
+@media (min-width: 58.5625em) {
+  .Features {
+    gap: var(--u-page-spacing);
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    padding-block: 6em;
+  }
+  .Features-icon + .Features-title {
+    margin-block-start: 2em;
+  }
+}
+
+/* src/css/homepage/hero.css */
+.Hero {
+  background-color: transparent;
+}
+.Hero-contentContainer {
+  box-sizing: border-box;
+  padding: var(--u-page-spacing);
+}
+.Hero-titleProject,
+.Hero-titleTagline {
+  display: block;
+}
+.Hero-titleProject {
+  color: var(--color-orange);
+  font-weight: 600;
+  margin-block-end: 1.25rem;
+}
+.Hero-titleTagline {
+  font-size: clamp(2.65em, 4vw, 3.75em);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.Hero-title + .Hero-link {
+  display: inline-block;
+  margin-block-start: 3em;
+}
+.Hero-link {
+  background-color: var(--color-grey-900);
+  border: 0.2em solid transparent;
+  border-radius: var(--border-radius);
+  color: var(--color-white);
+  font-size: var(--typo-Default-font-size);
+  padding: 0.65625rem 1.40625rem;
+}
+@media (max-width: 48em) {
+  .Hero-container {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .Hero-image {
+    aspect-ratio: 1.2/1;
+    height: auto;
+    width: 100%;
+  }
+}
+@media (min-width: 48.0625em) {
+  .Hero {
+    display: flex;
+    justify-content: center;
+  }
+  :is(.Hero-imageContainer, .Hero-contentContainer):only-child {
+    flex: 1;
+  }
+  :is(.Hero-imageContainer, .Hero-contentContainer):not(:only-child) {
+    flex: 0 0 50%;
+  }
+  .Hero-imageContainer picture {
+    height: 100%;
+  }
+  .Hero-image {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+  .Hero-container {
+    display: flex;
+    max-width: var(--u-max-width);
+    width: 100%;
+  }
+}
+
+/* src/css/homepage.css */
+/*# sourceMappingURL=homepage.css.map */

@@ -1,0 +1,48 @@
+<svg height="27" shape-rendering="crispEdges" viewBox="0 0 27 27" width="27" xmlns="http://www.w3.org/2000/svg">
+<style>
+  rect { fill: #111827; }
+  @media (prefers-color-scheme: dark) {
+    rect { fill: white; }
+  }
+</style>
+<rect height="1" width="3" x="6" y="4"/>
+<rect height="3" width="1" x="7" y="3"/>
+<rect height="3" width="1" x="9" y="3"/>
+<rect height="3" width="1" x="11" y="3"/>
+<rect height="3" width="3" x="12" y="3"/>
+<rect height="1" width="3" x="15" y="4"/>
+<rect height="3" width="1" x="16" y="3"/>
+<rect height="1" width="3" x="18" y="4"/>
+<rect height="3" width="1" x="19" y="3"/>
+<rect height="1" width="3" x="6" y="7"/>
+<rect height="3" width="1" x="7" y="6"/>
+<rect height="3" width="3" x="9" y="6"/>
+<rect height="3" width="1" x="12" y="6"/>
+<rect height="3" width="1" x="14" y="6"/>
+<rect height="3" width="1" x="15" y="6"/>
+<rect height="3" width="1" x="17" y="6"/>
+<rect height="3" width="1" x="18" y="6"/>
+<rect height="3" width="1" x="20" y="6"/>
+<rect height="3" width="3" x="6" y="9"/>
+<rect height="3" width="3" x="9" y="9"/>
+<rect height="3" width="3" x="6" y="12"/>
+<rect height="3" width="1" x="9" y="12"/>
+<rect height="3" width="1" x="11" y="12"/>
+<rect height="3" width="3" x="12" y="12"/>
+<rect height="1" width="3" x="15" y="13"/>
+<rect height="3" width="1" x="16" y="12"/>
+<rect height="3" width="1" x="6" y="15"/>
+<rect height="3" width="1" x="8" y="15"/>
+<rect height="3" width="3" x="9" y="15"/>
+<rect height="3" width="1" x="12" y="15"/>
+<rect height="3" width="1" x="14" y="15"/>
+<rect height="3" width="3" x="15" y="15"/>
+<rect height="1" width="3" x="6" y="19"/>
+<rect height="3" width="1" x="7" y="18"/>
+<rect height="3" width="1" x="9" y="18"/>
+<rect height="3" width="1" x="11" y="18"/>
+<rect height="1" width="3" x="6" y="22"/>
+<rect height="3" width="1" x="7" y="21"/>
+<rect height="1" width="3" x="9" y="22"/>
+<rect height="3" width="1" x="10" y="21"/>
+</svg>
