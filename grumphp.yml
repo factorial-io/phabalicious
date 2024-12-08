@@ -1,4 +1,7 @@
 grumphp:
+    environment:
+      variables:
+        PHP_CS_FIXER_IGNORE_ENV: "1"
     process_timeout: 180
     stop_on_failure: true
     tasks:
