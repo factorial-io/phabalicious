@@ -9,7 +9,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class StartRemoteAccessCommand extends BaseCommand
 {
 
-    protected function configure(): void {
+    protected function configure(): void
+    {
         $host= gethostname();
         $ip = false;
 
@@ -104,7 +105,8 @@ class StartRemoteAccessCommand extends BaseCommand
         return $this->getContext()->getResult('exitCode', 0);
     }
 
-    private function getSchemeFromPort($port): string {
+    private function getSchemeFromPort($port): string
+    {
         $mapping = [
             '80' => 'http',
             '443' => 'https',

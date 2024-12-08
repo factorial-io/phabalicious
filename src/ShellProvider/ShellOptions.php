@@ -45,7 +45,8 @@ class ShellOptions
         return $this;
     }
 
-    public function isShellExecutableProvided(): bool {
+    public function isShellExecutableProvided(): bool
+    {
         return $this->shellExecutableProvided;
     }
 

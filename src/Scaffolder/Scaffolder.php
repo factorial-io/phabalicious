@@ -86,7 +86,7 @@ class Scaffolder
         $root_folder,
         TaskContextInterface $in_context,
         array $tokens = [],
-        Options $options = null
+        ?Options $options = null
     ) {
         if (!$options) {
             $options = new Options();

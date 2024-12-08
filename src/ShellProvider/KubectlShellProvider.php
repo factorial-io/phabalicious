@@ -75,7 +75,7 @@ class KubectlShellProvider extends LocalShellProvider
         }
     }
 
-    public function createShellProcess(array $command = [], ShellOptions $options = null): Process
+    public function createShellProcess(array $command = [], ?ShellOptions $options = null): Process
     {
         // Apply kubectl environment vars.
         $this->setShellEnvironmentVars($this->hostConfig['kube']['environment']);

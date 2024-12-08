@@ -22,7 +22,7 @@ final class EnsureKnownHosts
     public static function ensureKnownHosts(
         ConfigurationService $config,
         array $known_hosts,
-        ShellProviderInterface $shell = null
+        ?ShellProviderInterface $shell = null
     ) {
         if (!$shell) {
             $shell = ShellProviderFactory::create('local', $config->getLogger());

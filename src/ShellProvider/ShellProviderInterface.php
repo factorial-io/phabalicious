@@ -68,7 +68,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     public function getShellCommand(array $program_to_call, ShellOptions $options): array;
 
-    public function createShellProcess(array $command = [], ShellOptions $options = null): Process;
+    public function createShellProcess(array $command = [], ?ShellOptions $options = null): Process;
 
     public function createTunnelProcess(HostConfig $target_config, array $prefix = []): Process;
 

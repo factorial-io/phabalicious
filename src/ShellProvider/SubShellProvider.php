@@ -70,7 +70,7 @@ class SubShellProvider extends BaseShellProvider
         throw new \LogicException("getShellCommand not implemented");
     }
 
-    public function createShellProcess(array $command = [], ShellOptions $options = null): Process
+    public function createShellProcess(array $command = [], ?ShellOptions $options = null): Process
     {
         throw new \LogicException("createShellProcess not implemented");
     }
@@ -85,7 +85,8 @@ class SubShellProvider extends BaseShellProvider
         throw new \LogicException("wrapCommandInLoginShell not implemented");
     }
 
-    public function terminate(): void {
+    public function terminate(): void
+    {
         $this->parentShell->terminate();
     }
 

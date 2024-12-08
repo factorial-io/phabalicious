@@ -19,7 +19,7 @@ class ParallelExecutorRun extends ProcessRun
 
     protected $identifier;
 
-    public function __construct(string $identifier, $command_line, ConsoleSectionOutput $output = null)
+    public function __construct(string $identifier, $command_line, ?ConsoleSectionOutput $output = null)
     {
         $this->identifier = $identifier;
         $this->output = $output;

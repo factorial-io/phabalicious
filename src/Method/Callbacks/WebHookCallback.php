@@ -24,7 +24,7 @@ class WebHookCallback implements CallbackInterface
         return "3.6";
     }
 
-    public function __construct(WebhookMethod $method = null)
+    public function __construct(?WebhookMethod $method = null)
     {
         $this->method = $method;
     }

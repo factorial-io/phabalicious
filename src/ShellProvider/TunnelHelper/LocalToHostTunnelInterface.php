@@ -11,6 +11,6 @@ interface LocalToHostTunnelInterface
     public function createLocalToHostTunnel(
         HostConfig $config,
         TaskContextInterface $context,
-        TunnelDataInterface $tunnel_data = null
+        ?TunnelDataInterface $tunnel_data = null
     ): TunnelDataInterface;
 }

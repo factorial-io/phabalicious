@@ -82,7 +82,7 @@ class LocalShellProvider extends BaseShellProvider
         );
     }
 
-    public function createShellProcess(array $command = [], ShellOptions $options = null): Process
+    public function createShellProcess(array $command = [], ?ShellOptions $options = null): Process
     {
         if (!$options) {
             $options = new ShellOptions();

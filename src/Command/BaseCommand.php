@@ -205,7 +205,7 @@ abstract class BaseCommand extends BaseOptionsCommand
         array $args,
         InputInterface $original_input,
         OutputInterface $output,
-        TaskContextInterface $context_to_pass = null
+        ?TaskContextInterface $context_to_pass = null
     ) {
         $cmd = $this->getApplication()->find($command);
 
@@ -257,7 +257,7 @@ abstract class BaseCommand extends BaseOptionsCommand
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         array $command = [],
-        ShellOptions $options = null
+        ?ShellOptions $options = null
     ) {
         $fn = function ($type, $buffer) use ($context) {
             if ($type == Process::ERR) {

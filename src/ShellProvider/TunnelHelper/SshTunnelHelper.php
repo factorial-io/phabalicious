@@ -14,7 +14,7 @@ class SshTunnelHelper extends TunnelHelperBase implements HostToHostTunnelInterf
     public function createLocalToHostTunnel(
         HostConfig $config,
         TaskContextInterface $context,
-        TunnelDataInterface $tunnel_data = null
+        ?TunnelDataInterface $tunnel_data = null
     ): TunnelDataInterface {
         return $this->createTunnel($config, $config, false, $context, $tunnel_data);
     }
@@ -23,7 +23,7 @@ class SshTunnelHelper extends TunnelHelperBase implements HostToHostTunnelInterf
         HostConfig $source_config,
         HostConfig $target_config,
         TaskContextInterface $context,
-        TunnelDataInterface $tunnel_data = null
+        ?TunnelDataInterface $tunnel_data = null
     ): TunnelDataInterface {
         return $this->createTunnel($source_config, $target_config, true, $context, $tunnel_data);
     }
@@ -43,7 +43,7 @@ class SshTunnelHelper extends TunnelHelperBase implements HostToHostTunnelInterf
         HostConfig $target_config,
         bool $remote,
         TaskContextInterface $context,
-        TunnelDataInterface $tunnel_data = null
+        ?TunnelDataInterface $tunnel_data = null
     ) {
         $key = $source_config->getConfigName() . '->' . $target_config->getConfigName();
         if ($remote) {

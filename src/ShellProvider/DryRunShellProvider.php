@@ -96,7 +96,7 @@ class DryRunShellProvider extends BaseShellProvider
         throw new \RuntimeException("getShellCommand not implemented!");
     }
 
-    public function createShellProcess(array $command = [], ShellOptions $options = null): Process
+    public function createShellProcess(array $command = [], ?ShellOptions $options = null): Process
     {
         throw new \RuntimeException("createShellProcess not implemented!");
     }
