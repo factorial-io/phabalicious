@@ -11,60 +11,6 @@ All notable changes to this project will be documented in this file. See [standa
 * Modernize code base ([30b81c1](https://github.com/factorial-io/phabalicious/commit/30b81c19758823d58426f64bc17bdb077e846534))
 * Refactor Shellprovider::run to better control the output ([03268c5](https://github.com/factorial-io/phabalicious/commit/03268c5833d3a7fbc7ffabad31ec641ee69987f9))
 
-## [4.0.0-alpha.6](https://github.com/factorial-io/phabalicious/compare/3.8.34...4.0.0-alpha.6) (2024-11-19)
-
-
-### Features
-
-* Print all shell output to the console ([43ab8e9](https://github.com/factorial-io/phabalicious/commit/43ab8e9e1016d8fd3381cec0e11f65e3951dbd28))
-
-
-### Bug Fixes
-
-* **deps:** update dependency symfony/process to v5.4.46 [security] ([befaf1d](https://github.com/factorial-io/phabalicious/commit/befaf1d4776e70613731037122d9e0243abf99da))
-
-## [4.0.0-alpha.5](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.4...4.0.0-alpha.5) (2024-11-06)
-
-
-### Bug Fixes
-
-* Fix crashing error with inheritOnly ([67c1510](https://github.com/factorial-io/phabalicious/commit/67c15104afa7a0515e19f2f48ec050dd160bcded))
-
-## [4.0.0-alpha.4](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.2...4.0.0-alpha.4) (2024-11-05)
-
-
-### Bug Fixes
-
-* autocompletion for fish ([1aa027c](https://github.com/factorial-io/phabalicious/commit/1aa027c2f69cbb6b75ac14f0d1437b482989f905))
-
-## [4.0.0-alpha.2](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.1...4.0.0-alpha.2) (2024-11-05)
-
-
-### Bug Fixes
-
-* Fix crahs doing blueprint resolution ([35b02ce](https://github.com/factorial-io/phabalicious/commit/35b02ce42175eafde6346998189506869e114142))
-
-## [4.0.0-alpha.1](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.0...4.0.0-alpha.1) (2024-11-05)
-
-## [4.0.0-alpha.0](https://github.com/factorial-io/phabalicious/compare/1.0.0...4.0.0-alpha.0) (2024-11-05)
-
-## [1.0.0](https://github.com/factorial-io/phabalicious/compare/3.8.33...1.0.0) (2024-11-05)
-
-
-### Features
-
-* Add support for ttl, allow-robots and custom-domains for scotty ([b0f245c](https://github.com/factorial-io/phabalicious/commit/b0f245c9db3841a1e6b6fcfc2c3e52f5bb941ff1))
-
-
-### Bug Fixes
-
-* **deps:** update dependency consolidation/self-update to v3 ([209106a](https://github.com/factorial-io/phabalicious/commit/209106ae17c9ea4d94ac84015272b1f98cfbdab8))
-* Fix return type ([c0c2643](https://github.com/factorial-io/phabalicious/commit/c0c2643dbbc3061f617483665e148da183239288))
-* Get dynamic options handling working ([fc50185](https://github.com/factorial-io/phabalicious/commit/fc5018556a4918ded82968fabe721690d64734be))
-* Small fixes and enable PHP 8.3 tests for ci ([8d7c87b](https://github.com/factorial-io/phabalicious/commit/8d7c87bc481356637380e7cd96dc77962cb5a2a8))
-* Upgrade to PHP 8.1.x and symfony 6.x ([10df878](https://github.com/factorial-io/phabalicious/commit/10df87845882bbf5d03936019a0100a0694d7103))
-* Upgrade to PHP 8.x and symfony 5.x ([de9b5ae](https://github.com/factorial-io/phabalicious/commit/de9b5aee8fdc080b454050ec8ce7e7289f3d18ac))
-* Upgrade to symfony 5 ([587008f](https://github.com/factorial-io/phabalicious/commit/587008f1ac33ee2ea3217aba7a2c19eefc80ac1b))
 
 ## [4.0.0-alpha.6](https://github.com/factorial-io/phabalicious/compare/3.8.34...4.0.0-alpha.6) (2024-11-19)
 
