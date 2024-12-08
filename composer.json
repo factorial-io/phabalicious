@@ -41,7 +41,8 @@
         "phpstan/phpstan-symfony": "^1.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpro/grumphp-shim": "^2",
-        "jangregor/phpstan-prophecy": "^1.0"
+        "jangregor/phpstan-prophecy": "^1.0",
+        "friendsofphp/php-cs-fixer": "^3.65"
     },
     "autoload": {
         "psr-4": {
