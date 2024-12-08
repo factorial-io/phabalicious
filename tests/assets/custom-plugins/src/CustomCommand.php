@@ -14,7 +14,7 @@ class CustomCommand extends BaseCommand
         $this->setName('custom');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;
