@@ -6,7 +6,6 @@ namespace Phabalicious\Configuration;
 
 class HostConfig extends HostConfigAbstract
 {
-
     #[\ReturnTypeWillChange]
     public function offsetGet($offset): mixed
     {

@@ -15,7 +15,6 @@ use Phabalicious\Validation\ValidationService;
 
 class GitMethod extends BaseMethod implements MethodInterface
 {
-
     public function getName(): string
     {
         return 'git';
@@ -23,22 +22,22 @@ class GitMethod extends BaseMethod implements MethodInterface
 
     public function supports(string $method_name): bool
     {
-        return $method_name === 'git';
+        return 'git' === $method_name;
     }
 
     public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
-            'gitOptions' =>  [
+            'gitOptions' => [
                 'pull' => [
                     '--no-edit',
-                    '--rebase'
+                    '--rebase',
                 ],
             ],
             'executables' => [
                 'git' => 'git',
             ],
-        ], $this->getName() . ' global settings');
+        ], $this->getName().' global settings');
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
@@ -48,15 +47,14 @@ class GitMethod extends BaseMethod implements MethodInterface
             'gitRootFolder' => $host_config['rootFolder'] ?? null,
             'ignoreSubmodules' => false,
             'gitOptions' => $configuration_service->getSetting('gitOptions', []),
-        ], $this->getName() . ' method defaults');
+        ], $this->getName().' method defaults');
     }
 
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
+        ValidationErrorBagInterface $errors,
     ) {
-
         $validation = new ValidationService($config, $errors, sprintf('host-config: `%s`', $config['configName']));
         $validation->hasKey('gitRootFolder', 'gitRootFolder should point to your gits root folder.');
         $validation->checkForValidFolderName('gitRootFolder');
@@ -73,9 +71,8 @@ class GitMethod extends BaseMethod implements MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-
-        return parent::isRunningAppRequired($host_config, $context, $task) ||
-            in_array($task, ['version', 'deploy']);
+        return parent::isRunningAppRequired($host_config, $context, $task)
+            || in_array($task, ['version', 'deploy']);
     }
 
     public function getTag(HostConfig $host_config, TaskContextInterface $context)
@@ -83,13 +80,16 @@ class GitMethod extends BaseMethod implements MethodInterface
         $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
         $result = $host_config->shell()->run('#!git describe --exact-match', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $host_config->shell()->popWorkingDir();
+
         return $result->succeeded() ? str_replace('/', '-', $result->getOutput()[0]) : false;
     }
+
     public function getVersion(HostConfig $host_config, TaskContextInterface $context)
     {
         $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
         $result = $host_config->shell()->run('#!git describe --always --tags', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $host_config->shell()->popWorkingDir();
+
         return $result->succeeded() ? str_replace('/', '-', $result->getOutput()[0]) : '';
     }
 
@@ -98,6 +98,7 @@ class GitMethod extends BaseMethod implements MethodInterface
         $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
         $result = $host_config->shell()->run('#!git rev-parse HEAD', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $host_config->shell()->popWorkingDir();
+
         return $result->getOutput()[0];
     }
 
@@ -106,6 +107,7 @@ class GitMethod extends BaseMethod implements MethodInterface
         $host_config->shell()->pushWorkingDir($host_config['gitRootFolder']);
         $result = $host_config->shell()->run('#!git diff --exit-code --quiet', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $host_config->shell()->popWorkingDir();
+
         return $result->succeeded();
     }
 
@@ -115,14 +117,12 @@ class GitMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
      * @throws EarlyTaskExitException
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
-        if ($host_config['deployMethod'] !== 'git') {
-            return ;
+        if ('git' !== $host_config['deployMethod']) {
+            return;
         }
         $shell = $this->getShell($host_config, $context);
         $shell->cd($host_config['gitRootFolder']);
@@ -136,18 +136,17 @@ class GitMethod extends BaseMethod implements MethodInterface
         $branch = $context->get('branch', $host_config['branch']);
 
         $shell->run('#!git fetch -q origin');
-        $shell->run('#!git checkout ' . $branch);
+        $shell->run('#!git checkout '.$branch);
         $shell->run('#!git fetch --tags');
 
         $git_options = implode(' ', Utilities::getProperty($host_config, 'gitOptions.pull', []));
-        $shell->run('#!git pull -q ' . $git_options . ' origin ' . $branch);
+        $shell->run('#!git pull -q '.$git_options.' origin '.$branch);
 
         if (empty($host_config['ignoreSubmodules'])) {
             $shell->run('#!git submodule update --init');
             $shell->run('#!git submodule sync');
         }
     }
-
 
     public function backupPrepare(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -183,7 +182,7 @@ class GitMethod extends BaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        if ($current_stage !== 'installCode') {
+        if ('installCode' !== $current_stage) {
             return;
         }
         /** @var ShellProviderInterface $shell */

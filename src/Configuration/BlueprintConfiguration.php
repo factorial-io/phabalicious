@@ -10,7 +10,6 @@ use Phabalicious\Validation\ValidationService;
 
 class BlueprintConfiguration
 {
-
     /** @var BlueprintTemplate[] */
     private $templates = [];
 
@@ -32,7 +31,7 @@ class BlueprintConfiguration
         foreach ($this->configuration->getAllDockerConfigs() as $key => $data) {
             $data = $this->configuration->getDockerConfigData($key);
             if (!empty($data['blueprint'])) {
-                $this->templates['docker:'  . $key] =
+                $this->templates['docker:'.$key] =
                     new BlueprintTemplate(
                         'docker:key',
                         $this->configuration,
@@ -43,9 +42,9 @@ class BlueprintConfiguration
         }
         foreach ($this->configuration->getAllHostConfigs() as $key => $data) {
             if (!empty($data['blueprint'])) {
-                $this->templates['host:'  . $key] =
+                $this->templates['host:'.$key] =
                     new BlueprintTemplate(
-                        'host:' . $key,
+                        'host:'.$key,
                         $this->configuration,
                         $data->get('blueprint'),
                         $data
@@ -61,26 +60,26 @@ class BlueprintConfiguration
         }
     }
 
-
     /**
      * Get a template by key.
+     *
      * @param string $key
-     * @return BlueprintTemplate
+     *
      * @throws BlueprintTemplateNotFoundException
      */
     public function getTemplate($key = 'default'): BlueprintTemplate
     {
-        if (isset($this->templates['host:' . $key])) {
-            return $this->templates['host:' . $key];
+        if (isset($this->templates['host:'.$key])) {
+            return $this->templates['host:'.$key];
         }
-        if (isset($this->templates['docker:' . $key])) {
-            return $this->templates['docker:' . $key];
+        if (isset($this->templates['docker:'.$key])) {
+            return $this->templates['docker:'.$key];
         }
         if (isset($this->templates['default'])) {
             return $this->templates['default'];
         }
 
-        throw new BlueprintTemplateNotFoundException('Could not find blueprint template with key `' . $key . '`');
+        throw new BlueprintTemplateNotFoundException('Could not find blueprint template with key `'.$key.'`');
     }
 
     public function getTemplates()
@@ -92,6 +91,7 @@ class BlueprintConfiguration
      * Expand variants.
      *
      * @param array $blueprints
+     *
      * @throws BlueprintTemplateNotFoundException
      * @throws ValidationFailedException
      */
@@ -126,12 +126,10 @@ class BlueprintConfiguration
         }
     }
 
-
     /**
      * Get all variants for a given config.
      *
      * @param string $config_name
-     * @return bool|array
      */
     public function getVariants($config_name): bool|array
     {

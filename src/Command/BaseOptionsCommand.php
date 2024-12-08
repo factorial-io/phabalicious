@@ -27,9 +27,8 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
      */
     protected $methods;
 
-    /** @var \Phabalicious\Method\TaskContextInterface */
-    private $context = null;
-
+    /** @var TaskContextInterface */
+    private $context;
 
     public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
     {
@@ -84,12 +83,13 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
 
     public function completeOptionValues($optionName, CompletionContext $context): array
     {
-        if ($optionName == 'offline') {
+        if ('offline' == $optionName) {
             return ['1', '0'];
         }
-        if ($optionName == 'skip-cache') {
+        if ('skip-cache' == $optionName) {
             return ['1', '0'];
         }
+
         return [];
     }
 
@@ -99,7 +99,6 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
     }
 
     /**
-     * @param InputInterface $input
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -121,8 +120,6 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
 
     /**
      * Get the configuration object.
-     *
-     * @return ConfigurationService
      */
     public function getConfiguration(): ConfigurationService
     {
@@ -136,8 +133,6 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
 
     /**
      * Check if all required params are available.
-     *
-     * @param InputInterface $input
      */
     protected function checkAllRequiredOptionsAreNotEmpty(InputInterface $input)
     {
@@ -147,11 +142,10 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         /** @var InputOption $option */
         foreach ($options as $option) {
             $name = $option->getName();
-            /** @var mixed $value */
             $value = $input->getOption($name);
 
-            if ($option->isValueRequired() &&
-                ($value === null || $value === '' || ($option->isArray() && empty($value)))
+            if ($option->isValueRequired()
+                && (null === $value || '' === $value || ($option->isArray() && empty($value)))
             ) {
                 $errors[] = sprintf('The required option --%s is not set or is empty', $name);
             }
@@ -161,6 +155,7 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
             throw new \InvalidArgumentException(implode("\n\n", $errors));
         }
     }
+
     protected function parseScriptArguments(array $defaults, $arguments_string)
     {
         if (empty($arguments_string)) {
@@ -177,14 +172,11 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
     /**
      * Create a TaskContextInterface and prefill it.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @param array $default_arguments
-     * @return TaskContext
      */
     protected function createContext(InputInterface $input, OutputInterface $output, $default_arguments = []): TaskContext
     {
-        $context =  $this->context ?: new TaskContext($this, $input, $output);
+        $context = $this->context ?: new TaskContext($this, $input, $output);
         $arguments = $this->parseScriptArguments($default_arguments, $input->getOption('arguments'));
         $context->set('variables', $arguments);
         $context->set('deployArguments', $arguments);
@@ -194,12 +186,14 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         );
 
         $this->context = $context;
+
         return $this->context;
     }
 
     protected function getContext(): TaskContextInterface
     {
         assert($this->context);
+
         return $this->context;
     }
 

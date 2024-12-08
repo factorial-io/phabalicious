@@ -11,10 +11,9 @@ use Phabalicious\Utilities\Utilities;
 
 class FilesMethod extends BaseMethod implements MethodInterface
 {
-
-    const DEFAULT_FILE_SOURCES = [
+    public const DEFAULT_FILE_SOURCES = [
         'public' => 'filesFolder',
-        'private' => 'privateFilesFolder'
+        'private' => 'privateFilesFolder',
     ];
 
     public function getName(): string
@@ -24,7 +23,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
     public function supports(string $method_name): bool
     {
-        return $method_name === 'files';
+        return 'files' === $method_name;
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
@@ -39,13 +38,13 @@ class FilesMethod extends BaseMethod implements MethodInterface
             'chmod' => 'chmod',
         ];
 
-        return $parent->merge(new Node($return, $this->getName() . ' defautls'));
+        return $parent->merge(new Node($return, $this->getName().' defautls'));
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-        return parent::isRunningAppRequired($host_config, $context, $task) ||
-            in_array($task, ['putFile', 'getFile', 'backup', 'listBackups', 'restore', 'getFilesDump', 'copyFrom']);
+        return parent::isRunningAppRequired($host_config, $context, $task)
+            || in_array($task, ['putFile', 'getFile', 'backup', 'listBackups', 'restore', 'getFilesDump', 'copyFrom']);
     }
 
     public function putFile(HostConfig $config, TaskContextInterface $context)
@@ -53,13 +52,14 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $source = $context->get('sourceFile', false);
         if (!$source) {
             $context->setResult('exitCode', 1);
+
             return;
         }
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($config, $context);
-        $target_file_path = $context->get('destinationFile', false) ?: $config['rootFolder'] . '/' . basename($source);
-        if ($target_file_path[0] !== '/') {
-            $target_file_path = Utilities::resolveRelativePaths($config['rootFolder'] . '/' . $target_file_path);
+        $target_file_path = $context->get('destinationFile', false) ?: $config['rootFolder'].'/'.basename($source);
+        if ('/' !== $target_file_path[0]) {
+            $target_file_path = Utilities::resolveRelativePaths($config['rootFolder'].'/'.$target_file_path);
         }
         $shell->putFile($source, $target_file_path, $context, true);
         $context->setResult('targetFile', $target_file_path);
@@ -68,12 +68,13 @@ class FilesMethod extends BaseMethod implements MethodInterface
     public function getFile(HostConfig $config, TaskContextInterface $context)
     {
         $source = $context->get('sourceFile', false);
-        if ($source[0] !== '/') {
-            $source = Utilities::resolveRelativePaths($config['rootFolder'] . '/' . $source);
+        if ('/' !== $source[0]) {
+            $source = Utilities::resolveRelativePaths($config['rootFolder'].'/'.$source);
         }
         $dest = $context->get('destFile', false);
         if (!$source || !$dest) {
             $context->setResult('exitCode', 1);
+
             return;
         }
         /** @var ShellProviderInterface $shell */
@@ -85,7 +86,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
     public function backup(HostConfig $host_config, TaskContextInterface $context)
     {
-        if ($host_config->get('fileBackupStrategy', 'files') !== 'files') {
+        if ('files' !== $host_config->get('fileBackupStrategy', 'files')) {
             return;
         }
 
@@ -103,19 +104,19 @@ class FilesMethod extends BaseMethod implements MethodInterface
             if (empty($host_config[$folder])) {
                 continue;
             }
-            $backup_file_name = $host_config['backupFolder'] . '/' . implode('--', $basename) . '.' . $key . '.tgz';
+            $backup_file_name = $host_config['backupFolder'].'/'.implode('--', $basename).'.'.$key.'.tgz';
             $source_folders = [$host_config[$folder]];
 
             $backup_file_name = $this->backupFiles($host_config, $context, $shell, $source_folders, $backup_file_name);
 
             if (!$backup_file_name) {
-                $this->logger->error('Could not backup files ' . implode(' ', $source_folders));
+                $this->logger->error('Could not backup files '.implode(' ', $source_folders));
             } else {
-                $this->logger->notice('Files dumped to `' . $backup_file_name . '`');
+                $this->logger->notice('Files dumped to `'.$backup_file_name.'`');
 
                 $context->addResult('files', [[
                     'type' => 'files',
-                    'file' => $backup_file_name
+                    'file' => $backup_file_name,
                 ]]);
             }
         }
@@ -126,7 +127,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         array $source_folders,
-        string $backup_file_name
+        string $backup_file_name,
     ) {
         return $this->tarFiles($context, $shell, $source_folders, $backup_file_name, 'backup');
     }
@@ -136,17 +137,17 @@ class FilesMethod extends BaseMethod implements MethodInterface
         ShellProviderInterface $shell,
         array $source_folders,
         string $backup_file_name,
-        string $type
+        string $type,
     ) {
-        $exclude_files = $context->getConfigurationService()->getSetting('excludeFiles.' . $type, false);
+        $exclude_files = $context->getConfigurationService()->getSetting('excludeFiles.'.$type, false);
         $cmd = ['#!tar'];
 
         if ($exclude_files) {
             foreach ($exclude_files as $e) {
-                $cmd[] = '--exclude=' . $e;
+                $cmd[] = '--exclude='.$e;
             }
         }
-        $cmd[] = ' -czPf ' . $backup_file_name;
+        $cmd[] = ' -czPf '.$backup_file_name;
         $tar_options = $context->get('tarOptions', []);
         $cmd = array_merge($cmd, $tar_options);
 
@@ -181,25 +182,25 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
         $backup_set = $context->get('backup_set', []);
         foreach ($backup_set as $elem) {
-            if ($elem['type'] != 'files') {
+            if ('files' != $elem['type']) {
                 continue;
             }
             $file_type = $this->getFileTypeFromFileName($elem['file']);
             if (empty($host_config[$file_type])) {
                 $this->logger->error(
-                    'Could not find configuration for file-type `' . $file_type . '`, skipping restore'
+                    'Could not find configuration for file-type `'.$file_type.'`, skipping restore'
                 );
                 continue;
             }
 
             $target_dir = $host_config[$file_type];
-            $result = $this->extractFiles($shell, $host_config['backupFolder'] . '/' . $elem['file'], $target_dir);
+            $result = $this->extractFiles($shell, $host_config['backupFolder'].'/'.$elem['file'], $target_dir);
             if (!$result->succeeded()) {
-                $result->throwException('Could not restore backup from ' . $elem['file']);
+                $result->throwException('Could not restore backup from '.$elem['file']);
             }
             $context->addResult('files', [[
                 'type' => 'files',
-                'file' => $elem['file']
+                'file' => $elem['file'],
             ]]);
         }
     }
@@ -207,13 +208,13 @@ class FilesMethod extends BaseMethod implements MethodInterface
     private function extractFiles(
         ShellProviderInterface $shell,
         string $archive,
-        string $target_dir
+        string $target_dir,
     ) {
-        $this->logger->notice('Extracting ' . $archive . ' to ' . $target_dir);
+        $this->logger->notice('Extracting '.$archive.' to '.$target_dir);
 
         if ($shell->exists($target_dir)) {
             // Rename and move away.
-            $backup = $target_dir . date('YmdHms');
+            $backup = $target_dir.date('YmdHms');
             $shell->run(sprintf('chmod u+w %s', $target_dir));
             $shell->run(sprintf('mv %s %s', $target_dir, $backup));
         }
@@ -249,10 +250,10 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $keys = array_merge($keys, self::DEFAULT_FILE_SOURCES);
         foreach ($keys as $key => $name) {
             if (!empty($host_config[$name])) {
-                $filename = $host_config['tmpFolder'] .
-                    '/' . $host_config->getConfigName() .
-                    '.' . $key . '.'
-                    . date('Y-m-d-H-m-s') . '.tgz';
+                $filename = $host_config['tmpFolder'].
+                    '/'.$host_config->getConfigName().
+                    '.'.$key.'.'
+                    .date('Y-m-d-H-m-s').'.tgz';
                 $filename = $this->tarFiles($context, $shell, [$host_config[$name]], $filename, $key);
 
                 if ($filename) {
@@ -271,7 +272,6 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
         $from_config = $context->get('from', false);
         /** @var HostConfig $from_config */
-
         $keys = ['filesFolder', 'privateFilesFolder'];
         foreach ($keys as $key) {
             if (!empty($host_config[$key]) && !empty($from_config[$key])) {
@@ -279,7 +279,6 @@ class FilesMethod extends BaseMethod implements MethodInterface
             }
         }
     }
-
 
     private function rsync(HostConfig $to_config, HostConfig $from_config, TaskContextInterface $context, string $key)
     {
@@ -289,11 +288,12 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $rsync_add_args = $from_config->shell()->getRsyncOptions($to_config, $from_config, $to_path, $from_path);
         if (!$rsync_add_args) {
             $this->logger->error(sprintf(
-                "Shell of type %s does not support rsync in this combination! (`%s` <- `%s`)",
+                'Shell of type %s does not support rsync in this combination! (`%s` <- `%s`)',
                 $from_config->shell()->getName(),
                 $to_config->shell()->getName(),
                 $from_config->shell()->getName()
             ));
+
             return new CommandResult(1, []);
         }
 
@@ -308,7 +308,7 @@ class FilesMethod extends BaseMethod implements MethodInterface
         $exclude_settings = $context->getConfigurationService()->getSetting('excludeFiles.copyFrom', false);
         if ($exclude_settings) {
             foreach ($exclude_settings as $e) {
-                $rsync_args[] = '--exclude ' . $e;
+                $rsync_args[] = '--exclude '.$e;
             }
         }
 
@@ -318,10 +318,10 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
         $rsync_args = array_merge($rsync_args, $rsync_add_args);
 
-
         /** @var ShellProviderInterface $shell */
         $shell = $this->getShell($to_config, $context);
-        return $shell->run('#!rsync ' . implode(' ', $rsync_args));
+
+        return $shell->run('#!rsync '.implode(' ', $rsync_args));
     }
 
     public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)

@@ -15,6 +15,6 @@ class Md5Extension extends AbstractExtension
 
     public function getName(): string
     {
-        return "md5";
+        return 'md5';
     }
 }

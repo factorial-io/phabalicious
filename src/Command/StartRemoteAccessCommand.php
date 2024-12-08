@@ -8,10 +8,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class StartRemoteAccessCommand extends BaseCommand
 {
-
     protected function configure(): void
     {
-        $host= gethostname();
+        $host = gethostname();
         $ip = false;
 
         if ($host) {
@@ -22,7 +21,7 @@ class StartRemoteAccessCommand extends BaseCommand
         $this
             ->setName('start-remote-access')
             ->setDescription('starts remote access')
-            ->setHelp('Depending on the configuration phabalicious will create a tunnel ' .
+            ->setHelp('Depending on the configuration phabalicious will create a tunnel '.
                 'so you can access the installation via a local port or sth similar.');
         $this->addOption(
             'port',
@@ -54,10 +53,6 @@ class StartRemoteAccessCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -92,7 +87,6 @@ class StartRemoteAccessCommand extends BaseCommand
 
         $context->io()->comment('Usually this will open a new remote shell, type `exit` when you are finished.');
 
-
         $shell->startRemoteAccess(
             $ip,
             $port,
@@ -111,9 +105,9 @@ class StartRemoteAccessCommand extends BaseCommand
             '80' => 'http',
             '443' => 'https',
             '22' => 'ssh',
-            '3306' => 'mysql'
+            '3306' => 'mysql',
         ];
 
-        return isset($mapping[$port]) ? $mapping[$port] . '://' : '';
+        return isset($mapping[$port]) ? $mapping[$port].'://' : '';
     }
 }

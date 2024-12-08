@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -13,7 +15,6 @@ use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Method\MethodFactory;
-use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,7 +29,7 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
         ConfigurationService $configuration,
         MethodFactory $method_factory,
         $executable_name,
-        $run_interactively = false
+        $run_interactively = false,
     ) {
         $this->executableName = $executable_name;
         $this->runInteractively = $run_interactively;
@@ -40,8 +41,8 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
         parent::configure();
         $this
             ->setName($this->executableName)
-            ->setDescription('Runs ' . $this->executableName)
-            ->setHelp('Runs a ' . $this->executableName . ' command against the given host-config');
+            ->setDescription('Runs '.$this->executableName)
+            ->setHelp('Runs a '.$this->executableName.' command against the given host-config');
         $this->addArgument(
             'command-arguments',
             InputArgument::REQUIRED | InputArgument::IS_ARRAY,
@@ -50,11 +51,6 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -86,10 +82,7 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
             $command = $context->getResult('command');
 
             if (!$command) {
-                throw new \RuntimeException(sprintf(
-                    'No command-arguments returned for %s-command!',
-                    $this->executableName
-                ));
+                throw new \RuntimeException(sprintf('No command-arguments returned for %s-command!', $this->executableName));
             }
 
             $context->io()->comment(sprintf(
@@ -99,6 +92,7 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
             ));
 
             $options = $this->getSuitableShellOptions($output);
+
             return $this->startInteractiveShell($context, $shell, $command, $options)
                 ->getExitCode();
         }

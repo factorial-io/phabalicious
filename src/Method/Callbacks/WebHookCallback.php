@@ -11,7 +11,6 @@ use Phabalicious\Validation\ValidationErrorBag;
 
 class WebHookCallback implements CallbackInterface
 {
-
     protected $method;
 
     public static function getName(): string
@@ -21,7 +20,7 @@ class WebHookCallback implements CallbackInterface
 
     public static function requires(): string
     {
-        return "3.6";
+        return '3.6';
     }
 
     public function __construct(?WebhookMethod $method = null)
@@ -36,7 +35,7 @@ class WebHookCallback implements CallbackInterface
             $this->method = new WebhookMethod($configurationService->getLogger());
             $errors = new ValidationErrorBag();
             $config = [
-                'webhooks' =>$configurationService->getSetting('webhooks', []),
+                'webhooks' => $configurationService->getSetting('webhooks', []),
             ];
             $config = Utilities::mergeData($this->method->getGlobalSettings($configurationService)->asArray(), $config);
             $configurationService->setSetting('webhooks', $config['webhooks']);
@@ -53,10 +52,7 @@ class WebHookCallback implements CallbackInterface
     }
 
     /**
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param mixed ...$args
-     *
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws ValidationFailedException
      */
     public function handle(TaskContextInterface $context, ...$args)
     {

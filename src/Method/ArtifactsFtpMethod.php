@@ -16,13 +16,12 @@ use Psr\Log\LoggerInterface;
 
 class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 {
-
-    const STAGES = [
+    public const STAGES = [
         'installCode',
         'installDependencies',
         'runActions',
         'runDeployScript',
-        'syncToFtp'
+        'syncToFtp',
     ];
 
     public function __construct(LoggerInterface $logger)
@@ -38,7 +37,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 
     public function supports(string $method_name): bool
     {
-        return in_array($method_name, array('ftp-sync', $this->getName()));
+        return in_array($method_name, ['ftp-sync', $this->getName()]);
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
@@ -64,7 +63,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
                     'action' => 'copy',
                     'arguments' => [
                         'from' => '*',
-                        'to' => '.'
+                        'to' => '.',
                     ],
                 ],
                 [
@@ -74,28 +73,21 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
                         'node_modules/',
                         '.fabfile.yaml',
                         '.projectCreated.yaml',
-                        'fabfile.yaml'
+                        'fabfile.yaml',
                     ],
-                ]
+                ],
             ],
         ];
 
-        return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
+        return $parent->merge(new Node($return, $this->getName().' method defaults'));
     }
 
-  /**
-   * @param \Phabalicious\Configuration\ConfigurationService $configuration_service
-   * @param \Phabalicious\Configuration\Storage\Node $config
-   * @param ValidationErrorBagInterface $errors
-   */
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
+        ValidationErrorBagInterface $errors,
     ) {
-
         parent::validateConfig($configuration_service, $config, $errors);
-
 
         if (in_array('drush', $config['needs'])) {
             $errors->addError(
@@ -128,7 +120,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
             if (empty($config[self::PREFS_KEY]['password'])) {
                 $errors->addWarning(
                     'password',
-                    'Support for plain passwords is deprecated and will ' .
+                    'Support for plain passwords is deprecated and will '.
                     'be removed in a future version of phab. Please use the secret-system instead!'
                 );
             }
@@ -137,9 +129,6 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     *
      * @throws MethodNotFoundException
      * @throws MissingScriptCallbackImplementation
      * @throws TaskNotFoundInMethodException
@@ -165,26 +154,17 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
 
         $this->cleanupDirectories($host_config, $context);
 
-
         // Do not run any next tasks.
         $context->setResult('runNextTasks', []);
     }
 
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
         $this->runStageSteps($host_config, $context, [
-            'syncToFtp'
+            'syncToFtp',
         ]);
     }
 
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     */
     protected function syncToFtp(HostConfig $host_config, TaskContextInterface $context)
     {
         $shell = $this->getShell($host_config, $context);
@@ -192,11 +172,11 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         $exclude = $context->getResult(ExcludeAction::FTP_SYNC_EXCLUDES, []);
         $options = implode(' ', $host_config[self::PREFS_KEY]['lftpOptions']);
         if (count($exclude)) {
-            $options .= ' --exclude ' . implode(' --exclude ', $exclude);
+            $options .= ' --exclude '.implode(' --exclude ', $exclude);
         }
 
         // Now we can sync the files via FTP.
-        $command_file = $host_config['tmpFolder'] . '/lftp_commands_' . time() . '.x';
+        $command_file = $host_config['tmpFolder'].'/lftp_commands_'.time().'.x';
         $shell->run(sprintf('touch %s', $command_file));
         $shell->run(sprintf(
             "echo 'open -u %s,%s -p%s %s' >> %s",

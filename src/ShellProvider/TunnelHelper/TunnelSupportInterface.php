@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\ShellProvider\TunnelHelper;
 
 interface TunnelSupportInterface

@@ -22,6 +22,7 @@ class InputDefinitionWithDynamicOptions extends InputDefinition
             $this->addOption(new InputOption($name, null, InputOption::VALUE_OPTIONAL));
             $this->dynamicOptions[] = $name;
         }
+
         return parent::getOption($name);
     }
 
@@ -30,9 +31,6 @@ class InputDefinitionWithDynamicOptions extends InputDefinition
         return true;
     }
 
-  /**
-   * @return array
-   */
     public function getDynamicOptions(): array
     {
         return $this->dynamicOptions;

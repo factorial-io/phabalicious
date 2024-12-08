@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Utilities;
 
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 
 interface PasswordManagerInterface

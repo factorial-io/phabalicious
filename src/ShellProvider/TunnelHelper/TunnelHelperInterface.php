@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\ShellProvider\TunnelHelper;
 
 use Phabalicious\Configuration\HostConfig;

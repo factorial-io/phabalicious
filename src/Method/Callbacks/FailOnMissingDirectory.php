@@ -8,7 +8,6 @@ use Phabalicious\Scaffolder\Callbacks\CallbackInterface;
 
 class FailOnMissingDirectory implements CallbackInterface
 {
-
     protected $method;
 
     public static function getName(): string
@@ -18,7 +17,7 @@ class FailOnMissingDirectory implements CallbackInterface
 
     public static function requires(): string
     {
-        return "3.6";
+        return '3.6';
     }
 
     public function __construct(ScriptMethod $method)
@@ -30,7 +29,7 @@ class FailOnMissingDirectory implements CallbackInterface
     {
         $dir = array_shift($args);
         if (!$context->getShell()->exists($dir)) {
-            throw new \Exception('`' . $dir . '` . does not exist!');
+            throw new \Exception('`'.$dir.'` . does not exist!');
         }
     }
 }

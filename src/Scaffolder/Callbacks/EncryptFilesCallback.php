@@ -8,19 +8,11 @@ use Phabalicious\Utilities\Utilities;
 
 class EncryptFilesCallback extends CryptoBaseCallback
 {
-
-
-    /**
-     * @inheritDoc
-     */
     public static function getName(): string
     {
         return 'encrypt_files';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function requires(): string
     {
         return '3.7';
@@ -51,9 +43,9 @@ class EncryptFilesCallback extends CryptoBaseCallback
             wordwrap($encrypted, 80, "\n", true)
         );
 
-        $target_file_name = $output_dir . '/' . basename($input) . '.enc';
+        $target_file_name = $output_dir.'/'.basename($input).'.enc';
         $context->getConfigurationService()->getLogger()->info(sprintf(
-            "%s: Writing encrypted data to %s",
+            '%s: Writing encrypted data to %s',
             $this->getName(),
             $target_file_name
         ));

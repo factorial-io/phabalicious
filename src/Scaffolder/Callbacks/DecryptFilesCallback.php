@@ -2,25 +2,16 @@
 
 namespace Phabalicious\Scaffolder\Callbacks;
 
-use Defuse\Crypto\Crypto;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Scaffolder\Callbacks\FileContentsHandler\DecryptFileContentsHandler;
 
 class DecryptFilesCallback extends CryptoBaseCallback
 {
-
-
-    /**
-     * @inheritDoc
-     */
     public static function getName(): string
     {
         return 'decrypt_files';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function requires(): string
     {
         return '3.7';
@@ -35,7 +26,6 @@ class DecryptFilesCallback extends CryptoBaseCallback
             throw new \RuntimeException('Could not find secret `%s`!', $arguments[2]);
         }
 
-
         foreach ($this->iterateOverFiles($context, $arguments[0]) as $file) {
             $this->decryptFileTo($context, $file, $arguments[1], $secret);
         }
@@ -47,10 +37,10 @@ class DecryptFilesCallback extends CryptoBaseCallback
 
         $decrypted = DecryptFileContentsHandler::decryptFileContent($content, $secret);
 
-        $target_file_name = $output_dir . '/' . str_replace('.enc', '', basename($input));
+        $target_file_name = $output_dir.'/'.str_replace('.enc', '', basename($input));
 
         $context->getConfigurationService()->getLogger()->info(sprintf(
-            "%s: Writing decrypted data to %s",
+            '%s: Writing decrypted data to %s',
             $this->getName(),
             $target_file_name
         ));

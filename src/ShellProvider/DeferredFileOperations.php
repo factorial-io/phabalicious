@@ -2,14 +2,13 @@
 
 namespace Phabalicious\ShellProvider;
 
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\Utilities;
 
 class DeferredFileOperations implements FileOperationsInterface
 {
     /**
-     * @var \Phabalicious\ShellProvider\ShellProviderInterface
+     * @var ShellProviderInterface
      */
     private $shell;
 
@@ -22,11 +21,12 @@ class DeferredFileOperations implements FileOperationsInterface
     {
         $tmp_file_name = tempnam(
             $this->shell->getHostConfig()->get('tmpFolder', '/tmp'),
-            Utilities::getTempNamePrefix($this->shell->getHostConfig()) . '-' . basename($filename)
+            Utilities::getTempNamePrefix($this->shell->getHostConfig()).'-'.basename($filename)
         );
         $this->shell->getFile($filename, $tmp_file_name, $context);
-        $result =  file_get_contents($tmp_file_name);
+        $result = file_get_contents($tmp_file_name);
         @unlink($tmp_file_name);
+
         return $result;
     }
 
@@ -34,9 +34,9 @@ class DeferredFileOperations implements FileOperationsInterface
     {
         $tmp_file_name = tempnam(
             $this->shell->getHostConfig()->get('tmpFolder', '/tmp'),
-            Utilities::getTempNamePrefix($this->shell->getHostConfig()) . '-' . basename($filename)
+            Utilities::getTempNamePrefix($this->shell->getHostConfig()).'-'.basename($filename)
         );
-        $result =  file_put_contents($tmp_file_name, $data);
+        $result = file_put_contents($tmp_file_name, $data);
         $this->shell->putFile($tmp_file_name, $filename, $context);
         @unlink($tmp_file_name);
 
@@ -49,6 +49,7 @@ class DeferredFileOperations implements FileOperationsInterface
         if ($result->failed() || count($result->getOutput()) < 1) {
             return false;
         }
+
         return $result->getOutput()[0];
     }
 }

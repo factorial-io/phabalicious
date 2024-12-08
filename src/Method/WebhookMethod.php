@@ -17,7 +17,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class WebhookMethod extends BaseMethod implements MethodInterface
 {
-
     private $handletaskSpecificWebhooks = [];
 
     public function getName(): string
@@ -40,15 +39,14 @@ class WebhookMethod extends BaseMethod implements MethodInterface
                 'options' => [
                     'headers' => [
                         'User-Agent' => 'phabalicious',
-                        'Accept'     => 'application/json',
+                        'Accept' => 'application/json',
                     ],
                 ],
-            ]
+            ],
         ];
 
-        return $parent->merge(new Node($settings, $this->getName() . ' global settings'));
+        return $parent->merge(new Node($settings, $this->getName().' global settings'));
     }
-
 
     public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors)
     {
@@ -59,7 +57,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         $defaults = $settings['webhooks']['defaults'] ?? [];
 
         foreach ($settings['webhooks'] as $name => $webhook) {
-            if ($name == 'defaults') {
+            if ('defaults' == $name) {
                 continue;
             }
 
@@ -75,10 +73,6 @@ class WebhookMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param HostConfig $config
-     * @param string $task
-     * @param TaskContextInterface $context
-     *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function runTaskSpecificWebhooks(HostConfig $config, string $task, TaskContextInterface $context)
@@ -104,10 +98,6 @@ class WebhookMethod extends BaseMethod implements MethodInterface
     /**
      * Run fallback webhooks.
      *
-     * @param string $task
-     * @param HostConfig $config
-     * @param TaskContextInterface $context
-     *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
@@ -119,24 +109,16 @@ class WebhookMethod extends BaseMethod implements MethodInterface
     /**
      * Run preflight webhooks.
      *
-     * @param string $task
-     * @param HostConfig $config
-     * @param TaskContextInterface $context
-     *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
         parent::preflightTask($task, $config, $context);
-        $this->runTaskSpecificWebhooks($config, $task . 'Prepare', $context);
+        $this->runTaskSpecificWebhooks($config, $task.'Prepare', $context);
     }
 
     /**
      * Run postflight webhooks.
-     *
-     * @param string $task
-     * @param HostConfig $config
-     * @param TaskContextInterface $context
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -151,9 +133,9 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             $this->runTaskSpecificWebhooks($config, $task, $context);
         }
 
-        $this->runTaskSpecificWebhooks($config, $task . 'Finished', $context);
+        $this->runTaskSpecificWebhooks($config, $task.'Finished', $context);
 
-        foreach ([$task . 'Prepare', $task, $task . 'Finished'] as $t) {
+        foreach ([$task.'Prepare', $task, $task.'Finished'] as $t) {
             unset($this->handletaskSpecificWebhooks[$t]);
         }
     }
@@ -197,9 +179,9 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         if (!empty($webhook['payload'])) {
             $payload = $webhook['payload'];
 
-            if ($webhook['method'] == 'get') {
-                $webhook['url'] .= '?' . http_build_query($payload);
-            } elseif ($webhook['method'] == 'post') {
+            if ('get' == $webhook['method']) {
+                $webhook['url'] .= '?'.http_build_query($payload);
+            } elseif ('post' == $webhook['method']) {
                 $format = $webhook['format'];
                 $webhook['options'][$format] = $payload;
             }
@@ -211,8 +193,8 @@ class WebhookMethod extends BaseMethod implements MethodInterface
             $webhook['method'],
             $webhook['format']
         ));
-        $this->logger->info('payload: ' . print_r($webhook['payload'], true));
-        $this->logger->debug('guzzle options: ' . print_r($webhook['options'], true));
+        $this->logger->info('payload: '.print_r($webhook['payload'], true));
+        $this->logger->debug('guzzle options: '.print_r($webhook['options'], true));
 
         $client = new Client();
         $response = $client->request(
@@ -231,9 +213,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * Implements alter hook script callbacks
-     *
-     * @param CallbackOptions $options
+     * Implements alter hook script callbacks.
      */
     public function alterScriptCallbacks(CallbackOptions &$options)
     {
@@ -241,17 +221,14 @@ class WebhookMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param TaskContextInterface $context
      * @param Response|bool $result
-     * @param string $webhook_name
-     * @param string $msg
      */
     public function handleWebhookResult(TaskContextInterface $context, $result, string $webhook_name, string $msg)
     {
         if (!$result) {
             throw new \InvalidArgumentException($msg);
         } else {
-            $result = (string)$result->getBody();
+            $result = (string) $result->getBody();
             if (!empty($result)) {
                 // Try to parse json.
                 $json = json_decode($result, true);

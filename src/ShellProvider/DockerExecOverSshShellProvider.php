@@ -16,15 +16,10 @@ class DockerExecOverSshShellProvider extends SshShellProvider
 {
     public const PROVIDER_NAME = 'docker-exec-over-ssh';
 
-    /**
-     * @var DockerExecShellProvider
-     */
     protected DockerExecShellProvider $dockerExec;
 
     /**
      * Shell to run docker commands on host.
-     *
-     * @var ShellProviderInterface
      */
     protected ShellProviderInterface $sshShell;
 
@@ -73,11 +68,11 @@ class DockerExecOverSshShellProvider extends SshShellProvider
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $parent =  parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
         $result = [];
         $result['dockerExecutable'] = 'docker';
 
-        return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
+        return $parent->merge(new Node($result, $this->getName().' shellprovider defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
@@ -99,10 +94,7 @@ class DockerExecOverSshShellProvider extends SshShellProvider
         return array_merge($ssh_command, $command);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function exists($file):bool
+    public function exists($file): bool
     {
         return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::NONE, false)
             ->succeeded();
@@ -129,9 +121,6 @@ class DockerExecOverSshShellProvider extends SshShellProvider
         return Utilities::getTempFileName($this->getHostConfig(), $str);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $tmp_dest = $this->getTempFileName($dest);
@@ -149,9 +138,6 @@ class DockerExecOverSshShellProvider extends SshShellProvider
         return $result->succeeded();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $tmp_source = $this->getTempFileName($source);
@@ -169,17 +155,13 @@ class DockerExecOverSshShellProvider extends SshShellProvider
         return $result;
     }
 
-
-    /**
-     * {@inheritdoc}
-     */
     public function wrapCommandInLoginShell(array $command): array
     {
         return [
             '/bin/sh',
             '-l',
             '-c',
-            '\'' . implode(" ", $command) . '\'',
+            '\''.implode(' ', $command).'\'',
         ];
     }
 }

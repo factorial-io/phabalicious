@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\Utilities;
 
 use Psr\Log\LoggerInterface;
@@ -8,17 +7,14 @@ use Psr\Log\LogLevel;
 
 class TestableLogger implements LoggerInterface
 {
-
     private $storage = [];
+
     /**
      * System is unusable.
      *
      * @param string $message
-     * @param array $context
-     *
-     * @return void
      */
-    public function emergency($message, array $context = array()): void
+    public function emergency($message, array $context = []): void
     {
         $this->log(LogLevel::EMERGENCY, $message);
     }
@@ -30,11 +26,8 @@ class TestableLogger implements LoggerInterface
      * trigger the SMS alerts and wake you up.
      *
      * @param string $message
-     * @param array $context
-     *
-     * @return void
      */
-    public function alert($message, array $context = array()): void
+    public function alert($message, array $context = []): void
     {
         $this->log(LogLevel::ALERT, $message);
     }
@@ -45,11 +38,8 @@ class TestableLogger implements LoggerInterface
      * Example: Application component unavailable, unexpected exception.
      *
      * @param string $message
-     * @param array $context
-     *
-     * @return void
      */
-    public function critical($message, array $context = array()): void
+    public function critical($message, array $context = []): void
     {
         $this->log(LogLevel::CRITICAL, $message);
     }
@@ -59,11 +49,8 @@ class TestableLogger implements LoggerInterface
      * be logged and monitored.
      *
      * @param string $message
-     * @param array $context
-     *
-     * @return void
      */
-    public function error($message, array $context = array()): void
+    public function error($message, array $context = []): void
     {
         $this->log(LogLevel::ERROR, $message);
     }
@@ -75,11 +62,8 @@ class TestableLogger implements LoggerInterface
      * that are not necessarily wrong.
      *
      * @param string $message
-     * @param array $context
-     *
-     * @return void
      */
-    public function warning($message, array $context = array()): void
+    public function warning($message, array $context = []): void
     {
         $this->log(LogLevel::WARNING, $message);
     }
@@ -88,11 +72,8 @@ class TestableLogger implements LoggerInterface
      * Normal but significant events.
      *
      * @param string $message
-     * @param array $context
-     *
-     * @return void
      */
-    public function notice($message, array $context = array()): void
+    public function notice($message, array $context = []): void
     {
         $this->log(LogLevel::NOTICE, $message);
     }
@@ -103,11 +84,8 @@ class TestableLogger implements LoggerInterface
      * Example: User logs in, SQL logs.
      *
      * @param string $message
-     * @param array $context
-     *
-     * @return void
      */
-    public function info($message, array $context = array()): void
+    public function info($message, array $context = []): void
     {
         $this->log(LogLevel::INFO, $message);
     }
@@ -116,11 +94,8 @@ class TestableLogger implements LoggerInterface
      * Detailed debug information.
      *
      * @param string $message
-     * @param array $context
-     *
-     * @return void
      */
-    public function debug($message, array $context = array()): void
+    public function debug($message, array $context = []): void
     {
         $this->log(LogLevel::DEBUG, $message);
     }
@@ -128,13 +103,9 @@ class TestableLogger implements LoggerInterface
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed $level
      * @param string $message
-     * @param array $context
-     *
-     * @return void
      */
-    public function log($level, $message, array $context = array()): void
+    public function log($level, $message, array $context = []): void
     {
         if (!isset($this->storage[$level])) {
             $this->storage[$level] = [];
@@ -149,9 +120,9 @@ class TestableLogger implements LoggerInterface
 
     public function containsMessage($level, $message)
     {
-        return isset($this->storage[$level]) &&
-            array_reduce($this->storage[$level], function ($carry, $item) use ($message) {
-                return strpos($message, $item) !== 0 ? true : $carry;
+        return isset($this->storage[$level])
+            && array_reduce($this->storage[$level], function ($carry, $item) use ($message) {
+                return 0 !== strpos($message, $item) ? true : $carry;
             }, false);
     }
 }

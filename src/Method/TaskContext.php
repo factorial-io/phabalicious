@@ -2,11 +2,11 @@
 
 namespace Phabalicious\Method;
 
-use Phabalicious\Utilities\PasswordManagerInterface;
 use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
+use Phabalicious\Utilities\PasswordManagerInterface;
 use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -59,7 +59,7 @@ class TaskContext implements TaskContextInterface
 
     public function get(string $key, $default = null)
     {
-         return $this->data[$key] ?? $default;
+        return $this->data[$key] ?? $default;
     }
 
     public function getData(): array
@@ -105,9 +105,6 @@ class TaskContext implements TaskContextInterface
         $this->input = $input;
     }
 
-    /**
-     * @return InputInterface
-     */
     public function getInput(): InputInterface
     {
         return $this->input;
@@ -123,7 +120,7 @@ class TaskContext implements TaskContextInterface
         return $this->commandResult;
     }
 
-    public function getShell() : ?ShellProviderInterface
+    public function getShell(): ?ShellProviderInterface
     {
         return $this->shell;
     }
@@ -177,6 +174,7 @@ class TaskContext implements TaskContextInterface
     {
         $question = new Question($question);
         $question_helper = new QuestionHelper();
+
         return $question_helper->ask($this->input, $this->output, $question);
     }
 
@@ -185,9 +183,6 @@ class TaskContext implements TaskContextInterface
         return $this->getConfigurationService()->getPasswordManager();
     }
 
-    /**
-     * @return SymfonyStyle
-     */
     public function io(): SymfonyStyle
     {
         if (!$this->io) {
@@ -198,6 +193,7 @@ class TaskContext implements TaskContextInterface
             }
             $this->io = new SymfonyStyle($this->getInput(), $output);
         }
+
         return $this->io;
     }
 

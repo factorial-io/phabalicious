@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Method;
 
-use InvalidArgumentException;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\RunOptions;
@@ -15,27 +14,27 @@ class ScottyCtlOptions
 
     public function __construct(
         protected readonly HostConfig $hostConfig,
-        protected readonly TaskContextInterface $context
+        protected readonly TaskContextInterface $context,
     ) {
         $this->data = [];
-        $scotty_data = $hostConfig->getData()->get("scotty");
+        $scotty_data = $hostConfig->getData()->get('scotty');
         if (!$scotty_data) {
-            throw new InvalidArgumentException("Missing scotty configuration");
+            throw new \InvalidArgumentException('Missing scotty configuration');
         }
 
-        foreach (["server", "access-token"] as $key) {
+        foreach (['server', 'access-token'] as $key) {
             if ($scotty_data->has($key)) {
                 $this->data[$key] = $scotty_data->get($key)->getValue();
             }
         }
-        if ($this->data["access-token"]) {
+        if ($this->data['access-token']) {
             $this->context
                 ->getPasswordManager()
-                ->registerCustomSecretToObfuscate($this->data["access-token"]);
+                ->registerCustomSecretToObfuscate($this->data['access-token']);
         }
 
-        $this->data["app-name"] =
-            $scotty_data["app-name"] ?? "%host.configName%";
+        $this->data['app-name'] =
+            $scotty_data['app-name'] ?? '%host.configName%';
     }
 
     public function build(string $command, array $additional_data = []): array
@@ -56,13 +55,13 @@ class ScottyCtlOptions
 
     protected function buildImpl(array $data, string $command): array
     {
-        $options = ["--server", $this->data["server"]];
-        if ($data["access-token"]) {
-            $options[] = "--access-token";
-            $options[] = $data["access-token"];
+        $options = ['--server', $this->data['server']];
+        if ($data['access-token']) {
+            $options[] = '--access-token';
+            $options[] = $data['access-token'];
         }
         $options[] = $command;
-        $options[] = $data["app-name"];
+        $options[] = $data['app-name'];
 
         return $options;
     }
@@ -70,12 +69,12 @@ class ScottyCtlOptions
     public function runInShell(
         ShellProviderInterface $shell,
         string $command,
-        array $add_data = []
+        array $add_data = [],
     ): CommandResult {
         return $shell->run(
             sprintf(
-                "#!scottyctl %s",
-                implode(" ", $this->build($command, $add_data))
+                '#!scottyctl %s',
+                implode(' ', $this->build($command, $add_data))
             ),
             RunOptions::CAPTURE_AND_HIDE_OUTPUT,
             false

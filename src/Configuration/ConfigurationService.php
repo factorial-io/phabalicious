@@ -30,9 +30,9 @@ use Symfony\Component\Yaml\Yaml;
 
 class ConfigurationService
 {
-    const MAX_FILECACHE_LIFETIME = 60 * 60;
+    public const MAX_FILECACHE_LIFETIME = 60 * 60;
 
-    const DISCARD_DEPRECATED_PROPERTIES = false;
+    public const DISCARD_DEPRECATED_PROPERTIES = false;
 
     /**
      * @var LoggerInterface
@@ -64,19 +64,19 @@ class ConfigurationService
     private $disallowDeepMergeForKeys = [];
 
     /** @var PasswordManagerInterface */
-    private $passwordManager = null;
+    private $passwordManager;
 
     private $inheritanceBaseUrl = false;
 
-  /**
-   * @var bool
-   */
+    /**
+     * @var bool
+     */
     protected $strictRemoteHandling = false;
 
     /**
      * @var ValidationErrorBag
      */
-    protected $deprecationMessages = null;
+    protected $deprecationMessages;
 
     public function __construct(Application $application, LoggerInterface $logger)
     {
@@ -103,10 +103,6 @@ class ConfigurationService
     /**
      * Read configuration from a file.
      *
-     * @param string $path
-     * @param string $override
-     *
-     * @return bool
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
      * @throws MismatchedVersionException
@@ -128,9 +124,9 @@ class ConfigurationService
 
         if (!$fabfile || !file_exists($fabfile)) {
             if (!empty($override)) {
-                throw new FabfileNotFoundException("Could not find fabfile at '" . $override . "'");
+                throw new FabfileNotFoundException("Could not find fabfile at '".$override."'");
             } else {
-                throw new FabfileNotFoundException("Could not find any fabfile at '" . $path . "'");
+                throw new FabfileNotFoundException("Could not find any fabfile at '".$path."'");
             }
         }
 
@@ -138,7 +134,7 @@ class ConfigurationService
 
         $data = $this->readFile($fabfile);
         if (!$data) {
-            throw new FabfileNotReadableException("Could not read from '" . $fabfile . "'");
+            throw new FabfileNotReadableException("Could not read from '".$fabfile."'");
         }
         $this->fabfileLocation = realpath($fabfile);
 
@@ -217,13 +213,13 @@ class ConfigurationService
         $depth = 0;
         while ($depth <= 5) {
             foreach ($candidates as $candidate) {
-                $p = $path . '/' . $candidate;
-                $this->logger->debug('trying ' . $p);
+                $p = $path.'/'.$candidate;
+                $this->logger->debug('trying '.$p);
                 if (file_exists($p)) {
                     return $p;
                 }
             }
-            $depth++;
+            ++$depth;
             $path = dirname($path);
         }
 
@@ -233,40 +229,27 @@ class ConfigurationService
     /**
      * Check requires of data.
      *
-     * @param Node $data
-     * @param $file
      * @throws MismatchedVersionException
      */
     protected function checkRequires(Node $data, $file)
     {
-
         if ($data->has('requires')) {
             $required_version = $data['requires'];
             // Alpha or beta versions act like released versions for requires.
             $app_version = Utilities::getNextStableVersion($this->application->getVersion());
-            $this->getLogger()->debug(sprintf("required %s in %s, app has %s", $required_version, $file, $app_version));
+            $this->getLogger()->debug(sprintf('required %s in %s, app has %s', $required_version, $file, $app_version));
             if (Comparator::greaterThan($required_version, $app_version)) {
-                throw new MismatchedVersionException(
-                    sprintf(
-                        'Could not read from %s because of version mismatch. %s is required, current app is %s',
-                        $file,
-                        $required_version,
-                        $app_version
-                    )
-                );
+                throw new MismatchedVersionException(sprintf('Could not read from %s because of version mismatch. %s is required, current app is %s', $file, $required_version, $app_version));
             }
         }
     }
 
     /**
-     * @param string $file
-     *
-     * @return mixed
      * @throws MismatchedVersionException
      */
     protected function readFile(string $file): mixed
     {
-        $cid = 'yaml:' . $file;
+        $cid = 'yaml:'.$file;
         if (isset($this->cache[$cid])) {
             return $this->cache[$cid];
         }
@@ -277,14 +260,14 @@ class ConfigurationService
         } catch (\Exception $e) {
             throw new YamlParseException("Could not parse file `$file`", 0, $e);
         }
-        $ext = '.' . pathinfo($file, PATHINFO_EXTENSION);
-        $override_file = str_replace($ext, '.override' . $ext, $file);
+        $ext = '.'.pathinfo($file, PATHINFO_EXTENSION);
+        $override_file = str_replace($ext, '.override'.$ext, $file);
         $this->logger->debug(sprintf('Trying to read data from override `%s`', $override_file));
 
         if (file_exists($override_file)) {
             $data->merge(Node::parseYamlFile($override_file));
         }
-        $env_file = dirname($file) . '/.env';
+        $env_file = dirname($file).'/.env';
         if (file_exists($env_file)) {
             $this->logger->info(sprintf('Reading .env from %s', $env_file));
             $dotenv = new Dotenv();
@@ -298,8 +281,8 @@ class ConfigurationService
 
         $this->checkRequires($data, $file);
 
-
         $this->cache[$cid] = $data;
+
         return $data;
     }
 
@@ -321,12 +304,12 @@ class ConfigurationService
     public function mergeData(
         Node $data,
         Node $override_data,
-        $protected_properties_key = 'protectedProperties'
+        $protected_properties_key = 'protectedProperties',
     ): Node {
         $properties_to_restore = [];
         if ($protected_properties = $data[$protected_properties_key] ?? false) {
             if (!is_array($protected_properties)) {
-                $protected_properties = [ $protected_properties ];
+                $protected_properties = [$protected_properties];
             }
             foreach ($protected_properties as $prop) {
                 $properties_to_restore[$prop] = Utilities::getProperty($data, $prop);
@@ -338,6 +321,7 @@ class ConfigurationService
         foreach ($properties_to_restore as $prop => $value) {
             $data->setProperty($prop, $value);
         }
+
         return $data;
     }
 
@@ -350,23 +334,21 @@ class ConfigurationService
                 $data[$key] = $data->get($key)->baseOntop($defaults->get($key));
             }
         }
+
         return $data;
     }
 
     /**
      * Resolve relative includes to absolute paths/urls.
      *
-     * @param \Phabalicious\Configuration\Storage\Node $data
-     * @param  $base_url
-     *
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws FabfileNotReadableException
      */
     public function resolveRelativeInheritanceRefs(
         Node $data,
         $base_url,
-        string $inherit_key = "inheritsFrom"
+        string $inherit_key = 'inheritsFrom',
     ) {
-        if ($base_url && substr($base_url, -1) !== '/') {
+        if ($base_url && '/' !== substr($base_url, -1)) {
             $base_url .= '/';
         }
         /** @var Node $node */
@@ -378,27 +360,25 @@ class ConfigurationService
                 $item = $child->getValue();
 
                 // Skip urls and absolute paths:
-                if ($item[0] === '/' || Utilities::isHttpUrl($item) || Utilities::isPharUrl($item)) {
+                if ('/' === $item[0] || Utilities::isHttpUrl($item) || Utilities::isPharUrl($item)) {
                     continue;
                 }
 
                 $parent = dirname($child->getSource()->getSource());
-                if (substr($parent, -1) !== '/') {
+                if ('/' !== substr($parent, -1)) {
                     $parent .= '/';
                 }
                 $file_ext = pathinfo($item, PATHINFO_EXTENSION);
 
-                if ($item[0] === '.') {
-                    $item = Utilities::resolveRelativePaths($parent . $item);
-                } elseif ($item[0] === '@') {
+                if ('.' === $item[0]) {
+                    $item = Utilities::resolveRelativePaths($parent.$item);
+                } elseif ('@' === $item[0]) {
                     if (!$base_url) {
-                        throw new FabfileNotReadableException(
-                            "No base url provided, can't resolve relative references!"
-                        );
+                        throw new FabfileNotReadableException("No base url provided, can't resolve relative references!");
                     }
-                    $item = Utilities::resolveRelativePaths($base_url . '.' . substr($item, 1));
+                    $item = Utilities::resolveRelativePaths($base_url.'.'.substr($item, 1));
                 } elseif (in_array($file_ext, ['yml', 'yaml'], true)) {
-                    $item = Utilities::resolveRelativePaths($parent . './' . $item);
+                    $item = Utilities::resolveRelativePaths($parent.'./'.$item);
                 }
                 $child->setValue($item);
             }
@@ -408,24 +388,15 @@ class ConfigurationService
     /**
      * Resolve inheritance for given data.
      *
-     * @param \Phabalicious\Configuration\Storage\Node $data
-     * @param \Phabalicious\Configuration\Storage\Node $lookup
-     *
-     * @param string|null $root_folder
-     * @param array $stack
-     * @param string $inherit_key
-     *
-     * @return \Phabalicious\Configuration\Storage\Node
-     *
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
      */
     public function resolveInheritance(
         Node $data,
         Node $lookup,
         ?string $root_folder = null,
         array $stack = [],
-        string $inherit_key = "inheritsFrom"
+        string $inherit_key = 'inheritsFrom',
     ): Node {
         if (empty($stack)) {
             $this->deprecationMessages = new ValidationErrorBag();
@@ -439,7 +410,7 @@ class ConfigurationService
         }
 
         $baseUrl = $lookup['inheritanceBaseUrl'] ?? $this->getInheritanceBaseUrl();
-        if ($baseUrl && $baseUrl[0] == '.') {
+        if ($baseUrl && '.' == $baseUrl[0]) {
             $fullpathBaseUrl = realpath($baseUrl);
             if (!$fullpathBaseUrl) {
                 throw new \RuntimeException(sprintf('Could not resolve/ find base url: `%s`', $baseUrl));
@@ -454,11 +425,7 @@ class ConfigurationService
 
         foreach ($inheritsFrom->iterateBackwardsOverValues() as $resource) {
             if (in_array($resource, $stack)) {
-                throw new \InvalidArgumentException(sprintf(
-                    "Possible recursion in inheritsFrom detected! `%s `in [%s]",
-                    $resource,
-                    implode(', ', $stack)
-                ));
+                throw new \InvalidArgumentException(sprintf('Possible recursion in inheritsFrom detected! `%s `in [%s]', $resource, implode(', ', $stack)));
             }
             $add_data = false;
             if ($lookup->has($resource)) {
@@ -476,18 +443,14 @@ class ConfigurationService
                     $this->resolveRelativeInheritanceRefs($add_data, $baseUrl);
                     $this->checkRequires($add_data, $resource);
                 }
-            } elseif (file_exists($root_folder . '/' . $resource)) {
-                $add_data = $this->readFile($root_folder . '/' . $resource);
+            } elseif (file_exists($root_folder.'/'.$resource)) {
+                $add_data = $this->readFile($root_folder.'/'.$resource);
                 if ($add_data) {
                     $this->resolveRelativeInheritanceRefs($add_data, $baseUrl);
                     $this->checkRequires($add_data, $resource);
                 }
             } else {
-                throw new FabfileNotReadableException(sprintf(
-                    "Could not resolve inheritance from `inheritsFrom: %s`! \n\nPossible values:\n%s",
-                    $resource,
-                    '- ' . implode("\n- ", array_keys($lookup->asArray()))
-                ));
+                throw new FabfileNotReadableException(sprintf("Could not resolve inheritance from `inheritsFrom: %s`! \n\nPossible values:\n%s", $resource, '- '.implode("\n- ", array_keys($lookup->asArray()))));
             }
             if ($add_data && $add_data->has('deprecated')) {
                 $this->deprecationMessages->addWarning(
@@ -519,22 +482,22 @@ class ConfigurationService
 
     public function readHttpResource(string $resource)
     {
-        $cid = 'resource:' . $resource;
+        $cid = 'resource:'.$resource;
         $contents = false;
 
         if (isset($this->cache[$cid])) {
             return $this->cache[$cid];
         }
-        $cache_file = getenv("HOME")
-            . '/.phabalicious/' . md5($resource)
-            . '.' . pathinfo($resource, PATHINFO_EXTENSION);
+        $cache_file = getenv('HOME')
+            .'/.phabalicious/'.md5($resource)
+            .'.'.pathinfo($resource, PATHINFO_EXTENSION);
 
         // Check for cached version, maximum age 60 minutes.
-        if (!$this->skipCache &&
-            file_exists($cache_file) &&
-            time()-filemtime($cache_file) < self::MAX_FILECACHE_LIFETIME
+        if (!$this->skipCache
+            && file_exists($cache_file)
+            && time() - filemtime($cache_file) < self::MAX_FILECACHE_LIFETIME
         ) {
-            $this->logger->info('Using cached version for `' . $resource .'`');
+            $this->logger->info('Using cached version for `'.$resource.'`');
             $contents = file_get_contents($cache_file);
             if (!empty($contents)) {
                 $this->cache[$cid] = $contents;
@@ -548,7 +511,7 @@ class ConfigurationService
                 $url = Utilities::parseUrl($resource);
                 $url['path'] = urlencode($url['path']);
                 $url['path'] = str_replace('%2F', '/', $url['path']);
-                $resource =  http_build_url($url);
+                $resource = http_build_url($url);
                 set_error_handler(
                     function ($severity, $message) {
                         throw new FabfileNotReadableException($message);
@@ -559,7 +522,7 @@ class ConfigurationService
                     'http' => [
                         'method' => 'GET',
                         'header' => [
-                            'User-Agent: phabalicious  (factorial-io/phabalicious)' . ' (PHP)',
+                            'User-Agent: phabalicious  (factorial-io/phabalicious) (PHP)',
                         ],
                     ],
                 ];
@@ -567,7 +530,7 @@ class ConfigurationService
                 $context = stream_context_create($opts);
                 $contents = file_get_contents($resource, false, $context);
             } catch (\Exception $e) {
-                $this->logger->warning('Could not load resource from `' . $resource . '`: ' . $e->getMessage());
+                $this->logger->warning('Could not load resource from `'.$resource.'`: '.$e->getMessage());
                 $contents = false;
             } finally {
                 restore_error_handler();
@@ -579,7 +542,7 @@ class ConfigurationService
         }
 
         if (empty($contents) && file_exists($cache_file)) {
-            $this->logger->info('Using cached version for `' . $resource .'`');
+            $this->logger->info('Using cached version for `'.$resource.'`');
             $contents = file_get_contents($cache_file);
         } elseif (!empty($contents)) {
             file_put_contents($cache_file, $contents);
@@ -597,27 +560,24 @@ class ConfigurationService
         return $contents;
     }
 
-  /**
-   * @param string $config_name
-   *
-   * @return HostConfig
-   * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-   * @throws FabfileNotReadableException
-   * @throws \Phabalicious\Exception\MismatchedVersionException
-   * @throws \Phabalicious\Exception\MissingHostConfigException
-   * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-   * @throws \Phabalicious\Exception\ValidationFailedException
-   */
+    /**
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws MissingHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
+     */
     public function getHostConfig(string $config_name): HostConfig
     {
-        $cid = 'host:' . $config_name;
+        $cid = 'host:'.$config_name;
 
         if (!empty($this->cache[$cid])) {
             return $this->cache[$cid];
         }
 
         if (empty($this->hosts[$config_name])) {
-            throw new MissingHostConfigException('Could not find host configuration for ' . $config_name);
+            throw new MissingHostConfigException('Could not find host configuration for '.$config_name);
         }
 
         $data = Node::clone($this->hosts->get($config_name));
@@ -628,24 +588,22 @@ class ConfigurationService
         $data = $this->validateHostConfig($config_name, $data);
 
         $this->cache[$cid] = $data;
+
         return $data;
     }
 
-  /**
-   * @param string $blueprint
-   * @param string $identifier
-   *
-   * @return HostConfig
-   * @throws MismatchedVersionException
-   * @throws ShellProviderNotFoundException
-   * @throws ValidationFailedException
-   * @throws BlueprintTemplateNotFoundException
-   * @throws FabfileNotReadableException
-   */
+    /**
+     * @return HostConfig
+     *
+     * @throws MismatchedVersionException
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     */
     public function getHostConfigFromBlueprint(string $blueprint, string $identifier, $skip_host_validation = false): HostConfig|Node
     {
-        $cid = 'blueprint:' . $blueprint . ':' . $identifier;
-
+        $cid = 'blueprint:'.$blueprint.':'.$identifier;
 
         if (!empty($this->cache[$cid])) {
             return $this->cache[$cid];
@@ -655,7 +613,7 @@ class ConfigurationService
         $data = $template->expand($identifier);
 
         $errors = new ValidationErrorBag();
-        $validation = new ValidationService($data, $errors, 'blueprint: `' . $identifier . '`');
+        $validation = new ValidationService($data, $errors, 'blueprint: `'.$identifier.'`');
         $validation->hasKey('configName', 'The blueprint needs a `configName` property');
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
@@ -664,23 +622,20 @@ class ConfigurationService
             $data = $this->validateHostConfig($data['configName'], $data);
         }
 
-        $this->cache['host:' . $data['configName']] = $data;
+        $this->cache['host:'.$data['configName']] = $data;
         $this->cache[$cid] = $data;
-
 
         return $data;
     }
 
     /**
      * @param string $config_name
-     * @param \Phabalicious\Configuration\Storage\Node $data
      *
-     * @return HostConfig
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws FabfileNotReadableException
      * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws MismatchedVersionException
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
      */
     private function validateHostConfig($config_name, Node $data): HostConfig
     {
@@ -698,7 +653,7 @@ class ConfigurationService
             'config_name' => $config_name, // For backwards compatibility
             'configName' => $config_name,
             'executables' => $this->getSetting('executables', []),
-            'supportsInstalls' => $type !== HostType::PROD,
+            'supportsInstalls' => HostType::PROD !== $type,
             'supportsCopyFrom' => true,
             'backupBeforeDeploy' => in_array($type, [HostType::STAGE, HostType::PROD]),
             'tmpFolder' => '/tmp',
@@ -738,7 +693,7 @@ class ConfigurationService
 
         // Overall validation.
         $validation_errors = new ValidationErrorBag();
-        $validation = new ValidationService($data, $validation_errors, 'host-config: `' . $config_name . '`');
+        $validation = new ValidationService($data, $validation_errors, 'host-config: `'.$config_name.'`');
 
         // Apply defaults and handle deprecations
 
@@ -747,7 +702,7 @@ class ConfigurationService
                 $this->mapDeprecatedConfig($data, $deprecation_mapping);
                 foreach ($deprecation_mapping as $old => $new) {
                     $validation->deprecate([
-                        $old => sprintf("Please use new format: `%s`", $new),
+                        $old => sprintf('Please use new format: `%s`', $new),
                     ]);
                     if (self::DISCARD_DEPRECATED_PROPERTIES) {
                         unset($data[$old]);
@@ -759,7 +714,7 @@ class ConfigurationService
                 if ($n = $data->find($mapping->getKey())) {
                     if ($mapping->apply($n)) {
                         $validation->deprecate([
-                             $mapping->getKey() => $mapping->getDeprecationMessage(),
+                            $mapping->getKey() => $mapping->getDeprecationMessage(),
                         ]);
                     }
                 }
@@ -771,7 +726,6 @@ class ConfigurationService
             );
         }
 
-
         $validation->isArray('needs', 'Please specify the needed methods as an array');
         $validation->isOneOf('type', HostType::getAll());
 
@@ -780,7 +734,6 @@ class ConfigurationService
         foreach ($used_methods as $method) {
             $method->validateConfig($this, $data, $validation_errors);
         }
-
 
         // Give methods a chance to alter the config.
         foreach ($used_methods as $method) {
@@ -799,12 +752,7 @@ class ConfigurationService
             $shell_provider = ShellProviderFactory::create($shell_provider_name, $this->logger);
         }
         if (!$shell_provider) {
-            throw new ShellProviderNotFoundException(
-                'Could not find any shell provider `' .
-                $shell_provider_name.
-                '` for `' . $config_name .
-                '`!'
-            );
+            throw new ShellProviderNotFoundException('Could not find any shell provider `'.$shell_provider_name.'` for `'.$config_name.'`!');
         }
 
         // Validate data against shell-provider.
@@ -831,11 +779,10 @@ class ConfigurationService
             $replacements = Utilities::expandVariables([
                 'globals' => Utilities::getGlobalReplacements($this),
                 'host' => $data->asArray(),
-                'settings' => $this->getAllSettings()
+                'settings' => $this->getAllSettings(),
             ]);
             $data['info'] = Utilities::expandStrings($data['info'], $replacements);
         }
-
 
         // Create host-config and return.
         $host_config = new HostConfig($data, $shell_provider, $this);
@@ -848,19 +795,15 @@ class ConfigurationService
     }
 
     /**
-     * @param string $config_name
-     *
-     * @return Node
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ValidationFailedException
      */
     public function getDockerConfigData(string $config_name): Node
     {
-
         if (empty($this->dockerHosts[$config_name])) {
-            throw new MissingDockerHostConfigException('Could not find docker host configuration for ' . $config_name);
+            throw new MissingDockerHostConfigException('Could not find docker host configuration for '.$config_name);
         }
 
         $data = Node::clone($this->dockerHosts->get($config_name));
@@ -878,14 +821,14 @@ class ConfigurationService
     }
 
     /**
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\ValidationFailedException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws MismatchedVersionException
+     * @throws FabfileNotReadableException
+     * @throws ValidationFailedException
+     * @throws MissingDockerHostConfigException
      */
     public function getDockerConfig(string $config_name): DockerConfig
     {
-        $cid = 'dockerhost:' . $config_name;
+        $cid = 'dockerhost:'.$config_name;
 
         if (!empty($this->cache[$cid])) {
             return $this->cache[$cid];
@@ -893,10 +836,9 @@ class ConfigurationService
         $data = $this->getDockerConfigData($config_name);
         $shell_provider = ShellProviderFactory::create($data['shellProvider'], $this->logger);
 
-
         $errors = new ValidationErrorBag();
         if (!$shell_provider) {
-            $errors->addError('shellProvider', 'Unhandled shell-provider: `' . $data['shellProvider'] . '`');
+            $errors->addError('shellProvider', 'Unhandled shell-provider: `'.$data['shellProvider'].'`');
         } else {
             $data = Node::mergeData($shell_provider->getDefaultConfig($this, $data), $data);
             $shell_provider->validateConfig($data, $errors);
@@ -907,6 +849,7 @@ class ConfigurationService
         $data = new DockerConfig($data, $shell_provider, $this);
 
         $this->cache[$cid] = $data;
+
         return $data;
     }
 
@@ -916,6 +859,7 @@ class ConfigurationService
         foreach ($without as $key) {
             unset($copy[$key]);
         }
+
         return $copy;
     }
 
@@ -949,7 +893,7 @@ class ConfigurationService
 
     private function validateDockerConfig(Node $data, $config_name): Node
     {
-        $data['configName'] = 'dockerHosts.' . $config_name;
+        $data['configName'] = 'dockerHosts.'.$config_name;
 
         if (!empty($data['runLocally'])) {
             $data['shellProvider'] = 'local';
@@ -959,13 +903,13 @@ class ConfigurationService
             $data['shellProvider'] = 'ssh';
         }
         $errors = new ValidationErrorBag();
-        $validation = new ValidationService($data, $errors, 'dockerHost: `' . $config_name . '`');
+        $validation = new ValidationService($data, $errors, 'dockerHost: `'.$config_name.'`');
         $validation->deprecate(['runLocally']);
         $validation->hasKey('shellProvider', 'The name of the shell-provider to use');
         $validation->hasKey('rootFolder', 'The rootFolder to start with');
         $validation->hasKey('tmpFolder', 'The rootFolder to use');
-        if (!empty($data['rootFolder']) && $data['rootFolder'][0] === '.') {
-            $data['rootFolder'] = realpath($this->getFabfilePath() . '/' . $data['rootFolder']);
+        if (!empty($data['rootFolder']) && '.' === $data['rootFolder'][0]) {
+            $data['rootFolder'] = realpath($this->getFabfilePath().'/'.$data['rootFolder']);
         }
 
         if ($errors->hasErrors()) {
@@ -985,6 +929,7 @@ class ConfigurationService
     public function setOffline($offline): ConfigurationService
     {
         $this->offlineMode = $offline;
+
         return $this;
     }
 
@@ -999,17 +944,13 @@ class ConfigurationService
     }
 
     /**
-     * @param string $config_name
-     * @param \Phabalicious\Configuration\Storage\Node $data
-     *
-     * @return \Phabalicious\Configuration\Storage\Node
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
      */
-    protected function inheritFromBlueprint(string $config_name, Node $data): \Phabalicious\Configuration\Storage\Node
+    protected function inheritFromBlueprint(string $config_name, Node $data): Node
     {
         $errors = new ValidationErrorBag();
         $validation = new ValidationService($data['inheritFromBlueprint'], $errors, 'inheritFromBlueprint');
@@ -1040,17 +981,14 @@ class ConfigurationService
 
     /**
      * @param bool $skipCache
-     * @return ConfigurationService
      */
     public function setSkipCache($skipCache): ConfigurationService
     {
         $this->skipCache = $skipCache;
+
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isSkipCache(): bool
     {
         return $this->skipCache;
@@ -1061,9 +999,6 @@ class ConfigurationService
         $this->strictRemoteHandling = $flag;
     }
 
-  /**
-   * @return bool
-   */
     public function isStrictRemoteHandling(): bool
     {
         return $this->strictRemoteHandling;
@@ -1071,7 +1006,6 @@ class ConfigurationService
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-
         $needs = $host_config['needs'];
         $result = false;
         foreach ($this->getMethodFactory()->getSubset($needs) as $method) {
@@ -1081,7 +1015,8 @@ class ConfigurationService
             }
         }
 
-        $this->logger->debug("$task requires running app? " . ($result ? "YES" : "NO"));
+        $this->logger->debug("$task requires running app? ".($result ? 'YES' : 'NO'));
+
         return $result;
     }
 
@@ -1090,54 +1025,43 @@ class ConfigurationService
         if (!empty($host_config['scripts'][$script_name])) {
             return $host_config['scripts'][$script_name];
         }
-        return $this->getSetting('scripts.' . $script_name, false);
+
+        return $this->getSetting('scripts.'.$script_name, false);
     }
 
-    /**
-     * @return PasswordManagerInterface|null
-     */
     public function getPasswordManager(): ?PasswordManagerInterface
     {
         if (!$this->passwordManager) {
             $this->setPasswordManager(new PasswordManager());
         }
+
         return $this->passwordManager;
     }
 
-    /**
-     * @param PasswordManagerInterface $passwordManager
-     *
-     * @return ConfigurationService
-     */
     public function setPasswordManager(PasswordManagerInterface $passwordManager): ConfigurationService
     {
         $this->passwordManager = $passwordManager;
         if ($this->logger instanceof Logger) {
             $this->logger->setPasswordManager($passwordManager);
         }
+
         return $this;
     }
 
     /**
      * Get the base url for inheritance, scaffolds.
-     *
-     * @return bool|string
      */
     public function getInheritanceBaseUrl(): bool|string
     {
         return !empty($this->inheritanceBaseUrl)
             ? $this->inheritanceBaseUrl
-            : $this->getSetting("inheritanceBaseUrl", false);
+            : $this->getSetting('inheritanceBaseUrl', false);
     }
 
-    /**
-     * @param string $inheritanceBaseUrl
-     *
-     * @return ConfigurationService
-     */
     public function setInheritanceBaseUrl(string $inheritanceBaseUrl): ConfigurationService
     {
         $this->inheritanceBaseUrl = $inheritanceBaseUrl;
+
         return $this;
     }
 
@@ -1149,7 +1073,6 @@ class ConfigurationService
         );
     }
 
-
     public function reportDeprecations(string $source): bool
     {
         if (!$this->deprecationMessages || !$this->deprecationMessages->hasWarnings()) {
@@ -1157,7 +1080,7 @@ class ConfigurationService
         }
         $messages = [];
         $messages[] = sprintf('`%s` contains inherited, but deprecated configuration!', $source);
-        $messages[] = "";
+        $messages[] = '';
         foreach ($this->deprecationMessages->getWarnings() as $msg) {
             $messages[] = $msg;
         }

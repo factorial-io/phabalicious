@@ -11,20 +11,13 @@ use Psr\Log\LoggerInterface;
 
 class MethodFactory
 {
-
     /**
      * @var MethodInterface[]
      */
     protected array $methods = [];
 
-    /**
-     * @var ConfigurationService
-     */
     protected ConfigurationService $configuration;
 
-    /**
-     * @var LoggerInterface
-     */
     protected LoggerInterface $logger;
 
     protected ?TunnelHelperFactory $tunnelHelperFactory = null;
@@ -33,9 +26,6 @@ class MethodFactory
 
     /**
      * MethodFactory constructor.
-     *
-     * @param ConfigurationService $configuration
-     * @param LoggerInterface $logger
      */
     public function __construct(ConfigurationService $configuration, LoggerInterface $logger)
     {
@@ -48,8 +38,6 @@ class MethodFactory
 
     /**
      * Add a method.
-     *
-     * @param MethodInterface $method
      */
     public function addMethod(MethodInterface $method)
     {
@@ -62,9 +50,6 @@ class MethodFactory
     /**
      * Get a method by name.
      *
-     * @param string $name
-     *
-     * @return MethodInterface
      * @throws MethodNotFoundException
      */
     public function getMethod(string $name): MethodInterface
@@ -76,22 +61,17 @@ class MethodFactory
         foreach ($this->methods as $method) {
             if ($method->supports($name)) {
                 $this->lookupCache[$name] = $method;
+
                 return $method;
             }
         }
 
-        throw new MethodNotFoundException('Could not find implementation for method ' . $name);
+        throw new MethodNotFoundException('Could not find implementation for method '.$name);
     }
 
     /**
      * Run a task.
      *
-     * @param string $task_name
-     * @param HostConfig $configuration
-     * @param TaskContextInterface $context
-     * @param array $nextTasks
-     *
-     * @return TaskContextInterface
      * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
      */
@@ -99,12 +79,12 @@ class MethodFactory
         string $task_name,
         HostConfig $configuration,
         TaskContextInterface $context,
-        array $nextTasks = []
+        array $nextTasks = [],
     ): TaskContextInterface {
         $saved_next_tasks = $context->getResult('runNextTasks', []);
         $context->setResult('runNextTasks', $nextTasks);
         $this->preflight('preflight', $task_name, $configuration, $context);
-        $this->runTaskImpl($task_name . 'Prepare', $configuration, $context, false);
+        $this->runTaskImpl($task_name.'Prepare', $configuration, $context, false);
         $this->runTaskImpl($task_name, $configuration, $context, true);
 
         $nextTasks = $context->getResult('runNextTasks', []);
@@ -113,20 +93,16 @@ class MethodFactory
                 $this->runTask($next_task_name, $configuration, $context);
             }
         }
-        $this->runTaskImpl($task_name . 'Finished', $configuration, $context, false);
+        $this->runTaskImpl($task_name.'Finished', $configuration, $context, false);
         $this->preflight('postflight', $task_name, $configuration, $context);
 
         $context->setResult('runNextTasks', $saved_next_tasks);
+
         return $context;
     }
 
     /**
      * Run a task (implementation).
-     *
-     * @param string $task_name
-     * @param HostConfig $configuration
-     * @param TaskContextInterface $context
-     * @param bool $fallback_allowed
      *
      * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
@@ -135,12 +111,12 @@ class MethodFactory
         string $task_name,
         HostConfig $configuration,
         TaskContextInterface $context,
-        bool $fallback_allowed
+        bool $fallback_allowed,
     ): void {
         $fn_called = false;
 
         if (!$context->get('quiet')) {
-            $this->logger->debug('Running task ' . $task_name . ' on configuration ' . $configuration->getConfigName());
+            $this->logger->debug('Running task '.$task_name.' on configuration '.$configuration->getConfigName());
         }
 
         foreach ($configuration['needs'] as $method_name) {
@@ -161,11 +137,6 @@ class MethodFactory
     /**
      * Call a method (implementation).
      *
-     * @param MethodInterface $method
-     * @param string $task_name
-     * @param HostConfig $configuration
-     * @param TaskContextInterface $in_context
-     * @param bool $optional
      * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
      */
@@ -174,7 +145,7 @@ class MethodFactory
         string $task_name,
         HostConfig $configuration,
         TaskContextInterface $in_context,
-        bool $optional
+        bool $optional,
     ): void {
         $context = clone $in_context;
         $overrides = [];
@@ -187,30 +158,22 @@ class MethodFactory
         $context->set('currentMethod', $method_name);
 
         if (isset($overrides[$method_name])) {
-            $this->logger->info('Use override ' . $overrides[$method_name] . ' for ' . $method_name);
+            $this->logger->info('Use override '.$overrides[$method_name].' for '.$method_name);
             $method = $this->getMethod($overrides[$method_name]);
         }
-        $this->logger->debug('Call task ' . $task_name . ' on method ' . $method_name);
+        $this->logger->debug('Call task '.$task_name.' on method '.$method_name);
 
         if (method_exists($method, $task_name)) {
             $method->{$task_name}($configuration, $context);
             $in_context->mergeResults($context);
         } elseif (!$optional) {
-            throw new TaskNotFoundInMethodException(
-                'Could not find task `' . $task_name . '` in method `' . $method_name . '`'
-            );
+            throw new TaskNotFoundInMethodException('Could not find task `'.$task_name.'` in method `'.$method_name.'`');
         }
     }
 
     /**
      * Call a task on a specifc method.
      *
-     * @param string $method_name
-     * @param string $task_name
-     * @param HostConfig $configuration
-     * @param TaskContextInterface $context
-     *
-     * @return TaskContextInterface
      * @throws MethodNotFoundException
      * @throws TaskNotFoundInMethodException
      */
@@ -218,7 +181,7 @@ class MethodFactory
         string $method_name,
         string $task_name,
         HostConfig $configuration,
-        TaskContextInterface $context
+        TaskContextInterface $context,
     ): TaskContextInterface {
         $method = $this->getMethod($method_name);
         $this->preflight('preflight', $task_name, $configuration, $context);
@@ -229,12 +192,7 @@ class MethodFactory
     }
 
     /**
-     * Run preflight/ postflight-step
-     *
-     * @param string $step_name
-     * @param string $task_name
-     * @param HostConfig $configuration
-     * @param TaskContextInterface $context
+     * Run preflight/ postflight-step.
      *
      * @throws MethodNotFoundException
      */
@@ -242,11 +200,11 @@ class MethodFactory
         string $step_name,
         string $task_name,
         HostConfig $configuration,
-        TaskContextInterface $context
+        TaskContextInterface $context,
     ) {
         foreach ($configuration['needs'] as $method_name) {
             $method = $this->getMethod($method_name);
-            $method->{$step_name . "Task"}($task_name, $configuration, $context);
+            $method->{$step_name.'Task'}($task_name, $configuration, $context);
         }
     }
 
@@ -263,12 +221,11 @@ class MethodFactory
     /**
      * Get a subset of methods.
      *
-     * @param array $needs
-     *
      * @return MethodInterface[]
-     * @throws \Phabalicious\Exception\MethodNotFoundException
+     *
+     * @throws MethodNotFoundException
      */
-    public function getSubset(Array $needs): array
+    public function getSubset(array $needs): array
     {
         return array_map(function ($elem) {
             return $this->getMethod($elem);
@@ -276,10 +233,8 @@ class MethodFactory
     }
 
     /**
-     * @param array $needs
-     * @param $interface
+     * @return array|MethodInterface[]
      *
-     * @return array|\Phabalicious\Method\MethodInterface[]
      * @throws \Phabalicious\Exception\MethodNotFoundException*
      */
     public function getSubsetImplementing(array $needs, $interface): array
@@ -289,13 +244,14 @@ class MethodFactory
             if (is_a($method, $interface)) {
                 return $method;
             }
+
             return false;
         }, $needs));
     }
 
     public function alter(array $needs, $func_name, AlterableDataInterface $data): void
     {
-        $fn = 'alter' . ucwords($func_name);
+        $fn = 'alter'.ucwords($func_name);
         foreach ($this->getSubset($needs) as $method) {
             if (method_exists($method, $fn)) {
                 $method->{$fn}($data);

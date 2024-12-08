@@ -2,16 +2,12 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Method\TaskContext;
-use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class GetFileCommand extends BaseCommand
 {
-
     protected function configure()
     {
         parent::configure();
@@ -29,10 +25,6 @@ class GetFileCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -49,12 +41,11 @@ class GetFileCommand extends BaseCommand
         }
         $file = $input->getArgument('file');
 
-
         $context = $this->getContext();
         $context->set('sourceFile', $file);
-        $context->set('destFile', getcwd() . '/' . basename($file));
+        $context->set('destFile', getcwd().'/'.basename($file));
 
-        $context->io()->comment('Get file `' . $file . '` from `' . $this->getHostConfig()->getConfigName(). '`');
+        $context->io()->comment('Get file `'.$file.'` from `'.$this->getHostConfig()->getConfigName().'`');
 
         $this->getMethods()->runTask('getFile', $this->getHostConfig(), $context);
 
@@ -66,6 +57,7 @@ class GetFileCommand extends BaseCommand
                 $context->getResult('targetFile', 'unknown')
             ));
         }
+
         return $return_code;
     }
 }

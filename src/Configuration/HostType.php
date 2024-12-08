@@ -1,19 +1,20 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: stephan
  * Date: 28.10.18
- * Time: 13:16
+ * Time: 13:16.
  */
 
 namespace Phabalicious\Configuration;
 
 class HostType
 {
-    const DEV = 'dev';
-    const STAGE = 'stage';
-    const PROD = 'prod';
-    const TEST = 'test';
+    public const DEV = 'dev';
+    public const STAGE = 'stage';
+    public const PROD = 'prod';
+    public const TEST = 'test';
 
     public static function getAll()
     {
@@ -21,13 +22,13 @@ class HostType
             self::DEV,
             self::STAGE,
             self::PROD,
-            self::TEST
+            self::TEST,
         ];
     }
 
     public static function convertLegacyTypes($type)
     {
-        if ($type == 'live') {
+        if ('live' == $type) {
             return self::PROD;
         }
 

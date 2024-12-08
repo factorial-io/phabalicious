@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputInterface;
 
 abstract class BackupBaseCommand extends BaseCommand
 {
-
     protected function collectBackupMethods(InputInterface $input, TaskContextInterface $context)
     {
         $what = array_map(function ($elem) {

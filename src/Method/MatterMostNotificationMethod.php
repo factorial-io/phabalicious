@@ -15,7 +15,6 @@ use ThibaudDauce\Mattermost\Message;
 
 class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInterface, NotifyMethodInterface
 {
-
     public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         $parent = parent::getGlobalSettings($configuration);
@@ -24,17 +23,13 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
             'username' => 'Phabalicious',
         ];
 
-        return $parent->merge(new Node($settings, $this->getName() . ' global settings'));
+        return $parent->merge(new Node($settings, $this->getName().' global settings'));
     }
 
     /**
-     * @param ConfigurationService $configuration_service
-     * @param \Phabalicious\Configuration\Storage\Node $host_config
-     *
-     * @return \Phabalicious\Configuration\Storage\Node
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws ValidationFailedException
      */
-    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): \Phabalicious\Configuration\Storage\Node
+    public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
         $config = $configuration_service->getSetting('mattermost', []);
         $errors = new ValidationErrorBag();
@@ -49,7 +44,6 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
 
         return parent::getDefaultConfig($configuration_service, $host_config);
     }
-
 
     public function getName(): string
     {
@@ -66,7 +60,7 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
         string $message,
         TaskContextInterface $context,
         string $type,
-        array $meta
+        array $meta,
     ) {
         $channel = $context->get('channel', false);
         if (!$channel) {
@@ -82,7 +76,7 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
         $mmm = (new Message())
             ->text($message)
             ->channel($channel)
-            ->username($config['username'] . ' (' . get_current_user() . ')');
+            ->username($config['username'].' ('.get_current_user().')');
 
         $keys = ['iconUrl'];
 
@@ -94,9 +88,9 @@ class MatterMostNotificationMethod extends BaseNotifyMethod implements MethodInt
 
         $mmm->attachment(function (Attachment $attachment) use ($message, $type, $host_config, $meta) {
             $attachment->fallback($message);
-            if ($type == BaseNotifyMethod::SUCCESS) {
+            if (BaseNotifyMethod::SUCCESS == $type) {
                 $attachment->success();
-            } elseif ($type == BaseNotifyMethod::ERROR) {
+            } elseif (BaseNotifyMethod::ERROR == $type) {
                 $attachment->error();
             }
             $attachment

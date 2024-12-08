@@ -2,9 +2,6 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +9,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class GetFilesDumpCommand extends BaseCommand
 {
-
     protected function configure()
     {
         $this
@@ -31,9 +27,6 @@ class GetFilesDumpCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -60,14 +53,13 @@ class GetFilesDumpCommand extends BaseCommand
         foreach ($to_copy as $file) {
             if ($shell->getFile(
                 $file,
-                getcwd() . '/' . basename($file),
+                getcwd().'/'.basename($file),
                 $context
             )) {
                 $files[] = basename($file);
             }
             $shell->run(sprintf('rm %s', $file));
         }
-
 
         if (count($files) > 0) {
             $io = new SymfonyStyle($input, $output);

@@ -17,7 +17,7 @@ use Webmozart\Assert\Assert;
 class ResticMethod extends BaseMethod
 {
     // phpcs:ignore
-    public const RESTIC_DOWNLOAD_URL = "https://github.com/restic/restic/releases/download/v0.12.0/restic_0.12.0_linux_amd64.bz2";
+    public const RESTIC_DOWNLOAD_URL = 'https://github.com/restic/restic/releases/download/v0.12.0/restic_0.12.0_linux_amd64.bz2';
 
     public function getName(): string
     {
@@ -39,33 +39,31 @@ class ResticMethod extends BaseMethod
             ],
             'restic' => [
                 'options' => [
-                    '--verbose'
+                    '--verbose',
                 ],
                 'allowInstallation' => true,
                 'environment' => [],
                 'downloadUrl' => self::RESTIC_DOWNLOAD_URL,
             ],
-        ], $this->getName() . ' global settings');
+        ], $this->getName().' global settings');
     }
-
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
         $parent = parent::getDefaultConfig($configuration_service, $host_config);
         $config = [
             'fileBackupStrategy' => 'restic',
-            'restic' => $configuration_service->getSetting('restic')
-            ];
+            'restic' => $configuration_service->getSetting('restic'),
+        ];
 
-        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
+        return $parent->merge(new Node($config, $this->getName().' method defaults'));
     }
 
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
+        ValidationErrorBagInterface $errors,
     ): void {
-
         parent::validateConfig($configuration_service, $config, $errors);
 
         $validation = new ValidationService(
@@ -84,27 +82,26 @@ class ResticMethod extends BaseMethod
 
             $validation->hasKeys([
                 'repository' => 'The repository to backup to',
-                'environment' => 'The environment variables to apply before calling restic'
+                'environment' => 'The environment variables to apply before calling restic',
             ]);
         }
     }
 
-
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-        return parent::isRunningAppRequired($host_config, $context, $task) ||
-            in_array($task, [
+        return parent::isRunningAppRequired($host_config, $context, $task)
+            || in_array($task, [
                 'deploy',
                 'backup',
                 'restore',
                 'listBackups',
-                'restic'
+                'restic',
             ]);
     }
 
     public function backup(HostConfig $host_config, TaskContextInterface $context): void
     {
-        if ($host_config->get('fileBackupStrategy', 'files') !== 'restic') {
+        if ('restic' !== $host_config->get('fileBackupStrategy', 'files')) {
             return;
         }
 
@@ -123,7 +120,7 @@ class ResticMethod extends BaseMethod
                 $folder = $host_config[$key];
                 $context->addResult('files', [[
                     'type' => 'restic',
-                    'file' => $folder
+                    'file' => $folder,
                 ]]);
             }
         }
@@ -140,7 +137,7 @@ class ResticMethod extends BaseMethod
         $restic_path = $this->ensureResticExecutable($shell, $host_config, $context);
 
         $context->io()->comment(sprintf(
-            "Running backup to offsite repo `%s`",
+            'Running backup to offsite repo `%s`',
             $repository
         ));
 
@@ -155,7 +152,7 @@ class ResticMethod extends BaseMethod
 
         // lets delete the db backup files, as they are in the restic backup now.
         foreach ($context->getResult('files', []) as $file) {
-            if ($file['type'] === 'db') {
+            if ('db' === $file['type']) {
                 $shell->run(sprintf('rm "%s"', $file['file']));
             }
         }
@@ -173,7 +170,7 @@ class ResticMethod extends BaseMethod
 
         $backup_set = $context->get('backup_set', []);
         foreach ($backup_set as $elem) {
-            if ($elem['type'] != 'restic') {
+            if ('restic' != $elem['type']) {
                 continue;
             }
             [$name, $config, $short_id] = explode('--', $elem['hash']);
@@ -186,7 +183,7 @@ class ResticMethod extends BaseMethod
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $restic_path,
-        array $files
+        array $files,
     ) {
         $options = $this->getResticOptions($host_config, $context, true);
 
@@ -203,7 +200,7 @@ class ResticMethod extends BaseMethod
         ), RunOptions::NONE, true);
 
         if ($result->failed()) {
-            $result->throwException("Restic reported an error while trying to run the backup.");
+            $result->throwException('Restic reported an error while trying to run the backup.');
         }
     }
 
@@ -212,7 +209,7 @@ class ResticMethod extends BaseMethod
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $restic_path,
-        string $short_id
+        string $short_id,
     ) {
         $options = $this->getResticOptions($host_config, $context, true);
 
@@ -223,34 +220,34 @@ class ResticMethod extends BaseMethod
             $short_id
         ), RunOptions::NONE);
         if ($result->failed()) {
-            $result->throwException("Restic reported an error while trying to restore files.");
+            $result->throwException('Restic reported an error while trying to restore files.');
         }
     }
 
     private function ensureResticExecutable(
         ShellProviderInterface $shell,
         HostConfig $host_config,
-        TaskContextInterface $context
+        TaskContextInterface $context,
     ): string {
         $result = $shell->run('#!restic --help', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         if ($result->succeeded()) {
             return '#!restic';
         }
 
-        $restic_path = $host_config['backupFolder'] . '/restic';
+        $restic_path = $host_config['backupFolder'].'/restic';
         $result = $shell->run(sprintf('%s --help', $restic_path), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         if ($result->succeeded()) {
             return $restic_path;
         }
 
-        $context->io()->comment("Could not find restic app, trying to install it from github ...");
+        $context->io()->comment('Could not find restic app, trying to install it from github ...');
 
         $shell->run(sprintf(
             '#!curl -L %s  | #!bunzip2 > %s',
             $host_config['restic']['downloadUrl'],
             $restic_path
         ), true, true);
-        $shell->run(sprintf("chmod +x %s", $restic_path), RunOptions::NONE, true);
+        $shell->run(sprintf('chmod +x %s', $restic_path), RunOptions::NONE, true);
 
         return $restic_path;
     }
@@ -264,24 +261,24 @@ class ResticMethod extends BaseMethod
         $options = $this->getResticOptions($host_config, $context, true);
         $options[] = '--json';
 
-        $result = $shell->run(sprintf("%s %s snapshots", $restic_path, implode(' ', $options)), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
+        $result = $shell->run(sprintf('%s %s snapshots', $restic_path, implode(' ', $options)), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         if ($result->failed()) {
-            $result->throwException("Restic reported an error while trying to get the list of snapshots.");
+            $result->throwException('Restic reported an error while trying to get the list of snapshots.');
         }
 
-        $json = json_decode(implode(" ", $result->getOutput()));
+        $json = json_decode(implode(' ', $result->getOutput()));
 
         $result = [];
         foreach ($json as $files) {
-            [$name, $config] = explode("--", $files->hostname);
+            [$name, $config] = explode('--', $files->hostname);
 
             $d = \DateTime::createFromFormat('Y-m-d\TH:i:s+', $files->time);
             $tokens = [
                 'config' => $config,
                 'date' => $d->format('Y-m-d'),
-                'time' => $d->format("h:m:s"),
+                'time' => $d->format('h:m:s'),
                 'type' => 'restic',
-                'hash' => implode("--", [$name, $config, $files->short_id]),
+                'hash' => implode('--', [$name, $config, $files->short_id]),
                 'file' => implode("\n", $files->paths),
             ];
             $result[] = $tokens;
@@ -291,9 +288,6 @@ class ResticMethod extends BaseMethod
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     *
      * @return array|mixed
      */
     protected function getResticOptions(HostConfig $host_config, TaskContextInterface $context, $include_host): mixed
@@ -308,27 +302,20 @@ class ResticMethod extends BaseMethod
                 $context->getConfigurationService()
                         ->getSetting('name', 'unknown'),
                 '-'
-            ) . '--' . $host_config->getConfigName();
+            ).'--'.$host_config->getConfigName();
         }
 
         return $options;
     }
-
 
     public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
     {
         $context->addResult('backupMethods', ['restic']);
     }
 
-    /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     *
-     * @return \Phabalicious\ShellProvider\ShellProviderInterface
-     */
     protected function getShellForRestic(
         HostConfig $host_config,
-        TaskContextInterface $context
+        TaskContextInterface $context,
     ): ShellProviderInterface {
         $shell = $this->getShell($host_config, $context);
         Assert::isInstanceOf($shell, ShellProviderInterface::class);
@@ -337,25 +324,23 @@ class ResticMethod extends BaseMethod
             $environment = $context->getPasswordManager()->resolveSecrets($environment);
         }
         $shell->applyEnvironment($environment);
+
         return $shell;
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     * @param ShellProviderInterface $shell
      * @throws \Phabalicious\Exception\FailedShellCommandException
      */
     protected function ensureKnownHosts(
         HostConfig $host_config,
         TaskContextInterface $context,
-        ShellProviderInterface $shell
+        ShellProviderInterface $shell,
     ): void {
         $repository = $host_config['restic']['repository'];
-        if (substr($repository, 0, 5) === 'sftp:') {
+        if ('sftp:' === substr($repository, 0, 5)) {
             $a = Utilities::parseUrl($repository);
             $known_hosts = [
-                sprintf("%s:%d", $a['host'], $a['port'] ?? 22)
+                sprintf('%s:%d', $a['host'], $a['port'] ?? 22),
             ];
             EnsureKnownHosts::ensureKnownHosts($context->getConfigurationService(), $known_hosts, $shell);
         }
@@ -365,7 +350,7 @@ class ResticMethod extends BaseMethod
     {
         $shell = $this->getShellForRestic($host_config, $context);
         if (!$shell || !$shell instanceof BaseShellProvider) {
-            throw new \RuntimeException("Could not get a shell for restic");
+            throw new \RuntimeException('Could not get a shell for restic');
         }
 
         $repository = $host_config['restic']['repository'];

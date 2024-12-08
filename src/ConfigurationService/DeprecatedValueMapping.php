@@ -6,7 +6,6 @@ use Phabalicious\Configuration\Storage\Node;
 
 class DeprecatedValueMapping
 {
-
     /**
      * @var string
      */
@@ -23,8 +22,8 @@ class DeprecatedValueMapping
     protected $new;
 
     /**
-   * Ctor.
-   */
+     * Ctor.
+     */
     public function __construct(string $key, string $old, string $new)
     {
         $this->key = $key;
@@ -36,14 +35,13 @@ class DeprecatedValueMapping
     {
         if ($node->getValue() === $this->old) {
             $node->setValue($this->new);
+
             return true;
         }
+
         return false;
     }
 
-    /**
-     * @return string
-     */
     public function getKey(): string
     {
         return $this->key;
@@ -51,6 +49,6 @@ class DeprecatedValueMapping
 
     public function getDeprecationMessage(): string
     {
-        return sprintf("Value `%s` is deprecated for key `%s`, use instead `%s`.", $this->old, $this->key, $this->new);
+        return sprintf('Value `%s` is deprecated for key `%s`, use instead `%s`.', $this->old, $this->key, $this->new);
     }
 }

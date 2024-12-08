@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -21,9 +23,10 @@ class K8sCommand extends BaseCommand
 {
     public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
-        if ($argumentName == 'k8s') {
+        if ('k8s' == $argumentName) {
             return K8sMethod::AVAILABLE_SUB_COMMANDS;
         }
+
         return parent::completeArgumentValues($argumentName, $context);
     }
 
@@ -42,11 +45,6 @@ class K8sCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -65,7 +63,7 @@ class K8sCommand extends BaseCommand
         $context = $this->getContext();
         $subcommands = $input->getArgument('k8s');
         if (!is_array($subcommands)) {
-            $subcommands = [ $subcommands ];
+            $subcommands = [$subcommands];
         }
         $context->set('command', implode(' ', $subcommands));
 

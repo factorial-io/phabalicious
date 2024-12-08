@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -15,7 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class WorkspaceCreateCommand extends ScaffoldBaseCommand
 {
-
     protected function configure()
     {
         parent::configure();
@@ -41,10 +42,6 @@ class WorkspaceCreateCommand extends ScaffoldBaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws MismatchedVersionException
      * @throws ValidationFailedException
      * @throws FabfileNotReadableException
@@ -55,12 +52,13 @@ class WorkspaceCreateCommand extends ScaffoldBaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $context = $this->createContext($input, $output);
-        $url  = $this->scaffolder->getLocalScaffoldFile('mbb/mbb.yml');
+        $url = $this->scaffolder->getLocalScaffoldFile('mbb/mbb.yml');
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
 
         $options = new Options();
         $options->setUseCacheTokens(false);
         $result = $this->scaffold($url, $root_folder, $context, [], $options);
+
         return $result->getExitCode();
     }
 }

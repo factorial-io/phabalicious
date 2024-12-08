@@ -10,14 +10,12 @@ use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Phabalicious\Utilities\AppDefaultStages;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
 
 class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterface
 {
-
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
@@ -44,36 +42,28 @@ class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterfa
             'useLocalRepository' => false,
         ];
 
-        return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
+        return $parent->merge(new Node($return, $this->getName().' method defaults'));
     }
 
-    /**
-     * @param \Phabalicious\Configuration\ConfigurationService $configuration_service
-     * @param \Phabalicious\Configuration\Storage\Node $config
-     * @param ValidationErrorBagInterface $errors
-     */
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
+        ValidationErrorBagInterface $errors,
     ) {
         parent::validateConfig($configuration_service, $config, $errors);
 
-        $validation = new ValidationService($config[self::PREFS_KEY], $errors, "artifact settings");
+        $validation = new ValidationService($config[self::PREFS_KEY], $errors, 'artifact settings');
         $validation->hasKey('stages', '`stages` is required.');
         $validation->isArray('stages', '`stages` should be an array');
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
      * @throws MethodNotFoundException
      * @throws MissingScriptCallbackImplementation
      * @throws TaskNotFoundInMethodException
      */
     public function deploy(HostConfig $host_config, TaskContextInterface $context)
     {
-
         $stages = $host_config[self::PREFS_KEY]['stages'];
         $stages = $this->prepareDirectoriesAndStages($host_config, $context, $stages, true);
 
@@ -84,10 +74,6 @@ class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterfa
         $context->setResult('runNextTasks', []);
     }
 
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
         $this->runStageSteps($host_config, $context, []);

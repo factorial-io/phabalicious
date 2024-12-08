@@ -2,32 +2,21 @@
 
 namespace Phabalicious\Scaffolder\Callbacks;
 
-use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Yaml\Yaml;
 
 class AlterYamlFileCallback extends BaseCallback implements CallbackInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getName(): string
     {
         return 'alter_yaml_file';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function requires(): string
     {
         return '3.4';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function handle(TaskContextInterface $context, ...$arguments)
     {
         $this->alterYamlFile($context, $arguments[0], $arguments[1]);
@@ -36,7 +25,7 @@ class AlterYamlFileCallback extends BaseCallback implements CallbackInterface
     public function alterYamlFile(
         TaskContextInterface $context,
         $yaml_file_name,
-        $data_key
+        $data_key,
     ) {
         $this->alterFile(
             $context,
@@ -44,6 +33,7 @@ class AlterYamlFileCallback extends BaseCallback implements CallbackInterface
             $data_key,
             function ($file_name) use ($context) {
                 $content = $context->getShell()->getFileContents($file_name, $context);
+
                 return Yaml::parse($content);
             },
             function ($file_name, $data) use ($context) {

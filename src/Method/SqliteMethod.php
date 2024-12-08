@@ -13,29 +13,18 @@ use Phabalicious\Validation\ValidationService;
 
 class SqliteMethod extends DatabaseMethod implements MethodInterface
 {
-    const METHOD_NAME = 'sqlite';
+    public const METHOD_NAME = 'sqlite';
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return self::METHOD_NAME;
     }
 
-    /**
-     * @param string $method_name
-     *
-     * @return bool
-     */
     public function supports(string $method_name): bool
     {
-        return $method_name === self::METHOD_NAME;
+        return self::METHOD_NAME === $method_name;
     }
 
-    /**
-     * @return Node
-     */
     public function getGlobalSettings(ConfigurationService $configuration): Node
     {
         return new Node([
@@ -45,14 +34,10 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
                 'gzip' => 'gzip',
                 'cat' => 'cat',
             ],
-        ], $this->getName() . ' global settings');
+        ], $this->getName().' global settings');
     }
 
-
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     *
      * @throws \Exception
      */
     public function install(HostConfig $host_config, TaskContextInterface $context): ?CommandResult
@@ -65,29 +50,16 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
         return null;
     }
 
-
-    /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
-     * @param array $data
-     */
     public function dropDatabase(
         HostConfig $host_config,
         TaskContextInterface $context,
         ShellProviderInterface $shell,
-        array $data
-    ):CommandResult {
-        return $shell->run(sprintf("rm %s", $data['database']));
+        array $data,
+    ): CommandResult {
+        return $shell->run(sprintf('rm %s', $data['database']));
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
-     * @param string $backup_file_name
-     *
-     * @return string
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      * @throws \Phabalicious\Exception\ValidationFailedException
@@ -96,18 +68,17 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
         HostConfig $host_config,
         TaskContextInterface $context,
         ShellProviderInterface $shell,
-        string $backup_file_name
+        string $backup_file_name,
     ): string {
-
         $data = $this->getDatabaseCredentials($host_config, $context);
 
         $context->io()->comment(sprintf('Dumping database of `%s` ...', $host_config->getConfigName()));
         $shell->pushWorkingDir($data['workingDir']);
 
         $cmd = [
-            "#!sqlite3",
-            $data["database"],
-            ".dump"
+            '#!sqlite3',
+            $data['database'],
+            '.dump',
         ];
 
         if (!$shell->exists(dirname($backup_file_name))) {
@@ -117,15 +88,15 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
         $zipped_backup = $host_config['supportsZippedBackups'];
 
         if ($zipped_backup) {
-            $backup_file_name .= ".gz";
-            $cmd[] = "| #!gzip";
+            $backup_file_name .= '.gz';
+            $cmd[] = '| #!gzip';
         }
         $shell->run(sprintf('rm -f %s', escapeshellarg($backup_file_name)));
 
-        $cmd[] = ">";
+        $cmd[] = '>';
         $cmd[] = $backup_file_name;
 
-        $shell->run(implode(" ", $cmd), RunOptions::NONE, true);
+        $shell->run(implode(' ', $cmd), RunOptions::NONE, true);
 
         $shell->popWorkingDir();
 
@@ -133,13 +104,6 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
     }
 
     /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param ShellProviderInterface $shell
-     * @param string $file
-     * @param bool $drop_db
-     *
-     * @return CommandResult
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      * @throws \Phabalicious\Exception\ValidationFailedException
@@ -149,7 +113,7 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $file,
-        bool $drop_db
+        bool $drop_db,
     ): CommandResult {
         $data = $this->getDatabaseCredentials($host_config, $context);
 
@@ -162,40 +126,31 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
         $this->logger->notice(sprintf('Restoring db from %s ...', $file));
 
         $cmd = [
-            "#!sqlite3",
-            $data["database"],
+            '#!sqlite3',
+            $data['database'],
         ];
 
-        if (substr($file, strrpos($file, '.') + 1) == 'gz') {
-            array_unshift($cmd, "#!gunzip", "-c", $file, "|");
+        if ('gz' == substr($file, strrpos($file, '.') + 1)) {
+            array_unshift($cmd, '#!gunzip', '-c', $file, '|');
         } else {
-            array_unshift($cmd, "#!cat", $file, "|");
+            array_unshift($cmd, '#!cat', $file, '|');
         }
-        $result = $shell->run(implode(" ", $cmd));
+        $result = $shell->run(implode(' ', $cmd));
         $shell->popWorkingDir();
 
         return $result;
     }
 
-    /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
-     *
-     * @return \Phabalicious\ShellProvider\CommandResult
-     */
     public function checkDatabaseConnection(
         HostConfig $host_config,
         TaskContextInterface $context,
-        ShellProviderInterface $shell
+        ShellProviderInterface $shell,
     ): CommandResult {
         // This is a no op.
         return new CommandResult(0, []);
     }
 
     /**
-     * @param array $data
-     * @param \Phabalicious\Validation\ValidationErrorBag $errors
      * @param false $validate_working_dir
      */
     public function validateCredentials(array $data, ValidationErrorBag $errors, bool $validate_working_dir = false): void
@@ -221,9 +176,10 @@ class SqliteMethod extends DatabaseMethod implements MethodInterface
     public function getShellCommand(HostConfig $host_config, TaskContextInterface $context): array
     {
         $data = $this->getDatabaseCredentials($host_config, $context);
+
         return [
-            "#!sqlite3",
-            $data["database"],
+            '#!sqlite3',
+            $data['database'],
         ];
     }
 }

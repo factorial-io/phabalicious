@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\ShellProvider\TunnelHelper;
 
 use Phabalicious\Configuration\HostConfig;
@@ -12,6 +11,6 @@ interface HostToHostTunnelInterface
         HostConfig $source_config,
         HostConfig $dest_config,
         TaskContextInterface $context,
-        ?TunnelDataInterface $tunnel_data = null
+        ?TunnelDataInterface $tunnel_data = null,
     ): TunnelDataInterface;
 }

@@ -6,15 +6,11 @@ use Phabalicious\Exception\FailedShellCommandException;
 
 class CommandResult
 {
-
     private $exitCode;
     private $lines;
 
     /**
      * CommandResult constructor.
-     *
-     * @param int $exit_code
-     * @param array $lines
      */
     public function __construct(int $exit_code, array $lines)
     {
@@ -22,9 +18,9 @@ class CommandResult
         $this->lines = $lines;
     }
 
-    public function succeeded():bool
+    public function succeeded(): bool
     {
-        return $this->exitCode == 0;
+        return 0 == $this->exitCode;
     }
 
     public function failed(): bool
@@ -48,13 +44,10 @@ class CommandResult
     }
 
     /**
-     * @param string $message
      * @throws FailedShellCommandException
      */
     public function throwException(string $message)
     {
-        throw new FailedShellCommandException(
-            $message . "\n" . implode("\n", $this->getOutput())
-        );
+        throw new FailedShellCommandException($message."\n".implode("\n", $this->getOutput()));
     }
 }

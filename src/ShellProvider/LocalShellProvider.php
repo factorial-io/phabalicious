@@ -19,14 +19,11 @@ use Symfony\Component\Process\Process;
 
 class LocalShellProvider extends BaseShellProvider
 {
-
     public const RESULT_IDENTIFIER = '##RESULT:';
     public const PROVIDER_NAME = 'local';
 
-    /** @var Process|null */
     protected ?Process $process = null;
 
-    /** @var InputStream */
     protected InputStream $input;
 
     protected RunOptions $runOptions = RunOptions::NONE;
@@ -38,7 +35,7 @@ class LocalShellProvider extends BaseShellProvider
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
-        if ($this->getName() === 'local') {
+        if ('local' === $this->getName()) {
             $this->setFileOperationsHandler(new LocalFileOperations());
         }
     }
@@ -48,9 +45,6 @@ class LocalShellProvider extends BaseShellProvider
         return 'local';
     }
 
-    /**
-     * @param bool $preventTimeout
-     */
     public function setPreventTimeout(bool $preventTimeout): void
     {
         $this->preventTimeout = $preventTimeout;
@@ -68,7 +62,7 @@ class LocalShellProvider extends BaseShellProvider
         $result['shellExecutable'] = $configuration_service->getSetting('shellExecutable', '/bin/bash');
         $result['shellProviderExecutable'] = $configuration_service->getSetting('shellProviderExecutable', '/bin/bash');
 
-        return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
+        return $parent->merge(new Node($result, $this->getName().' shellprovider defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
@@ -88,7 +82,7 @@ class LocalShellProvider extends BaseShellProvider
             $options = new ShellOptions();
         }
         $shell_command = $this->getShellCommand($command, $options);
-        $this->logger->info('Starting shell with ' . implode(' ', $shell_command));
+        $this->logger->info('Starting shell with '.implode(' ', $shell_command));
         $env_vars = Utilities::mergeData([
             'LANG' => '',
             'LC_CTYPE' => 'POSIX',
@@ -104,7 +98,6 @@ class LocalShellProvider extends BaseShellProvider
 
         return $process;
     }
-
 
     /**
      * Setup local shell.
@@ -131,25 +124,20 @@ class LocalShellProvider extends BaseShellProvider
 
         $this->process->start(function ($type, $buffer) use ($run_options) {
             $buffer = preg_replace(
-                "/" . self::RESULT_IDENTIFIER . '(\d*)$/',
-                "",
+                '/'.self::RESULT_IDENTIFIER.'(\d*)$/',
+                '',
                 $buffer
             );
             if (!$run_options->hideOutput()) {
-                if ($this->output && $type === Process::OUT) {
+                if ($this->output && Process::OUT === $type) {
                     $this->output->write($buffer);
                 } else {
-                    fwrite($type === Process::ERR ? STDERR : STDOUT, $buffer);
+                    fwrite(Process::ERR === $type ? STDERR : STDOUT, $buffer);
                 }
             }
         });
         if ($this->process->isTerminated() && !$this->process->isSuccessful()) {
-            throw new \RuntimeException(sprintf(
-                'Could not start shell via `%s`, exited with exit code %d, %s',
-                $this->process->getCommandLine(),
-                $this->process->getExitCode(),
-                $this->process->getErrorOutput()
-            ));
+            throw new \RuntimeException(sprintf('Could not start shell via `%s`, exited with exit code %d, %s', $this->process->getCommandLine(), $this->process->getExitCode(), $this->process->getErrorOutput()));
         }
 
         $environment = [];
@@ -178,7 +166,7 @@ class LocalShellProvider extends BaseShellProvider
     public function terminate(): void
     {
         if ($this->process && !$this->process->isTerminated()) {
-            $this->logger->info("Terminating current running shell ...");
+            $this->logger->info('Terminating current running shell ...');
             $this->process->stop();
         }
         $this->process = null;
@@ -192,12 +180,9 @@ class LocalShellProvider extends BaseShellProvider
     /**
      * Run a command in the shell.
      *
-     * @param string $command
-     * @param \Phabalicious\ShellProvider\RunOptions $run_options
      * @param bool $throw_exception_on_error
      *
-     * @return CommandResult
-     * @throws \Phabalicious\Exception\FailedShellCommandException
+     * @throws FailedShellCommandException
      */
     public function run(string $command, RunOptions $run_options = RunOptions::NONE, $throw_exception_on_error = true): CommandResult
     {
@@ -210,7 +195,7 @@ class LocalShellProvider extends BaseShellProvider
         $last_timestamp = time();
         while ((!str_contains($result, self::RESULT_IDENTIFIER)) && !$this->process->isTerminated()) {
             $partial = $this->process->getIncrementalOutput();
-            $result .=  $partial;
+            $result .= $partial;
             if (empty($partial) && !$this->process->isTerminated()) {
                 usleep(1000 * 50);
                 $delta = time() - $last_timestamp;
@@ -240,6 +225,7 @@ class LocalShellProvider extends BaseShellProvider
             if ($throw_exception_on_error || $exit_code) {
                 $cr->throwException(sprintf('`%s` failed!', $command));
             }
+
             return $cr;
         }
 
@@ -256,7 +242,7 @@ class LocalShellProvider extends BaseShellProvider
             $lines = explode("\n", trim($this->process->getErrorOutput()));
         }
 
-        # Remove any empty lines from the end.
+        // Remove any empty lines from the end.
         while (count($lines) > 0 && empty($lines[count($lines) - 1])) {
             array_pop($lines);
         }
@@ -265,11 +251,11 @@ class LocalShellProvider extends BaseShellProvider
         if ($throw_exception_on_error && $cr->failed() && !$run_options->isCapturingOutput()) {
             $cr->throwException(sprintf('`%s` failed!', $command));
         }
+
         return $cr;
     }
 
-
-    public function getShellCommand(array $program_to_call, ShellOptions $options):array
+    public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
         return $program_to_call;
     }
@@ -280,11 +266,6 @@ class LocalShellProvider extends BaseShellProvider
     }
 
     /**
-     * @param string $source
-     * @param string $dest
-     * @param TaskContextInterface $context
-     * @param bool $verbose
-     * @return bool
      * @throws \Exception
      */
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
@@ -297,11 +278,6 @@ class LocalShellProvider extends BaseShellProvider
     }
 
     /**
-     * @param string $source
-     * @param string $dest
-     * @param TaskContextInterface $context
-     * @param bool $verbose
-     * @return bool
      * @throws \Exception
      */
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
@@ -309,14 +285,13 @@ class LocalShellProvider extends BaseShellProvider
         return $this->putFile($source, $dest, $context, $verbose);
     }
 
-
     public function startRemoteAccess(
         string $ip,
         int $port,
         string $public_ip,
         int $public_port,
         HostConfig $config,
-        TaskContextInterface $context
+        TaskContextInterface $context,
     ): int {
         throw new \InvalidArgumentException('Local shells cannot handle startRemoteAccess!');
     }
@@ -326,9 +301,6 @@ class LocalShellProvider extends BaseShellProvider
         throw new \InvalidArgumentException('Local shells cannot handle tunnels!');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function wrapCommandInLoginShell(array $command): array
     {
         array_unshift(
@@ -337,6 +309,7 @@ class LocalShellProvider extends BaseShellProvider
             '--login',
             '-c'
         );
+
         return $command;
     }
 
@@ -349,15 +322,10 @@ class LocalShellProvider extends BaseShellProvider
     public function startSubShell(array $cmd): ShellProviderInterface
     {
         $this->sendCommandToShell(implode(' ', $cmd), RunOptions::NONE);
+
         return new SubShellProvider($this->logger, $this);
     }
 
-    /**
-     * @param string $command
-     * @param bool $include_result_identifier
-     *
-     * @return string
-     */
     protected function sendCommandToShell(string $command, RunOptions $run_options, bool $include_result_identifier = true): string
     {
         $this->setup($run_options);
@@ -371,7 +339,7 @@ class LocalShellProvider extends BaseShellProvider
             $command = $password_manager->resolveSecrets($command);
         }
 
-        $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
+        $command = sprintf('cd %s && %s', $this->getWorkingDir(), $this->expandCommand($command));
         if (str_ends_with($command, ';')) {
             $command = substr($command, 0, -1);
         }
@@ -379,10 +347,11 @@ class LocalShellProvider extends BaseShellProvider
 
         // Send to shell.
         $input = $include_result_identifier
-            ? $command . '; printf "\n' . self::RESULT_IDENTIFIER . '$?"' . PHP_EOL
-            : $command . PHP_EOL;
+            ? $command.'; printf "\n'.self::RESULT_IDENTIFIER.'$?"'.PHP_EOL
+            : $command.PHP_EOL;
 
         $this->input->write($input);
+
         return $command;
     }
 }

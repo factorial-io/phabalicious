@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -11,7 +13,6 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -43,11 +44,6 @@ class DeployCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -85,7 +81,7 @@ class DeployCommand extends BaseCommand
 
         try {
             $this->getMethods()->runTask('deploy', $this->getHostConfig(), $context, ['reset']);
-            $context->io()->success(sprintf("%s deployed successfully!", $this->getHostConfig()->getLabel()));
+            $context->io()->success(sprintf('%s deployed successfully!', $this->getHostConfig()->getLabel()));
         } catch (EarlyTaskExitException $e) {
             return 1;
         }
@@ -95,6 +91,6 @@ class DeployCommand extends BaseCommand
 
     private function runBackup(InputInterface $original_input, OutputInterface $output)
     {
-        return $this->runCommand('backup', [ 'what' => ['db'] ], $original_input, $output);
+        return $this->runCommand('backup', ['what' => ['db']], $original_input, $output);
     }
 }

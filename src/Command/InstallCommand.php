@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -34,11 +36,6 @@ class InstallCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -57,7 +54,7 @@ class InstallCommand extends BaseCommand
         $context = $this->getContext();
         $host_config = $this->getHostConfig();
 
-        if ($host_config['supportsInstalls'] == false) {
+        if (false == $host_config['supportsInstalls']) {
             throw new \InvalidArgumentException('This configuration disallows installs!');
         }
 
@@ -70,14 +67,13 @@ class InstallCommand extends BaseCommand
             }
         }
 
-
         $next_tasks = $input->getOption('skip-reset') ? [] : ['reset'];
 
-        $context->io()->comment('Installing new app for `' . $this->getHostConfig()->getConfigName(). '`');
+        $context->io()->comment('Installing new app for `'.$this->getHostConfig()->getConfigName().'`');
 
         try {
             $this->getMethods()->runTask('install', $this->getHostConfig(), $context, $next_tasks);
-            $context->io()->success(sprintf("%s installed successfully!", $this->getHostConfig()->getLabel()));
+            $context->io()->success(sprintf('%s installed successfully!', $this->getHostConfig()->getLabel()));
         } catch (EarlyTaskExitException $e) {
             return 1;
         }

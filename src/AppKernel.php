@@ -1,4 +1,5 @@
 <?php
+
 namespace Phabalicious;
 
 use Phabalicious\DependencyInjection\CompilerPass\CollectCommandsToApplicationCompilerPass;
@@ -18,26 +19,29 @@ class AppKernel extends Kernel
     {
         return [];
     }
+
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $loader->load(__DIR__ . '/../config/services.yml');
+        $loader->load(__DIR__.'/../config/services.yml');
     }
+
     /**
-     * Unique cache path for this Kernel
+     * Unique cache path for this Kernel.
      */
     public function getCacheDir(): string
     {
         $dir = implode('-', [
-            sys_get_temp_dir() . '/phabalicious',
+            sys_get_temp_dir().'/phabalicious',
             Utilities::FALLBACK_VERSION,
             posix_getuid(),
-            md5(self::class)
+            md5(self::class),
         ]);
 
         return $dir;
     }
+
     /**
-     * Unique logs path for this Kernel
+     * Unique logs path for this Kernel.
      */
     public function getLogDir(): string
     {

@@ -2,21 +2,12 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Exception\BlueprintTemplateNotFoundException;
-use Phabalicious\Exception\FabfileNotFoundException;
-use Phabalicious\Exception\FabfileNotReadableException;
-use Phabalicious\Exception\MethodNotFoundException;
-use Phabalicious\Exception\MismatchedVersionException;
-use Phabalicious\Exception\MissingDockerHostConfigException;
-use Phabalicious\Exception\ShellProviderNotFoundException;
-use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Method\DatabaseMethod;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DatabaseQueryCommand extends DatabaseSubCommand
 {
-
     public function getSubcommandInfo(): array
     {
         return [
@@ -40,12 +31,13 @@ class DatabaseQueryCommand extends DatabaseSubCommand
 
         if (!$result) {
             $lines = $this->getContext()->getCommandResult()->getOutput();
-            $this->getContext()->io()->title("Result");
+            $this->getContext()->io()->title('Result');
             $output->setVerbosity(OutputInterface::VERBOSITY_NORMAL);
             foreach ($lines as $line) {
                 $output->writeln($line);
             }
         }
+
         return $this->getContext()->getResult('exitCode', 0);
     }
 }

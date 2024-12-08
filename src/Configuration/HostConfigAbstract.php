@@ -5,17 +5,16 @@ namespace Phabalicious\Configuration;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\BaseMethod;
 use Phabalicious\ShellProvider\ShellProviderInterface;
-use Phabalicious\Utilities\Utilities;
 
 abstract class HostConfigAbstract implements \ArrayAccess
 {
-    /** @var \Phabalicious\Configuration\Storage\Node */
+    /** @var Node */
     protected $data;
 
-    /** @var \Phabalicious\ShellProvider\ShellProviderInterface  */
+    /** @var ShellProviderInterface */
     protected $shell;
 
-    /** @var \Phabalicious\Configuration\ConfigurationService  */
+    /** @var ConfigurationService */
     protected $configurationService;
 
     /** @var array|bool */
@@ -29,7 +28,7 @@ abstract class HostConfigAbstract implements \ArrayAccess
         $this->data = $data instanceof Node ? $data : new Node($data, 'unknown');
         $this->shell = $shell;
         $this->category = HostConfigurationCategory::getOrCreate(
-            $data['info']['category'] ?? ["id" => "unknown", "label" => "Unknown category"]
+            $data['info']['category'] ?? ['id' => 'unknown', 'label' => 'Unknown category']
         );
 
         $shell->setHostConfig($this);
@@ -45,7 +44,7 @@ abstract class HostConfigAbstract implements \ArrayAccess
         return $this->configurationService;
     }
 
-    public function getData() : Node
+    public function getData(): Node
     {
         return $this->data;
     }
@@ -56,18 +55,19 @@ abstract class HostConfigAbstract implements \ArrayAccess
     }
 
     /**
-     * Whether a offset exists
+     * Whether a offset exists.
      *
-     * @link https://php.net/manual/en/arrayaccess.offsetexists.php
+     * @see https://php.net/manual/en/arrayaccess.offsetexists.php
      *
      * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
+     *                      An offset to check for.
+     *                      </p>
      *
-     * @return boolean true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
+     * @return bool true on success or false on failure.
+     *              </p>
+     *              <p>
+     *              The return value will be casted to boolean if non-boolean was returned.
+     *
      * @since 5.0.0
      */
     public function offsetExists($offset): bool
@@ -75,13 +75,12 @@ abstract class HostConfigAbstract implements \ArrayAccess
         return isset($this->data[$offset]);
     }
 
-
-
     public function get($key, $default = null)
     {
         if (empty($this->data[$key])) {
             return $default;
         }
+
         return $this->data[$key];
     }
 
@@ -97,6 +96,7 @@ abstract class HostConfigAbstract implements \ArrayAccess
                 return true;
             }
         }
+
         return false;
     }
 
@@ -140,7 +140,7 @@ abstract class HostConfigAbstract implements \ArrayAccess
         if (!$urls) {
             return [];
         }
-        $this->publicUrls = is_array($urls) ? $urls : [ $urls ];
+        $this->publicUrls = is_array($urls) ? $urls : [$urls];
 
         return $this->publicUrls;
     }
@@ -148,6 +148,7 @@ abstract class HostConfigAbstract implements \ArrayAccess
     public function getMainPublicUrl(): ?string
     {
         $urls = $this->getPublicUrls();
+
         return $urls ? $urls[0] : false;
     }
 
@@ -171,6 +172,7 @@ abstract class HostConfigAbstract implements \ArrayAccess
     public function getDockerConfig(): ?DockerConfig
     {
         $docker_config_name = $this->getProperty('docker.configuration', null);
+
         return $docker_config_name ? $this->getConfigurationService()->getDockerConfig($docker_config_name) : null;
     }
 }

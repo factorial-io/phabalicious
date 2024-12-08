@@ -8,8 +8,7 @@ abstract class BaseFileContentsHandler implements FileContentsHandlerInterface
 
     protected function createTempFile(string $file_name, $content, HandlerOptions $options): void
     {
-
-        $this->tmpFile = $options->getTwigRootPath() .  '/' . $file_name;
+        $this->tmpFile = $options->getTwigRootPath().'/'.$file_name;
         if (!is_dir(dirname($this->tmpFile)) && !mkdir($concurrentDirectory = dirname($this->tmpFile), 0777, true) && !is_dir($concurrentDirectory)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }

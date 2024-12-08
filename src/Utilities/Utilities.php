@@ -12,20 +12,14 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class Utilities
 {
-
-    const FALLBACK_VERSION = '4.0.0-alpha.6';
-    const COMBINED_ARGUMENTS = 'combined';
-    const UNNAMED_ARGUMENTS = 'unnamedArguments';
+    public const FALLBACK_VERSION = '4.0.0-alpha.6';
+    public const COMBINED_ARGUMENTS = 'combined';
+    public const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
     /**
      * Merge two arrays, elements of override_data will replace elements in data.
      *
      * Plain arrays, which are not associcative will get replaced, instead of merged.
-     *
-     * @param array $data
-     * @param array $override_data
-     *
-     * @return array
      */
     public static function mergeData(array $data, array $override_data): array
     {
@@ -33,9 +27,9 @@ class Utilities
         foreach ($override_data as $key => $value) {
             if (isset($data[$key])) {
                 // Do a merge
-                if (is_array($data[$key]) &&
-                    is_array($value) &&
-                    (self::isAssocArray($data[$key]) || self::isAssocArray($value))
+                if (is_array($data[$key])
+                    && is_array($value)
+                    && (self::isAssocArray($data[$key]) || self::isAssocArray($value))
                 ) {
                     $result[$key] = self::mergeData($data[$key], $value);
                 } else {
@@ -46,15 +40,12 @@ class Utilities
                 $result[$key] = $value;
             }
         }
+
         return $result;
     }
 
     /**
-     * Expand variables. Will create an array with replacement strings as key and their value
-     *
-     * @param array $variables
-     *
-     * @return array
+     * Expand variables. Will create an array with replacement strings as key and their value.
      */
     public static function expandVariables(array $variables): array
     {
@@ -63,30 +54,27 @@ class Utilities
             if (is_array($value)) {
                 self::expandVariablesImpl($key, $value, $result);
             } else {
-                $result["%$key%"] = (string)($value);
+                $result["%$key%"] = (string) $value;
             }
         }
+
         return $result;
     }
 
     /**
      * Implementation details for expandVariables.
-     *
-     * @param string $prefix
-     * @param array $variables
-     * @param array $result
      */
     private static function expandVariablesImpl(string $prefix, array $variables, array &$result)
     {
         foreach ($variables as $key => $value) {
             if (is_array($value)) {
-                self::expandVariablesImpl($prefix . '.' . $key, $value, $result);
+                self::expandVariablesImpl($prefix.'.'.$key, $value, $result);
             } elseif (is_object($value)) {
                 if (method_exists($value, '__toString')) {
-                    $result["%$prefix.$key%"] = (string)($value);
+                    $result["%$prefix.$key%"] = (string) $value;
                 }
             } else {
-                $result["%$prefix.$key%"] = (string)($value);
+                $result["%$prefix.$key%"] = (string) $value;
             }
         }
     }
@@ -111,17 +99,11 @@ class Utilities
         $strings = self::expandStrings([$string], $replacements, $ignore_list);
         $strings = self::validateScriptCommands($strings, $replacements);
 
-        return empty($strings) ? "" : $strings[0];
+        return empty($strings) ? '' : $strings[0];
     }
 
     /**
      * Expands an array of string and replace patterns.
-     *
-     * @param array $strings
-     * @param array $replacements
-     * @param array $ignore_list
-     *
-     * @return array
      */
     public static function expandStrings(array $strings, array $replacements, array $ignore_list = []): array
     {
@@ -152,7 +134,7 @@ class Utilities
             } elseif (is_array($line)) {
                 $result[$key] = self::expandStringsImpl($line, $replacements, $pattern, $ignore_list);
             } elseif (is_string($line)) {
-                $result[$key] = preg_replace_callback('/' . $pattern . '/', function ($found) use ($replacements) {
+                $result[$key] = preg_replace_callback('/'.$pattern.'/', function ($found) use ($replacements) {
                     return $replacements[$found[0]];
                 }, $line);
             } else {
@@ -166,16 +148,12 @@ class Utilities
     /**
      * Validate an array of script commands and unescape any escaped percentages.
      *
-     * @param array $commands
-     * @param array $replacements
-     *
-     * @return array
-     * @throws \Phabalicious\Exception\UnknownReplacementPatternException
+     * @throws UnknownReplacementPatternException
      */
     public static function validateScriptCommands(array $commands, array $replacements): array
     {
         $validated = Utilities::validateReplacements($commands);
-        if ($validated !== true) {
+        if (true !== $validated) {
             throw new UnknownReplacementPatternException($validated, array_keys($replacements));
         }
 
@@ -188,7 +166,6 @@ class Utilities
      * Validate for any remaining replacement strings.
      *
      * @param string[] $strings
-     * @return bool|ReplacementValidationError
      */
     public static function validateReplacements(array $strings): bool|ReplacementValidationError
     {
@@ -209,6 +186,7 @@ class Utilities
                 return new ReplacementValidationError($strings, $ndx, $matches[0]);
             }
         }
+
         return true;
     }
 
@@ -242,13 +220,14 @@ class Utilities
         $p1 = strpos($line, '(');
         $p2 = strrpos($line, ')');
 
-        if (($p1 === false) && ($p2 === false)) {
+        if ((false === $p1) && (false === $p2)) {
             return false;
         }
 
         $callback_name = substr($line, 0, $p1);
         $arg_string = trim(substr($line, $p1 + 1, $p2 - $p1 - 1));
         $args = self::extractArguments($arg_string);
+
         return [$callback_name, $args];
     }
 
@@ -256,9 +235,10 @@ class Utilities
      * Extract callback arguments from a string, support quoted string as arguments.
      *
      * @param $str
-     *   The string to parse.
+     *             The string to parse
+     *
      * @return array
-     *   The array of arguments.
+     *               The array of arguments
      *
      * @throws ArgumentParsingException
      */
@@ -266,7 +246,7 @@ class Utilities
     {
         // If only one argument return early.
         if (!str_contains($str, ',')) {
-            return [ str_replace('"', '', $str) ];
+            return [str_replace('"', '', $str)];
         }
         $result = [];
         $pos = 0;
@@ -274,34 +254,34 @@ class Utilities
         do {
             // Find first non-space.
             while ($pos < strlen($str) && ctype_space($str[$pos])) {
-                $pos++;
+                ++$pos;
             }
             if ($pos === strlen($str)) {
                 $done = true;
-            } elseif ($str[$pos] === '"') {
+            } elseif ('"' === $str[$pos]) {
                 // Quoted string ahead, extract.
-                $end_p = strpos($str, '"', $pos+1);
-                if ($end_p === false) {
+                $end_p = strpos($str, '"', $pos + 1);
+                if (false === $end_p) {
                     throw new ArgumentParsingException(sprintf('Missing closing quote in %s', $str));
                 }
-                $found = substr($str, $pos+1, $end_p - $pos - 1);
+                $found = substr($str, $pos + 1, $end_p - $pos - 1);
                 $result[] = $found;
                 // Advance to next comma or finish.
-                $comma_p = strpos($str, ',', $end_p+1);
-                if ($comma_p === false) {
+                $comma_p = strpos($str, ',', $end_p + 1);
+                if (false === $comma_p) {
                     // Seems we are finished.
                     $done = true;
                 } else {
                     $pos = $comma_p;
                 }
-            } elseif ($str[$pos] === ',') {
+            } elseif (',' === $str[$pos]) {
                 // Comma, move one char forward.
-                $pos++;
+                ++$pos;
                 continue;
             } else {
                 // Handle argument without quotes.
                 $end_p = strpos($str, ',', $pos);
-                if ($end_p === false) {
+                if (false === $end_p) {
                     // Seems like this is the last one
                     $end_p = strlen($str);
                 }
@@ -345,7 +325,7 @@ class Utilities
 
         foreach ($keys as $key) {
             if (!isset($data[$key])) {
-                throw new \InvalidArgumentException(sprintf("Could not find key %s in data!", $dotted_key));
+                throw new \InvalidArgumentException(sprintf('Could not find key %s in data!', $dotted_key));
             }
             $data = &$data[$key];
         }
@@ -360,23 +340,20 @@ class Utilities
 
     /**
      * Check if $arr is an associative array.
-     *
-     * @param mixed $arr
-     *
-     * @return bool
      */
     public static function isAssocArray($arr): bool
     {
-        if (!is_array($arr) || array() === $arr) {
+        if (!is_array($arr) || [] === $arr) {
             return false;
         }
+
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
     public static function prependRootFolder($rootFolder, $subfolder): string
     {
         if (!str_contains($subfolder, $rootFolder)) {
-            return $rootFolder . $subfolder;
+            return $rootFolder.$subfolder;
         }
 
         return $subfolder;
@@ -394,9 +371,8 @@ class Utilities
         ];
         $identifier = strtr($identifier, $filter);
 
-
         $identifier = preg_replace(
-            '/[^\\x{002D}\\x{002E}}\\x{0030}-\\x{0039}\\x{0041}-' .
+            '/[^\\x{002D}\\x{002E}}\\x{0030}-\\x{0039}\\x{0041}-'.
             '\\x{005A}\\x{005F}\\x{0061}-\\x{007A}\\x{00A1}-\\x{FFFF}]/u',
             '',
             $identifier
@@ -409,8 +385,8 @@ class Utilities
     public static function getRelativePath($from, $to): string
     {
         // some compatibility fixes for Windows paths
-        $from = is_dir($from) ? rtrim($from, '\/') . '/' : $from;
-        $to = is_dir($to) ? rtrim($to, '\/') . '/' : $to;
+        $from = is_dir($from) ? rtrim($from, '\/').'/' : $from;
+        $to = is_dir($to) ? rtrim($to, '\/').'/' : $to;
         $from = str_replace('\\', '/', $from);
         $to = str_replace('\\', '/', $to);
 
@@ -432,17 +408,14 @@ class Utilities
                     $relPath = array_pad($relPath, $padLength, '..');
                     break;
                 } else {
-                    $relPath[0] = './' . $relPath[0];
+                    $relPath[0] = './'.$relPath[0];
                 }
             }
         }
+
         return implode('/', $relPath);
     }
 
-    /**
-     * @param $arguments_string
-     * @return array
-     */
     public static function parseArguments($arguments_string): array
     {
         $args = is_array($arguments_string) ? $arguments_string : explode(' ', $arguments_string);
@@ -463,23 +436,22 @@ class Utilities
             self::COMBINED_ARGUMENTS => implode(' ', $unnamed_args),
             self::UNNAMED_ARGUMENTS => $unnamed_args,
         ]);
+
         return $named_args;
     }
 
     /**
      * Build an array suitable for InputOptions from an arbitrary array.
      *
-     * @param array $array
-     * @return array
      * @see Utilities::parseArguments()
      */
     public static function buildOptionsForArguments(array $array): array
     {
         $return = [];
         foreach ($array as $key => $value) {
-            if ($key == Utilities::COMBINED_ARGUMENTS) {
+            if (Utilities::COMBINED_ARGUMENTS == $key) {
                 continue;
-            } elseif ($key == Utilities::UNNAMED_ARGUMENTS) {
+            } elseif (Utilities::UNNAMED_ARGUMENTS == $key) {
                 foreach ($value as $item) {
                     $return[] = $item;
                 }
@@ -487,29 +459,26 @@ class Utilities
                 $return[] = sprintf('%s=%s', $key, $value);
             }
         }
+
         return $return;
     }
 
-
     public static function generateUUID(): string
     {
-        return bin2hex(openssl_random_pseudo_bytes(4)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
-            bin2hex(openssl_random_pseudo_bytes(2)) . '-' .
+        return bin2hex(openssl_random_pseudo_bytes(4)).'-'.
+            bin2hex(openssl_random_pseudo_bytes(2)).'-'.
+            bin2hex(openssl_random_pseudo_bytes(2)).'-'.
+            bin2hex(openssl_random_pseudo_bytes(2)).'-'.
             bin2hex(openssl_random_pseudo_bytes(6));
     }
 
-    /**
-     * @param array $tokens
-     * @return array
-     */
     public static function getReplacements(array $tokens): array
     {
         $replacements = [];
         foreach ($tokens as $key => $value) {
-            $replacements['%' . $key . '%'] = $value;
+            $replacements['%'.$key.'%'] = $value;
         }
+
         return $replacements;
     }
 
@@ -521,31 +490,28 @@ class Utilities
             if (is_array($value)) {
                 self::pushKeysAsDotNotation($value, $return, $new_levels);
             } else {
-                $return[] =  implode('.', $new_levels);
+                $return[] = implode('.', $new_levels);
             }
         }
     }
 
     /**
      * Get the current users home directory.
-     *
-     * @return string
      */
     public static function getUserFolder(): string
     {
         $uid = posix_getuid();
+
         return posix_getpwuid($uid)['dir'];
     }
 
     /**
      * Check if the given named option is set.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     *   The input.
-     * @param string $name
-     *   The name of the option.
-     *
-     * @return bool
+     * @param InputInterface $input
+     *                              The input
+     * @param string         $name
+     *                              The name of the option
      */
     public static function hasBoolOptionSet(InputInterface $input, string $name): bool
     {
@@ -566,7 +532,7 @@ class Utilities
 
     public static function toUpperSnakeCase($string): string
     {
-        return strtoUpper(str_replace('-', '_', self::camel2dashed($string)));
+        return strtoupper(str_replace('-', '_', self::camel2dashed($string)));
     }
 
     /**
@@ -574,7 +540,7 @@ class Utilities
      */
     public static function getNextStableVersion(string $version): string
     {
-        $exploded = explode(".", $version);
+        $exploded = explode('.', $version);
         if (count($exploded) < 3) {
             return $version;
         }
@@ -584,7 +550,7 @@ class Utilities
             $exploded[2] = str_replace('-alpha', '', $exploded[2]);
             unset($exploded[3]);
 
-            return implode(".", $exploded);
+            return implode('.', $exploded);
         }
 
         return $version;
@@ -592,7 +558,7 @@ class Utilities
 
     public static function getTempNamePrefixFromString(string $str, $prefix = 'phab'): string
     {
-        return $prefix . '-' . md5($str . mt_rand());
+        return $prefix.'-'.md5($str.mt_rand());
     }
 
     public static function getTempNamePrefix($hostconfig): string
@@ -603,8 +569,8 @@ class Utilities
     public static function getTempFileName(HostConfig $host_config, $str): string
     {
         return
-            $host_config->get('tmpFolder', sys_get_temp_dir()) . '/' .
-            bin2hex(random_bytes(8)) . '--' .
+            $host_config->get('tmpFolder', sys_get_temp_dir()).'/'.
+            bin2hex(random_bytes(8)).'--'.
             basename($str);
     }
 
@@ -612,12 +578,12 @@ class Utilities
     {
         $tempDir = $hostConfig->get('tmpFolder', sys_get_temp_dir());
         $uniqueFolderName = uniqid($name, true);
-        $uniqueFolderPath = $tempDir . DIRECTORY_SEPARATOR . $uniqueFolderName;
+        $uniqueFolderPath = $tempDir.DIRECTORY_SEPARATOR.$uniqueFolderName;
         if (mkdir($uniqueFolderPath, 0777, true) || is_dir($uniqueFolderPath)) {
             return $uniqueFolderPath;
         }
 
-        throw new \RuntimeException('Could not create temporary folder ' . $uniqueFolderPath);
+        throw new \RuntimeException('Could not create temporary folder '.$uniqueFolderPath);
     }
 
     /**
@@ -627,13 +593,13 @@ class Utilities
     {
         if (self::isPharUrl($url)) {
             return [
-               'scheme' => 'phar',
-               'path' => str_replace('phar://', '//', $url),
+                'scheme' => 'phar',
+                'path' => str_replace('phar://', '//', $url),
             ];
         }
+
         return parse_url($url);
     }
-
 
     public static function resolveRelativePaths(string $url): string
     {
@@ -642,17 +608,17 @@ class Utilities
         $path = [];
         $parts = explode('/', $filename);
         $root = '';
-        if (empty($result['host']) && !empty($parts[0]) && $parts[0][0] == '.') {
+        if (empty($result['host']) && !empty($parts[0]) && '.' == $parts[0][0]) {
             $root = $parts[0];
             array_shift($parts);
         }
 
         foreach ($parts as $part) {
-            if ($part === '.' || $part === '') {
+            if ('.' === $part || '' === $part) {
                 continue;
             }
 
-            if ($part !== '..') {
+            if ('..' !== $part) {
                 array_push($path, $part);
             } elseif (count($path) > 0) {
                 array_pop($path);
@@ -672,26 +638,27 @@ class Utilities
     {
         $url = '';
         if (!empty($components['scheme'])) {
-            $url .= $components['scheme'] . '://';
+            $url .= $components['scheme'].'://';
         }
         if (!empty($components['username']) && !empty($components['password'])) {
-            $url .= $components['username'] . ':' . $components['password'] . '@';
+            $url .= $components['username'].':'.$components['password'].'@';
         }
         if (!empty($components['host'])) {
             $url .= $components['host'];
         }
         if (!empty($components['port'])) {
-            $url .= ':' . $components['port'];
+            $url .= ':'.$components['port'];
         }
         if (!empty($components['path'])) {
             $url .= $components['path'];
         }
         if (!empty($components['query'])) {
-            $url .= '?' . http_build_query($components['query']);
+            $url .= '?'.http_build_query($components['query']);
         }
         if (!empty($components['fragment'])) {
-            $url .= '#' . $components['fragment'];
+            $url .= '#'.$components['fragment'];
         }
+
         return $url;
     }
 
@@ -700,7 +667,7 @@ class Utilities
      */
     public static function isHttpUrl($url): bool
     {
-        return (str_starts_with($url, 'http'))  && (str_contains($url, '://'));
+        return str_starts_with($url, 'http') && str_contains($url, '://');
     }
 
     /**
@@ -708,6 +675,6 @@ class Utilities
      */
     public static function isPharUrl($url): bool
     {
-        return (str_starts_with($url, 'phar'))  && (str_contains($url, '://'));
+        return str_starts_with($url, 'phar') && str_contains($url, '://');
     }
 }

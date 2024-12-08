@@ -11,6 +11,7 @@ class ScottyCtlCreateOptions extends ScottyCtlOptions
     public const VALUE_PARAMS = ['basic-auth', 'app-blueprint', 'registry', 'ttl'];
     public const BOOL_PARAMS = ['allow-robots'];
     public const COMPLEX_PARAMS = ['services', 'environment', 'custom-domains'];
+
     public function __construct(HostConfig $host_config, TaskContextInterface $context)
     {
         parent::__construct($host_config, $context);
@@ -39,17 +40,16 @@ class ScottyCtlCreateOptions extends ScottyCtlOptions
         }
     }
 
-
     protected function buildImpl(array $data, string $command): array
     {
         $options = [
-        '--folder',
-          $data['app_folder'],
+            '--folder',
+            $data['app_folder'],
         ];
         $mapping = [
             'services' => 'service',
             'environment' => 'env',
-            'custom-domains' => 'custom-domain'
+            'custom-domains' => 'custom-domain',
         ];
         $separators = [
             'services' => ':',
@@ -59,23 +59,24 @@ class ScottyCtlCreateOptions extends ScottyCtlOptions
         foreach ($separators as $key => $separator) {
             if (isset($data[$key])) {
                 foreach ($data[$key] as $subkey => $value) {
-                    $options[] = '--' . $mapping[$key];
-                    $options[] = $subkey . $separator . $value;
+                    $options[] = '--'.$mapping[$key];
+                    $options[] = $subkey.$separator.$value;
                 }
             }
         }
         foreach (self::VALUE_PARAMS as $key) {
             if (isset($data[$key])) {
-                $options[] = '--' . $key;
+                $options[] = '--'.$key;
                 $options[] = $this->data[$key];
             }
         }
 
         foreach (self::BOOL_PARAMS as $key) {
             if (!empty($data[$key])) {
-                $options[] = '--' . $key;
+                $options[] = '--'.$key;
             }
         }
+
         return array_merge(parent::buildImpl($data, $command), $options);
     }
 }

@@ -18,35 +18,21 @@ use Symfony\Component\Process\Process;
 
 abstract class BaseShellProvider implements ShellProviderInterface
 {
-
-    /** @var null|HostConfig */
     protected ?HostConfig $hostConfig = null;
 
-    /** @var string */
     private string $workingDir = '';
 
-    /** @var \Psr\Log\LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var OutputInterface|null */
     protected ?OutputInterface $output = null;
 
-    /** @var LogLevelStack */
     protected LogLevelStack $loglevel;
 
-    /** @var LogLevelStack */
     protected LogLevelStack $errorLogLevel;
 
-    /** @var string */
     protected string $hash;
-    /**
-     * @var array
-     */
     private array $workingDirStack = [];
 
-    /**
-     * @var \Phabalicious\ShellProvider\FileOperationsInterface
-     */
     protected FileOperationsInterface $fileOperationsHandler;
 
     public function __construct(LoggerInterface $logger)
@@ -77,7 +63,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
     {
         return new Node([
             'rootFolder' => $configuration_service->getFabfilePath(),
-        ], $this->getName() . ' shellprovider defaults');
+        ], $this->getName().' shellprovider defaults');
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
@@ -103,7 +89,6 @@ abstract class BaseShellProvider implements ShellProviderInterface
         return $this->workingDir;
     }
 
-
     public function setOutput(OutputInterface $output): void
     {
         $this->output = $output;
@@ -111,12 +96,12 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     public function cd(string $dir): ShellProviderInterface
     {
-        if (empty($dir) || $dir[0] === '.') {
+        if (empty($dir) || '.' === $dir[0]) {
             $result = $this->run(sprintf('cd %s; echo $PWD', $dir), RunOptions::CAPTURE_AND_HIDE_OUTPUT, true);
             $dir = $result->getOutput()[0];
         }
         $this->workingDir = $dir;
-        $this->logger->debug('New working dir: ' . $dir);
+        $this->logger->debug('New working dir: '.$dir);
 
         return $this;
     }
@@ -129,7 +114,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     public function popWorkingDir(): void
     {
-        if (count($this->workingDirStack) === 0) {
+        if (0 === count($this->workingDirStack)) {
             throw new \RuntimeException('Can\'t pop working dir, stack is empty');
         }
         $working_dir = array_pop($this->workingDirStack);
@@ -140,7 +125,8 @@ abstract class BaseShellProvider implements ShellProviderInterface
      * Expand a command.
      *
      * @param string $line
-     * @return null|string|string[]
+     *
+     * @return string|string[]|null
      */
     public function expandCommand($line): string|array|null
     {
@@ -149,10 +135,10 @@ abstract class BaseShellProvider implements ShellProviderInterface
             return $line;
         }
         $pattern = implode('|', array_map(function ($elem) {
-            return preg_quote('#!' . $elem) . '|' . preg_quote('$$' . $elem);
+            return preg_quote('#!'.$elem).'|'.preg_quote('$$'.$elem);
         }, array_keys($this->hostConfig['executables'])));
 
-        $cmd = preg_replace_callback('/' . $pattern . '/', function ($elem) {
+        $cmd = preg_replace_callback('/'.$pattern.'/', function ($elem) {
             return $this->hostConfig['executables'][substr($elem[0], 2)];
         }, $line);
 
@@ -161,20 +147,20 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     public static function outputCallback($type, $buffer)
     {
-        if ($type === Process::ERR) {
+        if (Process::ERR === $type) {
             fwrite(STDERR, $buffer);
         } else {
             fwrite(STDOUT, $buffer);
         }
     }
 
-    public function runProcess(array $cmd, TaskContextInterface $context, $interactive = false, $verbose = false):bool
+    public function runProcess(array $cmd, TaskContextInterface $context, $interactive = false, $verbose = false): bool
     {
         $cb = ($verbose | $interactive)
-            ? [self::Class, 'outputCallback']
+            ? [self::class, 'outputCallback']
             : null;
         $stdin = $interactive ? fopen('php://stdin', 'rb') : null;
-        $this->logger->log($this->loglevel->get(), 'running command: ' . implode(' ', $cmd));
+        $this->logger->log($this->loglevel->get(), 'running command: '.implode(' ', $cmd));
         $process = new Process($cmd, $context->getConfigurationService()->getFabfilePath(), [], $stdin);
         if ($interactive) {
             $process->setTimeout(0);
@@ -182,14 +168,16 @@ abstract class BaseShellProvider implements ShellProviderInterface
             $process->start();
             $process->wait($cb);
         } else {
-            $process->setTimeout(24*60*60);
-            //$process->setTty($verbose);
+            $process->setTimeout(24 * 60 * 60);
+            // $process->setTty($verbose);
             $process->run($cb);
         }
-        if ($process->getExitCode() !== 0) {
+        if (0 !== $process->getExitCode()) {
             $this->logger->log($this->errorLogLevel->get(), $process->getErrorOutput());
+
             return false;
         }
+
         return true;
     }
 
@@ -198,7 +186,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         string $source_file_name,
         string $target_file_name,
         TaskContextInterface $context,
-        bool $verbose = false
+        bool $verbose = false,
     ): bool {
         $this->logger->notice(sprintf(
             'Copy from `%s` (%s) to `%s` (%s)',
@@ -213,8 +201,8 @@ abstract class BaseShellProvider implements ShellProviderInterface
         // This is a naive implementation, copying the file from source to local and
         // then from local to target.
 
-        $immediate_file_name = $context->getConfigurationService()->getFabfilePath() .
-            '/' . basename($source_file_name);
+        $immediate_file_name = $context->getConfigurationService()->getFabfilePath().
+            '/'.basename($source_file_name);
 
         $result = $from_shell->getFile($source_file_name, $immediate_file_name, $context, $verbose);
 
@@ -232,14 +220,13 @@ abstract class BaseShellProvider implements ShellProviderInterface
     /**
      * Setup environment variables..
      *
-     * @param array $environment
      * @throws \Exception
      */
     public function setupEnvironment(array $environment): void
     {
         $files = [
             '/etc/profile',
-            '~/.bashrc'
+            '~/.bashrc',
         ];
         foreach ($files as $file) {
             if ($this->exists($file)) {
@@ -251,14 +238,14 @@ abstract class BaseShellProvider implements ShellProviderInterface
 
     public function getApplyEnvironmentCmds(array $environment): array
     {
-
         $cmds = [];
         foreach ($environment as $key => $value) {
-            if (is_null($value) || $value === false || trim($value) === '') {
+            if (is_null($value) || false === $value || '' === trim($value)) {
                 continue;
             }
             $cmds[] = "export \"$key\"=\"$value\"";
         }
+
         return $cmds;
     }
 
@@ -266,18 +253,15 @@ abstract class BaseShellProvider implements ShellProviderInterface
     {
         $cmds = $this->getApplyEnvironmentCmds($environment);
         if (!empty($cmds)) {
-            $this->run(implode(" && ", $cmds));
+            $this->run(implode(' && ', $cmds));
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRsyncOptions(
         HostConfig $to_host_config,
         HostConfig $from_host_config,
         string $to_path,
-        string $from_path
+        string $from_path,
     ): false|array {
         return false;
     }

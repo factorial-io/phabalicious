@@ -50,7 +50,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
         string $source_file_name,
         string $target_file_name,
         TaskContextInterface $context,
-        bool $verbose = false
+        bool $verbose = false,
     ): bool;
 
     public function startRemoteAccess(
@@ -59,12 +59,12 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
         string $public_ip,
         int $public_port,
         HostConfig $config,
-        TaskContextInterface $context
+        TaskContextInterface $context,
     ): int;
 
     public function expandCommand($line);
 
-    public function runProcess(array $cmd, TaskContextInterface $context, $interactive = false, $verbose = false):bool;
+    public function runProcess(array $cmd, TaskContextInterface $context, $interactive = false, $verbose = false): bool;
 
     public function getShellCommand(array $program_to_call, ShellOptions $options): array;
 
@@ -74,27 +74,17 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
 
     /**
      * Wrap a command to execute into a login shell.
-     *
-     * @param array $command
-     * @return array
      */
     public function wrapCommandInLoginShell(array $command): array;
 
     /**
      * Get the rsync options from the shell providers.
-     *
-     * @param \Phabalicious\Configuration\HostConfig $to_host_config
-     * @param \Phabalicious\Configuration\HostConfig $from_host_config
-     * @param string $to_path
-     * @param string $from_path
-     *
-     * @return false|array
      */
     public function getRsyncOptions(
         HostConfig $to_host_config,
         HostConfig $from_host_config,
         string $to_path,
-        string $from_path
+        string $from_path,
     ): false|array;
 
     /**

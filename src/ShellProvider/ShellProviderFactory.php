@@ -4,7 +4,6 @@ namespace Phabalicious\ShellProvider;
 
 class ShellProviderFactory
 {
-
     public static function create($shell_provider_name, $logger)
     {
         switch ($shell_provider_name) {

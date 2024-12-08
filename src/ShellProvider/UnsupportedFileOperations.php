@@ -6,7 +6,6 @@ use Phabalicious\Method\TaskContextInterface;
 
 class UnsupportedFileOperations implements FileOperationsInterface
 {
-
     public function getFileContents($filename, TaskContextInterface $context)
     {
         throw new \RuntimeException('getFileContents not supported in this context!');

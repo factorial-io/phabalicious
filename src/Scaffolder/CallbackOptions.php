@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\Scaffolder;
 
 use Phabalicious\Method\AlterableDataInterface;
@@ -32,7 +31,7 @@ class CallbackOptions implements AlterableDataInterface
             ->addCallback(new AssertZeroCallback())
             ->addCallback(new AssertFileCallback())
             ->addCallback(new AssertContainsCallback())
-            ->addCallback(new SetDirectoryCallBack())
+            ->addCallback(new SetDirectoryCallback())
             ->addCallback(new AlterYamlFileCallback())
             ->addCallback(new AlterJsonFileCallback())
             ->addCallback(new GetFileFrom1Password())
@@ -46,6 +45,7 @@ class CallbackOptions implements AlterableDataInterface
     public function addCallback(CallbackInterface $callback): self
     {
         $this->callbacks[$callback::getName()] = $callback;
+
         return $this;
     }
 

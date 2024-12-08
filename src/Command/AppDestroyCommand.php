@@ -1,14 +1,12 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\AppDefaultStages;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AppDestroyCommand extends AppBaseCommand
@@ -44,11 +42,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -74,7 +67,7 @@ Examples:
         if ($install_dir) {
             /** @var ShellProviderInterface $outer_shell */
             $outer_shell = $context->getResult('outerShell', $host_config->shell());
-            $lock_file = $install_dir . '/.projectCreated';
+            $lock_file = $install_dir.'/.projectCreated';
             $app_exists = $outer_shell->exists($lock_file);
         } else {
             $app_exists = $context->getResult('appExists', false);

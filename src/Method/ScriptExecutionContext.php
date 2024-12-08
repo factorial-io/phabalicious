@@ -22,9 +22,8 @@ class ScriptExecutionContext
         self::DOCKER_IMAGE,
         self::DOCKER_COMPOSE_RUN,
         self::HOST,
-        self::KUBE_CTL
+        self::KUBE_CTL,
     ];
-
 
     protected $workingDir;
 
@@ -45,11 +44,10 @@ class ScriptExecutionContext
 
     protected $uniqueHash;
 
-
     public function __construct($working_dir, string $context_name, array $context_data)
     {
         $errors = self::validate(array_merge($context_data, [
-            'context' => $context_name
+            'context' => $context_name,
         ]));
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
@@ -62,7 +60,7 @@ class ScriptExecutionContext
     public static function validate(array $arguments): ValidationErrorBagInterface
     {
         $errors = new ValidationErrorBag();
-        $validation = new ValidationService($arguments, $errors, "ScriptExecutionContext");
+        $validation = new ValidationService($arguments, $errors, 'ScriptExecutionContext');
 
         $validation->isOneOf('context', self::VALID_CONTEXTS);
         if ($errors->hasErrors()) {
@@ -123,7 +121,7 @@ class ScriptExecutionContext
                 break;
 
             case self::DOCKER_IMAGE:
-                $root_folder =$this->getArgument('rootFolder', $this->workingDir);
+                $root_folder = $this->getArgument('rootFolder', $this->workingDir);
                 $working_dir = $shell->realPath($root_folder);
                 if (!$working_dir) {
                     throw new \RuntimeException(sprintf('Can\'t resolve working dir %s!', $root_folder));
@@ -179,11 +177,11 @@ class ScriptExecutionContext
 
     public function exit(): void
     {
-        if ($this->currentContextName !== self::HOST) {
+        if (self::HOST !== $this->currentContextName) {
             $this->shell->terminate();
         }
 
-        if ($this->currentContextName === self::DOCKER_COMPOSE_RUN) {
+        if (self::DOCKER_COMPOSE_RUN === $this->currentContextName) {
             $this->shell->cd($this->initialWorkingDir);
             $this->shell->cd($this->dockerComposeRootDir);
 
@@ -214,8 +212,8 @@ class ScriptExecutionContext
             'docker-compose',
             '-p',
             $this->uniqueHash,
-            $cmd
-            ];
+            $cmd,
+        ];
 
         return array_merge($return, $args);
     }
@@ -223,14 +221,10 @@ class ScriptExecutionContext
     private function getDockerComposeCmd($cmd, ...$args): string
     {
         $result = $this->getDockerComposeCmdAsArray($cmd, ...$args);
+
         return implode(' ', $result);
     }
 
-    /**
-     * @param \Phabalicious\ShellProvider\ShellProviderInterface $shell
-     *
-     * @return void
-     */
     protected function applyEnvironmentToHostShell(ShellProviderInterface $shell): void
     {
         $environment = $this->getArgument('environment', []);

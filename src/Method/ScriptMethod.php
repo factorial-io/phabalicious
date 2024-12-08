@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Method\Callbacks\BreakOnFirstError;
 use Phabalicious\Method\Callbacks\ExecuteCallback;
 use Phabalicious\Method\Callbacks\FailOnMissingDirectory;
@@ -17,21 +18,18 @@ use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
-use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Symfony\Component\Yaml\Yaml;
 
 class ScriptMethod extends BaseMethod implements MethodInterface
 {
-
-    const SCRIPT_COMMAND_LINE_DEFAULTS = 'scriptCommandLineDefaults';
-    const SCRIPT_QUESTIONS = 'scriptQuestions';
-    const SCRIPT_DATA = 'scriptData';
-    const SCRIPT_CONTEXT = 'scriptContext';
-    const SCRIPT_CONTEXT_DATA = 'scriptContextData';
-    const SCRIPT_COMPUTED_VALUES = 'scriptComputedValues';
-    const SCRIPT_CALLBACKS = 'callbacks';
-    const SCRIPT_CLEANUP = 'scriptCleanup';
-
+    public const SCRIPT_COMMAND_LINE_DEFAULTS = 'scriptCommandLineDefaults';
+    public const SCRIPT_QUESTIONS = 'scriptQuestions';
+    public const SCRIPT_DATA = 'scriptData';
+    public const SCRIPT_CONTEXT = 'scriptContext';
+    public const SCRIPT_CONTEXT_DATA = 'scriptContextData';
+    public const SCRIPT_COMPUTED_VALUES = 'scriptComputedValues';
+    public const SCRIPT_CALLBACKS = 'callbacks';
+    public const SCRIPT_CLEANUP = 'scriptCleanup';
 
     private $breakOnFirstError = true;
     private $callbacks = [];
@@ -44,20 +42,20 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
     public function supports(string $method_name): bool
     {
-        return $method_name == 'script';
+        return 'script' == $method_name;
     }
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
         return new Node([
             'rootFolder' => $configuration_service->getFabfilePath(),
-        ], $this->getName() . ' method defaults');
+        ], $this->getName().' method defaults');
     }
 
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
+        ValidationErrorBagInterface $errors,
     ) {
         $service = new ValidationService($config, $errors, 'host-config');
         $service->hasKey('rootFolder', 'The root-folder of your configuration.');
@@ -66,26 +64,20 @@ class ScriptMethod extends BaseMethod implements MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-        return parent::isRunningAppRequired($host_config, $context, $task) ||
-            in_array($task, ['runScript']);
+        return parent::isRunningAppRequired($host_config, $context, $task)
+            || in_array($task, ['runScript']);
     }
 
     /**
      * Set default callbacks, these are globally available.
-     *
-     * @param array $callbacks
      */
     public function setDefaultCallbacks(array $callbacks)
     {
         $this->callbacks = $callbacks;
     }
 
-
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     *
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
@@ -161,14 +153,11 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param \Phabalicious\Method\ScriptDataBag $bag
-     *
-     * @return CommandResult|null
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\ValidationFailedException
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
-    public function runScriptImpl(ScriptDataBag $bag) : ?CommandResult
+    public function runScriptImpl(ScriptDataBag $bag): ?CommandResult
     {
         $bag->getContext()->set('break_on_first_error', $this->getBreakOnFirstError());
 
@@ -204,7 +193,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
+     * @throws MissingScriptCallbackImplementation
      */
     private function runCommands(ShellProviderInterface $shell, array $commands, ScriptDataBag $bag): CommandResult
     {
@@ -214,7 +203,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
                 continue;
             }
             if (!is_string($line)) {
-                throw new \InvalidArgumentException("Not a valid script block!\n\n" . Yaml::dump($commands, 4));
+                throw new \InvalidArgumentException("Not a valid script block!\n\n".Yaml::dump($commands, 4));
             }
 
             $line = $bag->applyReplacements($line);
@@ -246,43 +235,32 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         return $command_result;
     }
 
-    /**
-     * @return bool
-     */
     public function getBreakOnFirstError(): bool
     {
         return $this->breakOnFirstError;
     }
 
-    /**
-     * @param bool $flag
-     */
     public function setBreakOnFirstError(bool $flag)
     {
         $this->breakOnFirstError = $flag;
     }
+
     /**
      * Execute callback.
      *
-     * @param TaskContextInterface $context
-     * @param array $callbacks
-     * @param string $callback_name
-     * @param array $args
-     *
-     * @return bool
      * @throws MissingScriptCallbackImplementation
      */
     private function executeCallback(
         TaskContextInterface $context,
         array $callbacks,
         string $callback_name,
-        array $args
+        array $args,
     ): bool {
         if (!isset($callbacks[$callback_name])) {
             return false;
         }
 
-        /** @var \Phabalicious\Scaffolder\Callbacks\CallbackInterface $fn */
+        /** @var CallbackInterface $fn */
         $fn = $callbacks[$callback_name];
         if (!($fn instanceof CallbackInterface)) {
             throw new MissingScriptCallbackImplementation($callback_name, $callbacks);
@@ -293,16 +271,12 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param HostConfig $config
-     * @param string $task
-     * @param TaskContextInterface $context
-     *
      * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     public function runTaskSpecificScripts(HostConfig $config, string $task, TaskContextInterface $context)
     {
-        $this->logger->debug("Try runTaskSpecific scripts for " . $task);
+        $this->logger->debug('Try runTaskSpecific scripts for '.$task);
 
         $this->handledTaskSpecificScripts[$task] = true;
 
@@ -312,6 +286,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             $this->logger->warning(
                 'Found old-style common scripts! Please regroup by common > taskName > type > commands.'
             );
+
             return;
         }
 
@@ -341,10 +316,6 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     /**
      * Run fallback scripts.
      *
-     * @param string $task
-     * @param HostConfig $config
-     * @param TaskContextInterface $context
-     *
      * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
@@ -357,29 +328,21 @@ class ScriptMethod extends BaseMethod implements MethodInterface
     /**
      * Run preflight scripts.
      *
-     * @param string $task
-     * @param HostConfig $config
-     * @param TaskContextInterface $context
-     *
      * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
     {
         parent::preflightTask($task, $config, $context);
-        $this->runTaskSpecificScripts($config, $task . 'Prepare', $context);
+        $this->runTaskSpecificScripts($config, $task.'Prepare', $context);
         if ($current_stage = $context->get('currentStage')) {
             $current_stage = ucfirst($current_stage);
-            $this->runTaskSpecificScripts($config, $task . $current_stage . 'Prepare', $context);
+            $this->runTaskSpecificScripts($config, $task.$current_stage.'Prepare', $context);
         }
     }
 
     /**
      * Run postflight scripts.
-     *
-     * @param string $task
-     * @param HostConfig $config
-     * @param TaskContextInterface $context
      *
      * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
@@ -396,12 +359,12 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         }
         if ($current_stage = $context->get('currentStage')) {
             $current_stage = ucfirst($current_stage);
-            $this->runTaskSpecificScripts($config, $task . $current_stage . 'Finished', $context);
+            $this->runTaskSpecificScripts($config, $task.$current_stage.'Finished', $context);
         }
 
-        $this->runTaskSpecificScripts($config, $task . 'Finished', $context);
+        $this->runTaskSpecificScripts($config, $task.'Finished', $context);
 
-        foreach ([$task . 'Prepare', $task, $task . 'Finished'] as $t) {
+        foreach ([$task.'Prepare', $task, $task.'Finished'] as $t) {
             unset($this->handledTaskSpecificScripts[$t]);
         }
     }
@@ -420,8 +383,8 @@ class ScriptMethod extends BaseMethod implements MethodInterface
             if ($cmd_result->succeeded()) {
                 $output = trim(implode("\n", $cmd_result->getOutput()));
             }
-            $result[$key] = $output == "" ? $cmd_result->getExitCode() : $output;
-            $this->logger->info(sprintf("Results for computed value %s: %s", $key, $result[$key]));
+            $result[$key] = '' == $output ? $cmd_result->getExitCode() : $output;
+            $this->logger->info(sprintf('Results for computed value %s: %s', $key, $result[$key]));
         }
 
         return $result;
@@ -432,7 +395,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         $script_context = $script_data['context'] ?? ScriptExecutionContext::HOST;
         $script_questions = $script_data['questions'] ?? [];
         $computed_values = $script_data['computedValues'] ?? [];
-        $script_cleanup= $script_data['finally'] ?? [];
+        $script_cleanup = $script_data['finally'] ?? [];
         $script_context_data = $script_data;
         if (!empty($script_data['script'])) {
             $script_data = $script_data['script'];

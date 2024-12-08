@@ -12,7 +12,6 @@ use Symfony\Component\Process\Process;
 
 class DryRunShellProvider extends BaseShellProvider
 {
-
     public const PROVIDER_NAME = 'dry-run';
 
     protected array $captured = [];
@@ -30,23 +29,19 @@ class DryRunShellProvider extends BaseShellProvider
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        return new Node([], $this->getName() . ' shellprovider defaults');
+        return new Node([], $this->getName().' shellprovider defaults');
     }
-
 
     /**
      * Run a command in the shell.
      *
-     * @param string $command
-     * @param \Phabalicious\ShellProvider\RunOptions $run_options
      * @param bool $throw_exception_on_error
      *
-     * @return CommandResult
      * @throws \Phabalicious\Exception\FailedShellCommandException
      */
     public function run(string $command, RunOptions $run_options = RunOptions::NONE, $throw_exception_on_error = true): CommandResult
     {
-        $command = sprintf("cd %s && %s", $this->getWorkingDir(), $this->expandCommand($command));
+        $command = sprintf('cd %s && %s', $this->getWorkingDir(), $this->expandCommand($command));
         if (str_ends_with($command, ';')) {
             $command = substr($command, 0, -1);
         }
@@ -62,6 +57,7 @@ class DryRunShellProvider extends BaseShellProvider
         if ($throw_exception_on_error && $cr->failed() && !$run_options->isCapturingOutput()) {
             $cr->throwException(sprintf('`%s` failed!', $command));
         }
+
         return $cr;
     }
 
@@ -72,12 +68,12 @@ class DryRunShellProvider extends BaseShellProvider
 
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
-        throw new \RuntimeException("getFile not implemented!");
+        throw new \RuntimeException('getFile not implemented!');
     }
 
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
-        throw new \RuntimeException("putFile not implemented!");
+        throw new \RuntimeException('putFile not implemented!');
     }
 
     public function startRemoteAccess(
@@ -86,24 +82,24 @@ class DryRunShellProvider extends BaseShellProvider
         string $public_ip,
         int $public_port,
         HostConfig $config,
-        TaskContextInterface $context
+        TaskContextInterface $context,
     ): int {
-        throw new \RuntimeException("startRemoteAccess not implemented!");
+        throw new \RuntimeException('startRemoteAccess not implemented!');
     }
 
     public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
-        throw new \RuntimeException("getShellCommand not implemented!");
+        throw new \RuntimeException('getShellCommand not implemented!');
     }
 
     public function createShellProcess(array $command = [], ?ShellOptions $options = null): Process
     {
-        throw new \RuntimeException("createShellProcess not implemented!");
+        throw new \RuntimeException('createShellProcess not implemented!');
     }
 
     public function createTunnelProcess(HostConfig $target_config, array $prefix = []): Process
     {
-        throw new \RuntimeException("createTunnelProcess not implemented!");
+        throw new \RuntimeException('createTunnelProcess not implemented!');
     }
 
     public function wrapCommandInLoginShell(array $command): array
@@ -111,9 +107,6 @@ class DryRunShellProvider extends BaseShellProvider
         return $command;
     }
 
-    /**
-     * @return array
-     */
     public function getCapturedCommands(): array
     {
         return $this->captured;

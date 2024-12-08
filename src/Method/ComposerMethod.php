@@ -6,7 +6,6 @@ use Phabalicious\Configuration\HostConfig;
 
 class ComposerMethod extends RunCommandBaseMethod implements MethodInterface
 {
-
     public function getName(): string
     {
         return 'composer';
@@ -14,16 +13,14 @@ class ComposerMethod extends RunCommandBaseMethod implements MethodInterface
 
     protected function prepareCommand(HostConfig $host_config, TaskContextInterface $context, string $command): string
     {
-        if (!in_array($host_config['type'], array('dev', 'test'))) {
+        if (!in_array($host_config['type'], ['dev', 'test'])) {
             $command .= ' --no-dev --optimize-autoloader';
         }
+
         return $command;
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     *
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
@@ -52,7 +49,7 @@ class ComposerMethod extends RunCommandBaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        if ($current_stage == 'installDependencies') {
+        if ('installDependencies' == $current_stage) {
             $this->resetPrepare($host_config, $context);
         }
     }

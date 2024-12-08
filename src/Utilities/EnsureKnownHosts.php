@@ -1,4 +1,5 @@
 <?php
+
 namespace Phabalicious\Utilities;
 
 use Phabalicious\Configuration\ConfigurationService;
@@ -13,30 +14,26 @@ final class EnsureKnownHosts
     /**
      * Ensure a list of known hosts.
      *
-     * @param ConfigurationService $config
-     * @param array $known_hosts
-     * @param ShellProviderInterface|null $shell
-     *
      * @throws FailedShellCommandException
      */
     public static function ensureKnownHosts(
         ConfigurationService $config,
         array $known_hosts,
-        ?ShellProviderInterface $shell = null
+        ?ShellProviderInterface $shell = null,
     ) {
         if (!$shell) {
             $shell = ShellProviderFactory::create('local', $config->getLogger());
             $host_config = new HostConfig([
                 'rootFolder' => getcwd(),
-                'shellExecutable' => '/bin/bash'
+                'shellExecutable' => '/bin/bash',
             ], $shell, $config);
             $shell->setHostConfig($host_config);
         }
         foreach ($known_hosts as $host) {
             $h = false;
-            if (strpos($host, ":") !== false) {
+            if (false !== strpos($host, ':')) {
                 [$h, $p] = @explode(':', $host);
-                if ($p !== "22") {
+                if ('22' !== $p) {
                     $host_str = sprintf('[%s]:%d', $h, $p);
                 } else {
                     $host_str = $h;

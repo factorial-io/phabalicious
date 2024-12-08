@@ -18,7 +18,6 @@ use Symfony\Component\Console\Input\StringInput;
 
 abstract class BaseMethod implements MethodInterface
 {
-
     /**
      * @var LoggerInterface
      */
@@ -50,7 +49,7 @@ abstract class BaseMethod implements MethodInterface
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
+        ValidationErrorBagInterface $errors,
     ) {
     }
 
@@ -61,7 +60,7 @@ abstract class BaseMethod implements MethodInterface
 
     public function getGlobalSettings(ConfigurationService $configuration): Node
     {
-        return new Node([], $this->getName() . ' global settings');
+        return new Node([], $this->getName().' global settings');
     }
 
     public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors)
@@ -70,7 +69,7 @@ abstract class BaseMethod implements MethodInterface
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        return new Node([], $this->getName() . ' method defaults');
+        return new Node([], $this->getName().' method defaults');
     }
 
     public function alterConfig(ConfigurationService $configuration_service, Node $data)
@@ -102,8 +101,9 @@ abstract class BaseMethod implements MethodInterface
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task)
     {
-        if ($task === 'appCreate') {
+        if ('appCreate' === $task) {
             $stage = $context->get('currentStage');
+
             return AppDefaultStages::stageNeedsRunningApp($stage);
         }
 
@@ -111,11 +111,6 @@ abstract class BaseMethod implements MethodInterface
     }
 
     /**
-     * @param TaskContext $context
-     * @param string $command_name
-     * @param array $in_args
-     *
-     * @return int
      * @throws \Symfony\Component\Console\Exception\ExceptionInterface
      */
     public function executeCommand(TaskContext $context, string $command_name, array $in_args): int
@@ -129,9 +124,9 @@ abstract class BaseMethod implements MethodInterface
         $variables = $context->get('variables', []);
 
         // Passing arguments and secrets to the command to execute
-        if ($command->getDefinition()->hasOption('arguments') &&
-            !empty($variables['arguments']) &&
-            is_array($variables['arguments'])
+        if ($command->getDefinition()->hasOption('arguments')
+            && !empty($variables['arguments'])
+            && is_array($variables['arguments'])
         ) {
             $args['--arguments'] = Utilities::buildOptionsForArguments($variables['arguments']);
         }
@@ -147,7 +142,7 @@ abstract class BaseMethod implements MethodInterface
             if (empty($option)) {
                 continue;
             }
-            $name = '--' . $name;
+            $name = '--'.$name;
             if (isset($args[$name])) {
                 if (is_array($args[$name])) {
                     $args[$name] = array_merge($args[$name], $option);
@@ -161,14 +156,10 @@ abstract class BaseMethod implements MethodInterface
         }
 
         $input = new ArrayInput($args);
+
         return $command->run($input, $context->getOutput());
     }
 
-    /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     * @return ShellProviderInterface|null
-     */
     public function getShell(HostConfig $host_config, TaskContextInterface $context): ?ShellProviderInterface
     {
         return $context->get('shell', $host_config->shell());
@@ -181,7 +172,7 @@ abstract class BaseMethod implements MethodInterface
 
         $result = [];
         foreach ($patterns as $pattern) {
-            $return = $shell->run('ls -l ' . $pattern . ' 2>/dev/null', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
+            $return = $shell->run('ls -l '.$pattern.' 2>/dev/null', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
             foreach ($return->getOutput() as $line) {
                 $a = preg_split('/\s+/', $line);
                 if (count($a) >= 8) {
@@ -202,7 +193,7 @@ abstract class BaseMethod implements MethodInterface
     protected function parseBackupFile(HostConfig $host_config, string $file, string $type)
     {
         $p = strrpos($file, '--');
-        $p2 = strpos($file, '.', $p+2);
+        $p2 = strpos($file, '.', $p + 2);
         $hash = substr($file, 0, $p2);
         $tokens = explode('--', $hash);
         if (count($tokens) < 3) {
@@ -217,7 +208,7 @@ abstract class BaseMethod implements MethodInterface
             return false;
         }
 
-        if (count($tokens) == 3) {
+        if (3 == count($tokens)) {
             // No commit hash.
             return [
                 'config' => $tokens[0],
@@ -225,7 +216,7 @@ abstract class BaseMethod implements MethodInterface
                 'time' => $tokens[2],
                 'type' => $type,
                 'hash' => $hash,
-                'file' => $file
+                'file' => $file,
             ];
         }
 
@@ -236,7 +227,7 @@ abstract class BaseMethod implements MethodInterface
             'time' => $tokens[3],
             'type' => $type,
             'hash' => $hash,
-            'file' => $file
+            'file' => $file,
         ];
     }
 

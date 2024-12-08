@@ -7,7 +7,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Question extends QuestionBase implements QuestionInterface
 {
-
     public static function getName()
     {
         return 'question';

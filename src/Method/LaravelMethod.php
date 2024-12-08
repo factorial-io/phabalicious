@@ -10,7 +10,6 @@ use Symfony\Component\Dotenv\Dotenv;
 
 class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
 {
-
     public function getName(): string
     {
         return 'laravel';
@@ -18,7 +17,7 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
 
     public function getExecutableName(): string
     {
-        return "php artisan";
+        return 'php artisan';
     }
 
     public function getGlobalSettings(ConfigurationService $configuration): Node
@@ -29,18 +28,17 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
             'install' => [
                 'db:wipe --force',
                 'migrate',
-                'db:seed'
+                'db:seed',
             ],
             'reset' => [
                 'config:cache',
                 'migrate',
-                'cache:clear'
-            ]
+                'cache:clear',
+            ],
         ];
 
-        return $parent->merge(new Node($settings, $this->getName() . ' global settings'));
+        return $parent->merge(new Node($settings, $this->getName().' global settings'));
     }
-
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
@@ -51,13 +49,13 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
                 $host_config['artisanTasks'][$key] ?? $configuration_service->getSetting("artisanTasks.$key", []);
         }
 
-        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
+        return $parent->merge(new Node($config, $this->getName().' method defaults'));
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-        return parent::isRunningAppRequired($host_config, $context, $task) ||
-            in_array($task, [
+        return parent::isRunningAppRequired($host_config, $context, $task)
+            || in_array($task, [
                 'artisan',
                 'laravel',
                 'install',
@@ -75,7 +73,7 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
 
     protected function runArtisanTasks(HostConfig $hostConfig, TaskContextInterface $context, string $what)
     {
-        $tasks = $hostConfig->get("artisanTasks", []);
+        $tasks = $hostConfig->get('artisanTasks', []);
         $tasks = $tasks[$what] ?? [];
         foreach ($tasks as $task) {
             $this->runCommand($hostConfig, $context, $task);
@@ -94,7 +92,6 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
 
     public function requestDatabaseCredentialsAndWorkingDir(HostConfig $host_config, TaskContextInterface $context)
     {
-
         $data = $context->get(DatabaseMethod::DATABASE_CREDENTIALS, []);
         if (empty($data)) {
             /** @var \Phabalicious\ShellProvider\ShellProviderInterface $shell */
@@ -108,7 +105,7 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
             $dotenv = new Dotenv();
             $envvars = $dotenv->parse(implode("\n", $result->getOutput()));
 
-            $driver = $data['driver'] = $envvars['DB_CONNECTION'] ?? "mysql";
+            $driver = $data['driver'] = $envvars['DB_CONNECTION'] ?? 'mysql';
 
             $mapping = [
                 'mysql' => [
@@ -118,7 +115,7 @@ class LaravelMethod extends RunCommandBaseMethod implements MethodInterface
                     'DB_PASSWORD' => 'pass',
                 ],
                 'sqlite' => [
-                    'DB_DATABASE' => 'database'
+                    'DB_DATABASE' => 'database',
                 ],
             ];
             foreach ($mapping[$driver] as $key => $mapped) {

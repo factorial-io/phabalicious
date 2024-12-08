@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -26,11 +28,6 @@ class BackupCommand extends BackupBaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -50,8 +47,8 @@ class BackupCommand extends BackupBaseCommand
         $what = $this->collectBackupMethods($input, $context);
         $context->set('what', $what);
         $context->setResult('basename', [
-           $this->getHostConfig()->getConfigName(),
-           date('Y-m-d--H-i-s')
+            $this->getHostConfig()->getConfigName(),
+            date('Y-m-d--H-i-s'),
         ]);
 
         try {

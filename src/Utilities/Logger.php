@@ -21,9 +21,6 @@ class Logger extends ConsoleLogger
     private SymfonyStyle $io;
     private OutputInterface $output;
 
-    /**
-     * @var \Phabalicious\Utilities\PasswordManagerInterface|null
-     */
     protected ?PasswordManagerInterface $passwordManager = null;
 
     /**
@@ -31,10 +28,8 @@ class Logger extends ConsoleLogger
      *
      * The property name is changed to prevent a crash caused by a bug in PHP
      * 8.0.8: see https://github.com/factorial-io/phabalicious/issues/272.
-     *
-     * @var array
      */
-    private array $verbosityLevelMapOverride = array(
+    private array $verbosityLevelMapOverride = [
         LogLevel::EMERGENCY => OutputInterface::VERBOSITY_NORMAL,
         LogLevel::ALERT => OutputInterface::VERBOSITY_NORMAL,
         LogLevel::CRITICAL => OutputInterface::VERBOSITY_NORMAL,
@@ -43,7 +38,7 @@ class Logger extends ConsoleLogger
         LogLevel::NOTICE => OutputInterface::VERBOSITY_VERBOSE,
         LogLevel::INFO => OutputInterface::VERBOSITY_VERY_VERBOSE,
         LogLevel::DEBUG => OutputInterface::VERBOSITY_DEBUG,
-    );
+    ];
 
     public function __construct(InputInterface $input, OutputInterface $output)
     {
@@ -74,14 +69,14 @@ class Logger extends ConsoleLogger
         );
 
         $formatLevelMap = [
-                LogLevel::EMERGENCY => self::ERROR,
-                LogLevel::ALERT => self::ERROR,
-                LogLevel::CRITICAL => self::ERROR,
-                LogLevel::ERROR => self::ERROR,
-                LogLevel::WARNING => self::WARNING,
-                LogLevel::NOTICE => self::NOTICE,
-                LogLevel::INFO => self::INFO,
-                LogLevel::DEBUG => self::DEBUG,
+            LogLevel::EMERGENCY => self::ERROR,
+            LogLevel::ALERT => self::ERROR,
+            LogLevel::CRITICAL => self::ERROR,
+            LogLevel::ERROR => self::ERROR,
+            LogLevel::WARNING => self::WARNING,
+            LogLevel::NOTICE => self::NOTICE,
+            LogLevel::INFO => self::INFO,
+            LogLevel::DEBUG => self::DEBUG,
         ];
         if (!$output->isDecorated()) {
             // For undecorated output warnings will be shown only when using verbose mode.
@@ -98,10 +93,7 @@ class Logger extends ConsoleLogger
         $this->output = $output;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function log($level, $message, array $context = array()): void
+    public function log($level, $message, array $context = []): void
     {
         if ($this->output->getVerbosity() < $this->verbosityLevelMapOverride[$level]) {
             return;
@@ -109,23 +101,19 @@ class Logger extends ConsoleLogger
         if ($this->passwordManager) {
             $message = $this->passwordManager->obfuscateSecrets($message);
         }
-        if ($level === LogLevel::WARNING) {
+        if (LogLevel::WARNING === $level) {
             $this->io->block($message, 'Warning', 'fg=black;bg=yellow', '   ', true);
-        } elseif ($level === LogLevel::ERROR) {
+        } elseif (LogLevel::ERROR === $level) {
             $this->io->error($message);
         } else {
             parent::log($level, $message, $context);
         }
     }
 
-    /**
-     * @param \Phabalicious\Utilities\PasswordManagerInterface $passwordManager
-     *
-     * @return Logger
-     */
     public function setPasswordManager(PasswordManagerInterface $passwordManager): Logger
     {
         $this->passwordManager = $passwordManager;
+
         return $this;
     }
 }

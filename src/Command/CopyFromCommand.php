@@ -1,8 +1,9 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
-use InvalidArgumentException;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Exception\FabfileNotFoundException;
@@ -15,14 +16,12 @@ use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Method\DatabaseMethod;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\Utilities;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CopyFromCommand extends BaseCommand
 {
@@ -63,23 +62,19 @@ class CopyFromCommand extends BaseCommand
 
     public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
-        if ($argumentName == 'from') {
+        if ('from' == $argumentName) {
             return $this->configuration->getAllHostConfigs()->getKeys();
-        } elseif ($argumentName == 'what') {
+        } elseif ('what' == $argumentName) {
             return [
                 'db',
-                'files'
+                'files',
             ];
         }
+
         return [];
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -100,7 +95,7 @@ class CopyFromCommand extends BaseCommand
         $context = $this->getContext();
         $from = $this->configuration->getHostConfig($input->getArgument('from'));
         if (empty($from['supportsCopyFrom'])) {
-            throw new InvalidArgumentException('Source config does not support copy-from!');
+            throw new \InvalidArgumentException('Source config does not support copy-from!');
         }
 
         $context->set('from', $from);

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\ShellProvider\TunnelHelper;
 
 use Symfony\Component\Process\Process;
@@ -18,9 +17,6 @@ class TunnelData implements TunnelDataInterface
             ->setState($state);
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -28,27 +24,21 @@ class TunnelData implements TunnelDataInterface
 
     /**
      * @param string $name
-     * @return TunnelData
      */
     public function setName($name): TunnelData
     {
         $this->name = $name;
+
         return $this;
     }
 
-    /**
-     * @param string $state
-     * @return TunnelData
-     */
     public function setState(string $state): TunnelData
     {
         $this->state = $state;
+
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getState(): mixed
     {
         return $this->state;
@@ -57,6 +47,7 @@ class TunnelData implements TunnelDataInterface
     public function setProcess(Process $process): TunnelData
     {
         $this->process = $process;
+
         return $this;
     }
 }

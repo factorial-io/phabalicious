@@ -8,16 +8,13 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Utilities\Utilities;
 use SelfUpdate\SelfUpdateCommand as BaseSelfUpdateCommand;
 use SelfUpdate\SelfUpdateManager;
-use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class SelfUpdateCommand extends BaseSelfUpdateCommand
 {
-    /**
-     * @var \Phabalicious\Configuration\ConfigurationService
-     */
     private ConfigurationService $configuration;
     private SelfUpdateManager $selfUpdateManager;
 
@@ -29,9 +26,9 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
         $version = $version_parser->normalize(Utilities::FALLBACK_VERSION);
 
         $this->selfUpdateManager = new SelfUpdateManager(
-            "phab",
+            'phab',
             $version,
-            "factorial-io/phabalicious"
+            'factorial-io/phabalicious'
         );
 
         parent::__construct($this->selfUpdateManager);
@@ -49,12 +46,12 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
             $version_parser = new VersionParser();
             $version = $version_parser->normalize($version);
             $preview =
-                stripos($version, "alpha") !== false ||
-                stripos($version, "beta") !== false;
+                false !== stripos($version, 'alpha')
+                || false !== stripos($version, 'beta');
 
             $latest = $this->selfUpdateManager->getLatestReleaseFromGithub([
-                "preview" => $preview,
-            ])["version"];
+                'preview' => $preview,
+            ])['version'];
 
             $update_available =
                 $latest && Comparator::greaterThan($latest, $version);
@@ -62,25 +59,25 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
                 ->getLogger()
                 ->debug(
                     sprintf(
-                        "Version-Check: current: %s, latest on remote: %s, check for preview: %s, update available: %s",
+                        'Version-Check: current: %s, latest on remote: %s, check for preview: %s, update available: %s',
                         $version,
                         $latest,
-                        $preview ? "YES" : "NO",
-                        $update_available ? "YES" : "NO"
+                        $preview ? 'YES' : 'NO',
+                        $update_available ? 'YES' : 'NO'
                     )
                 );
 
             return $update_available
                 ? [
-                    "new_version" => $latest,
-                    "preview" => $preview,
+                    'new_version' => $latest,
+                    'preview' => $preview,
                 ]
                 : false;
         } catch (\Exception $e) {
             $this->configuration
                 ->getLogger()
                 ->warning(
-                    sprintf("Could not check for updates: %s", $e->getMessage())
+                    sprintf('Could not check for updates: %s', $e->getMessage())
                 );
         }
 
@@ -90,39 +87,39 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
     public static function registerListener(EventDispatcher $dispatcher): void
     {
         $dispatcher->addListener(ConsoleEvents::COMMAND, function (
-            ConsoleCommandEvent $event
+            ConsoleCommandEvent $event,
         ) {
             $input = $event->getInput();
             $output = $event->getOutput();
 
-            /** @var \Phabalicious\Command\SelfUpdateCommand $command */
+            /** @var SelfUpdateCommand $command */
             $command = $event
                 ->getCommand()
                 ->getApplication()
-                ->find("self-update");
+                ->find('self-update');
 
-            if ($output->isDecorated() &&
-                !$output->isQuiet() &&
-                !$event->getCommand()->isHidden() &&
-                $event->getCommand()->getName() !== "self:update" &&
-                !$command->getConfiguration()->isOffline() &&
-                !$input->hasParameterOption(["--offline"]) &&
-                !$input->hasParameterOption(["--no-interaction"]) &&
-                ($version = $command->isUpdateAvailable())
+            if ($output->isDecorated()
+                && !$output->isQuiet()
+                && !$event->getCommand()->isHidden()
+                && 'self:update' !== $event->getCommand()->getName()
+                && !$command->getConfiguration()->isOffline()
+                && !$input->hasParameterOption(['--offline'])
+                && !$input->hasParameterOption(['--no-interaction'])
+                && ($version = $command->isUpdateAvailable())
             ) {
                 $style = new SymfonyStyle($input, $output);
                 $style->block(
                     [
-                        "Version " .
-                        $version["new_version"] .
-                        " of phabalicious is available. Run `phab self-update" .
-                        ($version["preview"] ? " --preview" : "") .
-                        "` to update your local installation.",
-                        "Visit https://github.com/factorial-io/phabalicious/releases for more info.",
+                        'Version '.
+                        $version['new_version'].
+                        ' of phabalicious is available. Run `phab self-update'.
+                        ($version['preview'] ? ' --preview' : '').
+                        '` to update your local installation.',
+                        'Visit https://github.com/factorial-io/phabalicious/releases for more info.',
                     ],
                     null,
-                    "fg=white;bg=blue",
-                    " ",
+                    'fg=white;bg=blue',
+                    ' ',
                     true
                 );
             }

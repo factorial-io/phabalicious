@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\Artifact\Actions\Ftp;
 
 use Phabalicious\Artifact\Actions\ActionBase;
@@ -10,8 +9,7 @@ use Phabalicious\Validation\ValidationService;
 
 class ExcludeAction extends ActionBase
 {
-
-    const FTP_SYNC_EXCLUDES = 'ftpSyncExcludes';
+    public const FTP_SYNC_EXCLUDES = 'ftpSyncExcludes';
 
     protected function validateArgumentsConfig(array $action_arguments, ValidationService $validation)
     {

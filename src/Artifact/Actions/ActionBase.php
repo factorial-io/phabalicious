@@ -11,14 +11,14 @@ use Phabalicious\Validation\ValidationService;
 
 abstract class ActionBase implements ActionInterface
 {
-    protected $arguments= [];
+    protected $arguments = [];
 
     public function setArguments($arguments)
     {
         $this->arguments = $arguments;
     }
 
-    protected function getArguments() : array
+    protected function getArguments(): array
     {
         return $this->arguments;
     }
@@ -37,7 +37,7 @@ abstract class ActionBase implements ActionInterface
         );
         $service->hasKeys([
             'action' => 'Every action needs the type of action to perform',
-            'arguments' => 'Missing arguments for an action'
+            'arguments' => 'Missing arguments for an action',
         ]);
         if (isset($action_config['arguments'])) {
             $service->isArray('arguments', 'arguments need to be an array!');
@@ -58,7 +58,6 @@ abstract class ActionBase implements ActionInterface
 
     abstract protected function validateArgumentsConfig(array $action_arguments, ValidationService $validation);
 
-
     public function run(HostConfig $host_config, TaskContextInterface $context)
     {
         /** @var ShellProviderInterface $shell */
@@ -76,7 +75,7 @@ abstract class ActionBase implements ActionInterface
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $install_dir,
-        string $target_dir
+        string $target_dir,
     ) {
         throw new \RuntimeException('Missing run implementation');
     }

@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -18,7 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ScaffoldCommand extends ScaffoldBaseCommand
 {
-
     protected function configure()
     {
         parent::configure();
@@ -51,10 +52,6 @@ class ScaffoldCommand extends ScaffoldBaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws MismatchedVersionException
      * @throws ValidationFailedException
      * @throws FabfileNotReadableException
@@ -64,13 +61,13 @@ class ScaffoldCommand extends ScaffoldBaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $url  = $input->getArgument('scaffold-path');
+        $url = $input->getArgument('scaffold-path');
         $root_folder = getcwd();
 
         $context = $this->createContext($input, $output);
         $callback = new TransformCallback();
         $context->mergeAndSet('callbacks', [
-            'transform' => [$callback, 'handle']
+            'transform' => [$callback, 'handle'],
         ]);
 
         $options = new Options();
@@ -91,7 +88,6 @@ class ScaffoldCommand extends ScaffoldBaseCommand
                 }
             )
             ->addCallback(new TransformCallback());
-
 
         $context->mergeAndSet('dataOverrides', [
             'questions' => [],

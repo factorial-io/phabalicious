@@ -6,7 +6,6 @@ use Phabalicious\Method\TaskContextInterface;
 
 class LocalFileOperations implements FileOperationsInterface
 {
-
     public function getFileContents($filename, TaskContextInterface $context)
     {
         return file_get_contents($filename);

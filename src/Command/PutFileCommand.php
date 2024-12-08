@@ -2,8 +2,6 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Method\TaskContext;
-use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -11,7 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PutFileCommand extends BaseCommand
 {
-
     protected function configure()
     {
         parent::configure();
@@ -55,10 +52,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -76,14 +69,14 @@ Examples:
         $file = $input->getArgument('file');
 
         if (!file_exists($file)) {
-            throw new \RuntimeException('Could not find file `' . $file . '`!');
+            throw new \RuntimeException('Could not find file `'.$file.'`!');
         }
 
         $context = $this->getContext();
         $context->set('sourceFile', $file);
         $context->set('destinationFile', $input->getOption('destination'));
 
-        $context->io()->comment('Putting file `' . $file . '` to `' . $this->getHostConfig()->getConfigName(). '`');
+        $context->io()->comment('Putting file `'.$file.'` to `'.$this->getHostConfig()->getConfigName().'`');
 
         $this->getMethods()->runTask('putFile', $this->getHostConfig(), $context);
 
@@ -95,6 +88,7 @@ Examples:
                 $context->getResult('targetFile', 'unknown')
             ));
         }
+
         return $return_code;
     }
 }

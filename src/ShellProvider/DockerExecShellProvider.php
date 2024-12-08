@@ -4,7 +4,6 @@ namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\Storage\Node;
-use Phabalicious\Method\DockerMethod;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -25,7 +24,7 @@ class DockerExecShellProvider extends LocalShellProvider
         $result['dockerExecutable'] = 'docker';
         $result['shellExecutable'] = '/bin/bash';
 
-        return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
+        return $parent->merge(new Node($result, $this->getName().' shellprovider defaults'));
     }
 
     public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
@@ -46,18 +45,15 @@ class DockerExecShellProvider extends LocalShellProvider
         }
     }
 
-
     public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
         if (empty($this->hostConfig['docker']['name'])) {
-            throw new \RuntimeException(
-                "Could not retrieve name of docker container, your configuration might be wrong!"
-            );
+            throw new \RuntimeException('Could not retrieve name of docker container, your configuration might be wrong!');
         }
         $command = [
             $this->hostConfig['dockerExecutable'],
             'exec',
-            ($options->useTty() ? '-it' : '-i'),
+            $options->useTty() ? '-it' : '-i',
             $this->hostConfig['docker']['name'],
         ];
         if ($options->useTty() && !$options->isShellExecutableProvided()) {
@@ -75,7 +71,7 @@ class DockerExecShellProvider extends LocalShellProvider
 
     /**
      * @param string $file
-     * @return bool
+     *
      * @throws \Exception
      */
     public function exists($file): bool
@@ -87,19 +83,17 @@ class DockerExecShellProvider extends LocalShellProvider
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $command = $this->getPutFileCommand($source, $dest);
+
         return $this->runProcess($command, $context, false, true);
     }
 
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $command = $this->getGetFileCommand($source, $dest);
+
         return $this->runProcess($command, $context, false, true);
     }
 
-
-    /**
-     * {@inheritdoc}
-     */
     public function wrapCommandInLoginShell(array $command): array
     {
         return array_merge([
@@ -110,8 +104,6 @@ class DockerExecShellProvider extends LocalShellProvider
     }
 
     /**
-     * @param string $source
-     * @param string $dest
      * @return string[]
      */
     public function getPutFileCommand(string $source, string $dest): array
@@ -120,13 +112,11 @@ class DockerExecShellProvider extends LocalShellProvider
             'docker',
             'cp',
             $source,
-            $this->hostConfig['docker']['name'] . ':' . $dest
+            $this->hostConfig['docker']['name'].':'.$dest,
         ];
     }
 
     /**
-     * @param string $source
-     * @param string $dest
      * @return string[]
      */
     public function getGetFileCommand(string $source, string $dest): array
@@ -134,7 +124,7 @@ class DockerExecShellProvider extends LocalShellProvider
         return [
             'docker',
             'cp',
-            $this->hostConfig['docker']['name'] . ':' . $source,
+            $this->hostConfig['docker']['name'].':'.$source,
             $dest,
         ];
     }

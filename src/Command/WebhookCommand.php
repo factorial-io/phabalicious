@@ -10,7 +10,6 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
@@ -42,26 +41,24 @@ class WebhookCommand extends BaseCommand
 
     public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
-        if (($argumentName == 'webhook') && ($context instanceof FishShellCompletionContext)) {
+        if (('webhook' == $argumentName) && ($context instanceof FishShellCompletionContext)) {
             $scripts = $this->getConfiguration()->getSetting('webhooks', []);
+
             return array_keys($scripts);
         }
+
         return parent::completeArgumentValues($argumentName, $context);
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -70,6 +67,7 @@ class WebhookCommand extends BaseCommand
         }
         if (!$input->getArgument('webhook')) {
             $this->listAllWebhooks($output);
+
             return 1;
         } else {
             $webhook_name = $input->getArgument('webhook');
@@ -96,10 +94,10 @@ class WebhookCommand extends BaseCommand
         $webhooks = $this->getConfiguration()->getSetting('webhooks', []);
         $output->writeln('<options=bold>Available webhooks</>');
         foreach ($webhooks as $name => $webhook) {
-            if ($name == 'defaults') {
+            if ('defaults' == $name) {
                 continue;
             }
-            $output->writeln('  - ' . $name);
+            $output->writeln('  - '.$name);
         }
     }
 }

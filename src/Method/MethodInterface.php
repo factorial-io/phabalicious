@@ -10,7 +10,6 @@ use Phabalicious\Validation\ValidationErrorBagInterface;
 
 interface MethodInterface
 {
-
     public function getName(): string;
 
     public function getOverriddenMethod();
@@ -21,7 +20,7 @@ interface MethodInterface
 
     public function getGlobalSettings(ConfigurationService $configuration): Node;
 
-    public function setTunnelHelperFactory(TunnelHelperFactory  $tunnel_helper_factory);
+    public function setTunnelHelperFactory(TunnelHelperFactory $tunnel_helper_factory);
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node;
 
@@ -30,7 +29,7 @@ interface MethodInterface
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
+        ValidationErrorBagInterface $errors,
     );
 
     public function alterConfig(ConfigurationService $configuration_service, Node $data);

@@ -8,7 +8,6 @@ use Phabalicious\Scaffolder\Options;
 use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
-use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
@@ -18,11 +17,11 @@ trait ScaffoldHelperTrait
     {
         if (!empty($host_config[$key]['scaffold']) || !empty($config[$key]['scaffold'])) {
             $config[$key]['scaffold'] = Utilities::mergeData([
-               'scaffold'  => [
-                   'copy_assets(%rootFolder%)'
-               ],
-               'questions' => [],
-               'successMessage' => "Scaffolded files for $key successfully!",
+                'scaffold' => [
+                    'copy_assets(%rootFolder%)',
+                ],
+                'questions' => [],
+                'successMessage' => "Scaffolded files for $key successfully!",
             ], $config[$key]['scaffold'] ?? []);
         } else {
             $config[$key]['scaffold'] = false;
@@ -40,9 +39,9 @@ trait ScaffoldHelperTrait
                 sprintf('host.%s.scaffold: `%s`', $key, $config['configName'])
             );
             $validation->hasKeys([
-               'assets' => 'The list of assets to scaffold',
-               'scaffold' => 'The scaffolding script',
-               'questions' => 'The questions to ask before scaffolding',
+                'assets' => 'The list of assets to scaffold',
+                'scaffold' => 'The scaffolding script',
+                'questions' => 'The questions to ask before scaffolding',
             ]);
         }
     }
@@ -58,13 +57,9 @@ trait ScaffoldHelperTrait
      */
     protected function runScaffolder(HostConfig $host_config, TaskContextInterface $context, ShellProviderInterface $shell, string $project_folder, string $key): void
     {
-
         $scaffold_definition = $host_config->getData()->get($key)?->get('scaffold');
         if (!$scaffold_definition || !$scaffold_definition->getValue()) {
-            throw new \RuntimeException(sprintf(
-                "Configuration `%s` does not support scaffolded $key configuration",
-                $host_config->getConfigName()
-            ));
+            throw new \RuntimeException(sprintf("Configuration `%s` does not support scaffolded $key configuration", $host_config->getConfigName()));
         }
         $tokens = Utilities::buildVariablesFrom($host_config, $context);
         unset($tokens['context']);

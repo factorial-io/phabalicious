@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnusedLocalVariableInspection */
+<?php
+
+/** @noinspection PhpUnusedLocalVariableInspection */
 
 namespace Phabalicious\Method;
 
@@ -11,9 +13,6 @@ use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Scaffolder\Callbacks\CopyAssetsBaseCallback;
-use Phabalicious\Scaffolder\Options;
-use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\ScopedLogLevel\ScopedErrorLogLevel;
 use Phabalicious\ScopedLogLevel\ScopedLogLevel;
 use Phabalicious\ShellProvider\CommandResult;
@@ -55,21 +54,22 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $config['executables']['chown'] = 'chown';
         $config['executables']['ssh-add'] = 'ssh-add';
 
-        if (!empty($host_config['sshTunnel']) &&
-            !empty($host_config['docker']['name']) &&
-            empty($host_config['sshTunnel']['destHostFromDockerContainer']) &&
-            empty($host_config['sshTunnel']['destHost'])
+        if (!empty($host_config['sshTunnel'])
+            && !empty($host_config['docker']['name'])
+            && empty($host_config['sshTunnel']['destHostFromDockerContainer'])
+            && empty($host_config['sshTunnel']['destHost'])
         ) {
             $config['sshTunnel']['destHostFromDockerContainer'] = $host_config['docker']['name'];
         }
         $config['docker']['scaffold'] = $this->getScaffoldDefaultConfig($host_config, $config, 'docker');
-        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
+
+        return $parent->merge(new Node($config, $this->getName().' method defaults'));
     }
 
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
+        ValidationErrorBagInterface $errors,
     ) {
         parent::validateConfig($configuration_service, $config, $errors);
 
@@ -112,12 +112,6 @@ class DockerMethod extends BaseMethod implements MethodInterface
             || in_array($task, $tasks);
     }
 
-    /**
-     * @param HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     *
-     * @return DockerConfig
-     */
     public function getDockerConfig(HostConfig $host_config, TaskContextInterface $context): DockerConfig
     {
         $config = $host_config->getDockerConfig();
@@ -130,28 +124,26 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         // Override environment.
         $config['environment'] = $environment;
+
         return $config;
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     *
-     * @throws \Phabalicious\Exception\FailedShellCommandException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws FailedShellCommandException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws ValidationFailedException
      */
     public function docker(HostConfig $host_config, TaskContextInterface $context)
     {
         $task = $context->get('docker_task');
 
-        $this->runTaskImpl($host_config, $context, $task . 'Prepare', true);
+        $this->runTaskImpl($host_config, $context, $task.'Prepare', true);
         $this->runTaskImpl($host_config, $context, $task, false);
-        $this->runTaskImpl($host_config, $context, $task . 'Finished', true);
+        $this->runTaskImpl($host_config, $context, $task.'Finished', true);
 
         // As docker methods might kill the current running application we need to
         // make sure that we terminate the shell.
@@ -159,30 +151,28 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $host_config->shell()->terminate();
         }
 
-
         $context->io()->success(sprintf('Task `%s` executed successfully!', $task));
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
      * @param string $task
-     * @param bool $silent
+     * @param bool   $silent
      *
-     * @throws \Phabalicious\Exception\FailedShellCommandException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws FailedShellCommandException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws ValidationFailedException
      */
     private function runTaskImpl(HostConfig $host_config, TaskContextInterface $context, $task, $silent)
     {
-        $this->logger->info('Running docker-task `' . $task . '` on `' . $host_config->getConfigName());
+        $this->logger->info('Running docker-task `'.$task.'` on `'.$host_config->getConfigName());
 
         if (method_exists($this, $task)) {
             $this->{$task}($host_config, $context);
+
             return;
         }
 
@@ -193,7 +183,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             return;
         }
         if (empty($tasks[$task])) {
-            throw new MethodNotFoundException('Missing task `' . $task . '`');
+            throw new MethodNotFoundException('Missing task `'.$task.'`');
         }
 
         $script = $tasks[$task];
@@ -227,20 +217,18 @@ class DockerMethod extends BaseMethod implements MethodInterface
             'waitForServices',
             'copySSHKeys',
             'startRemoteAccess',
-            'scaffoldDockerFiles'
+            'scaffoldDockerFiles',
         ];
     }
 
     /**
-     * @param HostConfig $hostconfig
-     * @param TaskContextInterface $context
      * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
      */
     public function waitForServices(HostConfig $hostconfig, TaskContextInterface $context)
     {
-        if ($hostconfig['executables']['supervisorctl'] === false) {
+        if (false === $hostconfig['executables']['supervisorctl']) {
             return;
         }
         $max_tries = 10;
@@ -250,10 +238,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $shell = $docker_config->shell();
 
         if (!$this->isContainerRunning($docker_config, $container_name)) {
-            throw new \RuntimeException(sprintf(
-                'Docker container %s is not running or could not be discovered! Check your docker config!',
-                $container_name
-            ));
+            throw new \RuntimeException(sprintf('Docker container %s is not running or could not be discovered! Check your docker config!', $container_name));
         }
 
         while ($tries < $max_tries) {
@@ -264,21 +249,22 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $count_running = 0;
             $count_services = 0;
             foreach ($result->getOutput() as $line) {
-                if (trim($line) != '') {
-                    $count_services++;
+                if ('' != trim($line)) {
+                    ++$count_services;
                     if (strpos($line, 'RUNNING')) {
-                        $count_running++;
+                        ++$count_running;
                     }
                 }
             }
-            if ($result->getExitCode() !== 0) {
+            if (0 !== $result->getExitCode()) {
                 $this->logger->notice('Error running supervisorctl, check the logs');
             }
-            if ($result->getExitCode() == 0 && ($count_running == $count_services)) {
+            if (0 == $result->getExitCode() && ($count_running == $count_services)) {
                 $context->io()->comment('Services up and running!');
+
                 return;
             }
-            $tries++;
+            ++$tries;
             $this->logger->notice(sprintf(
                 'Waiting for 5 secs and try again (%d/%d)...',
                 $tries,
@@ -291,33 +277,24 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
     public static function getProjectFolder(DockerConfig $docker_config, HostConfig $host_config)
     {
-        return $docker_config['rootFolder'] . '/'. $host_config['docker']['projectFolder'];
+        return $docker_config['rootFolder'].'/'.$host_config['docker']['projectFolder'];
     }
 
-    /**
-     * @param \Phabalicious\Configuration\HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param \Phabalicious\Configuration\DockerConfig $docker_config
-     *
-     * @return array
-     */
     public function getHostEnvironment(
         HostConfig $host_config,
         TaskContextInterface $context,
-        DockerConfig $docker_config
+        DockerConfig $docker_config,
     ): array {
         $variables = Utilities::buildVariablesFrom($host_config, $context);
         $replacements = Utilities::expandVariables($variables);
         $environment = Utilities::expandStrings($docker_config->get('environment', []), $replacements);
+
         return $context->getConfigurationService()
             ->getPasswordManager()
             ->resolveSecrets($environment);
     }
 
     /**
-     * @param HostConfig $hostconfig
-     * @param TaskContextInterface $context
-     *
      * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException|\Phabalicious\Exception\FabfileNotReadableException
@@ -326,8 +303,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
     {
         $files = [];
         $temp_files = [];
-        $temp_nam_prefix = 'phab-' . md5($hostconfig->getConfigName() . mt_rand());
-
+        $temp_nam_prefix = 'phab-'.md5($hostconfig->getConfigName().mt_rand());
 
         // Backwards-compatibility:
         if ($file = $context->getConfigurationService()->getSetting('dockerAuthorizedKeyFile')) {
@@ -348,7 +324,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 'permissions' => '600',
             ];
             $files['/root/.ssh/id_rsa.pub'] = [
-                'source' => $file . '.pub',
+                'source' => $file.'.pub',
                 'permissions' => '644',
             ];
         }
@@ -375,7 +351,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         // If no authorized_keys file is set, then add all public keys from the agent into the container.
         if (empty($files['/root/.ssh/authorized_keys'])) {
-            $file = tempnam("/tmp", $temp_nam_prefix);
+            $file = tempnam('/tmp', $temp_nam_prefix);
 
             try {
                 $result = $shell->run(sprintf('#!ssh-add -L > %s', $file));
@@ -396,42 +372,36 @@ class DockerMethod extends BaseMethod implements MethodInterface
         if (count($files) > 0) {
             $container_name = $this->getDockerContainerName($hostconfig, $context);
             if (!$this->isContainerRunning($docker_config, $container_name)) {
-                throw new \RuntimeException(sprintf(
-                    'Docker container %s not running, check your `host.docker.name` configuration!',
-                    $container_name
-                ));
+                throw new \RuntimeException(sprintf('Docker container %s not running, check your `host.docker.name` configuration!', $container_name));
             }
             $shell->run(sprintf('#!docker exec %s mkdir -p /root/.ssh', $container_name));
 
             foreach ($files as $dest => $data) {
-                if ((substr($data['source'], 0, 7) == 'http://') ||
-                    (substr($data['source'], 0, 8) == 'https://')) {
+                if (('http://' == substr($data['source'], 0, 7))
+                    || ('https://' == substr($data['source'], 0, 8))) {
                     $content = $context->getConfigurationService()->readHttpResource($data['source']);
-                    $temp_file = tempnam("/tmp", $temp_nam_prefix);
+                    $temp_file = tempnam('/tmp', $temp_nam_prefix);
                     file_put_contents($temp_file, $content);
                     $data['source'] = $temp_file;
                     $temp_files[] = $temp_file;
-                } elseif ($data['source'][0] !== '/') {
+                } elseif ('/' !== $data['source'][0]) {
                     $data['source'] =
-                          $context->getConfigurationService()->getFabfilePath() .
-                          '/' .
+                          $context->getConfigurationService()->getFabfilePath().
+                          '/'.
                           $data['source'];
                 }
 
                 // Check if file exists
                 if (!file_exists($data['source'])) {
                     if (empty($data['optional'])) {
-                        throw new \RuntimeException(sprintf(
-                            'File `%s does not exist, could not copy into container!',
-                            $data['source']
-                        ));
+                        throw new \RuntimeException(sprintf('File `%s does not exist, could not copy into container!', $data['source']));
                     } else {
                         $context->io()->comment(sprintf('File `%s does not exist, skipping!', $data['source']));
                         continue;
                     }
                 }
 
-                $temp_file = $docker_config['tmpFolder'] . '/' . $temp_nam_prefix . '-' . basename($data['source']);
+                $temp_file = $docker_config['tmpFolder'].'/'.$temp_nam_prefix.'-'.basename($data['source']);
                 $shell->putFile($data['source'], $temp_file, $context);
 
                 $shell->run(sprintf('#!docker cp %s %s:%s', $temp_file, $container_name, $dest));
@@ -463,7 +433,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
             $output = $result->getOutput();
             $last_line = array_pop($output);
-            if (strtolower(trim($last_line)) === 'true') {
+            if ('true' === strtolower(trim($last_line))) {
                 $is_running = true;
             }
             if (!$is_running) {
@@ -475,9 +445,6 @@ class DockerMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     * @return bool|string
      * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
@@ -505,19 +472,19 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $container_name
         ), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
-        if ($result->getExitCode() === 0) {
+        if (0 === $result->getExitCode()) {
             $ips = explode('|', $result->getOutput()[0]);
             $ips = array_filter($ips);
             $ip = reset($ips);
             $this->cache[$host_config->getConfigName()] = $ip;
+
             return $ip;
         }
+
         return false;
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
      * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
@@ -532,8 +499,6 @@ class DockerMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
      * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
@@ -543,10 +508,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $context->setResult('ip', $this->getIpAddress($host_config, $context));
     }
 
-
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
      * @throws ValidationFailedException
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
@@ -560,16 +522,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     *
-     * @throws \Phabalicious\Exception\FailedShellCommandException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws FailedShellCommandException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws ValidationFailedException
      */
     public function appCreate(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -577,8 +536,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        if (($current_stage === 'installCode') && !$context->getResult('projectCreated', false)) {
-
+        if (('installCode' === $current_stage) && !$context->getResult('projectCreated', false)) {
             /** @var \Phabalicious\ShellProvider\ShellProviderInterface $shell */
             $shell = $context->get('outerShell', $host_config->shell());
             $install_dir = $context->get('installDir', false);
@@ -598,16 +556,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     *
-     * @throws \Phabalicious\Exception\FailedShellCommandException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws FailedShellCommandException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws ValidationFailedException
      */
     public function appDestroy(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -615,16 +570,13 @@ class DockerMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     *
-     * @throws \Phabalicious\Exception\FailedShellCommandException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws FailedShellCommandException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws ValidationFailedException
      */
     public function runAppSpecificTask(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -635,21 +587,17 @@ class DockerMethod extends BaseMethod implements MethodInterface
         $docker_config = $this->getDockerConfig($host_config, $context);
         $shell = $docker_config->shell();
 
-        if (isset($docker_config['tasks'][$current_stage]) ||
-            in_array($current_stage, array('spinUp', 'spinDown', 'deleteContainer'))
+        if (isset($docker_config['tasks'][$current_stage])
+            || in_array($current_stage, ['spinUp', 'spinDown', 'deleteContainer'])
         ) {
             $this->runTaskImpl($host_config, $context, $current_stage, false);
         }
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     *
-     * @return string
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ValidationFailedException
      */
     public function getDockerContainerName(HostConfig $host_config, TaskContextInterface $context): string
     {
@@ -674,10 +622,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
                 return $docker_name;
             }
 
-            throw new \RuntimeException(sprintf(
-                'Could not get the name of the docker container running the service `%s`',
-                $composer_service
-            ));
+            throw new \RuntimeException(sprintf('Could not get the name of the docker container running the service `%s`', $composer_service));
         }
 
         return '';
@@ -693,7 +638,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
             $task
         );
 
-        if ($host_config['docker']['scaffold'] && $task === 'docker') {
+        if ($host_config['docker']['scaffold'] && 'docker' === $task) {
             $this->scaffoldDockerFiles($host_config, $context);
         }
 
@@ -735,9 +680,9 @@ class DockerMethod extends BaseMethod implements MethodInterface
     }
 
     /**
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\ValidationFailedException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws MismatchedVersionException
+     * @throws ValidationFailedException
+     * @throws MissingDockerHostConfigException
      */
     public function dockerCompose(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -757,14 +702,14 @@ class DockerMethod extends BaseMethod implements MethodInterface
             sprintf('cd %s', self::getProjectFolder($docker_config, $host_config)),
         ];
         foreach ($environment as $k => $v) {
-            $command_parts[] = sprintf(" export %s=%s", $k, escapeshellarg($v));
+            $command_parts[] = sprintf(' export %s=%s', $k, escapeshellarg($v));
         }
         $command_parts[] = sprintf('#!docker-compose %s', $arguments);
 
         $command = implode('&&', $command_parts);
         $command = $shell->expandCommand($command);
         $context->setResult('command', [
-            $command
+            $command,
         ]);
     }
 
@@ -775,7 +720,6 @@ class DockerMethod extends BaseMethod implements MethodInterface
             return;
         }
         $scaffolder_did_run[$host_config->getConfigName()] = true;
-
 
         $docker_config = $this->getDockerConfig($host_config, $context);
         $project_folder = self::getProjectFolder($docker_config, $host_config);

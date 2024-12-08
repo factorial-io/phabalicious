@@ -10,7 +10,6 @@ use Phabalicious\Validation\ValidationService;
 
 class NpmMethod extends RunCommandBaseMethod
 {
-
     public function getName(): string
     {
         return 'npm';
@@ -20,6 +19,7 @@ class NpmMethod extends RunCommandBaseMethod
     {
         $mapping = parent::getDeprecationMapping();
         $prefix = $this->getConfigPrefix();
+
         return array_merge($mapping, [
             "{$prefix}BuildCommand" => "{$prefix}.buildCommand",
         ]);
@@ -28,23 +28,18 @@ class NpmMethod extends RunCommandBaseMethod
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
+        ValidationErrorBagInterface $errors,
     ) {
-
         parent::validateConfig($configuration_service, $config, $errors);
-
 
         $service = new ValidationService($config, $errors, 'NPM');
         $service->hasKey('npm.buildCommand', 'build command to run with npm');
         $service->deprecate([
-        "npmBuildCommand" => "please change to `npm.buildCommand`",
+            'npmBuildCommand' => 'please change to `npm.buildCommand`',
         ]);
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     *
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
@@ -69,7 +64,7 @@ class NpmMethod extends RunCommandBaseMethod
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        if ($current_stage == 'installDependencies') {
+        if ('installDependencies' == $current_stage) {
             $this->resetPrepare($host_config, $context);
         }
     }

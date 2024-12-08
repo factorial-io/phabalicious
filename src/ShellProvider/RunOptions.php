@@ -11,11 +11,11 @@ enum RunOptions
 
     public function isCapturingOutput(): bool
     {
-        return $this === self::CAPTURE_OUTPUT || $this === self::CAPTURE_AND_HIDE_OUTPUT;
+        return self::CAPTURE_OUTPUT === $this || self::CAPTURE_AND_HIDE_OUTPUT === $this;
     }
 
     public function hideOutput(): bool
     {
-        return $this === self::HIDE_OUTPUT || $this === self::CAPTURE_AND_HIDE_OUTPUT;
+        return self::HIDE_OUTPUT === $this || self::CAPTURE_AND_HIDE_OUTPUT === $this;
     }
 }

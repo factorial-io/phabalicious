@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Command;
 
-use InvalidArgumentException;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
@@ -44,11 +43,6 @@ class RestoreSqlFromFileCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -67,16 +61,16 @@ class RestoreSqlFromFileCommand extends BaseCommand
         $context = $this->getContext();
         $file = $input->getArgument('file');
         if (!file_exists($file)) {
-            throw new InvalidArgumentException('Could not find file at `' . $file . '`');
+            throw new \InvalidArgumentException('Could not find file at `'.$file.'`');
         }
 
         $host_config = $this->getHostConfig();
         $this->getMethods()->runTask('restoreSqlFromFilePreparation', $host_config, $context);
 
         $shell = $host_config->shell();
-        $dest = $host_config['tmpFolder'] . '/' .
-            $host_config->getConfigName() . '.' .
-            date('YmdHis') . '.' .
+        $dest = $host_config['tmpFolder'].'/'.
+            $host_config->getConfigName().'.'.
+            date('YmdHis').'.'.
             basename($file);
 
         $context->io()->comment(sprintf('Copying dump to `%s` ...', $dest));
@@ -89,7 +83,7 @@ class RestoreSqlFromFileCommand extends BaseCommand
 
         $shell->run(sprintf('rm %s', $dest));
         $exitCode = $context->getResult('exitCode', 0);
-        if ($exitCode == 0) {
+        if (0 == $exitCode) {
             $context->io()->success('SQL dump imported successfully!');
         }
 
