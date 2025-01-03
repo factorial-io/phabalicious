@@ -246,7 +246,7 @@ class ResticMethod extends BaseMethod
             '#!curl -L %s  | #!bunzip2 > %s',
             $host_config['restic']['downloadUrl'],
             $restic_path
-        ), true, true);
+        ), RunOptions::CAPTURE_AND_HIDE_OUTPUT, true);
         $shell->run(sprintf('chmod +x %s', $restic_path), RunOptions::NONE, true);
 
         return $restic_path;
