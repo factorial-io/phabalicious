@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0-alpha.8](https://github.com/factorial-io/phabalicious/compare/4.0.0-alpha.7...4.0.0-alpha.8) (2025-01-04)
+
+
+### Bug Fixes
+
+* Fix restic download after missed in refactoring ([420b364](https://github.com/factorial-io/phabalicious/commit/420b364240b76efa1bddd020880ed1d23af1ca09))
+
 ## [4.0.0-alpha.7](https://github.com/factorial-io/phabalicious/compare/3.8.35...4.0.0-alpha.7) (2024-12-08)
 
 
