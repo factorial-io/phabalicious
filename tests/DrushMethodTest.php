@@ -1,23 +1,22 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
+
+/** @noinspection PhpParamsInspection */
 
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\Storage\Node;
-use Phabalicious\Method\BaseMethod;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
-use Phabalicious\Tests\PhabTestCase;
 use Phabalicious\Validation\ValidationErrorBag;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Application;
 
 class DrushMethodTest extends PhabTestCase
 {
-    /** @var \Phabalicious\Method\DrushMethod */
+    /** @var DrushMethod */
     private $method;
 
     /** @var ConfigurationService */
@@ -35,7 +34,7 @@ class DrushMethodTest extends PhabTestCase
         $method_factory->addMethod(new MysqlMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/drush-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__.'/assets/drush-tests/fabfile.yaml');
     }
 
     public function testGetDefaultConfig()
@@ -93,7 +92,7 @@ class DrushMethodTest extends PhabTestCase
     {
         $host_config = [
             'needs' => ['drush7'],
-            'configName' => 'test'
+            'configName' => 'test',
         ];
         $errors = new ValidationErrorBag();
         $this->method->validateConfig($this->configurationService, new Node($host_config, ''), $errors);
@@ -144,7 +143,7 @@ class DrushMethodTest extends PhabTestCase
         $this->assertEquals(
             ['mysql'],
             $this->method->getMethodDependencies($this->configurationService->getMethodFactory(), new Node([
-                'needs' => ['drush']
+                'needs' => ['drush'],
             ], ''))
         );
     }

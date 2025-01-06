@@ -22,7 +22,6 @@ class DeployCommandTest extends PhabTestCase
 
     public function setup(): void
     {
-
         $this->callback = new DebugCallback(false);
 
         $this->application = new Application();
@@ -32,12 +31,12 @@ class DeployCommandTest extends PhabTestCase
         $configuration = new ConfigurationService($this->application, $logger);
         $method_factory = new MethodFactory($configuration, $logger);
         $method = new ScriptMethod($logger);
-        $method->setDefaultCallbacks([ $this->callback::getName() => $this->callback ]);
+        $method->setDefaultCallbacks([$this->callback::getName() => $this->callback]);
 
         $method_factory->addMethod($method);
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $configuration->readConfiguration(__DIR__ . '/assets/script-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__.'/assets/script-tests/fabfile.yaml');
 
         $this->application->add(new DeployCommand($configuration, $method_factory));
     }
@@ -51,10 +50,10 @@ class DeployCommandTest extends PhabTestCase
         $this->callback->debugOutput = [];
         $command = $this->application->find('deploy');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'hostA',
-        ));
+        ]);
 
         $this->assertEquals([
             'deployPrepare on dev',
@@ -62,7 +61,7 @@ class DeployCommandTest extends PhabTestCase
             'deploy on dev',
             'deploy on hostA',
             'deployFinished on dev',
-            'deployFinished on hostA'
+            'deployFinished on hostA',
         ], $this->callback->debugOutput);
     }
 }

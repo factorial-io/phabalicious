@@ -6,14 +6,9 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\BaseMethod;
 use Phabalicious\Method\MethodFactory;
 use Psr\Log\AbstractLogger;
-use Symfony\Component\Console\Application;
 
 class MethodFactoryTest extends PhabTestCase
 {
-
-    /**
-     * @var MethodFactory
-     */
     private MethodFactory $methods;
 
     public function setUp(): void
@@ -44,7 +39,6 @@ class MethodFactoryTest extends PhabTestCase
         $this->methods->addMethod($method);
 
         $found_method = $this->methods->getMethod($method->getName());
-
 
         $this->assertEquals($found_method->getName(), $method->getName());
     }

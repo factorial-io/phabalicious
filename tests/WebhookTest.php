@@ -7,15 +7,14 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
-use Phabalicious\Method\WebhookMethod;
 use Phabalicious\Method\TaskContext;
+use Phabalicious\Method\WebhookMethod;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class WebhookTest extends PhabTestCase
 {
-
     private $method;
 
     private $configurationService;
@@ -24,7 +23,6 @@ class WebhookTest extends PhabTestCase
      * @var TaskContext
      */
     private $context;
-
 
     public function setup(): void
     {
@@ -38,7 +36,7 @@ class WebhookTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new WebhookMethod($logger));
 
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/webhook-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__.'/assets/webhook-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),

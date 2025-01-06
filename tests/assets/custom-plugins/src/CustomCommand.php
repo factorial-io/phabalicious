@@ -19,7 +19,8 @@ class CustomCommand extends BaseCommand
         if ($result = parent::execute($input, $output)) {
             return $result;
         }
-        $output->writeln("hello world");
+        $output->writeln('hello world');
+
         return 0;
     }
 }

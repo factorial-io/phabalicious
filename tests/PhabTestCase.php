@@ -13,16 +13,16 @@ use Symfony\Component\Process\Process;
 
 class PhabTestCase extends TestCase
 {
-
     protected function getTmpDir($sub_dir = null): string
     {
-        $dir = __DIR__ . '/tmp';
+        $dir = __DIR__.'/tmp';
         if ($sub_dir) {
-            $dir .= '/' . $sub_dir;
+            $dir .= '/'.$sub_dir;
         }
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
+
         return $dir;
     }
 
@@ -38,16 +38,15 @@ class PhabTestCase extends TestCase
         $this->assertStringContainsString($needle, $haystack);
     }
 
-
     protected function runDockerizedSshServer($logger, ConfigurationService $config): false|string
     {
-        $publicKeyFile = realpath(__DIR__ . '/assets/ssh-shell-tests/test_key.pub');
-        $privateKeyFile = realpath(__DIR__ . '/assets/ssh-shell-tests/test_key');
+        $publicKeyFile = realpath(__DIR__.'/assets/ssh-shell-tests/test_key.pub');
+        $privateKeyFile = realpath(__DIR__.'/assets/ssh-shell-tests/test_key');
 
         $runDockerShell = new LocalShellProvider($logger);
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/sh',
-            'rootFolder' => __DIR__
+            'rootFolder' => __DIR__,
         ], $runDockerShell, $config);
 
         $result = $runDockerShell->run('docker pull ghcr.io/linuxserver/openssh-server', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
@@ -92,7 +91,6 @@ class PhabTestCase extends TestCase
 
     public function getDockerizedSshShell($logger, ConfigurationService $config): SshShellProvider
     {
-
         $shellProvider = new SshShellProvider($logger);
         $privateKeyFile = $this->runDockerizedSshServer($logger, $config);
         $host_config = new HostConfig([
@@ -105,11 +103,10 @@ class PhabTestCase extends TestCase
             'port' => '22222',
             'user' => 'test',
             'shellProviderOptions' => [
-                '-i' .
-                $privateKeyFile
+                '-i'.
+                $privateKeyFile,
             ],
         ], $shellProvider, $config);
-
 
         $shellProvider->setHostConfig($host_config);
 

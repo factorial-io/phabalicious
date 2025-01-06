@@ -222,7 +222,7 @@ class DrushMethod extends BaseMethod implements MethodInterface
 
         return $shell->run(
             $command,
-            false,
+            RunOptions::NONE,
             $throw_exception_on_failure && $this->useStrictErrorHandling($shell->getHostConfig())
         );
     }

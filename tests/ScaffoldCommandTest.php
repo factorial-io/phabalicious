@@ -14,10 +14,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ScaffoldCommandTest extends PhabTestCase
 {
-    /** @var Application */
     protected Application $application;
 
-    /** @var ConfigurationService  */
     protected ConfigurationService $configuration;
 
     public function setup(): void
@@ -41,12 +39,12 @@ class ScaffoldCommandTest extends PhabTestCase
 
         $command_tester->execute([
             'command' => 'scaffold',
-            'scaffold-path' => __DIR__ . '/assets/scaffold-tests/simple-scaffold.yml',
+            'scaffold-path' => __DIR__.'/assets/scaffold-tests/simple-scaffold.yml',
         ]);
 
         $output = $command_tester->getDisplay();
-        $this->assertStringContainsStringIgnoringCase("Age: 18", $output);
-        $this->assertStringContainsStringIgnoringCase("Location: Hamburg", $output);
+        $this->assertStringContainsStringIgnoringCase('Age: 18', $output);
+        $this->assertStringContainsStringIgnoringCase('Location: Hamburg', $output);
     }
 
     public function testScaffoldCommandWithOptions(): void
@@ -56,13 +54,13 @@ class ScaffoldCommandTest extends PhabTestCase
 
         $command_tester->execute([
             'command' => 'scaffold',
-            'scaffold-path' => __DIR__ . '/assets/scaffold-tests/simple-scaffold.yml',
+            'scaffold-path' => __DIR__.'/assets/scaffold-tests/simple-scaffold.yml',
             '--age' => '20',
-            '--location' => "Berlin"
+            '--location' => 'Berlin',
         ]);
 
         $output = $command_tester->getDisplay();
-        $this->assertStringContainsStringIgnoringCase("Age: 20", $output);
-        $this->assertStringContainsStringIgnoringCase("Location: Berlin", $output);
+        $this->assertStringContainsStringIgnoringCase('Age: 20', $output);
+        $this->assertStringContainsStringIgnoringCase('Location: Berlin', $output);
     }
 }

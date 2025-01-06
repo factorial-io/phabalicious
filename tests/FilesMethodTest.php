@@ -4,14 +4,11 @@ namespace Phabalicious\Tests;
 
 use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\FilesMethod;
-use Phabalicious\Method\GitMethod;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
-use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -24,13 +21,10 @@ class FilesMethodTest extends PhabTestCase
 {
     use ProphecyTrait;
 
-    /** @var FilesMethod */
     private FilesMethod $method;
 
-    /** @var ConfigurationService */
     private ConfigurationService $configurationService;
 
-    /** @var TaskContext */
     private TaskContext $context;
 
     /**
@@ -52,7 +46,7 @@ class FilesMethodTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/files-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__.'/assets/files-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),

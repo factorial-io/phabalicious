@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
+
+/** @noinspection PhpParamsInspection */
 
 namespace Phabalicious\Tests;
 
@@ -25,17 +27,17 @@ class RunCommandBaseMethodTest extends PhabTestCase
     private $configurationService;
 
     /**
-     * @var \Phabalicious\Method\TaskContext
+     * @var TaskContext
      */
     protected $context;
 
     /**
-     * @var mixed|\PHPUnit\Framework\MockObject\MockObject|\Psr\Log\AbstractLogger
+     * @var mixed|\PHPUnit\Framework\MockObject\MockObject|AbstractLogger
      */
     private $logger;
 
     /**
-     * @var \Phabalicious\Method\MethodFactory
+     * @var MethodFactory
      */
     private $methodFactory;
 
@@ -62,10 +64,8 @@ class RunCommandBaseMethodTest extends PhabTestCase
         );
         $this->context->setConfigurationService($this->configurationService);
 
-
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/run-command-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__.'/assets/run-command-tests/fabfile.yaml');
     }
-
 
     /**
      * @dataProvider methodNameProvider
@@ -79,7 +79,7 @@ class RunCommandBaseMethodTest extends PhabTestCase
         ];
 
         $errors = new ValidationErrorBag();
-        $class_name = "Phabalicious\\Method\\" . ucwords($method_name) . "Method";
+        $class_name = 'Phabalicious\\Method\\'.ucwords($method_name).'Method';
         $method = new $class_name($this->logger);
         $method->validateConfig($this->configurationService, new Node($host_config, 'test'), $errors);
         if ($has_build_command) {
@@ -94,18 +94,19 @@ class RunCommandBaseMethodTest extends PhabTestCase
      */
     public function testDeprecationsStillAvailable($method_name, $has_build_command, $docker_image)
     {
-        $host_config = $this->configurationService->getHostConfig($method_name . '-deprecated');
+        $host_config = $this->configurationService->getHostConfig($method_name.'-deprecated');
 
         if ($has_build_command) {
             $this->assertEquals('build:prod', $host_config->getProperty("{$method_name}.buildCommand"));
         }
         $this->assertEquals('docker-image', $host_config->getProperty("{$method_name}.context"));
-        $this->assertEquals($docker_image, $host_config->getProperty("image"));
+        $this->assertEquals($docker_image, $host_config->getProperty('image'));
         $this->assertEquals('/foo/bar', $host_config->getProperty("{$method_name}.rootFolder"));
     }
 
     /**
      * @dataProvider hostConfigDataProvider
+     *
      * @group docker
      */
     public function testYarnRunCommand($config, $yarn_run_context)
@@ -114,8 +115,9 @@ class RunCommandBaseMethodTest extends PhabTestCase
 
         $this->assertEquals($yarn_run_context, $host_config->getProperty('yarn.context'));
         $this->context->set('command', 'info react');
-        $method = $this->methodFactory->getMethod('yarn');
+
         /** @var YarnMethod $method */
+        $method = $this->methodFactory->getMethod('yarn');
         $method->yarn($host_config, $this->context);
         $result = $this->context->getCommandResult();
 
@@ -124,7 +126,6 @@ class RunCommandBaseMethodTest extends PhabTestCase
         $payload = implode("\n", $result->getOutput());
         $this->assertStringContainsString("name: 'react'", $payload);
     }
-
 
     public function hostConfigDataProvider(): array
     {

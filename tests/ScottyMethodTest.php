@@ -19,7 +19,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class ScottyMethodTest extends PhabTestCase
 {
-
     private ScottyMethod $method;
 
     private ConfigurationService $configurationService;
@@ -38,7 +37,7 @@ class ScottyMethodTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/scotty-tests/nginx/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__.'/assets/scotty-tests/nginx/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)
@@ -64,6 +63,7 @@ class ScottyMethodTest extends PhabTestCase
         $host_config = $this->configurationService->getHostConfig('hostB');
         $this->assertEquals('http://scotty:21342', $host_config['scotty']['server']);
     }
+
     public function testScaffold(): void
     {
         $base_dir = $this->getTmpDir('scotty-tests');
@@ -71,7 +71,7 @@ class ScottyMethodTest extends PhabTestCase
         $host_config = $this->configurationService->getHostConfig('hostA');
         $this->method->scaffoldApp($host_config, $this->context);
 
-        $docker_compose = Yaml::parseFile($base_dir . '/docker-compose.yaml');
+        $docker_compose = Yaml::parseFile($base_dir.'/docker-compose.yaml');
 
         $this->assertEquals('my-deepest-secret', $docker_compose['services']['nginx']['environment']['APP_SECRET']);
     }
@@ -102,6 +102,7 @@ class ScottyMethodTest extends PhabTestCase
             '--registry',
             'factorial'], $result);
     }
+
     public function testScottyCtlCreateOptions2(): void
     {
         $host_config = $this->configurationService->getHostConfig('hostC');

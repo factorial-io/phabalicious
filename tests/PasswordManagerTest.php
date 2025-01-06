@@ -11,12 +11,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class PasswordManagerTest extends PhabTestCase
 {
-
     protected $context;
 
     public function setup(): void
     {
-
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
             $this->getMockBuilder(InputInterface::class)->getMock(),
@@ -27,7 +25,6 @@ class PasswordManagerTest extends PhabTestCase
 
     public function test1PasswordPayload()
     {
-
         $payload = <<<JSON
 {"uuid":"jevlzzmoza4cyuab2vfhsgiy64","templateUuid":"102","trashed":"N","createdAt":"2022-02-24T08:56:36Z",
 "updatedAt":"2022-02-24T09:33:11Z","changerUuid":"EEL7JCOQEFBLXJHRDGXOCSQAKI","itemVersion":2,"vaultUuid":
@@ -42,11 +39,10 @@ class PasswordManagerTest extends PhabTestCase
 "Verwandte Objekte"}]},"overview":{"ainfo":"85.215.230.93","ps":100,"title":"datacenter__prod"}}
 JSON;
 
-
         $mng = new PasswordManager();
         $mng->setContext($this->context);
 
-        $this->assertEquals("my-very-special-secret", $mng->extractSecretFrom1PasswordPayload($payload, 1, 'password'));
+        $this->assertEquals('my-very-special-secret', $mng->extractSecretFrom1PasswordPayload($payload, 1, 'password'));
     }
 
     public function test1PasswordCustomPropName()
@@ -117,8 +113,8 @@ JSON;
         $mng = new PasswordManager();
         $mng->setContext($this->context);
 
-        $this->assertEquals("zackbummpeng", $mng->extractSecretFrom1PasswordPayload($payload, 0, 'credential'));
-        $this->assertEquals("MM_ACCESS_TOKEN", $mng->extractSecretFrom1PasswordPayload($payload, 0, 'username'));
+        $this->assertEquals('zackbummpeng', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'credential'));
+        $this->assertEquals('MM_ACCESS_TOKEN', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'username'));
     }
 
     public function test1PasswordCliCustomPropName()
@@ -198,7 +194,7 @@ JSON;
         $mng = new PasswordManager();
         $mng->setContext($this->context);
 
-        $this->assertEquals("zackbummpeng", $mng->extractSecretFrom1PasswordPayload($payload, 2, 'credential'));
-        $this->assertEquals("MM_ACCESS_TOKEN", $mng->extractSecretFrom1PasswordPayload($payload, 2, 'username'));
+        $this->assertEquals('zackbummpeng', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'credential'));
+        $this->assertEquals('MM_ACCESS_TOKEN', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'username'));
     }
 }

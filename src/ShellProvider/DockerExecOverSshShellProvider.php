@@ -16,12 +16,12 @@ class DockerExecOverSshShellProvider extends SshShellProvider
 {
     public const PROVIDER_NAME = 'docker-exec-over-ssh';
 
-    protected DockerExecShellProvider $dockerExec;
+    protected ?DockerExecShellProvider $dockerExec = null;
 
     /**
      * Shell to run docker commands on host.
      */
-    protected ShellProviderInterface $sshShell;
+    protected ?ShellProviderInterface $sshShell = null;
 
     public function __construct(LoggerInterface $logger)
     {

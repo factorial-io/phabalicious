@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: stephan
  * Date: 10.10.18
- * Time: 21:10
+ * Time: 21:10.
  */
 
 namespace Phabalicious\Tests;
@@ -28,8 +29,6 @@ use Symfony\Component\Process\Process;
 
 class MysqlMethodTest extends PhabTestCase
 {
-
-    /** @var ConfigurationService */
     private ConfigurationService $config;
 
     private MysqlMethod $method;
@@ -39,7 +38,6 @@ class MysqlMethodTest extends PhabTestCase
 
     public function setup(): void
     {
-
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 
         $app = $this->getMockBuilder(Application::class)->getMock();
@@ -50,7 +48,6 @@ class MysqlMethodTest extends PhabTestCase
         $method_factory = new MethodFactory($this->config, $logger);
         $method_factory->addMethod($this->method);
         $method_factory->addMethod(new ScriptMethod($logger));
-
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
@@ -65,10 +62,10 @@ class MysqlMethodTest extends PhabTestCase
             'shellProvider' => 'local',
             'configName' => 'test-mysql',
             'needs' => [
-                'mysql'
+                'mysql',
             ],
             'mysqlDumpOptions' => [
-                '--column-statistics=0'
+                '--column-statistics=0',
             ],
             'executables' => [
                 'mysql' => 'mysql',
@@ -88,7 +85,7 @@ class MysqlMethodTest extends PhabTestCase
                 'pass' => 'admin',
                 'name' => 'test-phabalicious',
                 'skipCreateDatabase' => false,
-                'workingDir' => __DIR__
+                'workingDir' => __DIR__,
             ],
         ];
 
@@ -107,13 +104,12 @@ class MysqlMethodTest extends PhabTestCase
         $runDockerShell = new LocalShellProvider($logger);
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/sh',
-            'rootFolder' => __DIR__
+            'rootFolder' => __DIR__,
         ], $runDockerShell, $this->config);
 
         $runDockerShell->run('docker pull mysql', true);
         $runDockerShell->run('docker stop phabalicious_test | true', true);
         $runDockerShell->run('docker rm phabalicious_test | true', true);
-
 
         $backgroundProcess = new Process([
             'docker',
@@ -148,8 +144,10 @@ class MysqlMethodTest extends PhabTestCase
         );
         $cmd[] = '-e';
         $cmd[] = escapeshellarg($sql);
+
         return $cmd;
     }
+
     /**
      * @group docker
      */
@@ -158,14 +156,14 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->method->install($this->hostConfig, $this->context);
         $this->assertEquals(0, $result->getExitCode());
 
-        $cmd = $this->getExecuteSQLCommand(false, "SHOW DATABASES");
+        $cmd = $this->getExecuteSQLCommand(false, 'SHOW DATABASES');
 
         $result = $this->shell->run(implode(' ', $cmd));
         $this->assertStringContainsString('test-phabalicious', implode("\n", $result->getOutput()));
 
         $this->method->dropDatabase($this->hostConfig, $this->context, $this->shell, $this->hostConfig['database']);
 
-        $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
+        $cmd = $this->getExecuteSQLCommand(true, 'SHOW TABLES');
         $result = $this->shell->run(implode(' ', $cmd));
 
         $this->assertEquals(0, $result->getExitCode());
@@ -174,6 +172,7 @@ class MysqlMethodTest extends PhabTestCase
 
     /**
      * @dataProvider providerSqlFiles
+     *
      * @group docker
      */
     public function testImportExport($filename): void
@@ -184,7 +183,7 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->method->importSqlFromFile($this->hostConfig, $this->context, $this->shell, $filename, true);
         $this->assertEquals(0, $result->getExitCode());
 
-        $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
+        $cmd = $this->getExecuteSQLCommand(true, 'SHOW TABLES');
         $result = $this->shell->run(implode(' ', $cmd));
         $this->assertEquals(0, $result->getExitCode());
         $this->assertContains('customers', $result->getOutput());
@@ -193,7 +192,7 @@ class MysqlMethodTest extends PhabTestCase
 
         // Now export the sql again.
 
-        $export_file_name = '/tmp/' . basename($filename);
+        $export_file_name = '/tmp/'.basename($filename);
         $result = $this->method->exportSqlToFile($this->hostConfig, $this->context, $this->shell, $export_file_name);
         $this->assertEquals($export_file_name, $result);
 
@@ -203,8 +202,8 @@ class MysqlMethodTest extends PhabTestCase
     public function providerSqlFiles(): array
     {
         return [
-            [ __DIR__ . '/../tests/assets/mysqlsampledatabase.sql.gz' ],
-            [ __DIR__ . '/../tests/assets/mysqlsampledatabase.sql' ],
+            [__DIR__.'/../tests/assets/mysqlsampledatabase.sql.gz'],
+            [__DIR__.'/../tests/assets/mysqlsampledatabase.sql'],
         ];
     }
 
@@ -217,19 +216,18 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->method->database($this->hostConfig, $this->context);
         $this->assertEquals(0, $result->getExitCode());
 
-
-        $cmd = $this->getExecuteSQLCommand(true, "SHOW DATABASES");
+        $cmd = $this->getExecuteSQLCommand(true, 'SHOW DATABASES');
         $result = $this->shell->run(implode(' ', $cmd));
         $this->assertEquals(0, $result->getExitCode());
         $this->assertContains('test-phabalicious', $result->getOutput());
 
-        $cmd = $this->getExecuteSQLCommand(true, "USE test-phabalicious;");
+        $cmd = $this->getExecuteSQLCommand(true, 'USE test-phabalicious;');
         $result = $this->shell->run(implode(' ', $cmd));
 
-        $cmd = $this->getExecuteSQLCommand(true, "CREATE TABLE test_table(title VARCHAR(100) NOT NULL);");
+        $cmd = $this->getExecuteSQLCommand(true, 'CREATE TABLE test_table(title VARCHAR(100) NOT NULL);');
         $result = $this->shell->run(implode(' ', $cmd));
 
-        $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
+        $cmd = $this->getExecuteSQLCommand(true, 'SHOW TABLES');
         $result = $this->shell->run(implode(' ', $cmd));
 
         $this->assertEquals(0, $result->getExitCode());
@@ -239,8 +237,7 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->method->database($this->hostConfig, $this->context);
         $this->assertEquals(0, $result->getExitCode());
 
-
-        $cmd = $this->getExecuteSQLCommand(true, "SHOW TABLES");
+        $cmd = $this->getExecuteSQLCommand(true, 'SHOW TABLES');
         $result = $this->shell->run(implode(' ', $cmd));
         $this->assertEquals(0, $result->getExitCode());
         $this->assertCount(0, $result->getOutput());
@@ -248,11 +245,11 @@ class MysqlMethodTest extends PhabTestCase
 
     /**
      * @dataProvider providerSqlQueries
+     *
      * @group docker
      */
     public function testSqlQuery($query, $expected): void
     {
-
         $this->context->set('what', 'install');
         $result = $this->method->database($this->hostConfig, $this->context);
         $this->assertEquals(0, $result->getExitCode());
@@ -266,14 +263,12 @@ class MysqlMethodTest extends PhabTestCase
         $this->assertContains($expected, $result->getOutput());
     }
 
-
-
     public function providerSqlQueries(): array
     {
         return [
             [
                 'SHOW DATABASES',
-                'test-phabalicious'
+                'test-phabalicious',
             ],
             [
                 'USE test-phabalicious; CREATE TABLE test_table(title VARCHAR(100) NOT NULL); SHOW TABLES;',

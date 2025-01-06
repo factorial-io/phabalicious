@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: stephan
  * Date: 05.10.18
- * Time: 12:27
+ * Time: 12:27.
  */
 
 namespace Phabalicious\Tests;
@@ -31,7 +32,7 @@ class GetPropertyCommandTest extends PhabTestCase
         $method_factory = new MethodFactory($configuration, $logger);
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration(__DIR__ . '/assets/getproperty-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__.'/assets/getproperty-tests/fabfile.yaml');
 
         $this->application->add(new GetPropertyCommand($configuration, $method_factory));
     }
@@ -40,25 +41,26 @@ class GetPropertyCommandTest extends PhabTestCase
     {
         $command = $this->application->find('getProperty');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             'property' => 'host',
-            '--config' => 'testA'
-        ));
+            '--config' => 'testA',
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('getproperty-test-host.a', $output);
     }
+
     public function testGetNestedProperty()
     {
         $command = $this->application->find('getProperty');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             'property' => 'sub1.sub2.sub3',
-            '--config' => 'testA'
-        ));
+            '--config' => 'testA',
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
@@ -69,14 +71,14 @@ class GetPropertyCommandTest extends PhabTestCase
     {
         $command = $this->application->find('getProperty');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             'property' => 'host',
             '--config' => 'testA',
             '--set' => [
-                'host.host=overridden-host.a'
+                'host.host=overridden-host.a',
             ],
-        ));
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
@@ -87,14 +89,14 @@ class GetPropertyCommandTest extends PhabTestCase
     {
         $command = $this->application->find('getProperty');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             'property' => 'sub1.sub2.sub3',
             '--config' => 'testA',
             '--set' => [
-                'host.sub1.sub2.sub3=sub1.sub2.sub3-overridden'
+                'host.sub1.sub2.sub3=sub1.sub2.sub3-overridden',
             ],
-        ));
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
@@ -107,26 +109,25 @@ class GetPropertyCommandTest extends PhabTestCase
 
         $command = $this->application->find('getProperty');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             'property' => 'sub1.sub2.sub3',
             '--config' => 'testA',
             '--set' => [
-                'host.sub1.sub2.sub4=sub1.sub2.sub3-overridden'
+                'host.sub1.sub2.sub4=sub1.sub2.sub3-overridden',
             ],
-        ));
+        ]);
     }
 
     public function testGetPropertyB()
     {
         $command = $this->application->find('getProperty');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             'property' => 'host',
-            '--config' => 'testB'
-
-        ));
+            '--config' => 'testB',
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
@@ -137,13 +138,12 @@ class GetPropertyCommandTest extends PhabTestCase
     {
         $command = $this->application->find('getProperty');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             'property' => 'host',
             '--config' => 'testBlueprint',
-            '--blueprint' => 'value-from-blueprint'
-
-        ));
+            '--blueprint' => 'value-from-blueprint',
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();

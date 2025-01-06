@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
+
+/** @noinspection PhpParamsInspection */
 
 namespace Phabalicious\Tests;
 
@@ -17,13 +19,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GitMethodTest extends PhabTestCase
 {
-    /** @var GitMethod */
     private GitMethod $method;
 
-    /** @var ConfigurationService */
     private ConfigurationService $configurationService;
 
-    /** @var TaskContext */
     private TaskContext $context;
 
     /**
@@ -45,7 +44,7 @@ class GitMethodTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/git-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__.'/assets/git-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
