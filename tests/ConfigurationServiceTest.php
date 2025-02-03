@@ -4,6 +4,8 @@ namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
@@ -60,7 +62,7 @@ class ConfigurationServiceTest extends PhabTestCase
 
     public function testNonExistingCustomFabfile()
     {
-        $this->expectException(\Phabalicious\Exception\FabfileNotFoundException::class);
+        $this->expectException(FabfileNotFoundException::class);
         $result = $this->config->readConfiguration(
             __DIR__,
             __DIR__.'/assets/custom__not_existing.yaml'
@@ -99,7 +101,7 @@ class ConfigurationServiceTest extends PhabTestCase
 
     public function testNonExistingFabfile()
     {
-        $this->expectException(\Phabalicious\Exception\FabfileNotFoundException::class);
+        $this->expectException(FabfileNotFoundException::class);
         $result = $this->config->readConfiguration(
             __DIR__.'/assets/non-existing-fabfile-tests/one/two/three'
         );
@@ -107,7 +109,7 @@ class ConfigurationServiceTest extends PhabTestCase
 
     public function testNonMatchingVersion()
     {
-        $this->expectException(\Phabalicious\Exception\MismatchedVersionException::class);
+        $this->expectException(MismatchedVersionException::class);
         $application = $this->getMockBuilder(Application::class)
             ->setMethods(['getVersion'])
             ->getMock();

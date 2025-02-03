@@ -4,6 +4,7 @@ namespace Phabalicious\Utilities;
 
 use Composer\Autoload\ClassLoader;
 use Composer\Semver\Comparator;
+use Exception;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Exception\MismatchedVersionException;
 use Psr\Container\ContainerInterface;

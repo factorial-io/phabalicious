@@ -2,6 +2,7 @@
 
 namespace Phabalicious\Configuration;
 
+use ArrayAccess;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\BaseMethod;
 use Phabalicious\ShellProvider\ShellProviderInterface;

@@ -86,6 +86,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             ],
         ];
 
+        $return['gitRootFolder'] = $configuration_service->getFabfilePath();
         $return['deployMethod'] = 'git-sync';
 
         return $parent->merge(new Node($return, $this->getName().' method defaults'));
@@ -186,7 +187,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         $shell = $context->get('outerShell', $host_config->shell());
         $branch_exists = $shell->run(
             sprintf('#!git ls-remote -h --exit-code %s %s', $target_repository, $target_branch),
-            true
+            RunOptions::CAPTURE_AND_HIDE_OUTPUT
         )->succeeded();
         $branch_to_clone = $branch_exists ? $target_branch : $host_config[self::PREFS_KEY]['baseBranch'] ?? 'master';
         $clone_options = $host_config[self::PREFS_KEY]['gitOptions']['clone'] ?? [];
@@ -205,7 +206,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
             $shell->run(sprintf('#!git push --set-upstream origin %s', $target_branch));
         }
 
-        $log = $shell->run('#!git log --format="%H|%s"', true);
+        $log = $shell->run('#!git log --format="%H|%s"', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $found = false;
         $last_successful_deployment_hash = false;
         $new_commits_since_last_deployment = [];
@@ -231,7 +232,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
                     '#!git diff %s..%s --name-only',
                     $last_successful_deployment_hash,
                     $new_commits_since_last_deployment[0]['hash']
-                ), true);
+                ), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
                 $context->io()->note('Changed files:');
                 $context->io()->listing($affected_files->getOutput());
             }
