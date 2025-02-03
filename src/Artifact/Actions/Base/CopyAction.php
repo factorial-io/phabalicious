@@ -5,6 +5,7 @@ namespace Phabalicious\Artifact\Actions\Base;
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationService;
 
@@ -18,7 +19,7 @@ class CopyAction extends ActionBase
 
     private function getDirectoryContents(ShellProviderInterface $shell, $install_dir): array
     {
-        $contents = $shell->run('ls -1a '.$install_dir, true);
+        $contents = $shell->run('ls -1a '.$install_dir, RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         return array_filter($contents->getOutput(), function ($elem) {
             return !in_array($elem, ['.', '..']);

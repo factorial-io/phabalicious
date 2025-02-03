@@ -42,7 +42,7 @@ class DockerCopyAction extends ActionBase
             'docker run --entrypoint /bin/ls --rm %s -1a %s',
             $this->dockerImageName,
             $path
-        ), true);
+        ), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         if ($result->failed()) {
             $result->throwException('Could not get directory contents from docker image!');
