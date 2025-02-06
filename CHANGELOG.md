@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.8.36](https://github.com/factorial-io/phabalicious/compare/3.8.35...3.8.36) (2025-02-06)
+
+
+### Bug Fixes
+
+* Set sensible default for gitRootFolder for artifact based deployments ([3ba53e7](https://github.com/factorial-io/phabalicious/commit/3ba53e7d8c6372b8d4c14eaa1d5eff4fa8fc0a71))
+
 ### [3.8.35](https://github.com/factorial-io/phabalicious/compare/3.8.34...3.8.35) (2024-12-03)
 
 
