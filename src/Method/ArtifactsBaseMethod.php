@@ -93,7 +93,7 @@ abstract class ArtifactsBaseMethod extends BaseMethod
     ) {
         $hash = md5(rand(0, PHP_INT_MAX) . '-' . time());
         if ($use_local_repository = $host_config[self::PREFS_KEY]['useLocalRepository']) {
-            $install_dir = $host_config['gitRootFolder'];
+            $install_dir = $host_config['gitRootFolder'] ?? $host_config['rootFolder'];
             $stages = array_diff($stages, ['installCode']);
         } else {
             $install_dir = $host_config['tmpFolder'] . '/' . $host_config->getConfigName() . '-' . $hash;
