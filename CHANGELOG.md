@@ -113,6 +113,21 @@ All notable changes to this project will be documented in this file. See [standa
 * Upgrade dependencies
 * Remove deprecated code
 
+### [3.8.37](https://github.com/factorial-io/phabalicious/compare/3.8.36...3.8.37) (2025-02-06)
+
+
+### Bug Fixes
+
+* Set sensible default for gitRootFolder for artifact based deployments ([8e4e966](https://github.com/factorial-io/phabalicious/commit/8e4e966c1ccb6784404032a9959a8a53dc5e6d16))
+
+### [3.8.36](https://github.com/factorial-io/phabalicious/compare/3.8.35...3.8.36) (2025-02-06)
+
+
+### Bug Fixes
+
+* Set sensible default for gitRootFolder for artifact based deployments ([3ba53e7](https://github.com/factorial-io/phabalicious/commit/3ba53e7d8c6372b8d4c14eaa1d5eff4fa8fc0a71))
+
+
 ### [3.8.35](https://github.com/factorial-io/phabalicious/compare/3.8.34...3.8.35) (2024-12-03)
 
 
