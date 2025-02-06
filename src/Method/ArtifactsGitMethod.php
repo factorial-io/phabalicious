@@ -100,6 +100,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         ];
 
         $return['deployMethod'] = 'git-sync';
+        $return['gitRootFolder'] = $configuration_service->getFabfilePath();
 
         return $parent->merge(new Node($return, $this->getName() . ' method defaults'));
     }
