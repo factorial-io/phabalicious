@@ -60,7 +60,7 @@ interface ShellProviderInterface extends LogLevelStackGetterInterface
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context,
-    ): int;
+    ): bool;
 
     public function expandCommand($line);
 

@@ -1,6 +1,7 @@
 parameters:
-  level: 2
+  level: 4
   paths:
     - src/
+  treatPhpDocTypesAsCertain: false
 includes:
   - vendor/jangregor/phpstan-prophecy/extension.neon

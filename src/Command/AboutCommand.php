@@ -112,20 +112,4 @@ Examples:
 
         return $table;
     }
-
-    private function write(OutputInterface $output, array $data, int $level = 0)
-    {
-        ksort($data);
-        foreach ($data as $key => $value) {
-            if (is_numeric($key)) {
-                $key = '-';
-            }
-            if (is_array($value)) {
-                $output->writeln(str_pad('', $level).str_pad($key, 30 - $level).' : ');
-                $this->write($output, $value, $level + 2);
-            } else {
-                $output->writeln(str_pad('', $level).str_pad($key, 30 - $level).' : '.$value);
-            }
-        }
-    }
 }

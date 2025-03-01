@@ -3,7 +3,6 @@
 namespace Phabalicious\ShellCompletion;
 
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
-use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Descriptor\ApplicationDescription;
@@ -14,11 +13,8 @@ use Symfony\Component\Console\Input\InputOption;
 
 class FishShellCompletionDescriptor extends Descriptor
 {
-    private $context;
-
     public function __construct()
     {
-        $this->context = new CompletionContext();
     }
 
     /**

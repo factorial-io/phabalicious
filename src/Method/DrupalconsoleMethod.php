@@ -77,17 +77,4 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
             $command,
         ]);
     }
-
-    private function runDrupalConsole(HostConfig $host_config, ShellProviderInterface $shell, string $command)
-    {
-        $current = $shell->getWorkingDir();
-        $shell->cd($host_config['siteFolder']);
-
-        $root_folder = $this->getRootFolder($host_config);
-        $exec = $this->getDrupalExec($root_folder, $shell);
-        $result = $shell->run(sprintf('%s %s', $exec, $command));
-        $shell->cd($current);
-
-        return $result;
-    }
 }

@@ -83,7 +83,7 @@ class DryRunShellProvider extends BaseShellProvider
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context,
-    ): int {
+    ): bool {
         throw new \RuntimeException('startRemoteAccess not implemented!');
     }
 

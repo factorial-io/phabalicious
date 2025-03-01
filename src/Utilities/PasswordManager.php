@@ -17,7 +17,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class PasswordManager implements PasswordManagerInterface
 {
-    private TaskContextInterface $context;
+    private ?TaskContextInterface $context;
 
     private array $passwords = [];
 
@@ -257,7 +257,7 @@ class PasswordManager implements PasswordManagerInterface
     private function get1PasswordCliFilePath()
     {
         $op_file_path = getenv('PHAB_OP_FILE_PATH') ?: '/usr/local/bin/op';
-        if (!$op_file_path || !file_exists($op_file_path)) {
+        if (!file_exists($op_file_path)) {
             return false;
         }
 

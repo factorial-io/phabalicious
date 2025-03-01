@@ -146,7 +146,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
      *
      * @throws MethodNotFoundException
      */
-    private function getGitMethod(TaskContextInterface $context): GitMethod
+    private function getGitMethod(TaskContextInterface $context): ?GitMethod
     {
         return $context->getConfigurationService()->getMethodFactory()->getMethod('git');
     }

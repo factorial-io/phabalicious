@@ -37,7 +37,7 @@ interface TaskContextInterface
 
     public function setConfigurationService(ConfigurationService $service);
 
-    public function getConfigurationService(): ConfigurationService;
+    public function getConfigurationService(): ?ConfigurationService;
 
     public function setCommandResult(CommandResult $command_result);
 
@@ -66,7 +66,7 @@ interface TaskContextInterface
 
     public function askQuestion(string $string);
 
-    public function getPasswordManager(): PasswordManagerInterface;
+    public function getPasswordManager(): ?PasswordManagerInterface;
 
     public function io(): SymfonyStyle;
 }

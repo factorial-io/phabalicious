@@ -704,9 +704,6 @@ class ConfigurationService
                     $validation->deprecate([
                         $old => sprintf('Please use new format: `%s`', $new),
                     ]);
-                    if (self::DISCARD_DEPRECATED_PROPERTIES) {
-                        unset($data[$old]);
-                    }
                 }
             }
 

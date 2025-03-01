@@ -196,7 +196,7 @@ class LocalShellProvider extends BaseShellProvider
         while ((!str_contains($result, self::RESULT_IDENTIFIER)) && !$this->process->isTerminated()) {
             $partial = $this->process->getIncrementalOutput();
             $result .= $partial;
-            if (empty($partial) && !$this->process->isTerminated()) {
+            if (empty($partial)) {
                 usleep(1000 * 50);
                 $delta = time() - $last_timestamp;
                 if ($this->preventTimeout && $delta > 10) {
@@ -292,7 +292,7 @@ class LocalShellProvider extends BaseShellProvider
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context,
-    ): int {
+    ): bool {
         throw new \InvalidArgumentException('Local shells cannot handle startRemoteAccess!');
     }
 

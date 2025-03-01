@@ -207,9 +207,7 @@ class Utilities
             $docker_config = $context
                 ->getConfigurationService()
                 ->getDockerConfig($host_config['docker']['configuration']);
-            if ($docker_config) {
-                $variables['dockerHost'] = $docker_config->asArray();
-            }
+            $variables['dockerHost'] = $docker_config->asArray();
         }
 
         return $variables;
