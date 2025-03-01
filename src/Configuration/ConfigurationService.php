@@ -823,7 +823,7 @@ class ConfigurationService
      * @throws ValidationFailedException
      * @throws MissingDockerHostConfigException
      */
-    public function getDockerConfig(string $config_name): DockerConfig
+    public function getDockerConfig(string $config_name): ?DockerConfig
     {
         $cid = 'dockerhost:'.$config_name;
 
