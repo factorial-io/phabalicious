@@ -2,9 +2,11 @@
 
 namespace Phabalicious\ShellProvider;
 
+use Psr\Log\LoggerInterface;
+
 class ShellProviderFactory
 {
-    public static function create($shell_provider_name, $logger): ?ShellProviderInterface
+    public static function create(string $shell_provider_name, LoggerInterface $logger): ShellProviderInterface
     {
         switch ($shell_provider_name) {
             case LocalShellProvider::PROVIDER_NAME:
