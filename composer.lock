@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fa3d81644fd1fab243a712cf1a531a68",
+    "content-hash": "e509498ac1b16371bff6d39cbe6c52fb",
     "packages": [
         {
             "name": "composer/semver",
@@ -269,80 +269,6 @@
                 "source": "https://github.com/graze/data-structure/tree/master"
             },
             "time": "2017-11-29T09:06:31+00:00"
-        },
-        {
-            "name": "graze/parallel-process",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ARY112/parallel-process.git",
-                "reference": "145704250e9984367a8a0ef8698ad0ff76ae2523"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ARY112/parallel-process/zipball/145704250e9984367a8a0ef8698ad0ff76ae2523",
-                "reference": "145704250e9984367a8a0ef8698ad0ff76ae2523",
-                "shasum": ""
-            },
-            "require": {
-                "graze/data-structure": "^2.0",
-                "php": "^5.5 | ^7.0 | ^8.0",
-                "psr/log": "^1.0",
-                "symfony/event-dispatcher": "^2.8 | ^3.2 | ^4.0 | ^5.0",
-                "symfony/process": "^2.8 | ^3.2 | ^4.0 | ^5.0"
-            },
-            "require-dev": {
-                "graze/console-diff-renderer": "^0.6.1",
-                "graze/standards": "^2",
-                "mockery/mockery": "^1.0",
-                "phpunit/phpunit": "^5.7.21 | ^6 | ^7",
-                "squizlabs/php_codesniffer": "^3.3.1",
-                "symfony/console": "^3.1 | ^4 | ^5"
-            },
-            "suggest": {
-                "graze/console-diff-renderer": "required to use Table and Lines",
-                "symfony/console": "To use the Table to print current runs"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Graze\\ParallelProcess\\": "src"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Graze\\ParallelProcess\\Test\\": "tests/src",
-                    "Graze\\ParallelProcess\\Test\\Unit\\": "tests/unit",
-                    "Graze\\ParallelProcess\\Test\\Integration\\": "tests/integration"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Harry Bragg",
-                    "email": "harry.bragg@graze.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Graze Developers",
-                    "email": "developers@graze.com",
-                    "homepage": "http://www.graze.com",
-                    "role": "Development Team"
-                }
-            ],
-            "description": "run a pool of processes simultaneously",
-            "homepage": "https://github.com/graze/parallel-process",
-            "keywords": [
-                "graze",
-                "parallel-process"
-            ],
-            "support": {
-                "source": "https://github.com/ARY112/parallel-process/tree/master"
-            },
-            "time": "2022-06-01T07:02:29+00:00"
         },
         {
             "name": "graze/sort",
@@ -4130,6 +4056,86 @@
                 }
             ],
             "time": "2025-01-29T07:06:14+00:00"
+        },
+        {
+            "name": "verbb/parallel-process",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/verbb/parallel-process.git",
+                "reference": "cc7acb1566c6caec4564f9571345ff510a767bdf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/verbb/parallel-process/zipball/cc7acb1566c6caec4564f9571345ff510a767bdf",
+                "reference": "cc7acb1566c6caec4564f9571345ff510a767bdf",
+                "shasum": ""
+            },
+            "require": {
+                "graze/data-structure": "^2.0",
+                "php": "^5.5 | ^7.0 | ^8.0",
+                "psr/log": "^1.0 | ^2.0 | ^3.0",
+                "symfony/event-dispatcher": "^2.8 | ^3.2 | ^4.0 | ^5.0 | ^6.0 | ^7.0",
+                "symfony/process": "^2.8 | ^3.2 | ^4.0 | ^5.0 | ^6.0 | ^7.0"
+            },
+            "require-dev": {
+                "graze/console-diff-renderer": "^0.6.1",
+                "graze/standards": "^2",
+                "mockery/mockery": "^1.0",
+                "phpunit/phpunit": "^5.7.21 | ^6 | ^7",
+                "squizlabs/php_codesniffer": "^3.3.1",
+                "symfony/console": "^3.1 | ^4 | ^5"
+            },
+            "suggest": {
+                "graze/console-diff-renderer": "required to use Table and Lines",
+                "symfony/console": "To use the Table to print current runs"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Graze\\ParallelProcess\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Graze\\ParallelProcess\\Test\\": "tests/src",
+                    "Graze\\ParallelProcess\\Test\\Unit\\": "tests/unit",
+                    "Graze\\ParallelProcess\\Test\\Integration\\": "tests/integration"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Harry Bragg",
+                    "email": "harry.bragg@graze.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Graze Developers",
+                    "email": "developers@graze.com",
+                    "homepage": "http://www.graze.com",
+                    "role": "Development Team"
+                }
+            ],
+            "description": "run a pool of processes simultaneously",
+            "homepage": "https://github.com/graze/parallel-process",
+            "keywords": [
+                "graze",
+                "parallel-process"
+            ],
+            "support": {
+                "source": "https://github.com/verbb/parallel-process/tree/1.0.3"
+            },
+            "funding": [
+                {
+                    "type": "github",
+                    "url": "https://github.com/verbb"
+                }
+            ],
+            "time": "2024-05-26T12:20:11+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -8909,8 +8915,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "graze/parallel-process": 20,
-        "roave/security-advisories": 20
+        "roave/security-advisories": 20,
+        "verbb/parallel-process": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
