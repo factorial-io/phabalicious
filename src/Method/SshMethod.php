@@ -9,6 +9,7 @@ use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderFactory;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -53,7 +54,7 @@ class SshMethod extends BaseMethod implements MethodInterface
             || in_array($task, ['shell']);
     }
 
-    public function createShellProvider(array $host_config)
+    public function createShellProvider(array $host_config): ?ShellProviderInterface
     {
         return ShellProviderFactory::create(SshShellProvider::PROVIDER_NAME, $this->logger);
     }

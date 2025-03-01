@@ -4,7 +4,7 @@ namespace Phabalicious\ShellProvider;
 
 class ShellProviderFactory
 {
-    public static function create($shell_provider_name, $logger)
+    public static function create($shell_provider_name, $logger): ?ShellProviderInterface
     {
         switch ($shell_provider_name) {
             case LocalShellProvider::PROVIDER_NAME:
@@ -28,7 +28,7 @@ class ShellProviderFactory
                 break;
 
             default:
-                $shell_provider = false;
+                $shell_provider = null;
         }
 
         return $shell_provider;

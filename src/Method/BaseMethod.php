@@ -77,8 +77,9 @@ abstract class BaseMethod implements MethodInterface
         // Intentionally left blank.
     }
 
-    public function createShellProvider(array $host_config)
+    public function createShellProvider(array $host_config): ?ShellProviderInterface
     {
+        return null;
     }
 
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
@@ -99,7 +100,7 @@ abstract class BaseMethod implements MethodInterface
         // $this->logger->debug('fallback ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
-    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task)
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
         if ('appCreate' === $task) {
             $stage = $context->get('currentStage');

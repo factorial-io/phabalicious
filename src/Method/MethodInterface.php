@@ -5,6 +5,7 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\TunnelHelper\TunnelHelperFactory;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 
@@ -34,7 +35,7 @@ interface MethodInterface
 
     public function alterConfig(ConfigurationService $configuration_service, Node $data): void;
 
-    public function createShellProvider(array $host_config);
+    public function createShellProvider(array $host_config): ?ShellProviderInterface;
 
     public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context): void;
 
@@ -44,7 +45,7 @@ interface MethodInterface
 
     public function getRootFolderKey(): string;
 
-    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task);
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool;
 
     public function getMethodDependencies(MethodFactory $factory, \ArrayAccess $data): array;
 
