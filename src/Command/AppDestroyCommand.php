@@ -13,8 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AppDestroyCommand extends AppBaseCommand
 {
-    private OutputInterface $output;
-
     public function __construct(ConfigurationService $configuration, MethodFactory $method_factory, $name = null)
     {
         parent::__construct($configuration, $method_factory, $name);

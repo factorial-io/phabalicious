@@ -3,18 +3,11 @@
 namespace Phabalicious\Scaffolder\Callbacks\FileContentsHandler;
 
 use Defuse\Crypto\Crypto;
-use Twig\Environment;
 
 class DecryptFileContentsHandler extends BaseFileContentsHandler
 {
-    /**
-     * @var Environment
-     */
-    private $secret;
-
-    public function __construct(string $secret)
+    public function __construct(private string $secret)
     {
-        $this->secret = $secret;
     }
 
     public function handleContents(string &$file_name, string $content, HandlerOptions $options): string

@@ -704,9 +704,6 @@ class ConfigurationService
                     $validation->deprecate([
                         $old => sprintf('Please use new format: `%s`', $new),
                     ]);
-                    if (self::DISCARD_DEPRECATED_PROPERTIES) {
-                        unset($data[$old]);
-                    }
                 }
             }
 
@@ -826,7 +823,7 @@ class ConfigurationService
      * @throws ValidationFailedException
      * @throws MissingDockerHostConfigException
      */
-    public function getDockerConfig(string $config_name): DockerConfig
+    public function getDockerConfig(string $config_name): ?DockerConfig
     {
         $cid = 'dockerhost:'.$config_name;
 

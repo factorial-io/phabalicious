@@ -26,15 +26,6 @@
             ".php-cs-fixer.dist.php"
         ]
     },
-    "graze/data-structure": {
-        "version": "2.1.0"
-    },
-    "graze/parallel-process": {
-        "version": "0.8.1"
-    },
-    "graze/sort": {
-        "version": "2.0.1"
-    },
     "guzzlehttp/guzzle": {
         "version": "6.3.3"
     },
@@ -277,9 +268,6 @@
     },
     "symfony/polyfill-mbstring": {
         "version": "v1.9.0"
-    },
-    "symfony/polyfill-php73": {
-        "version": "v1.14.0"
     },
     "symfony/polyfill-php80": {
         "version": "v1.18.1"

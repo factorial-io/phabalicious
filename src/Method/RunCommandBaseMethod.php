@@ -189,11 +189,9 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
                 break;
         }
 
-        $commands = is_array($command)
-            ? $command
-            : [
-                sprintf('#!%s %s', $this->getExecutableName(), $command),
-            ];
+        $commands = [
+            sprintf('#!%s %s', $this->getExecutableName(), $command),
+        ];
 
         $script_context->setShell($shell);
 

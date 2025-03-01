@@ -98,9 +98,10 @@ class Scaffolder
                     $url = $fullpath;
                     $data = new Node(Yaml::parseFile($url), $url);
                 } else {
-                    $data = $this->configuration->readHttpResource($url);
-                    $data = new Node(Yaml::parse($data), $url);
-                    $is_remote = true;
+                    if ($data = $this->configuration->readHttpResource($url)) {
+                        $data = new Node(Yaml::parse($data), $url);
+                        $is_remote = true;
+                    }
                 }
             } catch (ParseException $e) {
                 throw new YamlParseException(sprintf('Could not parse `%s` (%s)! Working dir: %s', $orig_url, $url, getcwd()), 0, $e);
@@ -136,22 +137,6 @@ class Scaffolder
 
         if ($options->getBaseUrl()) {
             $this->configuration->setInheritanceBaseUrl($options->getBaseUrl());
-        }
-
-        // TODO: Disabled for now as this is handled now in configuration service.
-
-        if (0 && !empty($data['inheritsFrom'])) {
-            if (!is_array($data['inheritsFrom'])) {
-                $data['inheritsFrom'] = [$data['inheritsFrom']];
-            }
-            if ($is_remote) {
-                foreach ($data['inheritsFrom'] as $item) {
-                    $item = trim($item);
-                    if ('@' !== $item[0] && !Utilities::isHttpUrl($item)) {
-                        $data['inheritsFrom'] = $data['base_path'].'/'.$item;
-                    }
-                }
-            }
         }
 
         $this->configuration->resolveRelativeInheritanceRefs($data, $options->getBaseUrl());

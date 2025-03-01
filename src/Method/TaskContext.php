@@ -85,7 +85,7 @@ class TaskContext implements TaskContextInterface
         }
     }
 
-    public function getConfigurationService(): ConfigurationService
+    public function getConfigurationService(): ?ConfigurationService
     {
         return $this->configurationService;
     }
@@ -178,9 +178,9 @@ class TaskContext implements TaskContextInterface
         return $question_helper->ask($this->input, $this->output, $question);
     }
 
-    public function getPasswordManager(): PasswordManagerInterface
+    public function getPasswordManager(): ?PasswordManagerInterface
     {
-        return $this->getConfigurationService()->getPasswordManager();
+        return $this->getConfigurationService()?->getPasswordManager();
     }
 
     public function io(): SymfonyStyle

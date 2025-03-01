@@ -222,14 +222,12 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context,
-    ): int {
-        $this->runProcess(
+    ): bool {
+        return $this->runProcess(
             $this->getSshTunnelCommand($ip, $port, $public_ip, $public_port, $config),
             $context,
             true
         );
-
-        return 0;
     }
 
     /**

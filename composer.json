@@ -4,36 +4,43 @@
     "type": "project",
     "require": {
         "php": "^8.2",
-        "symfony/console": "^5",
+        "symfony/console": "^7.1",
         "psr/log": "^1.0",
-        "symfony/event-dispatcher": "^5",
-        "symfony/http-kernel": "^5",
-        "symfony/dependency-injection": "^5",
-        "symfony/config": "^5",
-        "symfony/yaml": "^5",
+        "symfony/event-dispatcher": "^7.1",
+        "symfony/http-kernel": "^7.1",
+        "symfony/dependency-injection": "^7.1",
+        "symfony/config": "^7.1",
+        "symfony/yaml": "^7.1",
         "composer/semver": "^1.4||^3.2",
-        "symfony/process": "^5",
-        "symfony/flex": "^1.1",
-        "symfony/dotenv": "^5",
+        "symfony/process": "^7.1",
+        "symfony/flex": "^2",
+        "symfony/dotenv": "^7.1",
         "ext-json": "*",
-        "stecman/symfony-console-completion": "^0.11.0",
-        "symfony/finder": "^5",
+        "stecman/symfony-console-completion": "^0.14",
+        "symfony/finder": "^7.1",
         "thibaud-dauce/mattermost-php": "^1.2",
         "twig/twig": "^3.0",
         "ext-openssl": "*",
         "jakeasmith/http_build_url": "^1.0",
         "lesstif/php-jira-rest-client": "^1.35",
-        "graze/parallel-process": "dev-master",
         "ext-posix": "*",
-        "twig/string-extra": "^3.7",
+        "twig/string-extra": "^3.7.1",
         "defuse/php-encryption": "^2.3",
         "consolidation/self-update": "^3.0",
-        "webmozart/assert": "^1.11"
+        "webmozart/assert": "^1.11",
+        "verbb/parallel-process": "dev-master",
+        "symfony/string": "^7.1",
+        "symfony/error-handler": "^7.1",
+        "symfony/var-dumper": "^7.1",
+        "friendsofphp/php-cs-fixer": "^3",
+        "symfony/http-foundation": "^7.1",
+        "symfony/filesystem": "^7.1",
+        "symfony/cache": "^7.1"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest" ,
-        "symfony/phpunit-bridge": "^5",
+        "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^9.3",
+        "symfony/phpunit-bridge": "^7.1",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "squizlabs/php_codesniffer": "^3.5",
         "dealerdirect/phpcodesniffer-composer-installer": "^1",
@@ -41,13 +48,12 @@
         "phpstan/phpstan-symfony": "^1.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpro/grumphp-shim": "^2",
-        "jangregor/phpstan-prophecy": "^1.0",
-        "friendsofphp/php-cs-fixer": "^3.65"
+        "jangregor/phpstan-prophecy": "^1.0"
     },
     "autoload": {
         "psr-4": {
-          "Phabalicious\\": "src/",
-          "Phabalicious\\Tests\\": "tests/"
+            "Phabalicious\\": "src/",
+            "Phabalicious\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -63,13 +69,11 @@
     "repositories": {
         "graze/parallel-process": {
             "type": "vcs",
-            "url": "https://github.com/ARY112/parallel-process.git"
+            "url": "https://github.com/verbb/parallel-process.git"
         }
     },
     "scripts": {
-        "auto-scripts": {
-
-        },
+        "auto-scripts": {},
         "build-phar": "box compile",
         "install-phar": "cp ./build/phabalicious.phar /usr/local/bin/phab; chmod u+x /usr/local/bin/phab"
     },
@@ -84,25 +88,28 @@
         }
     },
     "extra": {
-      "phar-builder": {
-        "compression": "GZip",
-        "name": "phabalicious.phar",
-        "output-dir": "./build",
-        "entry-point": "./bin/phab",
-        "include": ["bin","config"],
-        "include-dev": false,
-        "skip-shebang": false,
-        "events": {
-          "build.before" : "git describe --tags > bin/version.txt",
-          "build.after": [
-            "rm bin/version.txt",
-            "chmod +x ../phabalicious.phar"
-          ]
-        }
-    },
+        "phar-builder": {
+            "compression": "GZip",
+            "name": "phabalicious.phar",
+            "output-dir": "./build",
+            "entry-point": "./bin/phab",
+            "include": [
+                "bin",
+                "config"
+            ],
+            "include-dev": false,
+            "skip-shebang": false,
+            "events": {
+                "build.before": "git describe --tags > bin/version.txt",
+                "build.after": [
+                    "rm bin/version.txt",
+                    "chmod +x ../phabalicious.phar"
+                ]
+            }
+        },
         "symfony": {
             "allow-contrib": "false",
-             "require": "5.4.*"
+            "require": "7.*"
         }
-  }
+    }
 }

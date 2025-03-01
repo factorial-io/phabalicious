@@ -3,7 +3,6 @@
 namespace Phabalicious\ShellCompletion;
 
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
-use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Descriptor\ApplicationDescription;
@@ -14,25 +13,19 @@ use Symfony\Component\Console\Input\InputOption;
 
 class FishShellCompletionDescriptor extends Descriptor
 {
-    private $context;
-
     public function __construct()
     {
-        $this->context = new CompletionContext();
     }
 
     /**
      * Describes an InputArgument instance.
-     *
-     * @return string|mixed
      */
-    protected function describeInputArgument(InputArgument $argument, array $options = [])
+    protected function describeInputArgument(InputArgument $argument, array $options = []): void
     {
-        global $argv;
         /** @var Command $command */
         $command = $options['command'];
         if (!$command instanceof CompletionAwareInterface) {
-            return null;
+            return;
         }
         $this->output->write(
             "complete -c phab -n '__fish_seen_subcommand_from ".$command->getName().
@@ -54,10 +47,8 @@ class FishShellCompletionDescriptor extends Descriptor
 
     /**
      * Describes an InputOption instance.
-     *
-     * @return string|mixed
      */
-    protected function describeInputOption(InputOption $option, array $options = [])
+    protected function describeInputOption(InputOption $option, array $options = []): void
     {
         /** @var Command $command */
         $command = $options['command'];
@@ -85,7 +76,6 @@ class FishShellCompletionDescriptor extends Descriptor
             escapeshellarg($option->getDescription())
         );
         if ($command instanceof CompletionAwareInterface) {
-            global $argv;
             $this->output->write(
                 "complete -c phab -n '__fish_seen_subcommand_from ".
                 $command->getName().
@@ -109,22 +99,16 @@ class FishShellCompletionDescriptor extends Descriptor
 
     /**
      * Describes an InputDefinition instance.
-     *
-     * @return string|mixed
      */
-    protected function describeInputDefinition(InputDefinition $definition, array $options = [])
+    protected function describeInputDefinition(InputDefinition $definition, array $options = []): void
     {
     }
 
     /**
      * Describes a Command instance.
-     *
-     * @return string|mixed
      */
-    protected function describeCommand(Command $command, array $options = [])
+    protected function describeCommand(Command $command, array $options = []): void
     {
-        global $argv;
-
         $this->output->writeln(
             "complete -c phab -n '__fish_use_subcommand' -f -a ".
             $command->getName().
@@ -142,10 +126,8 @@ class FishShellCompletionDescriptor extends Descriptor
 
     /**
      * Describes an Application instance.
-     *
-     * @return string|mixed
      */
-    protected function describeApplication(Application $application, array $options = [])
+    protected function describeApplication(Application $application, array $options = []): void
     {
         global $argv;
         $this->output->writeln('complete -c phab -e');

@@ -352,18 +352,15 @@ abstract class DatabaseMethod extends BaseMethod implements DatabaseMethodInterf
                 $this->waitForDatabase($host_config, $context);
 
                 return $this->install($host_config, $context);
-                break;
 
             case 'drop':
                 return $this->dropDatabase($host_config, $context, $shell, $data);
-                break;
 
             case 'query':
                 $result = $this->runQuery($host_config, $context, $shell, $data);
                 $context->setCommandResult($result);
 
                 return $result;
-                break;
 
             case 'shell':
             case 'shell-command':

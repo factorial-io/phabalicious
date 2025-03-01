@@ -147,9 +147,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
 
         // As docker methods might kill the current running application we need to
         // make sure that we terminate the shell.
-        if ($host_config->shell()) {
-            $host_config->shell()->terminate();
-        }
+        $host_config->shell()->terminate();
 
         $context->io()->success(sprintf('Task `%s` executed successfully!', $task));
     }
@@ -598,6 +596,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
      * @throws MismatchedVersionException
      * @throws MissingDockerHostConfigException
      * @throws ValidationFailedException
+     * @throws \RuntimeException
      */
     public function getDockerContainerName(HostConfig $host_config, TaskContextInterface $context): string
     {

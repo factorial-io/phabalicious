@@ -62,7 +62,7 @@ class SubShellProvider extends BaseShellProvider
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context,
-    ): int {
+    ): bool {
         throw new \LogicException('startRemoteAccess not implemented');
     }
 

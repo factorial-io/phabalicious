@@ -245,7 +245,7 @@ class KubectlShellProvider extends LocalShellProvider
         int $public_port,
         HostConfig $config,
         TaskContextInterface $context,
-    ): int {
+    ): bool {
         $command = $this->getKubeCmd();
         $command[] = 'port-forward';
         $command[] = sprintf('pod/%s', $config['kube']['podForCli']);

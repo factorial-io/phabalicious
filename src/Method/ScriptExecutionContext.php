@@ -5,7 +5,6 @@ namespace Phabalicious\Method;
 use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
-use Phabalicious\ShellProvider\SubShellProvider;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -31,10 +30,7 @@ class ScriptExecutionContext
 
     protected $contextData;
 
-    /**
-     * @var SubShellProvider
-     */
-    protected $shell;
+    protected ShellProviderInterface $shell;
 
     protected $initialWorkingDir;
 

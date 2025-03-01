@@ -349,7 +349,7 @@ class ResticMethod extends BaseMethod
     public function restic(HostConfig $host_config, TaskContextInterface $context)
     {
         $shell = $this->getShellForRestic($host_config, $context);
-        if (!$shell || !$shell instanceof BaseShellProvider) {
+        if (!$shell instanceof BaseShellProvider) {
             throw new \RuntimeException('Could not get a shell for restic');
         }
 

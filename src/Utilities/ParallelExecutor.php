@@ -3,8 +3,6 @@
 namespace Phabalicious\Utilities;
 
 use Graze\ParallelProcess\PriorityPool;
-use Graze\ParallelProcess\ProcessRun;
-use Graze\ParallelProcess\RunInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -84,16 +82,5 @@ class ParallelExecutor
     public function add(ParallelExecutorRun $run)
     {
         $this->pool->add($run);
-    }
-
-    private function format(RunInterface $run, string $message)
-    {
-        if ($run instanceof ProcessRun) {
-            $cmd = $run->getProcess()->getCommandLine();
-
-            return implode(' ', $cmd).': '.$message;
-        }
-
-        return $message;
     }
 }
