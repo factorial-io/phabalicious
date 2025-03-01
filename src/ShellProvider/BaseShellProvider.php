@@ -230,7 +230,7 @@ abstract class BaseShellProvider implements ShellProviderInterface
         ];
         foreach ($files as $file) {
             if ($this->exists($file)) {
-                $this->run(sprintf('. %s', $file), RunOptions::NONE, false);
+                $this->run(sprintf('. %s', $file), RunOptions::HIDE_OUTPUT, false);
             }
         }
         $this->applyEnvironment($environment);
