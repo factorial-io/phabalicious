@@ -24,7 +24,7 @@
         "jakeasmith/http_build_url": "^1.0",
         "lesstif/php-jira-rest-client": "^1.35",
         "ext-posix": "*",
-        "twig/string-extra": "^3.7.1",
+        "twig/string-extra": "^3.20",
         "defuse/php-encryption": "^2.3",
         "consolidation/self-update": "^3.0",
         "webmozart/assert": "^1.11",
@@ -44,11 +44,11 @@
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "squizlabs/php_codesniffer": "^3.5",
         "dealerdirect/phpcodesniffer-composer-installer": "^1",
-        "phpstan/phpstan": "^1.0",
-        "phpstan/phpstan-symfony": "^1.0",
+        "phpstan/phpstan": "^2",
+        "phpstan/phpstan-symfony": "^2",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpro/grumphp-shim": "^2",
-        "jangregor/phpstan-prophecy": "^1.0"
+        "jangregor/phpstan-prophecy": "^2"
     },
     "autoload": {
         "psr-4": {

@@ -99,7 +99,7 @@ abstract class RunCommandBaseMethod extends BaseMethod implements MethodInterfac
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         $validation = new ValidationService($config, $errors, 'host-config');
         $prefix = $this->getConfigPrefix();
         $validation->deprecate([

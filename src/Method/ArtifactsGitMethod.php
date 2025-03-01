@@ -100,7 +100,7 @@ class ArtifactsGitMethod extends ArtifactsBaseMethod
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         parent::validateConfig($configuration_service, $config, $errors);
 
         if ('git-sync' !== $config['deployMethod']) {

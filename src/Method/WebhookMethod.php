@@ -48,7 +48,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
         return $parent->merge(new Node($settings, $this->getName().' global settings'));
     }
 
-    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors)
+    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors): void
     {
         parent::validateGlobalSettings($settings, $errors);
         if (!is_array($settings['webhooks'])) {
@@ -100,7 +100,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
+    public function fallback(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         parent::fallback($task, $config, $context);
         $this->runTaskSpecificWebhooks($config, $task, $context);
@@ -111,7 +111,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         parent::preflightTask($task, $config, $context);
         $this->runTaskSpecificWebhooks($config, $task.'Prepare', $context);
@@ -122,7 +122,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         parent::postflightTask($task, $config, $context);
 

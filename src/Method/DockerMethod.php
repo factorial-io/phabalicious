@@ -70,7 +70,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         parent::validateConfig($configuration_service, $config, $errors);
 
         $validation = new ValidationService($config, $errors, sprintf('host: `%s`', $config['configName']));
@@ -96,7 +96,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    public function alterConfig(ConfigurationService $configuration_service, Node $data)
+    public function alterConfig(ConfigurationService $configuration_service, Node $data): void
     {
         if (!empty($data['docker']['service'])) {
             $data->get('docker')->unset('name');
@@ -627,7 +627,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         return '';
     }
 
-    public function preflightTask(string $task, HostConfig $host_config, TaskContextInterface $context)
+    public function preflightTask(string $task, HostConfig $host_config, TaskContextInterface $context): void
     {
         parent::preflightTask($task, $host_config, $context);
 
@@ -662,7 +662,7 @@ class DockerMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    public function postflightTask(string $task, HostConfig $host_config, TaskContextInterface $context)
+    public function postflightTask(string $task, HostConfig $host_config, TaskContextInterface $context): void
     {
         parent::postflightTask($task, $host_config, $context);
 

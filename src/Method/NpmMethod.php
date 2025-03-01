@@ -29,7 +29,7 @@ class NpmMethod extends RunCommandBaseMethod
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         parent::validateConfig($configuration_service, $config, $errors);
 
         $service = new ValidationService($config, $errors, 'NPM');

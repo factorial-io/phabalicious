@@ -15,10 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PluginDiscovery
 {
-    /**
-     * @var ClassLoader|null;
-     */
-    protected static $autoloader;
+    protected static ?ClassLoader $autoloader;
 
     public static function discover(
         $application_version,
@@ -157,6 +154,7 @@ class PluginDiscovery
                 $config = $container->get(ConfigurationService::class);
                 $methods = $config->getMethodFactory();
 
+                /* @var AvailableMethodsAndCommandsPluginInterface plugin */
                 foreach ($result as $plugin) {
                     if ($output->isVerbose()) {
                         $output->writeln(sprintf(

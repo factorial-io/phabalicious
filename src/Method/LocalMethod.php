@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\ShellProvider\ShellProviderFactory;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
 
@@ -39,7 +40,7 @@ class LocalMethod extends BaseMethod implements MethodInterface
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         $validation = new ValidationService($config, $errors, 'host-config');
         $validation->checkForValidFolderName('rootFolder');
         $validation->deprecate([
@@ -47,7 +48,7 @@ class LocalMethod extends BaseMethod implements MethodInterface
         ]);
     }
 
-    public function createShellProvider(array $host_config)
+    public function createShellProvider(array $host_config): ?ShellProviderInterface
     {
         return ShellProviderFactory::create(LocalShellProvider::PROVIDER_NAME, $this->logger);
     }

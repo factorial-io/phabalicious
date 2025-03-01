@@ -235,7 +235,7 @@ class MethodFactory
     /**
      * @return array|MethodInterface[]
      *
-     * @throws \Phabalicious\Exception\MethodNotFoundException*
+     * @throws MethodNotFoundException
      */
     public function getSubsetImplementing(array $needs, $interface): array
     {

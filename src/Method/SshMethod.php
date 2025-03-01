@@ -9,6 +9,7 @@ use Phabalicious\Exception\FailedShellCommandException;
 use Phabalicious\Exception\MethodNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
 use Phabalicious\ShellProvider\ShellProviderFactory;
+use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Utilities\EnsureKnownHosts;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -38,7 +39,7 @@ class SshMethod extends BaseMethod implements MethodInterface
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         // Reuse implementation found in SShSellProvider.
         $provider = new SshShellProvider($this->logger);
         $config = Node::mergeData($provider->getDefaultConfig($configuration_service, $config), $config);
@@ -53,7 +54,7 @@ class SshMethod extends BaseMethod implements MethodInterface
             || in_array($task, ['shell']);
     }
 
-    public function createShellProvider(array $host_config)
+    public function createShellProvider(array $host_config): ?ShellProviderInterface
     {
         return ShellProviderFactory::create(SshShellProvider::PROVIDER_NAME, $this->logger);
     }
@@ -63,7 +64,7 @@ class SshMethod extends BaseMethod implements MethodInterface
      * @throws TaskNotFoundInMethodException
      * @throws FailedShellCommandException
      */
-    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         parent::preflightTask($task, $config, $context);
 

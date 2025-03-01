@@ -32,7 +32,7 @@ class DdevMethod extends BaseMethod implements MethodInterface
         return $node;
     }
 
-    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors)
+    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors): void
     {
         if ($settings->has('ddev')) {
             $ddev = $settings['ddev'];
@@ -41,7 +41,7 @@ class DdevMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    public function alterConfig(ConfigurationService $configuration_service, Node $data)
+    public function alterConfig(ConfigurationService $configuration_service, Node $data): void
     {
         $tokens = [
             'global' => Utilities::getGlobalReplacements($configuration_service),

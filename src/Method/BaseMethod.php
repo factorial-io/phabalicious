@@ -50,7 +50,7 @@ abstract class BaseMethod implements MethodInterface
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
     }
 
     public function getKeysForDisallowingDeepMerge(): array
@@ -63,7 +63,7 @@ abstract class BaseMethod implements MethodInterface
         return new Node([], $this->getName().' global settings');
     }
 
-    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors)
+    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors): void
     {
     }
 
@@ -72,16 +72,17 @@ abstract class BaseMethod implements MethodInterface
         return new Node([], $this->getName().' method defaults');
     }
 
-    public function alterConfig(ConfigurationService $configuration_service, Node $data)
+    public function alterConfig(ConfigurationService $configuration_service, Node $data): void
     {
         // Intentionally left blank.
     }
 
-    public function createShellProvider(array $host_config)
+    public function createShellProvider(array $host_config): ?ShellProviderInterface
     {
+        return null;
     }
 
-    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         // $this->logger->debug('preflightTask ' . $task . ' on ' . $this->getName(), [$config, $context]);
         if ($this->tunnelHelperFactory) {
@@ -89,17 +90,17 @@ abstract class BaseMethod implements MethodInterface
         }
     }
 
-    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         // $this->logger->debug('postflightTask ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
-    public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
+    public function fallback(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         // $this->logger->debug('fallback ' . $task . ' on ' . $this->getName(), [$config, $context]);
     }
 
-    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task)
+    public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
         if ('appCreate' === $task) {
             $stage = $context->get('currentStage');

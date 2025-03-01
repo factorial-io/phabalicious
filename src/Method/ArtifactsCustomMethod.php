@@ -49,7 +49,7 @@ class ArtifactsCustomMethod extends ArtifactsBaseMethod implements MethodInterfa
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         parent::validateConfig($configuration_service, $config, $errors);
 
         $validation = new ValidationService($config[self::PREFS_KEY], $errors, 'artifact settings');
