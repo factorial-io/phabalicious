@@ -86,7 +86,7 @@ class ArtifactsFtpMethod extends ArtifactsBaseMethod implements MethodInterface
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         parent::validateConfig($configuration_service, $config, $errors);
 
         if (in_array('drush', $config['needs'])) {

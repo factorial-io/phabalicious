@@ -38,7 +38,7 @@ class SshMethod extends BaseMethod implements MethodInterface
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         // Reuse implementation found in SShSellProvider.
         $provider = new SshShellProvider($this->logger);
         $config = Node::mergeData($provider->getDefaultConfig($configuration_service, $config), $config);
@@ -63,7 +63,7 @@ class SshMethod extends BaseMethod implements MethodInterface
      * @throws TaskNotFoundInMethodException
      * @throws FailedShellCommandException
      */
-    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         parent::preflightTask($task, $config, $context);
 

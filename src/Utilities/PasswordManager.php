@@ -17,7 +17,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class PasswordManager implements PasswordManagerInterface
 {
-    private ?TaskContextInterface $context;
+    private ?TaskContextInterface $context = null;
 
     private array $passwords = [];
 
@@ -388,20 +388,16 @@ class PasswordManager implements PasswordManagerInterface
     {
         foreach ($fields as $field) {
             if (!empty($field->id) && $field->id === $prop_name) {
-                /* @phpstan-ignore-next-line */
                 return $field->value;
             }
             // Support for field in sections.
             if (!empty($field->n) && $field->n === $prop_name) {
-                /* @phpstan-ignore-next-line */
                 return $field->v;
             }
             if (!empty($field->designation) && 'password' === $field->designation) {
-                /* @phpstan-ignore-next-line */
                 return $field->value;
             }
             if (!empty($field->purpose) && 'PASSWORD' === $field->purpose) {
-                /* @phpstan-ignore-next-line */
                 return $field->value;
             }
         }

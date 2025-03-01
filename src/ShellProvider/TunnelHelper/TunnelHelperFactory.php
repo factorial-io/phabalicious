@@ -108,10 +108,8 @@ class TunnelHelperFactory
 
     private function getTunnelHelperClass(HostConfig $config)
     {
-        if ($config->shell() instanceof TunnelSupportInterface) {
-            /** @var TunnelSupportInterface $shell */
-            $shell = $config->shell();
-
+        $shell = $config->shell();
+        if ($shell instanceof TunnelSupportInterface) {
             return $shell->getTunnelHelperClass();
         }
 

@@ -39,7 +39,7 @@ class LocalMethod extends BaseMethod implements MethodInterface
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         $validation = new ValidationService($config, $errors, 'host-config');
         $validation->checkForValidFolderName('rootFolder');
         $validation->deprecate([

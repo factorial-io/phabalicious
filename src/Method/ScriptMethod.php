@@ -56,7 +56,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    ) {
+    ): void {
         $service = new ValidationService($config, $errors, 'host-config');
         $service->hasKey('rootFolder', 'The root-folder of your configuration.');
         $service->checkForValidFolderName('rootFolder');
@@ -319,7 +319,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
-    public function fallback(string $task, HostConfig $config, TaskContextInterface $context)
+    public function fallback(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         parent::fallback($task, $config, $context);
         $this->runTaskSpecificScripts($config, $task, $context);
@@ -331,7 +331,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
-    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         parent::preflightTask($task, $config, $context);
         $this->runTaskSpecificScripts($config, $task.'Prepare', $context);
@@ -347,7 +347,7 @@ class ScriptMethod extends BaseMethod implements MethodInterface
      * @throws MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
-    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context)
+    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
     {
         parent::postflightTask($task, $config, $context);
 

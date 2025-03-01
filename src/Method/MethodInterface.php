@@ -24,23 +24,23 @@ interface MethodInterface
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node;
 
-    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors);
+    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors): void;
 
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
         ValidationErrorBagInterface $errors,
-    );
+    ): void;
 
-    public function alterConfig(ConfigurationService $configuration_service, Node $data);
+    public function alterConfig(ConfigurationService $configuration_service, Node $data): void;
 
     public function createShellProvider(array $host_config);
 
-    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context);
+    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context): void;
 
-    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context);
+    public function postflightTask(string $task, HostConfig $config, TaskContextInterface $context): void;
 
-    public function fallback(string $task, HostConfig $config, TaskContextInterface $context);
+    public function fallback(string $task, HostConfig $config, TaskContextInterface $context): void;
 
     public function getRootFolderKey(): string;
 

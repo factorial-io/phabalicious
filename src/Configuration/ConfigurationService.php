@@ -273,7 +273,7 @@ class ConfigurationService
             $dotenv = new Dotenv();
             $contents = file_get_contents($env_file);
             $envvars = $dotenv->parse($contents);
-            if (is_array($envvars)) {
+            if (!empty($envvars)) {
                 $environment = $data->getOrCreate('environment', []);
                 $environment->merge(new Node($envvars, $env_file));
             }
