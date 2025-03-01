@@ -63,7 +63,7 @@
     "repositories": {
         "graze/parallel-process": {
             "type": "vcs",
-            "url": "https://github.com/ARY112/parallel-process.git"
+            "url": "https://github.com/verbb/parallel-process.git"
         }
     },
     "scripts": {
