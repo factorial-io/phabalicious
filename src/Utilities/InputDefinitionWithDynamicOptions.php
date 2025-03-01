@@ -16,7 +16,7 @@ class InputDefinitionWithDynamicOptions extends InputDefinition
         $this->setOptions($definition->getOptions());
     }
 
-    public function getOption($name)
+    public function getOption($name): InputOption
     {
         if (!parent::hasOption($name)) {
             $this->addOption(new InputOption($name, null, InputOption::VALUE_OPTIONAL));
