@@ -23,6 +23,7 @@ use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
 use Phabalicious\Scaffolder\Callbacks\DecryptAssetsCallback;
 use Phabalicious\Scaffolder\TwigExtensions\EncryptExtension;
 use Phabalicious\Scaffolder\TwigExtensions\GetSecretExtension;
+use Phabalicious\Scaffolder\TwigExtensions\IndentExtension;
 use Phabalicious\Scaffolder\TwigExtensions\Md5Extension;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\DryRunShellProvider;
@@ -290,6 +291,7 @@ class Scaffolder
         $this->twig = new Environment($loader, array( ));
         $this->twig->addExtension(new StringExtension());
         $this->twig->addExtension(new Md5Extension());
+        $this->twig->addExtension(new IndentExtension());
         $this->twig->addExtension(new GetSecretExtension($this->configuration->getPasswordManager()));
         $this->twig->addExtension(new EncryptExtension($this->configuration->getPasswordManager()));
 
