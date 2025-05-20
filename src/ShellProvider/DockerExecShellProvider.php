@@ -76,7 +76,7 @@ class DockerExecShellProvider extends LocalShellProvider
      */
     public function exists($file): bool
     {
-        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::NONE, false)
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::CAPTURE_AND_HIDE_OUTPUT, false)
             ->succeeded();
     }
 
