@@ -26,7 +26,7 @@ class SubShellProvider extends BaseShellProvider
 
     public function exists($file): bool
     {
-        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::NONE, false)
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::HIDE_OUTPUT, false)
             ->succeeded();
     }
 

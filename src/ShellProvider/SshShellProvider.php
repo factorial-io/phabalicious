@@ -157,7 +157,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
      */
     public function exists($file): bool
     {
-        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::NONE, false)
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::HIDE_OUTPUT, false)
             ->succeeded();
     }
 

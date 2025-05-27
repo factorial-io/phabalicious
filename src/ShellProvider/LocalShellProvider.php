@@ -124,7 +124,7 @@ class LocalShellProvider extends BaseShellProvider
 
         $this->process->start(function ($type, $buffer) use ($run_options) {
             $buffer = preg_replace(
-                '/'.self::RESULT_IDENTIFIER.'(\d*)$/',
+                '/\n?'.self::RESULT_IDENTIFIER.'(\d*)$/',
                 '',
                 $buffer
             );
