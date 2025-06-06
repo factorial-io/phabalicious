@@ -102,7 +102,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
         }
     }
 
-    public function setup(RunOptions $run_options): void
+    public function setup(): void
     {
         if (empty(self::$cachedKnownHostsConfigs[$this->hostConfig->getConfigName()])) {
             EnsureKnownHosts::ensureKnownHosts($this->hostConfig->getConfigurationService(), [
@@ -111,7 +111,7 @@ class SshShellProvider extends LocalShellProvider implements TunnelSupportInterf
             self::$cachedKnownHostsConfigs[$this->hostConfig->getConfigName()] = true;
         }
 
-        parent::setup($run_options);
+        parent::setup();
     }
 
     protected function addCommandOptions(&$command, $override = false): void

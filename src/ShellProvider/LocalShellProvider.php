@@ -104,7 +104,7 @@ class LocalShellProvider extends BaseShellProvider
      *
      * @throws \RuntimeException|\Exception
      */
-    public function setup(RunOptions $run_options): void
+    public function setup(): void
     {
         if ($this->process) {
             return;
@@ -122,14 +122,14 @@ class LocalShellProvider extends BaseShellProvider
         $this->input = new InputStream();
         $this->process->setInput($this->input);
 
-        $this->process->start(function ($type, $buffer) use ($run_options) {
+        $this->process->start(function ($type, $buffer) {
             $buffer = preg_replace(
                 '/\n?'.self::RESULT_IDENTIFIER.'(\d*)$/',
                 '',
                 $buffer
             );
-            if (!$run_options->hideOutput()) {
-                if ($this->output && Process::OUT === $type) {
+            if (!$this->runOptions->hideOutput()) {
+                if ($this->output) {
                     $this->output->write($buffer);
                 } else {
                     fwrite(Process::ERR === $type ? STDERR : STDOUT, $buffer);
@@ -328,7 +328,7 @@ class LocalShellProvider extends BaseShellProvider
 
     protected function sendCommandToShell(string $command, RunOptions $run_options, bool $include_result_identifier = true): string
     {
-        $this->setup($run_options);
+        $this->setup();
         $this->process->clearErrorOutput();
         $this->process->clearOutput();
 

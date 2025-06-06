@@ -5,7 +5,6 @@ namespace Phabalicious\Command;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\ShellProvider\LocalShellProvider;
-use Phabalicious\ShellProvider\RunOptions;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -80,7 +79,7 @@ class EncryptCommand extends BaseOptionsCommand
             'shellExecutable' => '/bin/bash',
             'rootFolder' => getcwd(),
         ], $shell, $this->getConfiguration());
-        $shell->setup(RunOptions::NONE);
+        $shell->setup();
 
         $context->io()->comment('Encrypting files ...');
 
