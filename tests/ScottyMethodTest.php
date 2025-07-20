@@ -134,4 +134,53 @@ class ScottyMethodTest extends PhabTestCase
             '1h',
             '--allow-robots'], $result);
     }
+
+    public function testScottyCtlCreateOptionsWithNewFeatures(): void
+    {
+        $host_config = $this->configurationService->getHostConfig('hostD');
+
+        $options = new ScottyCtlCreateOptions($host_config, $this->context);
+        $result = $options->build('create', ['app_folder' => '/app/folder']);
+
+        // Verify the new options are included
+        $this->assertContains('--destroy-on-ttl', $result);
+        $this->assertContains('--env-file', $result);
+        $this->assertContains('.env.test', $result);
+        $this->assertContains('--middleware', $result);
+        $this->assertContains('auth@file', $result);
+        $this->assertContains('rate-limit', $result);
+        $this->assertContains('compress', $result);
+
+        // Verify the complete expected array
+        $this->assertEquals([
+            '--server',
+            'http://localhost:21342',
+            '--access-token',
+            'hello-world',
+            'create',
+            'phab-scotty-test',
+            '--folder',
+            '/app/folder',
+            '--service',
+            'nginx:80',
+            '--env',
+            'APP_SECRET=my-deepest-secret',
+            '--middleware',
+            'auth@file',
+            '--middleware',
+            'rate-limit',
+            '--middleware',
+            'compress',
+            '--basic-auth',
+            'admin:admin',
+            '--app-blueprint',
+            'nginx-lagoon',
+            '--registry',
+            'factorial',
+            '--ttl',
+            '2h',
+            '--env-file',
+            '.env.test',
+            '--destroy-on-ttl'], $result);
+    }
 }

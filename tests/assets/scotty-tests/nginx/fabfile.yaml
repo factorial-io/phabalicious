@@ -50,3 +50,13 @@ hosts:
       allow-robots: true
       custom-domains:
         example.com: nginx
+  hostD:
+    inheritsFrom: hostA
+    scotty:
+      ttl: 2h
+      destroy-on-ttl: true
+      env-file: .env.test
+      middleware:
+        - auth@file
+        - rate-limit
+        - compress

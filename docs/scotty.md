@@ -54,9 +54,12 @@ scotty:
 | `registry` | Docker registry name | - | `factorial` |
 | `ttl` | App time-to-live | - | `1h`, `forever` |
 | `allow-robots` | Allow robot indexing | `false` | `true` |
+| `destroy-on-ttl` | Auto-destroy after TTL | `false` | `true` |
+| `env-file` | Environment variables file | - | `.env.scotty` |
 | `services` | Service port mappings | - | See below |
 | `environment` | Environment variables | - | See below |
 | `custom-domains` | Custom domain mappings | - | See below |
+| `middleware` | Traefik middleware | - | See below |
 | `scaffold` | File/asset configuration | - | See below |
 
 ### Basic Authentication
@@ -106,6 +109,54 @@ scotty:
     api.example.com: api
     www.example.com: nginx
 ```
+
+### Environment File Loading
+
+Load environment variables from a file:
+
+```yaml
+scotty:
+  env-file: .env.production
+  # Variables from file are merged with environment config
+  environment:
+    APP_ENV: production
+```
+
+The environment file should contain variables in `KEY=VALUE` format:
+```
+DATABASE_URL=mysql://user:pass@host:3306/db
+API_KEY=your-secret-key
+DEBUG=false
+```
+
+### Middleware Configuration
+
+Configure Traefik middleware for advanced routing:
+
+```yaml
+scotty:
+  middleware:
+    - auth@file
+    - rate-limit@docker
+    - compress
+```
+
+Middleware can be specified as:
+- Simple strings: `compress`
+- Named middleware: `auth@file`
+- Array format for multiple middleware
+
+### Automatic Cleanup
+
+Configure automatic app destruction after TTL expires:
+
+```yaml
+scotty:
+  ttl: 2h
+  destroy-on-ttl: true
+```
+
+This is useful for temporary deployments, review apps, or testing environments.
 
 ### Scaffold Configuration
 
@@ -173,6 +224,8 @@ scotty:
   registry: myregistry
   ttl: 24h
   allow-robots: false
+  destroy-on-ttl: false
+  env-file: .env.production
   services:
     nginx: 80
     api: 3000
@@ -183,6 +236,9 @@ scotty:
   custom-domains:
     www.example.com: nginx
     api.example.com: api
+  middleware:
+    - auth@file
+    - rate-limit
   scaffold:
     docker:
       - ./docker-compose.yml
@@ -213,6 +269,7 @@ hosts:
       app-name: my-web-app-staging
       server: https://scotty-staging.example.com
       ttl: 7d
+      destroy-on-ttl: true
       environment:
         APP_ENV: staging
 ```

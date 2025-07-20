@@ -8,9 +8,9 @@ use Webmozart\Assert\Assert;
 
 class ScottyCtlCreateOptions extends ScottyCtlOptions
 {
-    public const VALUE_PARAMS = ['basic-auth', 'app-blueprint', 'registry', 'ttl'];
-    public const BOOL_PARAMS = ['allow-robots'];
-    public const COMPLEX_PARAMS = ['services', 'environment', 'custom-domains'];
+    public const VALUE_PARAMS = ['basic-auth', 'app-blueprint', 'registry', 'ttl', 'env-file'];
+    public const BOOL_PARAMS = ['allow-robots', 'destroy-on-ttl'];
+    public const COMPLEX_PARAMS = ['services', 'environment', 'custom-domains', 'middleware'];
 
     public function __construct(HostConfig $host_config, TaskContextInterface $context)
     {
@@ -40,6 +40,11 @@ class ScottyCtlCreateOptions extends ScottyCtlOptions
         }
     }
 
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string>
+     */
     protected function buildImpl(array $data, string $command): array
     {
         $options = [
@@ -50,17 +55,24 @@ class ScottyCtlCreateOptions extends ScottyCtlOptions
             'services' => 'service',
             'environment' => 'env',
             'custom-domains' => 'custom-domain',
+            'middleware' => 'middleware',
         ];
         $separators = [
             'services' => ':',
             'environment' => '=',
             'custom-domains' => ':',
+            'middleware' => '',
         ];
         foreach ($separators as $key => $separator) {
             if (isset($data[$key])) {
                 foreach ($data[$key] as $subkey => $value) {
                     $options[] = '--'.$mapping[$key];
-                    $options[] = $subkey.$separator.$value;
+                    if ('middleware' === $key) {
+                        // Middleware values are just the values, not key=value pairs
+                        $options[] = is_numeric($subkey) ? $value : $subkey;
+                    } else {
+                        $options[] = $subkey.$separator.$value;
+                    }
                 }
             }
         }
