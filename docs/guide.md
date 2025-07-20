@@ -17,8 +17,9 @@ Phabalicious is using configuration stored in a special file in the root of your
  * optionally work with our docker-based local development-stack [multibasebox](https://github.com/factorial-io/multibasebox)
  * scaffold and deploy definition files to a Kubernetes cluster (poor-mans-helm)
  * build the app into an artifact and sync that with ftp or push it to a repository
+ * deploy applications to Scotty mPaaS for lightweight containerized deployments
 
-It integrates nicely with existing solutions like for continuous integration or docker-based setups or diverse hosting environments like Acquia SiteFactory, Lagoon, platform.sh, Kubernetes or other complicated custom IT infrastructures.
+It integrates nicely with existing solutions like for continuous integration or docker-based setups or diverse hosting environments like Acquia SiteFactory, Lagoon, platform.sh, Kubernetes, Scotty mPaaS, or other complicated custom IT infrastructures.
 
 
 ## History
@@ -32,3 +33,42 @@ Meanwhile fabric (the foundation of fabalicious) took a different route. Fabric 
 So the idea was born, to do another rewrite in PHP and use Symfony console as a base for it.
 
 Phabalicious 3 still supports the fabfile-format from version 2, but the command-line syntax changed a lot, and is now more compliant with posix.
+
+## Quick Start Examples
+
+### Deploying to Scotty mPaaS
+
+Here's a simple example to deploy a web application to Scotty mPaaS:
+
+```yaml
+name: my-web-app
+
+needs:
+  - scotty
+
+scotty:
+  server: https://scotty.example.com
+  access-token: your-access-token
+
+hosts:
+  production:
+    scotty:
+      app-name: my-web-app-prod
+      services:
+        web: 80
+      environment:
+        APP_ENV: production
+      scaffold:
+        assets:
+          - ./docker-compose.yml
+          - ./public/*
+```
+
+Deploy your application:
+```bash
+phab --config=production deploy
+```
+
+This will scaffold your files, create the application in Scotty, and start it with the configured services and environment variables.
+
+For comprehensive Scotty configuration options, see the [Scotty documentation](scotty.md).
