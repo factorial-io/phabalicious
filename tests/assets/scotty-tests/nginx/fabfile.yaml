@@ -60,3 +60,9 @@ hosts:
         - auth@file
         - rate-limit
         - compress
+  hostE:
+    inheritsFrom: hostA
+    scotty:
+      custom-domains:
+        example.com: nginx
+        www.example.com: nginx

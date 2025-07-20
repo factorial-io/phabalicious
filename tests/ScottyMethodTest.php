@@ -183,4 +183,42 @@ class ScottyMethodTest extends PhabTestCase
             '.env.test',
             '--destroy-on-ttl'], $result);
     }
+
+    public function testScottyCtlCreateOptionsWithMultipleDomainsForOneService(): void
+    {
+        $host_config = $this->configurationService->getHostConfig('hostE');
+
+        $options = new ScottyCtlCreateOptions($host_config, $this->context);
+        $result = $options->build('create', ['app_folder' => '/app/folder']);
+
+        // Verify multiple domains for the same service are included
+        $this->assertContains('--custom-domain', $result);
+        $this->assertContains('example.com:nginx', $result);
+        $this->assertContains('www.example.com:nginx', $result);
+
+        // Verify the complete expected array
+        $this->assertEquals([
+            '--server',
+            'http://localhost:21342',
+            '--access-token',
+            'hello-world',
+            'create',
+            'phab-scotty-test',
+            '--folder',
+            '/app/folder',
+            '--service',
+            'nginx:80',
+            '--env',
+            'APP_SECRET=my-deepest-secret',
+            '--custom-domain',
+            'example.com:nginx',
+            '--custom-domain',
+            'www.example.com:nginx',
+            '--basic-auth',
+            'admin:admin',
+            '--app-blueprint',
+            'nginx-lagoon',
+            '--registry',
+            'factorial'], $result);
+    }
 }
