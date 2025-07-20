@@ -14,6 +14,7 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\DockerExecShellProvider;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\RunOptions;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
@@ -23,7 +24,6 @@ class DockerExecShellProviderTest extends PhabTestCase
     /** @var ConfigurationService */
     private $config;
     private $shellProvider;
-    private $runDockerShell;
     private $backgroundProcess;
 
     public function setup(): void
@@ -59,9 +59,9 @@ class DockerExecShellProviderTest extends PhabTestCase
             'rootFolder' => dirname(__FILE__),
         ], $runDockerShell, $this->config);
 
-        $result = $runDockerShell->run('docker pull busybox', true);
-        $result = $runDockerShell->run('docker stop phabalicious_test | true', true);
-        $result = $runDockerShell->run('docker rm phabalicious_test | true', true);
+        $result = $runDockerShell->run('docker pull busybox', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
+        $result = $runDockerShell->run('docker stop phabalicious_test | true', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
+        $result = $runDockerShell->run('docker rm phabalicious_test | true', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         $this->backgroundProcess = new Process([
             'docker',

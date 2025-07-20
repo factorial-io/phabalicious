@@ -18,6 +18,7 @@ use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Application;
@@ -107,9 +108,9 @@ class MysqlMethodTest extends PhabTestCase
             'rootFolder' => __DIR__,
         ], $runDockerShell, $this->config);
 
-        $runDockerShell->run('docker pull mysql', true);
-        $runDockerShell->run('docker stop phabalicious_test | true', true);
-        $runDockerShell->run('docker rm phabalicious_test | true', true);
+        $runDockerShell->run('docker pull mysql', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
+        $runDockerShell->run('docker stop phabalicious_test | true', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
+        $runDockerShell->run('docker rm phabalicious_test | true', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         $backgroundProcess = new Process([
             'docker',
