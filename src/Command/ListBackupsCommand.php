@@ -9,7 +9,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListBackupsCommand extends BackupBaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('list:backups')

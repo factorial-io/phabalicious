@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EncryptCommand extends BaseOptionsCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

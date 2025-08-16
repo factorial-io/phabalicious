@@ -14,7 +14,7 @@ class YarnCommand extends SimpleExecutableInvocationCommand
         parent::__construct($configuration, $method_factory, 'yarn');
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->setHelp('

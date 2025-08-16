@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RestoreCommand extends BackupBaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

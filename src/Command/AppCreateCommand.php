@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AppCreateCommand extends AppBaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

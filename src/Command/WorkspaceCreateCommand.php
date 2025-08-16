@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class WorkspaceCreateCommand extends ScaffoldBaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

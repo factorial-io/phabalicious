@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListBlueprintsCommand extends BaseOptionsCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('list:blueprints')

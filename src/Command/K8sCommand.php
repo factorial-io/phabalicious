@@ -30,7 +30,7 @@ class K8sCommand extends BaseCommand
         return parent::completeArgumentValues($argumentName, $context);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

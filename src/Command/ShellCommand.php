@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShellCommand extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->setAliases(['ssh']);

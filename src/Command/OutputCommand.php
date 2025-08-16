@@ -19,7 +19,7 @@ use Symfony\Component\Yaml\Dumper;
 
 class OutputCommand extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

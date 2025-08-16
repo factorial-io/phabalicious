@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InstallCommand extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

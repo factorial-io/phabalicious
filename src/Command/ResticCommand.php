@@ -14,7 +14,7 @@ class ResticCommand extends SimpleExecutableInvocationCommand
         parent::__construct($configuration, $method_factory, 'restic', true);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->setHelp('

@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubCommandInterface
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $info = $this->getSubcommandInfo();

@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListCommand extends BaseOptionsCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('list:hosts')

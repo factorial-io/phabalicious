@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GetBackupCommand extends BackupBaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('get:backup')

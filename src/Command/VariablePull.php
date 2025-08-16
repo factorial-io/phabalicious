@@ -19,7 +19,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class VariablePull extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

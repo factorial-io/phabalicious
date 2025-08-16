@@ -33,7 +33,7 @@ abstract class ScaffoldBaseCommand extends BaseOptionsCommand
         $this->scaffolder = new Scaffolder($configuration);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 

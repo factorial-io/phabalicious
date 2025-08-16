@@ -17,7 +17,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class VariablePush extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

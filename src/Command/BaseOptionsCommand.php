@@ -38,7 +38,7 @@ abstract class BaseOptionsCommand extends Command implements CompletionAwareInte
         parent::__construct($name);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $default_conf = getenv('PHABALICIOUS_DEFAULT_CONFIG');
         if (empty($default_conf)) {

@@ -36,7 +36,7 @@ abstract class SimpleExecutableInvocationCommand extends BaseCommand
         parent::__construct($configuration, $method_factory);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

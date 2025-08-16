@@ -12,7 +12,7 @@ class FindPropertyCommand extends BaseCommand
 {
     protected static $defaultName = 'about';
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

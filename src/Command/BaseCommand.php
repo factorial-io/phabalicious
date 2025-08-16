@@ -34,7 +34,7 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     private $dockerConfig;
 
-    protected function configure()
+    protected function configure(): void
     {
         $default_conf = getenv('PHABALICIOUS_DEFAULT_CONFIG');
         if (empty($default_conf)) {

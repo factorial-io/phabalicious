@@ -18,7 +18,7 @@ class AppDestroyCommand extends AppBaseCommand
         parent::__construct($configuration, $method_factory, $name);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
