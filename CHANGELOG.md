@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0-beta.1](https://github.com/factorial-io/phabalicious/compare/4.0.0-beta.0...4.0.0-beta.1) (2025-08-16)
+
+
+### Bug Fixes
+
+* **commands:** add void return types to configure() methods ([20b1f8a](https://github.com/factorial-io/phabalicious/commit/20b1f8a8c2b5d8143419be4463e9634ac63d38cc))
+
 ## [4.0.0-beta.0](https://github.com/factorial-io/phabalicious/compare/3.8.37...4.0.0-beta.0) (2025-07-20)
 
 
