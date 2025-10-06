@@ -388,17 +388,24 @@ class PasswordManager implements PasswordManagerInterface
     {
         foreach ($fields as $field) {
             if (!empty($field->id) && $field->id === $prop_name) {
-                return $field->value;
+                return $field->value ?? false;
             }
             // Support for field in sections.
             if (!empty($field->n) && $field->n === $prop_name) {
                 return $field->v;
             }
-            if (!empty($field->designation) && 'password' === $field->designation) {
-                return $field->value;
+            // Support for matching by label (for custom fields).
+            if (!empty($field->label) && $field->label === $prop_name) {
+                return $field->value ?? false;
             }
-            if (!empty($field->purpose) && 'PASSWORD' === $field->purpose) {
-                return $field->value;
+            // Fallback for password field (only when explicitly looking for 'password').
+            if ('password' === $prop_name) {
+                if (!empty($field->designation) && 'password' === $field->designation) {
+                    return $field->value ?? false;
+                }
+                if (!empty($field->purpose) && 'PASSWORD' === $field->purpose) {
+                    return $field->value ?? false;
+                }
             }
         }
 
