@@ -300,13 +300,14 @@ JSON;
     {
         "id": "ojv5verxo5ueh4qwfbyhzsqpfy",
         "section": {
-        "id": "add more"
+         "id": "add more"
         },
         "type": "CONCEALED",
         "label": "app_allowed_domains",
         "value": "9999",
         "reference": "op://Server-Infrastructure/Foo bar credentials/add more/app_allowed_domains"
     }
+    ]
 }
 JSON;
 
