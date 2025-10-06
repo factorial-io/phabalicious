@@ -278,15 +278,6 @@ JSON;
       "reference": "op://Server-Infrastructure/Foo Bar credentials/add more/email_pw"
     },
     {
-      "id": "icgamdd2oe73mqjg3o7cf6stpi",
-      "section": {
-        "id": "add more"
-      },
-      "type": "CONCEALED",
-      "label": "app_allowed_domains",
-      "reference": "op://Server-Infrastructure/Foo Bar credentials/add more/app_allowed_domains"
-    },
-    {
       "id": "y4upoih7zkgwumkxvxwico3mxu",
       "section": {
         "id": "add more"
@@ -305,8 +296,17 @@ JSON;
       "label": "postgres_string",
       "value": "7890",
       "reference": "op://Server-Infrastructure/Foo Bar credentials/add more/postgres_string"
+    },
+    {
+        "id": "ojv5verxo5ueh4qwfbyhzsqpfy",
+        "section": {
+        "id": "add more"
+        },
+        "type": "CONCEALED",
+        "label": "app_allowed_domains",
+        "value": "9999",
+        "reference": "op://Server-Infrastructure/Foo bar credentials/add more/app_allowed_domains"
     }
-  ]
 }
 JSON;
 
@@ -319,6 +319,7 @@ JSON;
         $this->assertEquals('9012', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'email_pw'));
         $this->assertEquals('3456', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'database'));
         $this->assertEquals('7890', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'postgres_string'));
+        $this->assertEquals('9999', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'app_allowed_domains'));
     }
 
     public function test1PasswordConnectCustomFieldLabels()
