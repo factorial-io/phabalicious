@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0-beta.2](https://github.com/factorial-io/phabalicious/compare/4.0.0-beta.1...4.0.0-beta.2) (2025-10-06)
+
+
+### Features
+
+* **passwords:** support matching 1Password custom fields by label ([4736f2f](https://github.com/factorial-io/phabalicious/commit/4736f2f50a6e00e4eac9c090c4e14e06affb9958))
+
 ## [4.0.0-beta.1](https://github.com/factorial-io/phabalicious/compare/4.0.0-beta.0...4.0.0-beta.1) (2025-08-16)
 
 
