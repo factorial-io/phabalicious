@@ -83,9 +83,27 @@ jobs:
                   token: ${{ secrets.ACCESS_TOKEN }}
                   path: tap
 
-            - name: Extract version
+            - name: Extract version and determine formula
               id: version
-              run: echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+              run: |
+                  VERSION=${GITHUB_REF#refs/tags/}
+                  echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+                  # Determine which formula to update based on version
+                  if [[ $VERSION =~ ^4\. ]]; then
+                    # Version 4.x -> phab@4.rb
+                    echo "formula=phab@4.rb" >> "$GITHUB_OUTPUT"
+                    echo "template=phabalicious-v4.rb.tpl" >> "$GITHUB_OUTPUT"
+                  elif [[ $VERSION =~ ^3\.8 ]]; then
+                    # Version 3.8.x -> phab.rb only
+                    echo "formula=phab.rb" >> "$GITHUB_OUTPUT"
+                    echo "template=phabalicious.rb.tpl" >> "$GITHUB_OUTPUT"
+                  else
+                    # Unsupported version - fail
+                    echo "Unsupported version: ${VERSION}"
+                    echo "Only 3.8.x and 4.x versions are supported"
+                    exit 1
+                  fi
 
             - name: Download and compute SHA
               id: sha
@@ -99,8 +117,11 @@ jobs:
 
             - name: Copy and render formula template
               run: |
-                  FORMULA_PATH="Formula/phab.rb"
-                  cp packaging/phabalicious.rb.tpl tap/$FORMULA_PATH
+                  FORMULA_FILE="${{ steps.version.outputs.formula }}"
+                  TEMPLATE="${{ steps.version.outputs.template }}"
+                  FORMULA_PATH="Formula/${FORMULA_FILE}"
+
+                  cp packaging/$TEMPLATE tap/$FORMULA_PATH
 
                   sed -i "s|VERSION_PLACEHOLDER|${{ steps.version.outputs.version }}|" tap/$FORMULA_PATH
                   sed -i "s|URL_PLACEHOLDER|https://github.com/factorial-io/phabalicious/releases/download/${{ steps.version.outputs.version }}/phabalicious.phar|" tap/$FORMULA_PATH
@@ -108,10 +129,10 @@ jobs:
 
             - name: Commit and push formula to tap
               run: |
-                  FORMULA_PATH="Formula/phab.rb"
+                  FORMULA_FILE="${{ steps.version.outputs.formula }}"
                   cd tap
                   git config user.name "github-actions"
                   git config user.email "github-actions@github.com"
-                  git add $FORMULA_PATH
+                  git add "Formula/${FORMULA_FILE}"
                   git commit -m "Update phabalicious formula to ${{ steps.version.outputs.version }}"
                   git push
