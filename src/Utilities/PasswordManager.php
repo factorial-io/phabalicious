@@ -144,10 +144,11 @@ class PasswordManager implements PasswordManagerInterface
     {
         $env_name = !empty($secret_data['env'])
             ? $secret_data['env']
-            : str_replace('.', '_', Utilities::toUpperSnakeCase($secret));
+            : str_replace('.', '_', Utilities::toUpperSnakeCase(strtolower($secret)));
 
         $configuration_service->getLogger()->debug(sprintf(
-            'Trying to get secret `%s` from env-var `%s` ...',
+            'Trying to get %s `%s` from env-var `%s` ...',
+            $secret_data['propName'] ?? 'password',
             $secret,
             $env_name
         ));
@@ -168,7 +169,8 @@ class PasswordManager implements PasswordManagerInterface
         }
 
         $configuration_service->getLogger()->debug(sprintf(
-            'Trying to get secret `%s` from command-line-argument `--secret %s=<VALUE>` ...',
+            'Trying to get %s `%s` from command-line-argument `--secret %s=<VALUE>` ...',
+            $secret_data['propName'] ?? 'password',
             $secret,
             $secret
         ));
@@ -196,7 +198,8 @@ class PasswordManager implements PasswordManagerInterface
             // Check onepassword connect ...
             if (!empty($secret_data['onePasswordVaultId']) && !empty($secret_data['onePasswordId'])) {
                 $configuration_service->getLogger()->debug(sprintf(
-                    'Trying to get secret `%s` from 1password.connect',
+                    'Trying to get %s `%s` from 1password.connect',
+                    $secret_data['propName'] ?? 'password',
                     $secret
                 ));
 
@@ -211,7 +214,7 @@ class PasswordManager implements PasswordManagerInterface
                 }
 
                 $configuration_service->getLogger()->warning(
-                    'No configuration for onePassword-connect found, skipping ...'
+                    'No configuration for onePassword-connect '.($secret_data['tokenId'] ?? 'default').' found, skipping ...'
                 );
             }
         } catch (\Exception $e) {
@@ -223,7 +226,8 @@ class PasswordManager implements PasswordManagerInterface
             // Check onepassword cli ...
             if (isset($secret_data['onePasswordId'])) {
                 $configuration_service->getLogger()->debug(sprintf(
-                    'Trying to get secret `%s` from 1password cli',
+                    'Trying to get %s `%s` from 1password cli',
+                    $secret_data['propName'] ?? 'password',
                     $secret
                 ));
                 $pw = $this->getSecretFrom1PasswordCli(
