@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0-beta.3](https://github.com/factorial-io/phabalicious/compare/4.0.0-beta.2...4.0.0-beta.3) (2025-10-06)
+
+
+### Features
+
+* **ci:** add version-specific homebrew formula updates ([3d00c85](https://github.com/factorial-io/phabalicious/commit/3d00c8566efec93d400f184b244ab8c9613ce5db))
+* **ci:** automate homebrew tap updates on release ([de94eed](https://github.com/factorial-io/phabalicious/commit/de94eedee338a3f624727013464cb107253ddb88))
+
 ## [4.0.0-beta.2](https://github.com/factorial-io/phabalicious/compare/4.0.0-beta.1...4.0.0-beta.2) (2025-10-06)
 
 

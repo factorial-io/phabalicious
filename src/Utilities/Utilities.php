@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class Utilities
 {
-    public const FALLBACK_VERSION = '4.0.0-beta.2';
+    public const FALLBACK_VERSION = '4.0.0-beta.3';
     public const COMBINED_ARGUMENTS = 'combined';
     public const UNNAMED_ARGUMENTS = 'unnamedArguments';
 
