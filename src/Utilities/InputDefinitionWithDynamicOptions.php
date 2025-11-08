@@ -16,7 +16,7 @@ class InputDefinitionWithDynamicOptions extends InputDefinition
         $this->setOptions($definition->getOptions());
     }
 
-    public function getOption($name)
+    public function getOption(string $name): InputOption
     {
         if (!parent::hasOption($name)) {
             $this->addOption(new InputOption($name, null, InputOption::VALUE_OPTIONAL));
@@ -25,7 +25,7 @@ class InputDefinitionWithDynamicOptions extends InputDefinition
         return parent::getOption($name);
     }
 
-    public function hasOption($name): bool
+    public function hasOption(string $name): bool
     {
         return true;
     }

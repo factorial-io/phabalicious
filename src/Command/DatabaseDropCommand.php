@@ -21,7 +21,14 @@ class DatabaseDropCommand extends DatabaseSubCommand
         return [
             'subcommand' => 'drop',
             'description' => 'Drop all tables in the database',
-            'help' => 'Drop all tables in the database',
+            'help' => '
+Drops all tables in the database.
+
+This command will remove all tables from the database. Use with caution!
+
+Examples:
+<info>phab --config=myconfig db:drop</info>
+            ',
         ];
     }
 }

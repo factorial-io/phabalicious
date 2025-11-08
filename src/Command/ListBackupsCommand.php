@@ -15,7 +15,31 @@ class ListBackupsCommand extends BackupBaseCommand
         $this
             ->setName('list:backups')
             ->setDescription('List all backups')
-            ->setHelp('Displays a list of all backups for a givebn configuration');
+            ->setHelp('
+Displays a list of all backups for the specified configuration.
+
+This command shows all backup files created with the "backup" command,
+sorted by date and time (most recent first). Each backup includes
+database dumps and/or file archives.
+
+Behavior:
+- Lists all backups from the configured backupFolder
+- Displays date, time, type (db/files), hash, and filename
+- Sorts by date and time (newest first)
+- Can be filtered by backup type using <what> argument
+- Shows hash that can be used with restore/get:backup commands
+
+Arguments:
+- <what>: Filter by backup type (optional, can specify multiple)
+         Valid values: db, files
+         If omitted, shows all backup types
+
+Examples:
+<info>phab --config=myconfig list:backups</info>
+<info>phab --config=myconfig list:backups db</info>       # Only database backups
+<info>phab --config=myconfig list:backups files</info>    # Only file backups
+<info>phab --config=myconfig listBackups</info>           # Using alias
+            ');
         $this->addArgument(
             'what',
             InputArgument::IS_ARRAY | InputArgument::OPTIONAL,

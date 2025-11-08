@@ -26,7 +26,35 @@ class RestoreSqlFromFileCommand extends BaseCommand
         $this
             ->setName('restore:sql-from-file')
             ->setDescription('Restores a database from a sql-file')
-            ->setHelp('Restores a database from a given sql-file');
+            ->setHelp('
+Restores a database from a local SQL dump file.
+
+This command uploads a local SQL dump file to the remote host and imports it
+into the database. It is useful for restoring database backups or migrating
+data from one environment to another.
+
+Behavior:
+- Verifies the specified file exists locally
+- Copies the SQL dump file to the remote host\'s tmpFolder
+- Drops the existing database by default (unless --skip-drop-db is set)
+- Imports the SQL dump into the database
+- Removes the temporary file from the remote host after import
+- Shows success message if import completes successfully
+
+The file is uploaded with a timestamp in its name to avoid conflicts.
+
+Arguments:
+- <file>: Path to the local SQL dump file to restore
+
+Options:
+- --skip-drop-db: Do not drop the database before importing (merge data instead)
+
+Examples:
+<info>phab --config=myconfig restore:sql-from-file backup.sql</info>
+<info>phab --config=myconfig restore:sql-from-file /path/to/dump.sql</info>
+<info>phab --config=myconfig restore:sql-from-file dump.sql --skip-drop-db</info>
+<info>phab --config=myconfig restoreSQLFromFile backup.sql</info>  # Using alias
+            ');
         $this->addArgument(
             'file',
             InputArgument::REQUIRED,

@@ -30,7 +30,28 @@ class ShellCommand extends BaseCommand
         $this
             ->setName('shell')
             ->setDescription('starts an interactive shell')
-            ->setHelp('Starts an interactive shell for a given config.');
+            ->setHelp('
+Starts an interactive shell session on the specified host configuration.
+
+This command opens a live, interactive shell (e.g., SSH, Docker exec, etc.) to the
+remote or local environment defined in your host configuration. The type of shell
+depends on your shell provider configuration (SSH, Docker, Kubernetes, etc.).
+
+Behavior:
+- Opens an interactive shell with TTY support
+- Allows methods to override the shell provider
+- Displays "Starting shell on `<config-name>`" before connecting
+- Shell session runs until you type "exit" or close it
+- Exit code from the shell session is returned
+
+This is the actual shell - for just seeing what command would be run,
+use "shell:command" instead.
+
+Examples:
+<info>phab --config=myconfig shell</info>
+<info>phab --config=production ssh</info>  # Using alias
+<info>phab shell</info>                     # Uses default config (ddev)
+            ');
     }
 
     /**

@@ -18,7 +18,34 @@ class GetBackupCommand extends BackupBaseCommand
         $this
             ->setName('get:backup')
             ->setDescription('Get a specific backup-set')
-            ->setHelp('Copies a backup-set to the local computer');
+            ->setHelp('
+Copies a specific backup set from the remote host to your local computer.
+
+This command downloads backup files (database dumps and/or file archives)
+from the remote backupFolder to your local machine. Use list:backups to
+find available backup hashes.
+
+Behavior:
+- Looks up the backup set by the provided hash
+- Downloads the specified backup files (db and/or files)
+- Saves them to the current working directory
+- Displays a table of downloaded backup files
+- Does not remove the backups from the remote server
+
+The hash can be obtained from the list:backups command output.
+
+Arguments:
+- <hash>: Hash identifier of the backup set to download
+- <what>: What to download (optional, defaults to both db and files)
+         Valid values: db, files
+         Can specify one or both
+
+Examples:
+<info>phab --config=myconfig get:backup abc123</info>
+<info>phab --config=myconfig get:backup abc123 db</info>       # Only download database
+<info>phab --config=myconfig get:backup abc123 files</info>    # Only download files
+<info>phab --config=myconfig getBackup abc123</info>           # Using alias
+            ');
         $this->addArgument(
             'hash',
             InputArgument::REQUIRED,

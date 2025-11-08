@@ -22,7 +22,15 @@ class DatabaseQueryCommand extends DatabaseSubCommand
         return [
             'subcommand' => 'query',
             'description' => 'Run a query against the database',
-            'help' => 'Run a query against the database',
+            'help' => '
+Runs a query against the database and displays the results.
+
+This command will execute a SQL query on the database and output the results.
+
+Examples:
+<info>phab --config=myconfig db:query "SELECT * FROM users LIMIT 10"</info>
+<info>phab --config=myconfig db:query "SHOW TABLES"</info>
+            ',
         ];
     }
 

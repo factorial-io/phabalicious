@@ -37,7 +37,30 @@ class WebhookCommand extends BaseCommand
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'Pass optional arguments to the webhook'
             )
-            ->setHelp('Invokes a webhook from the global section.');
+            ->setHelp('
+Invokes a webhook defined in the global section of your fabfile.
+
+Webhooks are custom tasks defined in the "webhooks" section of your fabfile.yaml
+that can be triggered on-demand or by external systems.
+
+Behavior:
+- If no <webhook> argument is provided, lists all available webhooks
+- If <webhook> is specified, invokes that webhook
+- Throws an error if the specified webhook does not exist
+- Optional arguments can be passed to the webhook using --arguments
+
+Arguments:
+- <webhook>: Name of the webhook to invoke (optional)
+
+Options:
+- --arguments, -a: Pass key=value arguments to the webhook (can be used multiple times)
+
+Examples:
+<info>phab webhook</info>                                    # List all available webhooks
+<info>phab webhook deploy-notification</info>                # Invoke the deploy-notification webhook
+<info>phab webhook my-webhook --arguments foo=bar</info>     # Invoke webhook with arguments
+<info>phab webhook my-webhook -a key1=val1 -a key2=val2</info>
+            ');
     }
 
     public function completeArgumentValues($argumentName, CompletionContext $context): array

@@ -23,7 +23,30 @@ class ShellCommandCommand extends BaseCommand
         $this
             ->setName('shell:command')
             ->setDescription('Prints the command to run an interactive shell')
-            ->setHelp('Prints the command to run an interactive shell');
+            ->setHelp('
+Prints the shell command that would be used to open an interactive shell.
+
+This command outputs the actual shell command (e.g., SSH command) that phabalicious
+would execute to connect to the remote host. It does NOT actually open the shell,
+but just displays the command for inspection or manual use.
+
+This is useful when you want to:
+- See what SSH/shell command phab would run
+- Copy the command to use in your own scripts
+- Debug connection issues
+- Understand the shell provider configuration
+
+For actually opening an interactive shell, use the "shell" command instead.
+
+Behavior:
+- Determines the appropriate shell command based on configuration
+- Prints the command to stdout
+- Does not execute the shell command
+
+Examples:
+<info>phab --config=myconfig shell:command</info>
+<info>phab --config=production sshCommand</info>  # Using alias
+            ');
     }
 
     /**

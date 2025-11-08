@@ -18,7 +18,16 @@ class AppUpdateCommand extends BaseCommand
         $this
             ->setName('app:update')
             ->setDescription('Updates the code-base of a project')
-            ->setHelp('Updates the code-base of a project');
+            ->setHelp('
+Updates the code-base to the latest changes.
+
+When using the drush method, Drupal core will be updated to the latest version
+(but only if composer is not used). If using composer, then composer will be
+used to update the existing code.
+
+Examples:
+<info>phab --config=myconfig app:update</info>
+            ');
     }
 
     /**

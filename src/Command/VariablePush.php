@@ -27,7 +27,28 @@ class VariablePush extends BaseCommand
         $this
             ->setName('variable:push')
             ->setDescription('Pushes a list of variables to a host.')
-            ->setHelp('Pushes a list of variables to a host.');
+            ->setHelp('
+Pushes a list of variables from a YAML file to a remote host.
+
+This command reads variable names and values from a YAML file and sets them
+on the remote instance. It is useful for restoring variables that were previously
+saved using variable:pull.
+
+Behavior:
+- Reads variables from the specified YAML file
+- Pushes all variables to the remote host configuration
+- Sets each variable to the value specified in the YAML file
+- Currently works only for Drupal 7 installations
+
+The YAML file format should contain variable names as keys and their values.
+
+Arguments:
+- <file>: Path to the YAML file containing variables to push
+
+Examples:
+<info>phab --config=myconfig variable:push variables.yaml</info>
+<info>phab --config=production variable:push /path/to/vars.yaml</info>
+            ');
         $this->addArgument('file', InputArgument::REQUIRED, 'yaml file to update, will be created if not existing');
     }
 

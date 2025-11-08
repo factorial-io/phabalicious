@@ -32,7 +32,26 @@ class CopyFromCommand extends BaseCommand
         $this
             ->setName('copy-from')
             ->setDescription('Copies database and/ or file from another instance')
-            ->setHelp('Copies database and/ or files from another instance.');
+            ->setHelp('
+Copies database and/or files from another instance.
+
+The source configuration must have supportsCopyFrom set to true.
+
+Behavior:
+- If <what> is omitted, both database and files will be copied (default: db and files)
+- Files are copied via rsync from source to destination
+- Database is dumped from source and restored to destination
+- After copying the database, the reset-command gets executed (unless --skip-reset is specified)
+- By default, the destination database is dropped before import (unless --skip-drop-db is specified)
+
+This is the ideal command to copy a complete installation from one host to another.
+
+Examples:
+<info>phab --config=dest copy-from source</info>
+<info>phab --config=dest copy-from source db</info>
+<info>phab --config=dest copy-from source files</info>
+<info>phab --config=dest copy-from source db --skip-reset --skip-drop-db</info>
+            ');
         $this->addArgument(
             'from',
             InputArgument::REQUIRED,
@@ -48,7 +67,7 @@ class CopyFromCommand extends BaseCommand
             'skip-reset',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Skip the reset-task after importind the db',
+            'Skip the reset-task after importing the db',
             false
         );
         $this->addOption(

@@ -39,7 +39,22 @@ class DeployCommand extends BaseCommand
                 'Pass optional arguments',
                 []
             )
-            ->setHelp('Deploys the current application to a given host-configuration.');
+            ->setHelp('
+Deploys the current application to a given host-configuration.
+
+Behavior:
+- If <branch-to-deploy> is specified, it will deploy that specific branch
+  (overriding the branch configured in the host config)
+- If the host configuration has backupBeforeDeploy set to true, a database
+  backup will be created before deployment starts
+- After a successful deployment, the reset-command will be run
+- Optional arguments can be passed to the deployment process using --arguments
+
+Examples:
+<info>phab --config=myconfig deploy</info>
+<info>phab --config=myconfig deploy feature/my-branch</info>
+<info>phab --config=myconfig deploy --arguments foo=bar</info>
+            ');
     }
 
     /**

@@ -26,8 +26,34 @@ class StartRemoteAccessCommand extends BaseCommand
         $this
             ->setName('start-remote-access')
             ->setDescription('starts remote access')
-            ->setHelp('Depending on the configuration phabalicious will create a tunnel ' .
-                'so you can access the installation via a local port or sth similar.');
+            ->setHelp('
+Starts remote access to an installation by creating a tunnel or port forwarding.
+
+This command establishes remote access to an installation, typically by creating
+an SSH tunnel or similar mechanism. This allows you to access a remote service
+(like a web server or database) on your local machine.
+
+Behavior:
+- Creates a tunnel or port forwarding based on configuration
+- Usually opens a new remote shell session
+- Allows accessing the remote installation via local ports
+- Type "exit" to close the tunnel when finished
+- Automatically detects your machine\'s IP address for the --public-ip default
+
+The exact mechanism depends on your shell provider configuration.
+
+Options:
+- --port, -p: Port on the remote host to connect to (default: 80)
+- --ip: Host/IP to connect to on the remote side (may not be supported by all shell providers)
+- --public-ip: Local IP address to listen on (default: your machine\'s IP or 0.0.0.0)
+- --public-port: Local port to listen on (default: 8080)
+
+Examples:
+<info>phab --config=myconfig start-remote-access</info>
+<info>phab --config=myconfig start-remote-access --port=3306 --public-port=3307</info>
+<info>phab --config=myconfig start-remote-access --port=443 --public-port=8443</info>
+<info>phab --config=myconfig startRemoteAccess</info>  # Using alias
+            ');
         $this->addOption(
             'port',
             'p',

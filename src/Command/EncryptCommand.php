@@ -18,6 +18,16 @@ class EncryptCommand extends BaseOptionsCommand
         $this
             ->setName('encrypt')
             ->setDescription('Encrypts a list of files with a password')
+            ->setHelp('
+Encrypts files with a password.
+
+The source files will be encrypted and stored in the target location.
+If no password is provided via the --password option, phab will prompt for one.
+
+Examples:
+<info>phab encrypt secrets.txt /path/to/output</info>
+<info>phab encrypt config.yaml /encrypted --password=mypassword</info>
+            ')
             ->addArgument(
                 'source',
                 InputArgument::REQUIRED,

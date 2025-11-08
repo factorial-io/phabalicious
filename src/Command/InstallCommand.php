@@ -23,7 +23,27 @@ class InstallCommand extends BaseCommand
         $this
             ->setName('install')
             ->setDescription('Install an instance')
-            ->setHelp('Runs all tasks necessary to install an instance on a existing code-base');
+            ->setHelp('
+Runs all tasks necessary to install an instance on an existing code-base.
+
+This command installs a new instance (e.g., installing a database, setting up configuration).
+
+Behavior:
+- The configuration must have supportsInstalls not set to false
+  (configurations can explicitly disallow installs)
+- Prompts for confirmation before installing (unless --force is used)
+- After installation, runs the reset task (unless --skip-reset is specified)
+
+You can configure install options in your fabfile.yaml:
+installOptions:
+  distribution: thunder
+  locale: es
+
+Examples:
+<info>phab --config=myconfig install</info>
+<info>phab --config=myconfig install --force</info>
+<info>phab --config=myconfig install --skip-reset</info>
+            ');
         $this->addOption(
             'skip-reset',
             null,

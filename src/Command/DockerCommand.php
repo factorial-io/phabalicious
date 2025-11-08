@@ -33,7 +33,36 @@ class DockerCommand extends BaseCommand
                 InputArgument::IS_ARRAY | InputArgument::REQUIRED,
                 'docker tasks to run'
             )
-            ->setHelp('Run one or more specific docker tasks');
+            ->setHelp('
+Runs one or more docker tasks defined in the docker configuration.
+
+Docker tasks are custom operations defined in your docker configuration section.
+They can include starting/stopping containers, running docker-compose commands,
+or executing custom scripts in the docker environment.
+
+Behavior:
+- Requires host configuration with docker integration enabled
+- Looks up tasks from the docker configuration\'s "tasks" section
+- Includes internal docker tasks provided by the docker method
+- Runs tasks sequentially if multiple tasks are specified
+- Shows available tasks if specified task doesn\'t exist
+
+Tasks can be defined in your fabfile under dockerHosts:
+
+<info>dockerHosts:
+  my-docker:
+    tasks:
+      custom-build:
+        - docker build -t myapp .</info>
+
+Arguments:
+- <docker>: One or more docker task names to run
+
+Examples:
+<info>phab --config=myconfig docker up</info>
+<info>phab --config=myconfig docker down build up</info>  # Run multiple tasks
+<info>phab --config=myconfig docker custom-task</info>
+            ');
     }
 
     public function completeArgumentValues($argumentName, CompletionContext $context): array

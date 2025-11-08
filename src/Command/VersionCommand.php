@@ -18,7 +18,24 @@ class VersionCommand extends BaseCommand
         $this
             ->setName('version')
             ->setDescription('Get the current installed version.')
-            ->setHelp('Gets the current installed version on a specific host');
+            ->setHelp('
+Gets the current installed version of the application on a specific host.
+
+This command retrieves version information from the configured host.
+The version information depends on the method implementation and might include:
+- Application version number
+- Git commit hash or tag
+- Custom version identifiers
+
+Behavior:
+- Runs the "version" task on the specified host configuration
+- Displays version information if successfully retrieved
+- Shows an error message if version cannot be determined
+
+Examples:
+<info>phab --config=myconfig version</info>
+<info>phab --config=production version</info>
+            ');
     }
 
     /**

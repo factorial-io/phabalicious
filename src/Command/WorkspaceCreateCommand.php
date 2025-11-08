@@ -22,7 +22,27 @@ class WorkspaceCreateCommand extends ScaffoldBaseCommand
         $this
             ->setName('workspace:create')
             ->setDescription('Creates a multibasebox workspace')
-            ->setHelp('Scaffolds a multibasebox workspace on your local.');
+            ->setHelp('
+Creates a new multibasebox workspace on your local machine.
+
+This command scaffolds a complete multibasebox workspace for local development.
+A multibasebox workspace is a local development environment for managing multiple projects.
+
+Behavior:
+- Uses the mbb/mbb.yml scaffold template to generate workspace files
+- Creates the workspace in the current directory by default
+- Can optionally override existing folders if --override is set to true
+- Interactive prompts will guide you through the setup process
+
+Options:
+- --output: Specify a custom folder where to create the workspace (default: current directory)
+- --override: Set to true to allow overwriting existing folders
+
+Examples:
+<info>phab workspace:create</info>
+<info>phab workspace:create --output=/path/to/workspace</info>
+<info>phab workspace:create --override=true</info>
+            ');
 
         $this->addOption(
             'output',

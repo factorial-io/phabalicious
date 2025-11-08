@@ -37,6 +37,35 @@ class SelfUpdateCommand extends BaseSelfUpdateCommand
         parent::__construct($this->selfUpdateManager);
     }
 
+    protected function configure(): void
+    {
+        parent::configure();
+        $this->setHelp('
+Updates phabalicious to the latest version.
+
+This command checks GitHub for the latest release of phabalicious and updates
+the local phar file to that version. It uses the consolidation/self-update
+library to safely download and install updates.
+
+Behavior:
+- Checks the factorial-io/phabalicious GitHub repository for the latest release
+- Compares the current version with the latest available version
+- Downloads and installs the update if a newer version is available
+- Creates a backup of the current phar file before updating
+- Can install preview/beta versions with the --preview flag
+
+The command automatically detects if you are running a preview version
+(alpha/beta) and will check for preview updates accordingly.
+
+Phabalicious also shows update notifications when a new version is available
+(unless running with --offline or --no-interaction).
+
+Examples:
+<info>phab self-update</info>
+<info>phab self-update --preview</info>     # Update to latest preview/beta version
+            ');
+    }
+
     public function getConfiguration(): ConfigurationService
     {
         return $this->configuration;

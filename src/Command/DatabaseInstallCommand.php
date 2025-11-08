@@ -21,7 +21,14 @@ class DatabaseInstallCommand extends DatabaseSubCommand
         return [
             'subcommand' => 'install',
             'description' => 'Install a new database',
-            'help' => 'Install a new database if there is no existing one',
+            'help' => '
+Installs a new database.
+
+This command will create a new database if there is no existing one.
+
+Examples:
+<info>phab --config=myconfig db:install</info>
+            ',
         ];
     }
 }

@@ -22,7 +22,33 @@ class JiraCommand extends BaseOptionsCommand
         $this
             ->setName('jira')
             ->setDescription('Shows open jira-tickets for this project')
-            ->setHelp('Shows a table of open jira-tickets for this project. ');
+            ->setHelp('
+Displays a table of open Jira tickets assigned to you for this project.
+
+This command queries Jira using the REST API and shows all tickets that are:
+- In the configured project
+- Not in "Done" status category
+- Assigned to the current user
+
+Configuration:
+The fabfile must include Jira connection details in the "jira" section:
+
+<info>jira:
+  host: https://yourcompany.atlassian.net
+  user: your-email@example.com
+  pass: your-api-token
+  projectKey: PROJ  # Optional, defaults to fabfile "key" setting</info>
+
+Behavior:
+- Connects to Jira using configured credentials
+- Queries for open tickets assigned to the current user
+- Displays results in a table with key, summary, and URL
+- JQL: project="<key>" AND statusCategory!=Done AND assignee=currentUser()
+
+Examples:
+<info>phab jira</info>
+<info>phab --config=myproject jira</info>
+            ');
     }
 
     /**

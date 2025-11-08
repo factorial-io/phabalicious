@@ -21,7 +21,21 @@ class WorkspaceUpdateCommand extends ScaffoldBaseCommand
         $this
             ->setName('workspace:update')
             ->setDescription('Updates a multibasebox workspace')
-            ->setHelp('Updates a multibasebox workspace on your local.');
+            ->setHelp('
+Updates a multibasebox workspace on your local machine.
+
+This command updates the configuration and setup scripts for a multibasebox workspace.
+A multibasebox workspace is a local development environment for managing multiple projects.
+
+Behavior:
+- Searches for the workspace root folder by looking for setup-docker.sh
+  (traverses up to 10 directory levels from current directory)
+- Uses the mbb/mbb-update.yml scaffold template to update workspace files
+- Updates workspace configuration based on the workspace name
+
+Examples:
+<info>phab workspace:update</info>
+            ');
     }
 
     /**

@@ -31,10 +31,39 @@ class ScriptCommand extends BaseCommand
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'Pass optional arguments to the script'
             )
-            ->setHelp(
-                'Runs a script from the global section or from a given host-config. ' .
-                'If you skip the script-option all available scripts were listed.'
-            );
+            ->setHelp('
+Runs a custom script defined in the global section or host configuration.
+
+Scripts are custom automation tasks defined in your fabfile.yaml under the "scripts"
+section. They can contain shell commands, method calls, or other phabalicious tasks
+that you want to run as a single unit.
+
+Behavior:
+- If no <script> argument is provided, lists all available scripts
+- If <script> is specified, runs that script
+- Scripts can be defined globally (in the "scripts" section) or per-host
+- Scripts can have defaults that override configuration values
+- Arguments can be passed to the script using --arguments
+- Throws an error if the specified script is not found
+
+Scripts are useful for:
+- Automating complex deployment workflows
+- Creating custom maintenance tasks
+- Combining multiple phabalicious commands
+- Running project-specific operations
+
+Arguments:
+- <script>: Name of the script to run (optional)
+
+Options:
+- --arguments, -a: Pass key=value arguments to the script (can be used multiple times)
+
+Examples:
+<info>phab script</info>                                    # List all available scripts
+<info>phab --config=myconfig script deploy-prod</info>      # Run the deploy-prod script
+<info>phab script my-task --arguments foo=bar</info>        # Run script with arguments
+<info>phab script cleanup -a dry-run=true -a verbose=1</info>
+            ');
     }
 
     public function completeArgumentValues($argumentName, CompletionContext $context): array

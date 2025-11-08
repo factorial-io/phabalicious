@@ -14,7 +14,19 @@ class DatabaseShellCommand extends DatabaseSubCommand
         return [
             'subcommand' => 'shell',
             'description' => 'Get a sql shell',
-            'help' => 'Get a shell to the database to execute commands directly.',
+            'help' => '
+Opens an interactive SQL shell to the database.
+
+This command will open an interactive database shell (e.g., mysql, psql) allowing you to
+execute SQL commands directly against the database. The shell runs in TTY mode for
+interactive use.
+
+The specific shell command (mysql, psql, etc.) is determined by the database method
+configured for your host.
+
+Examples:
+<info>phab --config=myconfig db:shell</info>
+            ',
         ];
     }
 

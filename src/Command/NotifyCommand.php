@@ -39,7 +39,33 @@ class NotifyCommand extends BaseCommand
                 InputOption::VALUE_OPTIONAL,
                 'The channel to send the message to'
             )
-            ->setHelp('Send a custom message as notification.');
+            ->setHelp('
+Sends a custom notification message.
+
+This command sends notifications through configured notification channels
+(e.g., Slack, Mattermost, email, webhooks). Notification channels must be
+configured in your fabfile under the "notifyOn" section.
+
+Behavior:
+- Sends the specified message through configured notification methods
+- Can optionally target a specific channel
+- Uses the host configuration\'s notification settings
+- Returns success if notification is sent successfully
+
+Notification channels are configured per host or globally in the fabfile.
+Each method (e.g., mattermost, slack) can define how notifications are sent.
+
+Arguments:
+- <message>: The text message to send as a notification
+
+Options:
+- --channel: Specific channel to send to (depends on notification method configuration)
+
+Examples:
+<info>phab --config=myconfig notify "Deployment completed successfully"</info>
+<info>phab --config=production notify "Starting maintenance" --channel="#ops"</info>
+<info>phab notify "Build finished"</info>
+            ');
     }
 
 

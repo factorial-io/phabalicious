@@ -16,7 +16,23 @@ class BackupCommand extends BackupBaseCommand
         $this
             ->setName('backup')
             ->setDescription('Backups all data of an application')
-            ->setHelp('Backups all data of an application');
+            ->setHelp('
+Backup your files and database into the specified backup-directory.
+
+The file-names will include configuration-name, a timestamp and the git-SHA1 (if available).
+Every backup can be referenced by its filename (w/o extension) or, when git is available,
+via the git-commit-hash.
+
+If <what> is omitted, files and db gets backed up. You can limit this by providing db and/or files.
+
+Your host-configuration will need a backupFolder and a filesFolder.
+
+Examples:
+<info>phab --config=myconfig backup</info>
+<info>phab --config=myconfig backup files</info>
+<info>phab --config=myconfig backup db</info>
+<info>phab --config=myconfig backup db files</info>
+            ');
         $this->addArgument(
             'what',
             InputArgument::IS_ARRAY | InputArgument::OPTIONAL,

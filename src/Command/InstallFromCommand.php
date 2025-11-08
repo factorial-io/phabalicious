@@ -15,8 +15,34 @@ class InstallFromCommand extends BaseCommand
         $this
             ->setName('install:from')
             ->setDescription('Install an instance and get files and db from another instance')
-            ->setHelp('Runs all tasks necessary to install an instance runs a copy-from from another '.
-                'instance to get all data.');
+            ->setHelp('
+Installs a new instance and copies data from another existing instance.
+
+This is a convenience command that combines "install" and "copy-from" into
+a single operation. It first installs a fresh instance, then copies database
+and/or files from the source instance.
+
+Behavior:
+- Runs the install command with --skip-reset
+- Then runs copy-from to get data from the source instance
+- The source instance must have supportsCopyFrom set to true
+- After copying, runs the reset task (unless skipped by copy-from)
+
+This is ideal for creating a new environment based on an existing one,
+such as creating a local development environment from staging/production.
+
+Arguments:
+- <from>: Name of the source host configuration to copy from
+- <what>: What to copy (optional, defaults to both db and files)
+         Valid values: db, files
+         Can specify one or both
+
+Examples:
+<info>phab --config=local install:from production</info>
+<info>phab --config=dev install:from staging db</info>       # Only copy database
+<info>phab --config=test install:from live files</info>      # Only copy files
+<info>phab --config=local installFrom production</info>      # Using alias
+            ');
         $this->addArgument(
             'from',
             InputArgument::REQUIRED,

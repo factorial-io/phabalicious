@@ -18,7 +18,30 @@ class GetFilesDumpCommand extends BaseCommand
         $this
             ->setName('get:files-dump')
             ->setDescription('Get a current dump of all files')
-            ->setHelp('Gets a dump of all files and copies it to your local computer');
+            ->setHelp('
+Creates an archive of files on the remote host and copies it to your local computer.
+
+This command creates a tar archive of the configured files/folders on the
+remote host, downloads it to your local machine, and then removes the
+temporary archive from the remote server.
+
+Behavior:
+- Creates a tar archive of files from the configured filesFolder
+- Downloads the archive to the current working directory
+- Removes the temporary archive from the remote host
+- Displays a list of downloaded archive files
+- Can pass custom options to the tar command
+
+The files to include are determined by the filesFolder configuration.
+
+Arguments:
+- <options>: Additional options to pass to the tar command (optional, multiple allowed)
+
+Examples:
+<info>phab --config=myconfig get:files-dump</info>
+<info>phab --config=myconfig get:files-dump --exclude "*.log"</info>
+<info>phab --config=myconfig getFilesDump</info>  # Using alias
+            ');
         $this->setAliases(['getFilesDump']);
 
         $this->addArgument(

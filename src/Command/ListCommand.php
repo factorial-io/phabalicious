@@ -30,7 +30,32 @@ class ListCommand extends BaseOptionsCommand
         $this
             ->setName('list:hosts')
             ->setDescription('List all configurations')
-            ->setHelp('Displays a list of all found confgurations from a fabfile');
+            ->setHelp('
+Displays a list of all host configurations from the fabfile.
+
+This command lists all available host configurations defined in your fabfile,
+excluding hidden configurations and inherit-only configurations.
+
+Behavior:
+- Reads all host configurations from the fabfile
+- Filters out hidden hosts (hidden: true) and inherit-only hosts
+- Groups hosts by categories if categories are defined
+- Shows configuration names and public URLs by default
+- With increased verbosity (-v), shows descriptions and all public URLs
+- Displays project name and description if defined in fabfile
+
+Configuration categories help organize hosts (e.g., "Development", "Production").
+Invalid configurations are shown in a separate "Configurations with validation errors" section.
+
+Verbosity levels:
+- Normal: Shows host names and main public URL
+- Verbose (-v): Shows host descriptions and all public URLs with links
+
+Examples:
+<info>phab list:hosts</info>
+<info>phab list:hosts -v</info>              # Show detailed listing with descriptions
+<info>phab --fabfile=other.yaml list:hosts</info>
+            ');
 
         parent::configure();
     }

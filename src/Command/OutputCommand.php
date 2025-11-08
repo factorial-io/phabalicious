@@ -26,7 +26,40 @@ class OutputCommand extends BaseCommand
         $this
             ->setName('output')
             ->setDescription('Outputs the configurarion as yaml')
-            ->setHelp('Outputs the configuration as yaml');
+            ->setHelp('
+Outputs the computed configuration as YAML or JSON.
+
+This command displays the fully resolved and computed configuration for debugging
+and inspection purposes. It shows how phabalicious interprets your fabfile after
+applying all inheritance, blueprints, and transformations.
+
+Behavior:
+- Resolves all inheritance and configuration merging
+- Expands blueprints if applicable
+- Resolves secrets (shows actual secret values)
+- Outputs in the specified format (YAML or JSON)
+
+Options:
+- --what: What to output (default: blueprint)
+  - blueprint: Applied blueprint configuration (requires --blueprint)
+  - host: Host configuration (single host)
+  - docker: Docker configuration
+  - global: Global fabfile settings
+- --format: Output format (default: yaml)
+  - yaml: YAML format
+  - json: JSON format
+
+Arguments:
+- --config: Which host configuration to output
+- --blueprint: Blueprint variant to expand (required for --what=blueprint)
+
+Examples:
+<info>phab --config=myconfig --blueprint=develop output</info>
+<info>phab --config=myconfig output --what=host</info>
+<info>phab --config=myconfig output --what=host --format=json</info>
+<info>phab output --what=global</info>
+<info>phab --config=myconfig output --what=docker</info>
+            ');
 
         $this->addOption(
             'what',

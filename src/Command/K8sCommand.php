@@ -33,7 +33,30 @@ class K8sCommand extends BaseCommand
         $this
             ->setName('k8s')
             ->setDescription('Run a k8s command')
-            ->setHelp('Runs a k8s command against the given host-config');
+            ->setHelp('
+Runs Kubernetes commands against the configured cluster.
+
+This command provides integration with Kubernetes, allowing you to run
+kubectl and custom k8s commands on hosts deployed to Kubernetes clusters.
+
+Behavior:
+- Requires host configuration with Kubernetes integration enabled
+- Executes kubectl or custom k8s commands in the context of the configured cluster
+- Passes all arguments to the k8s command handler
+- Returns the exit code from the command
+
+The host configuration must have Kubernetes properly configured,
+including cluster context, namespace, and authentication details.
+
+Arguments:
+- <k8s>: The Kubernetes command and arguments to run
+
+Examples:
+<info>phab --config=myconfig k8s get pods</info>
+<info>phab --config=production k8s logs <pod-name></info>
+<info>phab --config=myconfig k8s describe deployment</info>
+<info>phab --config=myconfig k8s exec <pod> -- ls</info>
+            ');
         $this->addArgument(
             'k8s',
             InputArgument::REQUIRED | InputArgument::IS_ARRAY,
