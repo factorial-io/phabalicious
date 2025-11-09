@@ -55,7 +55,7 @@ Examples:
         $this->addArgument(
             'what',
             InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
-            'What to restore, if ommitted files and db will be restored',
+            'What to restore, if omitted files and db will be restored',
             []
         );
     }

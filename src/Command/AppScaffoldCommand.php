@@ -23,8 +23,7 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
         parent::configure();
         $this
             ->setName('app:scaffold')
-            ->setDescription('Scaffolds an app from a remote scaffold-instruction')
-            ->setHelp('Scaffolds an app from a remote scaffold-instruction');
+            ->setDescription('Scaffolds an app from a remote scaffold-instruction');
 
         $this->addArgument(
             'scaffold-url',

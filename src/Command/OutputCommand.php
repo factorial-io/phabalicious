@@ -24,7 +24,7 @@ class OutputCommand extends BaseCommand
         parent::configure();
         $this
             ->setName('output')
-            ->setDescription('Outputs the configurarion as yaml')
+            ->setDescription('Outputs the configuration as yaml')
             ->setHelp('
 Outputs the computed configuration as YAML or JSON.
 
@@ -95,7 +95,7 @@ Examples:
 
         $available_options = ['blueprint', 'host', 'docker', 'global'];
         if (!in_array($what, $available_options)) {
-            throw new \InvalidArgumentException(sprintf('Unknown option for `what`. Allwoed values are %s', '`'.implode('`, `', $available_options).'`'));
+            throw new \InvalidArgumentException(sprintf('Unknown option for `what`. Allowed values are %s', '`'.implode('`, `', $available_options).'`'));
         }
 
         $this->readConfiguration($input);

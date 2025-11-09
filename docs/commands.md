@@ -59,7 +59,7 @@ Phab will output the current value of the searched property and from which resou
 ## output
 
 ``` bash
-Phab config=<your-config> --blueprint=<your-blueprint-config> output
+phab --config=<your-config> --blueprint=<your-blueprint-config> output
 ```
 
 This command will print the computed configuration from a blueprint as yams. You can copy it and paste it back to the fabfile to make it permanent.
