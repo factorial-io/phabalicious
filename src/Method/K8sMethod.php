@@ -317,7 +317,7 @@ class K8sMethod extends BaseMethod implements MethodInterface
      * @throws UnknownReplacementPatternException
      * @throws ValidationFailedException|\Phabalicious\Exception\YamlParseException
      */
-    protected function scaffold(HostConfig $host_config, TaskContextInterface $context): void
+    protected function scaffold(HostConfig $host_config, TaskContextInterface $context, $arguments = ''): void
     {
         $kube_config = $host_config['kube'];
         $host_data = $host_config->asArray();
@@ -408,12 +408,12 @@ class K8sMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    public function delete(HostConfig $host_config, TaskContextInterface $context)
+    public function delete(HostConfig $host_config, TaskContextInterface $context, $arguments = '')
     {
         $this->kubectl($host_config, $context, $host_config['kube']['deleteCommand']);
     }
 
-    public function apply(HostConfig $host_config, TaskContextInterface $context)
+    public function apply(HostConfig $host_config, TaskContextInterface $context, $arguments = '')
     {
         $kube_config = $host_config['kube'];
         if (!empty($kube_config['scaffoldBeforeApply'])) {

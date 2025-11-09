@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CustomCommand extends BaseCommand
 {
-    public function configure()
+    public function configure(): void
     {
         parent::configure();
         $this->setName('custom');

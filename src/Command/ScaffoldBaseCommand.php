@@ -23,7 +23,6 @@ use Symfony\Component\Console\Input\InputOption;
 
 abstract class ScaffoldBaseCommand extends BaseOptionsCommand
 {
-
     protected Scaffolder $scaffolder;
     protected $mergedDefinition;
 

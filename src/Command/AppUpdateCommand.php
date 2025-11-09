@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AppUpdateCommand extends BaseCommand
 {
-    protected static $defaultName = 'about';
+    protected static $defaultName = 'app:update';
 
     protected function configure(): void
     {

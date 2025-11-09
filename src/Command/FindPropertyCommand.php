@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class FindPropertyCommand extends BaseCommand
 {
-    protected static $defaultName = 'about';
+    protected static $defaultName = 'find:property';
 
     protected function configure(): void
     {
@@ -19,7 +19,7 @@ class FindPropertyCommand extends BaseCommand
             ->setName('find:property')
             ->setDescription('Helps the user to find a specific property and shows some details about it')
             ->setHelp('
-Provides an interactive way to search for a specific property whithout knowing
+Provides an interactive way to search for a specific property without knowing
 its exact name or location. Just type parts of the property after the prompt,
 phab will try to autocomplete your input. If the autocomplete does not reveal
 what you are looking for, just hit enter, phab will show a list of possible

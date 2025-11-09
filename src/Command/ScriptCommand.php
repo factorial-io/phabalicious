@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ScriptCommand extends BaseCommand
 {
-    protected static $defaultName = 'about';
+    protected static $defaultName = 'script';
 
     protected function configure(): void
     {

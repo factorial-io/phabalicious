@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PlatformCommand extends BaseCommand
 {
-    protected static $defaultName = 'about';
+    protected static $defaultName = 'platform';
 
     protected function configure(): void
     {
