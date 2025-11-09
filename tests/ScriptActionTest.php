@@ -14,23 +14,14 @@ use Phabalicious\ShellProvider\LocalShellProvider;
 use Phabalicious\Utilities\TestableLogger;
 use Phabalicious\Validation\ValidationErrorBag;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ScriptActionTest extends TestCase
 {
-
-    /**
-     * @var \Phabalicious\Configuration\HostConfig
-     */
     private HostConfig $hostConfig;
 
-    /**
-     * @var \Phabalicious\Method\TaskContext
-     */
     private TaskContext $context;
 
     public function setup(): void
@@ -39,7 +30,7 @@ class ScriptActionTest extends TestCase
             ->getMock();
         $logger = new TestableLogger();
 
-        $config  = new ConfigurationService($app, $logger);
+        $config = new ConfigurationService($app, $logger);
         $config->setMethodFactory(new MethodFactory($config, $logger));
 
         $config->getMethodFactory()->addMethod(new ScriptMethod($logger));
@@ -47,7 +38,7 @@ class ScriptActionTest extends TestCase
         $shellProvider = new LocalShellProvider($logger);
         $this->hostConfig = new HostConfig([
             'configName' => 'test',
-            'rootFolder' => __DIR__ . '/tests',
+            'rootFolder' => __DIR__.'/tests',
             'shellExecutable' => '/bin/bash',
         ], $shellProvider, $config);
 
@@ -62,7 +53,7 @@ class ScriptActionTest extends TestCase
     }
 
     /**
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws ValidationFailedException
      */
     protected function createAction(array $arguments): ScriptAction
     {
@@ -70,7 +61,7 @@ class ScriptActionTest extends TestCase
         $errors = new ValidationErrorBag();
         $action->validateConfig($this->hostConfig, [
             'action' => 'script',
-            'arguments' => $arguments
+            'arguments' => $arguments,
         ], $errors);
         if ($errors->hasErrors()) {
             throw new ValidationFailedException($errors);
@@ -90,7 +81,7 @@ class ScriptActionTest extends TestCase
         $output = $this->context->getCommandResult()->getOutput();
 
         $this->assertEquals(1, count($output));
-        $this->assertEquals("hello world", $output[0]);
+        $this->assertEquals('hello world', $output[0]);
     }
 
     public function testSimpleScriptInHostContext(): void
@@ -107,7 +98,7 @@ class ScriptActionTest extends TestCase
         $output = $this->context->getCommandResult()->getOutput();
 
         $this->assertEquals(1, count($output));
-        $this->assertEquals("hello world", $output[0]);
+        $this->assertEquals('hello world', $output[0]);
     }
 
     public function testScriptWithUnknownContext(): void
@@ -115,11 +106,11 @@ class ScriptActionTest extends TestCase
         $this->expectException(ValidationFailedException::class);
 
         $action = $this->createAction([
-           "script" => [
-               'echo "hello world"',
-           ],
-            "context" => 'dockerx',
-            "image" => "busybox"
+            'script' => [
+                'echo "hello world"',
+            ],
+            'context' => 'dockerx',
+            'image' => 'busybox',
         ]);
     }
 
@@ -129,17 +120,17 @@ class ScriptActionTest extends TestCase
     public function testScriptInDockerContext(): void
     {
         $action = $this->createAction([
-            "script" => [
+            'script' => [
                 'env',
             ],
-            "context" => 'docker-image',
-            "image" => "busybox"
+            'context' => 'docker-image',
+            'image' => 'busybox',
         ]);
 
         $action->run($this->hostConfig, $this->context);
         $output = $this->context->getCommandResult()->getOutput();
 
-        $this->assertContains("PHAB_SUB_SHELL=1", $output);
+        $this->assertContains('PHAB_SUB_SHELL=1', $output);
     }
 
     /**
@@ -148,17 +139,17 @@ class ScriptActionTest extends TestCase
     public function testNodeVersionInDockerContext(): void
     {
         $action = $this->createAction([
-            "script" => [
+            'script' => [
                 'node --version',
             ],
-            "context" => 'docker-image',
-            "image" => "node:14"
+            'context' => 'docker-image',
+            'image' => 'node:14',
         ]);
 
         $action->run($this->hostConfig, $this->context);
         $output = $this->context->getCommandResult()->getOutput();
 
-        $this->assertStringContainsString("v14.", $output[0]);
+        $this->assertStringContainsString('v14.', $output[0]);
     }
 
     /**
@@ -166,24 +157,22 @@ class ScriptActionTest extends TestCase
      */
     public function testNpmInstallInDockerContext(): void
     {
-        $dir = __DIR__ . '/assets/script-action-npm-install';
+        $dir = __DIR__.'/assets/script-action-npm-install';
 
         exec(sprintf('rm -rf "%s/bin" "%s/lib" "%s/node_modules"', $dir, $dir, $dir));
 
         $action = $this->createAction([
-
-            "script" => [
+            'script' => [
                 'npm cache clean --force  ',
                 'npm config set prefix /app',
                 'npm install -g gulp-cli',
                 'npm install',
-                '/app/bin/gulp --tasks'
+                '/app/bin/gulp --tasks',
             ],
-            "context" => 'docker-image',
-            "image" => "node:14",
-            "user" => "node"
+            'context' => 'docker-image',
+            'image' => 'node:14',
+            'user' => 'node',
         ]);
-
 
         $context = clone $this->context;
 
@@ -193,7 +182,7 @@ class ScriptActionTest extends TestCase
         $action->run($this->hostConfig, $context);
         $output = $context->getCommandResult()->getOutput();
 
-        $this->assertStringContainsString("Tasks for /app/gulpfile.js", $output[0]);
+        $this->assertStringContainsString('Tasks for /app/gulpfile.js', $output[0]);
 
         exec(sprintf('rm -rf "%s/bin" "%s/lib" "%s/node_modules', $dir, $dir, $dir));
     }

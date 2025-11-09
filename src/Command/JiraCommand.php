@@ -1,22 +1,20 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
 use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\Issue\IssueService;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class JiraCommand extends BaseOptionsCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -52,11 +50,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws ValidationFailedException
      * @throws \JiraRestApi\JiraException
      * @throws \JsonMapper_Exception
@@ -84,7 +77,7 @@ Examples:
         $client = new IssueService(new ArrayConfiguration([
             'jiraHost' => $jira_config['host'],
             'jiraUser' => $jira_config['user'],
-            'jiraPassword' => $jira_config['pass']
+            'jiraPassword' => $jira_config['pass'],
         ]));
 
         $jql = sprintf(
@@ -94,18 +87,17 @@ Examples:
 
         $this->configuration->getLogger()->info(sprintf('Querying jira with %s', $jql));
         $issues = $client->search($jql);
-        $context->io()->title('My open tickets on ' . $this->configuration->getSetting('name'));
+        $context->io()->title('My open tickets on '.$this->configuration->getSetting('name'));
         $context->io()->table(
             ['Key', 'Summary', 'Url'],
             array_map(function ($issue) use ($jira_config) {
                 return [
                     $issue->key,
                     $issue->fields->summary,
-                    sprintf('%s/browse/%s', $jira_config['host'], $issue->key)
+                    sprintf('%s/browse/%s', $jira_config['host'], $issue->key),
                 ];
             }, $issues->issues)
         );
-
 
         return 0;
     }

@@ -2,31 +2,20 @@
 
 namespace Phabalicious\Scaffolder\Callbacks;
 
-use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Utilities\Utilities;
 
 class LogMessageCallback implements CallbackInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getName(): string
     {
         return 'log_message';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function requires(): string
     {
         return '3.4';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function handle(TaskContextInterface $context, ...$arguments)
     {
         $this->logMessage($context, $arguments[0], $arguments[1] ?? '');
@@ -39,11 +28,11 @@ class LogMessageCallback implements CallbackInterface
             $log_level = 'info';
         }
         $log_level = strtolower($log_level);
-        if ($log_level == 'success') {
+        if ('success' == $log_level) {
             $context->io()->success($log_message);
-        } elseif ($log_level == 'warning') {
+        } elseif ('warning' == $log_level) {
             $context->io()->warning($log_message);
-        } elseif ($log_level == 'error') {
+        } elseif ('error' == $log_level) {
             $context->io()->warning($log_message);
         } else {
             $context->io()->note($log_message);

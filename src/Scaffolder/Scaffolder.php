@@ -5,7 +5,6 @@
 namespace Phabalicious\Scaffolder;
 
 use Composer\Semver\Comparator;
-use InvalidArgumentException;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
@@ -18,7 +17,6 @@ use Phabalicious\Exception\YamlParseException;
 use Phabalicious\Method\Callbacks\WebHookCallback;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Scaffolder\Callbacks\CopyAssetsBaseCallback;
 use Phabalicious\Scaffolder\Callbacks\CopyAssetsCallback;
 use Phabalicious\Scaffolder\Callbacks\DecryptAssetsCallback;
 use Phabalicious\Scaffolder\TwigExtensions\EncryptExtension;
@@ -31,8 +29,6 @@ use Phabalicious\Utilities\QuestionFactory;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBag;
 use Phabalicious\Validation\ValidationService;
-use Phar;
-use RuntimeException;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -44,13 +40,11 @@ use Twig\Loader\FilesystemLoader;
 
 class Scaffolder
 {
-
     protected $twig;
 
     protected $questionFactory;
 
     protected $configuration;
-
 
     /** @var \Phabalicious\ShellProvider\ShellProviderInterface */
     protected $shell;
@@ -68,25 +62,22 @@ class Scaffolder
      * Scaffold sth from an file/url.
      *
      * @param string $url
-     * @param $root_folder
-     * @param TaskContextInterface $in_context
-     * @param array $tokens
-     * @param Options|null $options
      *
      * @return CommandResult
+     *
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
      * @throws MismatchedVersionException
      * @throws MissingScriptCallbackImplementation
      * @throws ValidationFailedException
-     * @throws \Phabalicious\Exception\UnknownReplacementPatternException|\Phabalicious\Exception\YamlParseException
+     * @throws \Phabalicious\Exception\UnknownReplacementPatternException|YamlParseException
      */
     public function scaffold(
         $url,
         $root_folder,
         TaskContextInterface $in_context,
         array $tokens = [],
-        Options $options = null
+        ?Options $options = null,
     ) {
         if (!$options) {
             $options = new Options();
@@ -107,25 +98,21 @@ class Scaffolder
                     $url = $fullpath;
                     $data = new Node(Yaml::parseFile($url), $url);
                 } else {
-                    $data = $this->configuration->readHttpResource($url);
-                    $data = new Node(Yaml::parse($data), $url);
-                    $is_remote = true;
+                    if ($data = $this->configuration->readHttpResource($url)) {
+                        $data = new Node(Yaml::parse($data), $url);
+                        $is_remote = true;
+                    }
                 }
             } catch (ParseException $e) {
-                throw new YamlParseException(sprintf(
-                    "Could not parse `%s` (%s)! Working dir: %s",
-                    $orig_url,
-                    $url,
-                    getcwd()
-                ), 0, $e);
+                throw new YamlParseException(sprintf('Could not parse `%s` (%s)! Working dir: %s', $orig_url, $url, getcwd()), 0, $e);
             }
             if (!$data) {
-                throw new InvalidArgumentException('Could not read yaml from ' . $url);
+                throw new \InvalidArgumentException('Could not read yaml from '.$url);
             }
         }
 
         $io = $options->isQuiet() ? new SymfonyStyle($in_context->getInput(), new NullOutput()) : $in_context->io();
-        $this->context = $context = clone ($in_context);
+        $this->context = $context = clone $in_context;
         $context->setIo($io);
 
         // Allow implementation to override parts of the data.
@@ -135,14 +122,7 @@ class Scaffolder
         if ($data->has('requires')) {
             $required_version = $data['requires'];
             if (Comparator::greaterThan($required_version, $options->getCompabilityVersion())) {
-                throw new MismatchedVersionException(
-                    sprintf(
-                        'Could not read from %s because of version mismatch. %s is required, current app is %s',
-                        $url,
-                        $required_version,
-                        $options->getCompabilityVersion()
-                    )
-                );
+                throw new MismatchedVersionException(sprintf('Could not read from %s because of version mismatch. %s is required, current app is %s', $url, $required_version, $options->getCompabilityVersion()));
             }
         }
         if (!empty($data['secrets'])) {
@@ -159,28 +139,10 @@ class Scaffolder
             $this->configuration->setInheritanceBaseUrl($options->getBaseUrl());
         }
 
-
-        // TODO: Disabled for now as this is handled now in configuration service.
-
-        if (0 && !empty($data['inheritsFrom'])) {
-            if (!is_array($data['inheritsFrom'])) {
-                $data['inheritsFrom'] = [$data['inheritsFrom']];
-            }
-            if ($is_remote) {
-                foreach ($data['inheritsFrom'] as $item) {
-                    $item = trim($item);
-                    if ($item[0] !== '@' && !Utilities::isHttpUrl($item)) {
-                        $data['inheritsFrom'] = $data['base_path'] . '/' . $item;
-                    }
-                }
-            }
-        }
-
         $this->configuration->resolveRelativeInheritanceRefs($data, $options->getBaseUrl());
 
         $data = $this->configuration->resolveInheritance($data, new Node([], 'scaffolder defaults'), $root_path);
         $this->configuration->reportDeprecations($root_path);
-
 
         if (!empty($data['plugins']) && $options->getPluginRegistrationCallback()) {
             $options->getPluginRegistrationCallback()($data['plugins']);
@@ -215,7 +177,7 @@ class Scaffolder
         } else {
             $host_config = new HostConfig([
                 'rootFolder' => realpath($root_folder),
-                'shellExecutable' => '/bin/bash'
+                'shellExecutable' => '/bin/bash',
             ], $shell, $this->configuration);
         }
 
@@ -245,7 +207,7 @@ class Scaffolder
             $tokens = Utilities::mergeData($data['variables'], $tokens);
         }
         if (empty($tokens['name'])) {
-            throw new InvalidArgumentException('Missing `name` in questions, aborting!');
+            throw new \InvalidArgumentException('Missing `name` in questions, aborting!');
         }
 
         if (empty($tokens['projectFolder'])) {
@@ -266,8 +228,11 @@ class Scaffolder
         $tokens = $context->getConfigurationService()->getPasswordManager()->resolveSecrets($tokens);
 
         $tokens['projectFolder'] = Utilities::cleanupString($tokens['projectFolder']);
-        $tokens['rootFolder'] = $shell->realPath($root_folder) . '/' . $tokens['projectFolder'];
-
+        $real_root_folder = $shell->realPath($root_folder);
+        if (false === $real_root_folder) {
+            throw new \RuntimeException('Could not resolve root-folder '.$root_folder);
+        }
+        $tokens['rootFolder'] = $real_root_folder.'/'.$tokens['projectFolder'];
 
         $context->set(ScriptMethod::SCRIPT_DATA, $data['scaffold']);
         if (isset($data['computedValues'])) {
@@ -281,13 +246,13 @@ class Scaffolder
         $context->set('tokens', $tokens);
         $context->set('rootPath', $root_path);
 
-        $twig_root_path = '/tmp/phab-twig-' . bin2hex(random_bytes(8));
+        $twig_root_path = '/tmp/phab-twig-'.bin2hex(random_bytes(8));
         $context->set('twigRootPath', $twig_root_path);
         mkdir($twig_root_path, 0777, true);
 
         // Setup twig
         $loader = new FilesystemLoader($twig_root_path);
-        $this->twig = new Environment($loader, array( ));
+        $this->twig = new Environment($loader, []);
         $this->twig->addExtension(new StringExtension());
         $this->twig->addExtension(new Md5Extension());
         $this->twig->addExtension(new GetSecretExtension($this->configuration->getPasswordManager()));
@@ -307,11 +272,11 @@ class Scaffolder
                 'Destination folder exists! Continue anyways?',
                 false
             )) {
-                throw new RuntimeException(sprintf("Destination `%s` folder exists already", $tokens['rootFolder']));
+                throw new \RuntimeException(sprintf('Destination `%s` folder exists already', $tokens['rootFolder']));
             }
         }
         if ($context->getOutput()->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-            $io->note('Available tokens:' . PHP_EOL . print_r($tokens, true));
+            $io->note('Available tokens:'.PHP_EOL.print_r($tokens, true));
         }
 
         if (empty($tokens['skipCreateDestinationFolder'])) {
@@ -327,11 +292,7 @@ class Scaffolder
         /** @var CommandResult $result */
         $result = $context->getResult('commandResult', new CommandResult(0, []));
         if ($result && $result->failed()) {
-            throw new RuntimeException(sprintf(
-                "Scaffolding failed with exit-code %d\n%s",
-                $result->getExitCode(),
-                implode("\n", $result->getOutput())
-            ));
+            throw new \RuntimeException(sprintf("Scaffolding failed with exit-code %d\n%s", $result->getExitCode(), implode("\n", $result->getOutput())));
         }
 
         if ($options->useCacheTokens()) {
@@ -355,19 +316,11 @@ class Scaffolder
         return $result;
     }
 
-    /**
-     * @param array $questions
-     * @param TaskContextInterface $context
-     * @param array $tokens
-     * @param Options $options
-     *
-     * @return array
-     */
     protected function askQuestions(
         array $questions,
         TaskContextInterface $context,
         array $tokens,
-        Options $options
+        Options $options,
     ): array {
         return $this->questionFactory->askMultiple(
             $questions,
@@ -376,39 +329,31 @@ class Scaffolder
             function ($key, &$value) use ($options) {
                 $option_name = strtolower(preg_replace('%([a-z])([A-Z])%', '\1-\2', $key));
                 $dynamic_option = $options->getDynamicOption($option_name);
-                if ($dynamic_option !== false && $dynamic_option !== null) {
+                if (false !== $dynamic_option && null !== $dynamic_option) {
                     $value = $dynamic_option;
                 }
             }
         );
     }
 
-
     /**
      * Get local scaffold file.
-     * @param $name
-     * @return string
      */
     public function getLocalScaffoldFile($name): string
     {
-        $rootFolder = Phar::running()
-            ? Phar::running() . '/config/scaffold'
-            : realpath(__DIR__ . '/../../config/scaffold/');
+        $rootFolder = \Phar::running()
+            ? \Phar::running().'/config/scaffold'
+            : realpath(__DIR__.'/../../config/scaffold/');
 
-        return $rootFolder . '/' . $name;
+        return $rootFolder.'/'.$name;
     }
 
-    /**
-     * @param string $root_folder
-     * @param mixed $tokens
-     */
     protected function writeTokens(string $root_folder, $tokens)
     {
-        $this->shell->putFileContents($root_folder . '/.phab-scaffold-tokens', YAML::dump($tokens), $this->context);
+        $this->shell->putFileContents($root_folder.'/.phab-scaffold-tokens', Yaml::dump($tokens), $this->context);
     }
 
     /**
-     * @param string $root_folder
      * @param string $name
      *
      * @return array|mixed
@@ -420,7 +365,8 @@ class Scaffolder
             return [];
         }
         $content = $this->shell->getFileContents($full_path, $this->context);
-        $tokens = yaml::parse($content);
+        $tokens = Yaml::parse($content);
+
         return is_array($tokens) ? $tokens : [];
     }
 }

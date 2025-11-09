@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
+
+/** @noinspection PhpParamsInspection */
 
 namespace Phabalicious\Tests;
 
@@ -12,18 +14,16 @@ use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Psr\Log\AbstractLogger;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class GitMethodTest extends PhabTestCase
 {
-    /** @var GitMethod */
     private GitMethod $method;
 
-    /** @var ConfigurationService */
     private ConfigurationService $configurationService;
 
-    /** @var TaskContext */
     private TaskContext $context;
 
     /**
@@ -36,7 +36,7 @@ class GitMethodTest extends PhabTestCase
     public function setUp(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
-        $app = $this->getMockBuilder(\Symfony\Component\Console\Application::class)->getMock();
+        $app = $this->getMockBuilder(Application::class)->getMock();
         $this->method = new GitMethod($logger);
         $this->configurationService = new ConfigurationService($app, $logger);
 
@@ -45,7 +45,7 @@ class GitMethodTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/git-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__.'/assets/git-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),

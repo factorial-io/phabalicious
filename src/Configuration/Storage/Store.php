@@ -2,8 +2,6 @@
 
 namespace Phabalicious\Configuration\Storage;
 
-use mysql_xdevapi\Warning;
-
 class Store extends Node
 {
     protected static $protectedProperties = [];
@@ -15,7 +13,7 @@ class Store extends Node
         }
         $keys = $data->get($key_name)->getValue();
         if (!is_array($keys)) {
-            $keys = [ $keys ];
+            $keys = [$keys];
         }
         self::$protectedProperties = $keys;
     }
@@ -32,9 +30,10 @@ class Store extends Node
             if ($node = $data->find($key)) {
                 $result[$key] = Node::clone($node);
             } else {
-                $result[$key] = new Node(null, "protected property");
+                $result[$key] = new Node(null, 'protected property');
             }
         }
+
         return $result;
     }
 

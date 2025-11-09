@@ -14,7 +14,7 @@ class ScriptCommand extends BaseCommand
 {
     protected static $defaultName = 'about';
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -68,23 +68,22 @@ Examples:
 
     public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
-        if (($argumentName == 'script') && ($context instanceof FishShellCompletionContext)) {
+        if (('script' == $argumentName) && ($context instanceof FishShellCompletionContext)) {
             $scripts = $this->getConfiguration()->getSetting('scripts', []);
             $host_config = $context->getHostConfig();
             if ($host_config) {
                 $host_scripts = !empty($host_config['scripts']) ? $host_config['scripts'] : [];
+
                 return array_keys($scripts) + array_keys($host_scripts);
             }
+
             return array_keys($scripts);
         }
+
         return parent::completeArgumentValues($argumentName, $context);
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -101,6 +100,7 @@ Examples:
         }
         if (!$input->hasArgument('script')) {
             $this->listAllScripts($output);
+
             return 0;
         } else {
             $script_name = $input->getArgument('script');
@@ -108,7 +108,7 @@ Examples:
             if (!$script_data) {
                 $this->listAllScripts($output);
 
-                throw new \RuntimeException(sprintf("Could not find script `%s` in your fabfile!", $script_name));
+                throw new \RuntimeException(sprintf('Could not find script `%s` in your fabfile!', $script_name));
             }
 
             $defaults = $script_data['defaults'] ?? [];
@@ -126,11 +126,11 @@ Examples:
         $scripts = $this->getConfiguration()->getSetting('scripts', []);
         $output->writeln('<options=bold>Available scripts</>');
         foreach ($scripts as $name => $script) {
-            $output->writeln('  - ' . $name);
+            $output->writeln('  - '.$name);
         }
         if (isset($this->getHostConfig()['scripts'])) {
             foreach ($this->getHostConfig()['scripts'] as $name => $script) {
-                $output->writeln('  - ' . $name);
+                $output->writeln('  - '.$name);
             }
         }
     }

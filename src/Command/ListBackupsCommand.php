@@ -9,8 +9,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListBackupsCommand extends BackupBaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('list:backups')
@@ -52,9 +51,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -66,7 +62,6 @@ Examples:
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
         if ($result = parent::execute($input, $output)) {
             return $result;
         }
@@ -85,8 +80,10 @@ Examples:
                 if ($a['time'] == $b['time']) {
                     return strcmp($a['type'], $b['type']);
                 }
+
                 return strcmp($b['time'], $a['time']);
             }
+
             return strcmp($b['date'], $a['date']);
         });
         $io = new SymfonyStyle($input, $output);
@@ -99,7 +96,7 @@ Examples:
                     $file['time'],
                     $file['type'],
                     $file['hash'],
-                    $file['file']
+                    $file['file'],
                 ];
             }, $files)
         );

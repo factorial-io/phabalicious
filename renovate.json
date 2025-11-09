@@ -1,22 +1,22 @@
 {
-    "extends": [
-        ":preserveSemverRanges",
-        "config:base"
-    ],
-    "packageRules": [
-      {
-        "matchPackagePrefixes": [
-          "symfony/"
-        ],
-        "groupName": "symfony packages",
-        "groupSlug": "symfony"
-      },
-      {
-        "matchPackagePrefixes": [
-          "phpstan/"
-        ],
-        "groupName": "phpstan packages",
-        "groupSlug": "phpstan"
-      }
+  "extends": [
+    ":preserveSemverRanges",
+    "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "groupName": "symfony packages",
+      "groupSlug": "symfony",
+      "matchPackageNames": [
+        "symfony/{/,}**"
+      ]
+    },
+    {
+      "groupName": "phpstan packages",
+      "groupSlug": "phpstan",
+      "matchPackageNames": [
+        "phpstan/{/,}**"
+      ]
+    }
   ]
 }

@@ -5,15 +5,10 @@ namespace Phabalicious\Method;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
-use Phabalicious\Exception\EarlyTaskExitException;
 use Phabalicious\ShellProvider\ShellProviderInterface;
-use Phabalicious\Utilities\Utilities;
-use Phabalicious\Validation\ValidationErrorBagInterface;
-use Phabalicious\Validation\ValidationService;
 
 class DrupalconsoleMethod extends BaseMethod implements MethodInterface
 {
-
     public function getName(): string
     {
         return 'drupal';
@@ -21,7 +16,7 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
 
     public function supports(string $method_name): bool
     {
-        return $method_name === 'drupalconsole' || $method_name === 'drupal';
+        return 'drupalconsole' === $method_name || 'drupal' === $method_name;
     }
 
     public function getGlobalSettings(ConfigurationService $configuration): Node
@@ -30,18 +25,17 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
             'executables' => [
                 'drupal' => 'drupal',
             ],
-        ], $this->getName() . ' global settings');
+        ], $this->getName().' global settings');
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-
-        return parent::isRunningAppRequired($host_config, $context, $task) || $task === 'drupalConsole';
+        return parent::isRunningAppRequired($host_config, $context, $task) || 'drupalConsole' === $task;
     }
 
     private function getDrupalExec(string $root_folder, ShellProviderInterface $shell)
     {
-        if ($shell->exists($root_folder . '/vendor/bin/drupal')) {
+        if ($shell->exists($root_folder.'/vendor/bin/drupal')) {
             return sprintf('%s/vendor/bin/drupal', $root_folder);
         } else {
             return '#!drupal';
@@ -53,7 +47,7 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
         $keys = [
             'composer.rootFolder',
             'gitRootFolder',
-            'rootFolder'
+            'rootFolder',
         ];
         foreach ($keys as $key) {
             if (!empty($host_config->getProperty($key))) {
@@ -80,19 +74,7 @@ class DrupalconsoleMethod extends BaseMethod implements MethodInterface
         );
         $command = $shell->expandCommand($command);
         $context->setResult('command', [
-            $command
+            $command,
         ]);
-    }
-
-    private function runDrupalConsole(HostConfig $host_config, ShellProviderInterface $shell, string $command)
-    {
-        $current = $shell->getWorkingDir();
-        $shell->cd($host_config['siteFolder']);
-
-        $root_folder = $this->getRootFolder($host_config);
-        $exec = $this->getDrupalExec($root_folder, $shell);
-        $result = $shell->run(sprintf('%s %s', $exec, $command));
-        $shell->cd($current);
-        return $result;
     }
 }

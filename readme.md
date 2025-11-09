@@ -78,13 +78,13 @@ updating the changelog.
 To prepare a new release, run the following commands:
 
 ```
-yarn install && yarn release
+bun install && bun run release --no-verify
 ```
 
 To prepare a preview-release (e.g. a beta-version)
 
 ```
-yarn install && yarn standard-version  --  -t '' --sign --prerelease
+bun install && bun run standard-version -- -t '' --sign --prerelease --no-verify
 ```
 
 

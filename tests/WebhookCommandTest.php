@@ -33,7 +33,7 @@ class WebhookCommandTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration(__DIR__ . '/assets/webhook-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__.'/assets/webhook-tests/fabfile.yaml');
 
         $this->application->add(new WebhookCommand($configuration, $method_factory));
         $this->application->add(new DeployCommand($configuration, $method_factory));
@@ -41,15 +41,15 @@ class WebhookCommandTest extends PhabTestCase
 
     public function testNonexistingWebhookCommand()
     {
-        $this->expectException("RuntimeException");
+        $this->expectException('RuntimeException');
 
         $command = $this->application->find('webhook');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
+        $commandTester->execute([
             'command' => $command->getName(),
             'webhook' => 'nonExisitingWebhookName',
             '--config' => 'hostA',
-        ));
+        ]);
     }
 
     public function test404WebhookCommand()
@@ -58,21 +58,21 @@ class WebhookCommandTest extends PhabTestCase
 
         $command = $this->application->find('webhook');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
+        $commandTester->execute([
             'command' => $command->getName(),
             'webhook' => 'test404',
             '--config' => 'hostA',
-        ));
+        ]);
     }
 
     public function testListWebhookCommand()
     {
         $command = $this->application->find('webhook');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
+        $commandTester->execute([
             'command' => $command->getName(),
             '--config' => 'hostA',
-        ));
+        ]);
         $this->assertEquals(1, $commandTester->getStatusCode());
 
         $output = $commandTester->getDisplay();
@@ -87,28 +87,28 @@ class WebhookCommandTest extends PhabTestCase
     {
         $command = $this->application->find('webhook');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
+        $commandTester->execute([
             'command' => $command->getName(),
             'webhook' => 'testArguments',
             '--config' => 'hostA',
-            '--arguments' => 'q=hello-from-commandline'
-        ));
+            '--arguments' => 'q=hello-from-commandline',
+        ]);
         $this->assertEquals(0, $commandTester->getStatusCode());
 
         $output = $commandTester->getDisplay();
 
         $json = json_decode($output);
-        $this->assertEquals("hello-from-commandline", $json->args->q);
+        $this->assertEquals('hello-from-commandline', $json->args->q);
     }
 
     public function testTaskSpecificWebhooks()
     {
         $command = $this->application->find('deploy');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'hostA',
-        ));
+        ]);
 
         $output = $commandTester->getDisplay();
 

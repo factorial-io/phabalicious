@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -16,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DatabaseCommand extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -32,9 +34,6 @@ class DatabaseCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -61,9 +60,10 @@ class DatabaseCommand extends BaseCommand
         $this->getMethods()->runTask('database', $this->getHostConfig(), $context);
 
         $return_code = $context->getResult('exitCode', 0);
-        if ($return_code === 0) {
+        if (0 === $return_code) {
             $context->io()->success(sprintf('Database-command `%s` executed successfully!', $what));
         }
+
         return $return_code;
     }
 }

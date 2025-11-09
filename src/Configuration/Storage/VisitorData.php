@@ -4,9 +4,8 @@ namespace Phabalicious\Configuration\Storage;
 
 class VisitorData
 {
-
     /**
-     * @var \Phabalicious\Configuration\Storage\Node
+     * @var Node
      */
     protected $value;
 
@@ -15,20 +14,13 @@ class VisitorData
      */
     protected $stack;
 
-    /**
-     * @param array $stack
-     * @param \Phabalicious\Configuration\Storage\Node $value
-     */
     public function __construct(array $stack, Node $value)
     {
         $this->stack = $stack;
         $this->value = $value;
     }
 
-    /**
-     * @return \Phabalicious\Configuration\Storage\Node
-     */
-    public function getValue(): \Phabalicious\Configuration\Storage\Node
+    public function getValue(): Node
     {
         return $this->value;
     }

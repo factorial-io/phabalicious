@@ -2,12 +2,10 @@
 
 namespace Phabalicious\Configuration;
 
-use http\Exception\RuntimeException;
 use Phabalicious\Utilities\Utilities;
 
 class HostConfigurationCategory
 {
-
     protected $id;
     protected $label;
 
@@ -43,17 +41,11 @@ class HostConfigurationCategory
         return self::$categories[$category_id] ?? null;
     }
 
-    /**
-     * @return mixed
-     */
     public function getId(): mixed
     {
         return $this->id;
     }
 
-    /**
-     * @return mixed
-     */
     public function getLabel(): mixed
     {
         return $this->label;

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: stephan
  * Date: 05.10.18
- * Time: 12:27
+ * Time: 12:27.
  */
 
 namespace Phabalicious\Tests;
@@ -19,7 +20,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ScriptCommandTest extends PhabTestCase
 {
-    /** @var Application */
     protected Application $application;
 
     public function setup(): void
@@ -33,21 +33,20 @@ class ScriptCommandTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $configuration->readConfiguration(__DIR__ . '/assets/script-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__.'/assets/script-tests/fabfile.yaml');
 
         $this->application->add(new ScriptCommand($configuration, $method_factory));
     }
-
 
     public function testRunScript(): void
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'hostA',
-            'script' => 'testDefaults'
-        ));
+            'script' => 'testDefaults',
+        ]);
 
         $output = $commandTester->getDisplay();
 
@@ -62,16 +61,17 @@ class ScriptCommandTest extends PhabTestCase
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'hostA',
-            'script' => 'testInsideDockerImage'
-        ));
+            'script' => 'testInsideDockerImage',
+        ]);
 
         $output = $commandTester->getDisplay();
 
         $this->assertStringContainsString('v12', $output);
     }
+
     /**
      * @group docker
      */
@@ -79,11 +79,11 @@ class ScriptCommandTest extends PhabTestCase
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'hostA',
-            'script' => 'envInsideDockerImage'
-        ));
+            'script' => 'envInsideDockerImage',
+        ]);
 
         $output = $commandTester->getDisplay();
 
@@ -94,33 +94,31 @@ class ScriptCommandTest extends PhabTestCase
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'crypto',
             'script' => 'testEncryption',
-            '--secret' => ['test-secret=very-secure-1234']
-
-        ));
+            '--secret' => ['test-secret=very-secure-1234'],
+        ]);
 
         // Decrypt again.
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'crypto',
             'script' => 'testDecryption',
-            '--secret' => ['test-secret=very-secure-1234']
-
-        ));
+            '--secret' => ['test-secret=very-secure-1234'],
+        ]);
         $this->assertEquals(0, $commandTester->getStatusCode());
 
-        $root_dir = __DIR__ . '/assets/script-tests/crypto';
+        $root_dir = __DIR__.'/assets/script-tests/crypto';
         $files = [
             'test.md',
-            'test-jpg.jpg'
+            'test-jpg.jpg',
         ];
         foreach ($files as $filename) {
-            $source = file_get_contents($root_dir . '/source/' . $filename);
-            $decrypted = file_get_contents($root_dir . '/decrypted/' . $filename);
+            $source = file_get_contents($root_dir.'/source/'.$filename);
+            $decrypted = file_get_contents($root_dir.'/decrypted/'.$filename);
 
             $this->assertEquals($decrypted, $source);
         }
@@ -133,11 +131,11 @@ class ScriptCommandTest extends PhabTestCase
     {
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'base',
-            'script' => $scriptName
-        ));
+            'script' => $scriptName,
+        ]);
 
         $output = $commandTester->getDisplay();
 

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: stephan
  * Date: 05.10.18
- * Time: 12:27
+ * Time: 12:27.
  */
 
 namespace Phabalicious\Tests;
@@ -11,6 +12,7 @@ namespace Phabalicious\Tests;
 use Defuse\Crypto\Crypto;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
+use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
@@ -29,17 +31,13 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Yaml;
-use Phabalicious\Exception\MismatchedVersionException;
 
 class ScaffoldTest extends PhabTestCase
 {
-
     public const PASSWORD = 'my-secret-#21';
 
-    /** @var Application */
     protected Application $application;
 
-    /** @var ConfigurationService  */
     protected ConfigurationService $configuration;
 
     private LoggerInterface $logger;
@@ -56,7 +54,7 @@ class ScaffoldTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
 
         $this->configuration->setSetting('secrets', [
-            'test-encryption' => ['question' => "whats the password"],
+            'test-encryption' => ['question' => 'whats the password'],
         ]);
         $this->configuration->getPasswordManager()->setSecret('test-encryption', self::PASSWORD);
     }
@@ -70,20 +68,20 @@ class ScaffoldTest extends PhabTestCase
         );
         $context->setConfigurationService($this->configuration);
         $context->setIo($this->getMockBuilder(SymfonyStyle::class)->disableOriginalConstructor()->getMock());
+
         return $context;
     }
-
 
     public function testVersionCheck(): void
     {
         $this->expectException(MismatchedVersionException::class);
         $scaffolder = new Scaffolder($this->configuration);
         $options = new Options();
-        $options->setCompabilityVersion("2.0");
+        $options->setCompabilityVersion('2.0');
 
         $context = $this->createContext();
         $scaffolder->scaffold(
-            __DIR__ . '/assets/scaffolder-test/version-check.yml',
+            __DIR__.'/assets/scaffolder-test/version-check.yml',
             $this->getTmpDir(),
             $context,
             [],
@@ -104,7 +102,7 @@ class ScaffoldTest extends PhabTestCase
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
-            __DIR__ . '/assets/scaffolder-test/override.yml',
+            __DIR__.'/assets/scaffolder-test/override.yml',
             $this->getTmpDir(),
             $context,
             [
@@ -118,7 +116,6 @@ class ScaffoldTest extends PhabTestCase
 
     public function testAlterFile(): void
     {
-
         $scaffolder = new Scaffolder($this->configuration);
         $context = $this->createContext();
         $options = new Options();
@@ -126,7 +123,7 @@ class ScaffoldTest extends PhabTestCase
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
-            __DIR__ . '/assets/scaffolder-test/alter-file.yml',
+            __DIR__.'/assets/scaffolder-test/alter-file.yml',
             $this->getTmpDir(),
             $context,
             [
@@ -137,21 +134,21 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
 
-        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-alter/output.json'), false, 512, JSON_THROW_ON_ERROR);
+        $json = json_decode(file_get_contents($this->getTmpDir().'/test-alter/output.json'), false, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertEquals("b-overridden", $json->b);
-        $this->assertEquals("d-overridden", $json->c->d);
+        $this->assertEquals('b-overridden', $json->b);
+        $this->assertEquals('d-overridden', $json->c->d);
 
-        $yaml = Yaml::parseFile($this->getTmpDir() . '/test-alter/output.yaml');
+        $yaml = Yaml::parseFile($this->getTmpDir().'/test-alter/output.yaml');
 
-        $this->assertEquals("b-overridden", $yaml['b']);
-        $this->assertEquals("d-overridden", $yaml['c']['d']);
+        $this->assertEquals('b-overridden', $yaml['b']);
+        $this->assertEquals('d-overridden', $yaml['c']['d']);
         $this->assertTrue($yaml['c']['test_bool']);
         $this->assertIsBool($yaml['c']['test_bool']);
         $this->assertEquals(123, $yaml['c']['test_int']);
         $this->assertIsInt($yaml['c']['test_int']);
 
-        $this->assertEquals("a string", $yaml['c']['test_string']);
+        $this->assertEquals('a string', $yaml['c']['test_string']);
         $this->assertIsString($yaml['c']['test_string']);
     }
 
@@ -167,7 +164,7 @@ class ScaffoldTest extends PhabTestCase
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
-            __DIR__ . '/assets/scaffolder-test/scaffold-callback.yml',
+            __DIR__.'/assets/scaffolder-test/scaffold-callback.yml',
             $this->getTmpDir(),
             $context,
             [
@@ -178,13 +175,13 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
 
-        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-scaffold-callback/composer.json'), true, 512, JSON_THROW_ON_ERROR);
+        $json = json_decode(file_get_contents($this->getTmpDir().'/test-scaffold-callback/composer.json'), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals('phabalicious/helloworld', $json['name']);
         $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
         $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
 
-        $json = json_decode(file_get_contents($this->getTmpDir() . '/test-scaffold-callback/second/composer.json'), true, 512, JSON_THROW_ON_ERROR);
+        $json = json_decode(file_get_contents($this->getTmpDir().'/test-scaffold-callback/second/composer.json'), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('phpro/grumphp-shim', $json['require-dev']);
         $this->assertArrayHasKey('drupal/coder', $json['require-dev']);
@@ -199,7 +196,7 @@ class ScaffoldTest extends PhabTestCase
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
-            __DIR__ . '/assets/scaffolder-test/scaffold-twig.yml',
+            __DIR__.'/assets/scaffolder-test/scaffold-twig.yml',
             $dir,
             $context,
             [
@@ -210,7 +207,7 @@ class ScaffoldTest extends PhabTestCase
 
         $this->assertEquals(0, $result->getExitCode());
 
-        $content = $shell->getFileContents($dir . '/test-scaffold-twig/test-twig.json', $context);
+        $content = $shell->getFileContents($dir.'/test-scaffold-twig/test-twig.json', $context);
         $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals('A-test-string-to-be-slugified', $json['slug']);
@@ -222,12 +219,11 @@ class ScaffoldTest extends PhabTestCase
 
     public function testLocalTwigExtension(): void
     {
-
         $context = $this->createContext();
         $shell = new LocalShellProvider($this->logger);
         $host_config = new HostConfig([
             'rootFolder' => $this->getTmpDir(),
-            'shellExecutable' => '/bin/bash'
+            'shellExecutable' => '/bin/bash',
         ], $shell, $this->configuration);
         $shell->setHostConfig($host_config);
 
@@ -252,7 +248,7 @@ class ScaffoldTest extends PhabTestCase
             ->setUseCacheTokens(false);
 
         $result = $scaffolder->scaffold(
-            __DIR__ . '/assets/scaffolder-test/scaffold-files.yml',
+            __DIR__.'/assets/scaffolder-test/scaffold-files.yml',
             $this->getTmpDir(),
             $context,
             [
@@ -264,8 +260,8 @@ class ScaffoldTest extends PhabTestCase
         $this->assertEquals(0, $result->getExitCode());
 
         $this->compareScaffoldedFiles(
-            __DIR__ . '/assets/scaffolder-test',
-            $this->getTmpDir() . '/test-scaffold-files/'
+            __DIR__.'/assets/scaffolder-test',
+            $this->getTmpDir().'/test-scaffold-files/'
         );
     }
 
@@ -279,7 +275,7 @@ class ScaffoldTest extends PhabTestCase
 
         $context->getPasswordManager()->setSecret('my-secret', 'my-secret');
         $result = $scaffolder->scaffold(
-            __DIR__ . '/assets/scaffolder-test/scaffold-encrypted-files.yml',
+            __DIR__.'/assets/scaffolder-test/scaffold-encrypted-files.yml',
             $this->getTmpDir(),
             $context,
             [
@@ -291,27 +287,26 @@ class ScaffoldTest extends PhabTestCase
         $this->assertEquals(0, $result->getExitCode());
 
         $this->compareScaffoldedFiles(
-            __DIR__ . '/assets/scaffolder-test',
-            $this->getTmpDir() . '/test-scaffold-encrypted-files/'
+            __DIR__.'/assets/scaffolder-test',
+            $this->getTmpDir().'/test-scaffold-encrypted-files/'
         );
     }
 
     private function compareScaffoldedFiles($source_dir, $target_dir): void
     {
-
-        for ($i = 1; $i < 4; $i++) {
+        for ($i = 1; $i < 4; ++$i) {
             $filename = sprintf('test_%d.txt', $i);
             $this->assertFileEquals(
-                $source_dir . '/files/' . $filename,
-                $target_dir . $filename
+                $source_dir.'/files/'.$filename,
+                $target_dir.$filename
             );
         }
 
-        for ($i = 1; $i < 4; $i++) {
+        for ($i = 1; $i < 4; ++$i) {
             $filename = sprintf('test_%d.bin', $i);
             $this->assertFileEquals(
-                $source_dir . '/binary/' . $filename,
-                $target_dir . $filename
+                $source_dir.'/binary/'.$filename,
+                $target_dir.$filename
             );
         }
     }

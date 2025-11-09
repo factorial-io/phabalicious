@@ -15,13 +15,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubCommandInterface
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $info = $this->getSubcommandInfo();
         $this
-            ->setName('db:' . $info['subcommand'])
-            ->setAliases(['database:' . $info['subcommand']])
+            ->setName('db:'.$info['subcommand'])
+            ->setAliases(['database:'.$info['subcommand']])
             ->setDescription($info['description'])
             ->setHelp($info['help']);
 
@@ -31,11 +31,6 @@ abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubComm
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -63,14 +58,15 @@ abstract class DatabaseSubCommand extends BaseCommand implements DatabaseSubComm
             ->runTask('database', $this->getHostConfig(), $context);
 
         if ($this->getContext()->getCommandResult() && $this->getContext()->getCommandResult()->failed()) {
-            $this->getContext()->getCommandResult()->throwException("Query failed!");
+            $this->getContext()->getCommandResult()->throwException('Query failed!');
         }
 
         $return_code = $context->getResult('exitCode', 0);
-        if ($return_code === 0) {
+        if (0 === $return_code) {
             $context->io()
                 ->success(sprintf('Database-command `%s` executed successfully!', $what));
         }
+
         return $return_code;
     }
 

@@ -8,7 +8,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DatabaseShellCommand extends DatabaseSubCommand
 {
-
     public function getSubcommandInfo(): array
     {
         return [
@@ -32,7 +31,6 @@ Examples:
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-
         if ($result = BaseCommand::execute($input, $output)) {
             return $result;
         }
@@ -48,7 +46,7 @@ Examples:
             throw new \RuntimeException('Could not get shell-command from database method!');
         }
 
-        $output->writeln('<info>Starting database shell on `' . $this->getHostConfig()->getConfigName() . '`');
+        $output->writeln('<info>Starting database shell on `'.$this->getHostConfig()->getConfigName().'`');
 
         /** @var \Phabalicious\ShellProvider\ShellProviderInterface $shell */
         $shell = $context->getResult('shell', $this->getHostConfig()->shell());
@@ -57,7 +55,8 @@ Examples:
         $options->setUseTty(true);
         $options->setQuiet(false);
 
-        $process = $this->startInteractiveShell($context, $shell, [ implode(' ', $shell_command) ], $options);
+        $process = $this->startInteractiveShell($context, $shell, [implode(' ', $shell_command)], $options);
+
         return $process->getExitCode();
     }
 }

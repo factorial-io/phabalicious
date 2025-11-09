@@ -10,7 +10,6 @@ use Symfony\Component\Console\Application;
 
 class ConfigurationServiceValidationTest extends PhabTestCase
 {
-
     /**
      * @var ConfigurationService
      */
@@ -33,10 +32,8 @@ class ConfigurationServiceValidationTest extends PhabTestCase
         $method_factory->addMethod(new GitMethod($this->logger));
 
         $this->config->setMethodFactory($method_factory);
-        $this->config->readConfiguration(__DIR__ . '/assets/validation-tests');
+        $this->config->readConfiguration(__DIR__.'/assets/validation-tests');
     }
-
-
 
     public function testGlobalSettingsFromMethod()
     {

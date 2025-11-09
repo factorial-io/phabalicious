@@ -11,8 +11,6 @@ interface PluginInterface
 
     /**
      * Which (semantic) version is needed at minumum for this plugin.
-     *
-     * @return string
      */
     public static function requires(): string;
 }

@@ -7,7 +7,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Confirm extends QuestionBase implements QuestionInterface
 {
-
     public static function getName()
     {
         return 'confirm';

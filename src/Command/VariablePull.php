@@ -10,7 +10,6 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\Utilities\Utilities;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,13 +19,12 @@ use Symfony\Component\Yaml\Yaml;
 
 class VariablePull extends BaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
             ->setName('variable:pull')
-            ->setDescription('Pulls a list of variables from a host ' .
+            ->setDescription('Pulls a list of variables from a host '.
                 'and updates the given yaml file, or create it if it does not exist.')
             ->setHelp('
 Pulls a list of variables from a remote host and saves them to a YAML file.
@@ -61,18 +59,14 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -93,11 +87,13 @@ Examples:
             $filename = $input->getOption('output');
         }
         if (file_put_contents($filename, Yaml::dump($data, 4, 2))) {
-            $context->io()->success('Variables written to '. $filename);
+            $context->io()->success('Variables written to '.$filename);
+
             return 0;
         }
 
         $context->io()->error('Could not write to '.$filename);
+
         return 1;
     }
 }

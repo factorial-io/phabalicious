@@ -1,10 +1,11 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
+
+/** @noinspection PhpParamsInspection */
 
 namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\Storage\Node;
-use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\LaravelMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\MysqlMethod;
@@ -14,10 +15,8 @@ use Symfony\Component\Console\Application;
 
 class LaravelMethodTest extends PhabTestCase
 {
-    /** @var \Phabalicious\Method\LaravelMethod */
     private LaravelMethod $method;
 
-    /** @var ConfigurationService */
     private ConfigurationService $configurationService;
 
     public function setup(): void
@@ -32,7 +31,7 @@ class LaravelMethodTest extends PhabTestCase
         $method_factory->addMethod(new MysqlMethod($logger));
         $method_factory->addMethod($this->method);
 
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/laravel-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__.'/assets/laravel-tests/fabfile.yaml');
     }
 
     public function testGetDefaultConfig(): void
@@ -41,7 +40,7 @@ class LaravelMethodTest extends PhabTestCase
             'rootFolder' => '.',
             'needs' => ['laravel'],
             'artisanTasks' => [
-                'reset' => ['mycustomresettask']
+                'reset' => ['mycustomresettask'],
             ],
         ];
         $result = $this->method->getDefaultConfig($this->configurationService, new Node($host_config, 'code'));

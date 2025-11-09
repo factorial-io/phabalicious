@@ -19,7 +19,7 @@ class AppCreateCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    /** @var \Phabalicious\Configuration\ConfigurationService  */
+    /** @var ConfigurationService */
     protected $configuration;
 
     public function setup(): void
@@ -33,7 +33,7 @@ class AppCreateCommandTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new DockerMethod($logger));
 
-        $configuration->readConfiguration(__DIR__ . '/assets/app-create-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__.'/assets/app-create-tests/fabfile.yaml');
         $this->configuration = $configuration;
 
         $this->application->add(new AppCreateCommand($configuration, $method_factory));
@@ -61,10 +61,10 @@ class AppCreateCommandTest extends PhabTestCase
         /** @var AppCreateCommand $command */
         $command = $this->application->find('app:create');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            '--config'  => 'test',
+        $commandTester->execute([
+            '--config' => 'test',
             '--force' => 1,
-        ));
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
@@ -92,10 +92,10 @@ class AppCreateCommandTest extends PhabTestCase
 
         /** @var AppCreateCommand $command */
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            '--config'  => 'testWithPrepare',
+        $commandTester->execute([
+            '--config' => 'testWithPrepare',
             '--force' => 1,
-        ));
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();

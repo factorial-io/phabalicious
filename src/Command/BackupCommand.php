@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -10,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class BackupCommand extends BackupBaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -42,11 +44,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -66,8 +63,8 @@ Examples:
         $what = $this->collectBackupMethods($input, $context);
         $context->set('what', $what);
         $context->setResult('basename', [
-           $this->getHostConfig()->getConfigName(),
-           date('Y-m-d--H-i-s')
+            $this->getHostConfig()->getConfigName(),
+            date('Y-m-d--H-i-s'),
         ]);
 
         try {

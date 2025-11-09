@@ -12,13 +12,14 @@ abstract class QuestionBase implements QuestionInterface
     public function setData($question_data): ValidationService
     {
         $this->data = $question_data;
-        $validation = new ValidationService($question_data, new ValidationErrorBag(), "question data");
+        $validation = new ValidationService($question_data, new ValidationErrorBag(), 'question data');
 
         $validation->hasKey('question', 'A question needs a question');
         if (!empty($question_data['validation'])) {
             $validation->hasKey('validation', 'Please provide a regex for validation');
             $validation->hasKey('error', 'Please provide an error message when a validation fails');
         }
+
         return $validation;
     }
 
@@ -26,9 +27,10 @@ abstract class QuestionBase implements QuestionInterface
     {
         if (!empty($value) && !empty($this->data['validation'])) {
             if (!preg_match($this->data['validation'], $value)) {
-                throw new \InvalidArgumentException($this->data['error'] . ': ' . $value);
+                throw new \InvalidArgumentException($this->data['error'].': '.$value);
             }
         }
+
         return $value;
     }
 

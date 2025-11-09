@@ -2,20 +2,16 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
-use Phabalicious\Method\TaskContext;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AboutCommand extends BaseCommand
 {
     protected static $defaultName = 'about';
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -35,20 +31,16 @@ Examples:
             ');
     }
 
-  /**
-   * @param InputInterface $input
-   * @param OutputInterface $output
-   *
-   * @return int
-   * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-   * @throws \Phabalicious\Exception\FabfileNotFoundException
-   * @throws \Phabalicious\Exception\FabfileNotReadableException
-   * @throws \Phabalicious\Exception\MethodNotFoundException
-   * @throws \Phabalicious\Exception\MismatchedVersionException
-   * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-   * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-   * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
-   */
+    /**
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MethodNotFoundException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $context = $this->createContext($input, $output);
@@ -63,7 +55,7 @@ Examples:
             $header[] = 'Inherited from';
         }
 
-        $context->io()->title('Configuration of ' . $this->getHostConfig()->getConfigName());
+        $context->io()->title('Configuration of '.$this->getHostConfig()->getConfigName());
         $rows = [];
         $this->getRows($rows, $this->getHostConfig()->getData(), $verbose);
         $table = $this->getTable($output, $header, $verbose);
@@ -72,9 +64,8 @@ Examples:
         $table->setRows($rows);
         $table->render();
 
-
         if ($this->getDockerConfig()) {
-            $context->io()->title('Docker-configuration of ' . $this->getHostConfig()->getConfigName());
+            $context->io()->title('Docker-configuration of '.$this->getHostConfig()->getConfigName());
             $rows = [];
             $this->getRows($rows, $this->getDockerConfig()->getData(), $verbose);
             $table = $this->getTable($output, $header, $verbose);
@@ -84,6 +75,7 @@ Examples:
 
         $context = $this->getContext();
         $this->getMethods()->runTask('about', $this->getHostConfig(), $context);
+
         return 0;
     }
 
@@ -92,8 +84,8 @@ Examples:
         foreach ($node as $key => $value) {
             $stack[] = $key;
             $row = [
-               str_pad(' ', 2 * count($stack)) . implode('.', $stack),
-               $value->isArray() ? '' : $value->getValue()
+                str_pad(' ', 2 * count($stack)).implode('.', $stack),
+                $value->isArray() ? '' : $value->getValue(),
             ];
             if ($verbose) {
                 $row[] = $value->getSource()->getSource();
@@ -106,14 +98,7 @@ Examples:
         }
     }
 
-    /**
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param array $header
-     * @param bool $verbose
-     *
-     * @return \Symfony\Component\Console\Helper\Table
-     */
-    protected function getTable(OutputInterface $output, array $header, bool $verbose): \Symfony\Component\Console\Helper\Table
+    protected function getTable(OutputInterface $output, array $header, bool $verbose): Table
     {
         $table = new Table($output);
         $table->setHeaders($header);
@@ -124,22 +109,7 @@ Examples:
         if ($verbose) {
             $table->setColumnMaxWidth(2, $col_width);
         }
-        return $table;
-    }
 
-    private function write(OutputInterface $output, array $data, int $level = 0)
-    {
-        ksort($data);
-        foreach ($data as $key => $value) {
-            if (is_numeric($key)) {
-                $key = '-';
-            }
-            if (is_array($value)) {
-                $output->writeln(str_pad('', $level) . str_pad($key, 30 - $level) . ' : ');
-                $this->write($output, $value, $level + 2);
-            } else {
-                $output->writeln(str_pad('', $level) . str_pad($key, 30 - $level) . ' : ' . $value);
-            }
-        }
+        return $table;
     }
 }

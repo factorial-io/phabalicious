@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -9,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InstallFromCommand extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -60,23 +62,19 @@ Examples:
 
     public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
-        if ($argumentName == 'from') {
+        if ('from' == $argumentName) {
             return $this->configuration->getAllHostConfigs()->getKeys();
-        } elseif ($argumentName == 'what') {
+        } elseif ('what' == $argumentName) {
             return [
                 'db',
-                'files'
+                'files',
             ];
         }
+
         return [];
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException

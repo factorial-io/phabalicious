@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -14,8 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class WorkspaceUpdateCommand extends ScaffoldBaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -39,10 +40,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws MismatchedVersionException
      * @throws ValidationFailedException
      * @throws FabfileNotReadableException
@@ -54,7 +51,7 @@ Examples:
     {
         $context = $this->createContext($input, $output);
 
-        $url  = $this->scaffolder->getLocalScaffoldFile('mbb/mbb-update.yml');
+        $url = $this->scaffolder->getLocalScaffoldFile('mbb/mbb-update.yml');
         $root_folder = $this->findRootFolder(getcwd());
         if (!$root_folder) {
             throw new \InvalidArgumentException('Could not find multibasebox root folder!');
@@ -65,19 +62,21 @@ Examples:
         $options = new Options();
         $options->setUseCacheTokens(false);
         $this->scaffold($url, $root_folder, $context, ['name' => $name], $options);
+
         return 0;
     }
 
     private function findRootFolder($start_folder, $max_level = 10)
     {
-        if (file_exists($start_folder . '/setup-docker.sh')) {
+        if (file_exists($start_folder.'/setup-docker.sh')) {
             return $start_folder;
         }
-        $max_level--;
+        --$max_level;
         $start_folder = dirname($start_folder);
-        if ($max_level == 0 || $start_folder == DIRECTORY_SEPARATOR) {
+        if (0 == $max_level || DIRECTORY_SEPARATOR == $start_folder) {
             return false;
         }
+
         return $this->findRootFolder($start_folder, $max_level - 1);
     }
 }

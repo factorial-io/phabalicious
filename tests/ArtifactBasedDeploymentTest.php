@@ -30,7 +30,7 @@ class ArtifactBasedDeploymentTest extends PhabTestCase
         $method_factory->addMethod(new ArtifactsCustomMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration(__DIR__ . '/assets/artifact-based-deployment/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__.'/assets/artifact-based-deployment/fabfile.yaml');
 
         $this->application->add(new DeployCommand($configuration, $method_factory));
     }
@@ -39,9 +39,9 @@ class ArtifactBasedDeploymentTest extends PhabTestCase
     {
         $command = $this->application->find('deploy');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            '--config'  => 'broken',
-        ));
+        $commandTester->execute([
+            '--config' => 'broken',
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
@@ -55,18 +55,18 @@ class ArtifactBasedDeploymentTest extends PhabTestCase
     {
         $command = $this->application->find('deploy');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            '--config'  => 'messages',
-        ));
+        $commandTester->execute([
+            '--config' => 'messages',
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsStringIgnoringCase("Hello world error", $output);
-        $this->assertStringContainsStringIgnoringCase("Hello world warning", $output);
-        $this->assertStringContainsStringIgnoringCase("Hello world success", $output);
-        $this->assertStringContainsStringIgnoringCase("Hello world note", $output);
-        $this->assertStringContainsStringIgnoringCase("Hello world comment", $output);
-        $this->assertStringContainsStringIgnoringCase("", $output);
+        $this->assertStringContainsStringIgnoringCase('Hello world error', $output);
+        $this->assertStringContainsStringIgnoringCase('Hello world warning', $output);
+        $this->assertStringContainsStringIgnoringCase('Hello world success', $output);
+        $this->assertStringContainsStringIgnoringCase('Hello world note', $output);
+        $this->assertStringContainsStringIgnoringCase('Hello world comment', $output);
+        $this->assertStringContainsStringIgnoringCase('', $output);
         $this->assertEquals(0, $commandTester->getStatusCode());
     }
 
@@ -74,18 +74,18 @@ class ArtifactBasedDeploymentTest extends PhabTestCase
     {
         $command = $this->application->find('deploy');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            '--config'  => 'logs',
-            '-vv' # everything including info.
-        ));
+        $commandTester->execute([
+            '--config' => 'logs',
+            '-vv', // everything including info.
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
         $this->assertEquals(0, $commandTester->getStatusCode());
-        $this->assertTrue($this->logger->containsMessage("error", "hello world error"));
-        $this->assertTrue($this->logger->containsMessage("warning", "hello world warning"));
-        $this->assertTrue($this->logger->containsMessage("notice", "hello world notice"));
-        $this->assertTrue($this->logger->containsMessage("info", "hello world info"));
-        $this->assertTrue($this->logger->containsMessage("debug", "hello world debug"));
+        $this->assertTrue($this->logger->containsMessage('error', 'hello world error'));
+        $this->assertTrue($this->logger->containsMessage('warning', 'hello world warning'));
+        $this->assertTrue($this->logger->containsMessage('notice', 'hello world notice'));
+        $this->assertTrue($this->logger->containsMessage('info', 'hello world info'));
+        $this->assertTrue($this->logger->containsMessage('debug', 'hello world debug'));
     }
 }

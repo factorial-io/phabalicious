@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\Artifact\Actions\Git;
 
 use Phabalicious\Artifact\Actions\ActionBase;
@@ -11,7 +10,6 @@ use Phabalicious\Validation\ValidationService;
 
 class ExcludeAction extends ActionBase
 {
-
     protected function validateArgumentsConfig(array $action_arguments, ValidationService $validation)
     {
     }

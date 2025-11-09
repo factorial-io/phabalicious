@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -8,7 +10,6 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingScriptCallbackImplementation;
 use Phabalicious\Exception\UnknownReplacementPatternException;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\Scaffolder\Options;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AppScaffoldCommand extends ScaffoldBaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -30,7 +31,6 @@ class AppScaffoldCommand extends ScaffoldBaseCommand
             InputArgument::REQUIRED,
             'the url/path to load the scaffold-yaml from'
         );
-
 
         $this->addOption(
             'output',
@@ -67,10 +67,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws FabfileNotReadableException
      * @throws FailedShellCommandException
      * @throws MismatchedVersionException
@@ -86,6 +82,7 @@ Examples:
         $root_folder = empty($input->getOption('output')) ? getcwd() : $input->getOption('output');
 
         $this->scaffold($url, $root_folder, $context, [], new Options());
+
         return 0;
     }
 }

@@ -2,27 +2,18 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\MethodFactory;
-use Phabalicious\Method\TaskContext;
-use Phabalicious\Utilities\Utilities;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListBlueprintsCommand extends BaseOptionsCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('list:blueprints')
@@ -51,9 +42,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -67,6 +55,7 @@ Examples:
 
         $blueprints = array_map(function ($key) {
             $a = explode(':', $key);
+
             return array_pop($a);
         }, array_keys($this->configuration->getBlueprints()->getTemplates()));
 

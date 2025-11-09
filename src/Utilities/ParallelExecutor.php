@@ -3,21 +3,14 @@
 namespace Phabalicious\Utilities;
 
 use Graze\ParallelProcess\PriorityPool;
-use Graze\ParallelProcess\ProcessRun;
-use Graze\ParallelProcess\RunInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-
-use Symfony\Component\Console\Output\ConsoleSectionOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ParallelExecutor
 {
-
-
     private $pool;
 
     public function __construct($command_lines, OutputInterface $output, $max_simultaneous_processes = 4)
@@ -38,7 +31,6 @@ class ParallelExecutor
 
     public function execute(InputInterface $input, OutputInterface $output, ?string $save_as_json)
     {
-
         $progress_section = $output instanceof ConsoleOutput
             ? $output->section()
             : $output;
@@ -48,7 +40,7 @@ class ParallelExecutor
         $output->writeln('');
         $progress->display();
 
-        $interval = (200000);
+        $interval = 200000;
         $current = 0;
         $previous = 0;
         while ($this->pool->poll()) {
@@ -90,14 +82,5 @@ class ParallelExecutor
     public function add(ParallelExecutorRun $run)
     {
         $this->pool->add($run);
-    }
-
-    private function format(RunInterface $run, string $message)
-    {
-        if ($run instanceof ProcessRun) {
-            $cmd = $run->getProcess()->getCommandLine();
-            return implode(' ', $cmd) . ': ' . $message;
-        }
-        return $message;
     }
 }

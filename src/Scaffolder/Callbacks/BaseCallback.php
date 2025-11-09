@@ -7,29 +7,29 @@ use Phabalicious\Utilities\Utilities;
 
 abstract class BaseCallback implements CallbackInterface
 {
-
     protected function getData(TaskContextInterface $context)
     {
         $data = $context->get('scaffoldData');
         if ($data) {
             return $data;
         }
+
         return $context->getConfigurationService()->getAllSettings();
     }
 
     protected function getAbsoluteFilePath(TaskContextInterface $context, $file_name)
     {
-
-        if ($file_name[0] == '/') {
+        if ('/' == $file_name[0]) {
             return $file_name;
         } else {
             // Are we scaffolding?
             $data = $context->get('scaffoldData');
             if ($data) {
                 $tokens = $context->get('tokens');
-                return $tokens['rootFolder'] . '/' . $file_name;
+
+                return $tokens['rootFolder'].'/'.$file_name;
             } else {
-                return $context->getShell()->getHostConfig()['rootFolder'] . '/' . $file_name;
+                return $context->getShell()->getHostConfig()['rootFolder'].'/'.$file_name;
             }
         }
     }
@@ -39,11 +39,12 @@ abstract class BaseCallback implements CallbackInterface
         $file_name,
         $data_key,
         callable $read_fn,
-        callable $write_fn
+        callable $write_fn,
     ) {
         $file_path = $this->getAbsoluteFilePath($context, $file_name);
         if (!file_exists($file_path)) {
-            $context->io()->warning('Could not find file ' . $file_path);
+            $context->io()->warning('Could not find file '.$file_path);
+
             return;
         }
 
@@ -59,7 +60,7 @@ abstract class BaseCallback implements CallbackInterface
             $output = Utilities::mergeData($input, $override);
             $write_fn($file_path, $output);
         } else {
-            $context->io()->warning('Could not find override-data ' . $data_key);
+            $context->io()->warning('Could not find override-data '.$data_key);
         }
     }
 }

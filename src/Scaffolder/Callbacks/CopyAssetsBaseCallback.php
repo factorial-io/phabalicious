@@ -10,13 +10,12 @@ use Twig\Environment;
 
 abstract class CopyAssetsBaseCallback implements CallbackInterface
 {
-
-    const IGNORE_SUBFOLDERS_STRATEGY = 'ignoreSubfolders';
+    public const IGNORE_SUBFOLDERS_STRATEGY = 'ignoreSubfolders';
 
     /** @var ConfigurationService */
     protected $configuration;
 
-    /** @var Environment  */
+    /** @var Environment */
     protected $twig;
 
     protected $fileContentsHandler = [];
@@ -27,21 +26,14 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
         $this->twig = $twig;
     }
 
-
-
     /**
-     * @param TaskContextInterface $context
-     * @param string $target_folder
-     * @param string $data_key
-     * @param $apply_twig_to_files_w_extension
-     *
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      */
     public function copyAssets(
         TaskContextInterface $context,
         string $target_folder,
         string $data_key,
-        $apply_twig_to_files_w_extension
+        $apply_twig_to_files_w_extension,
     ) {
         $shell = $context->getShell();
         if (!$shell->exists($target_folder)) {
@@ -54,7 +46,7 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
             ->setTwigRootPath($context->get('twigRootPath'));
 
         if (empty($handler_options->get($data_key))) {
-            throw new \InvalidArgumentException('Scaffold-data does not contain ' . $data_key);
+            throw new \InvalidArgumentException('Scaffold-data does not contain '.$data_key);
         }
 
         $context->io()->comment(sprintf('Copying assets `%s`', $data_key));
@@ -66,23 +58,16 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
 
         foreach ($handler_options->get($data_key) as $file_name) {
             if ($handler_options->isRemote()) {
-                $url = $handler_options->get('base_path') . '/' . $file_name;
+                $url = $handler_options->get('base_path').'/'.$file_name;
                 $tmpl = $this->configuration->readHttpResource($url);
-                if ($tmpl === false) {
-                    throw new \RuntimeException(sprintf(
-                        'Could not read remote asset: `%s`!',
-                        $url
-                    ));
+                if (false === $tmpl) {
+                    throw new \RuntimeException(sprintf('Could not read remote asset: `%s`!', $url));
                 }
             } else {
-                $source_file_name = $handler_options->getBasePath() . '/' .$file_name;
+                $source_file_name = $handler_options->getBasePath().'/'.$file_name;
                 $tmpl = @file_get_contents($source_file_name);
-                if ($tmpl === false) {
-                    throw new \RuntimeException(sprintf(
-                        "Could not access %s!\n\n%s",
-                        $source_file_name,
-                        error_get_last()['message']
-                    ));
+                if (false === $tmpl) {
+                    throw new \RuntimeException(sprintf("Could not access %s!\n\n%s", $source_file_name, error_get_last()['message']));
                 }
             }
 
@@ -92,11 +77,10 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
                 $converted = $handler->handleContents($file_name, $converted, $handler_options);
             }
 
-
             $file_name = strtr($file_name, $handler_options->getReplacements());
             $file_name = $this->getTargetFileName($file_name, $handler_options->ignoreSubfolders());
 
-            $target_file_path = $target_folder . '/' . $file_name;
+            $target_file_path = $target_folder.'/'.$file_name;
 
             $p = dirname($target_file_path);
             if (!$shell->exists($p)) {
@@ -116,21 +100,16 @@ abstract class CopyAssetsBaseCallback implements CallbackInterface
         }
     }
 
-    /**
-     * @param string $file_name
-     * @param bool $ignore_subfolders
-     *
-     * @return false|string
-     */
     protected function getTargetFileName(string $file_name, bool $ignore_subfolders): false|string
     {
-        if (strpos($file_name, '/') !== false) {
+        if (false !== strpos($file_name, '/')) {
             if ($ignore_subfolders) {
                 $file_name = basename($file_name);
             } else {
                 $file_name = substr($file_name, strpos($file_name, '/', 1) + 1);
             }
         }
+
         return $file_name;
     }
 

@@ -2,20 +2,12 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Method\TaskContext;
-use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Tests\Compiler\OptionalParameter;
-use Symfony\Component\Process\Process;
 
 class ShellCommandCommand extends BaseCommand
 {
-
     protected function configure(): void
     {
         parent::configure();
@@ -50,10 +42,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -80,7 +68,7 @@ Examples:
         $options = $this->getSuitableShellOptions($output);
         $ssh_command = $context->getResult('ssh_command', $shell->getShellCommand([], $options));
 
-        $context->io()->text('$ ' . implode(' ', $ssh_command));
+        $context->io()->text('$ '.implode(' ', $ssh_command));
 
         return 0;
     }

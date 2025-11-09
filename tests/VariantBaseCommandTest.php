@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: stephan
  * Date: 05.10.18
- * Time: 12:27
+ * Time: 12:27.
  */
 
 namespace Phabalicious\Tests;
@@ -33,52 +34,52 @@ class VariantBaseCommandTest extends PhabTestCase
         $method_factory->addMethod(new FilesMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration(__DIR__ . '/assets/variants-base-command-tests/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__.'/assets/variants-base-command-tests/fabfile.yaml');
 
         $this->application->add(new ScriptCommand($configuration, $method_factory));
     }
 
     public function testNoVariants()
     {
-        $this->expectExceptionMessage("Could not find variants for `testMissingVariants` in `blueprints`");
+        $this->expectExceptionMessage('Could not find variants for `testMissingVariants` in `blueprints`');
         $this->expectException(\InvalidArgumentException::class);
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'testMissingVariants',
             '--variants' => 'all',
-        ));
+        ]);
     }
 
     public function testUnavailableVariants()
     {
-        $this->expectExceptionMessage("Could not find variants `x`, `y`, `z` in `blueprints`");
+        $this->expectExceptionMessage('Could not find variants `x`, `y`, `z` in `blueprints`');
         $this->expectException(\InvalidArgumentException::class);
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'test',
             '--variants' => 'a,b,c,x,y,z',
-        ));
+        ]);
     }
 
     private function runScript($script_name)
     {
-        $path = __DIR__ . '/../bin/phab';
+        $path = __DIR__.'/../bin/phab';
         $executable = realpath($path);
-        putenv('PHABALICIOUS_EXECUTABLE=' . $executable);
+        putenv('PHABALICIOUS_EXECUTABLE='.$executable);
 
         $command = $this->application->find('script');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'test',
             '--variants' => 'all',
             '--force' => 1,
-            'script' => $script_name
-        ));
+            'script' => $script_name,
+        ]);
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('--blueprint a', $output);

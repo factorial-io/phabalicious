@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\Utilities;
 
 use Phabalicious\Exception\ValidationFailedException;
@@ -9,7 +8,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class QuestionFactory
 {
-
     protected $factory = [];
 
     public function __construct()
@@ -27,7 +25,6 @@ class QuestionFactory
 
     public function askAndValidate(SymfonyStyle $io, $question_data, $value)
     {
-
         $type = $question_data['type'] ?? 'question';
 
         if (!isset($this->factory[$type])) {
@@ -76,6 +73,7 @@ class QuestionFactory
             }
             $result[$key] = $question;
         }
+
         return $result;
     }
 
@@ -83,7 +81,7 @@ class QuestionFactory
     {
         foreach ($questions as $key => $question_data) {
             if (!is_array($question_data)) {
-                throw new \InvalidArgumentException(sprintf("Missing question data for `%s`", $key));
+                throw new \InvalidArgumentException(sprintf('Missing question data for `%s`', $key));
             }
 
             $value = null;
@@ -101,6 +99,7 @@ class QuestionFactory
 
             $tokens[$key] = is_array($value) ? $value : trim($value);
         }
+
         return $tokens;
     }
 }

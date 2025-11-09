@@ -4,7 +4,6 @@ namespace Phabalicious\Validation;
 
 interface ValidationErrorBagInterface
 {
-
     public function addError(string $key, string $error_message);
 
     public function hasErrors(): bool;

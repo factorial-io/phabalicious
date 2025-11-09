@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: stephan
  * Date: 05.10.18
- * Time: 12:27
+ * Time: 12:27.
  */
 
 namespace Phabalicious\Tests;
@@ -15,7 +16,6 @@ use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Utilities\Utilities;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -24,10 +24,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class K8sScaffoldTest extends PhabTestCase
 {
-    /** @var Application */
     protected Application $application;
 
-    /** @var ConfigurationService  */
     protected ConfigurationService $configuration;
 
     public function setup(): void
@@ -42,11 +40,10 @@ class K8sScaffoldTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $this->configuration->readConfiguration(__DIR__ . '/assets/k8s-command/fabfile.yaml');
+        $this->configuration->readConfiguration(__DIR__.'/assets/k8s-command/fabfile.yaml');
 
         $this->application->add(new K8sCommand($this->configuration, $method_factory));
     }
-
 
     public function testK8sScaffold(): void
     {
@@ -54,10 +51,10 @@ class K8sScaffoldTest extends PhabTestCase
         system('echo "hello world" > kube/should-not-exist.yml');
         $command = $this->application->find('k8s');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'k8s'  => ['scaffold'],
+        $commandTester->execute([
+            'k8s' => ['scaffold'],
             '--config' => 'test',
-        ));
+        ]);
 
         $yaml = Yaml::parseFile('kube/deployment.yml');
         $this->assertEquals('foo', $yaml['data']['valueA']);
@@ -71,26 +68,25 @@ class K8sScaffoldTest extends PhabTestCase
         chdir($this->configuration->getFabfilePath());
         $command = $this->application->find('k8s');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'k8s'  => ['scaffold'],
+        $commandTester->execute([
+            'k8s' => ['scaffold'],
             '--config' => 'test-overridden',
-        ));
+        ]);
 
         $yaml = Yaml::parseFile('kube/deployment.yml');
         $this->assertEquals('foobar', $yaml['data']['valueA']);
         $this->assertEquals('baz', $yaml['data']['valueB']);
     }
 
-
     public function testK8sScaffoldWithNameiInQuestion(): void
     {
         chdir($this->configuration->getFabfilePath());
         $command = $this->application->find('k8s');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'k8s'  => ['scaffold'],
+        $commandTester->execute([
+            'k8s' => ['scaffold'],
             '--config' => 'test-name-in-question',
-        ));
+        ]);
 
         $yaml = Yaml::parseFile('kube/deployment.yml');
         $this->assertEquals('foobar', $yaml['data']['valueA']);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Phabalicious\Utilities;
 
 use Phabalicious\Configuration\HostConfig;
@@ -7,7 +8,7 @@ use Phabalicious\Method\TaskContextInterface;
 
 class AppDefaultStages
 {
-    const CREATE = [
+    public const CREATE = [
         'prepareDestination',
         'installCode',
         'spinUp',
@@ -16,17 +17,17 @@ class AppDefaultStages
         'install',
     ];
 
-    const DEPLOY = [
+    public const DEPLOY = [
         'spinUp',
     ];
 
-    const DESTROY = [
+    public const DESTROY = [
         'spinDown',
         'deleteContainer',
-        'deleteCode'
+        'deleteCode',
     ];
 
-    const NEEDS_RUNNING_APP = [
+    public const NEEDS_RUNNING_APP = [
         'checkConnectivity',
         'installDependencies',
         'install',
@@ -35,12 +36,6 @@ class AppDefaultStages
     private static $stagesNeedingARunningApp = self::NEEDS_RUNNING_APP;
 
     /**
-     * @param MethodFactory $method_factory
-     * @param HostConfig $host_config
-     * @param array $stages
-     * @param string $command
-     * @param TaskContextInterface $context
-     * @param string $message
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
      */
@@ -50,7 +45,7 @@ class AppDefaultStages
         array $stages,
         string $command,
         TaskContextInterface $context,
-        string $message
+        string $message,
     ) {
         foreach ($stages as $stage) {
             $context->io()->comment(sprintf('%s, stage %s', $message, $stage));
@@ -63,9 +58,7 @@ class AppDefaultStages
      * CHeck if a stage needs a running app.
      *
      * @param $stage
-     *   The name of the stage.
-     *
-     * @return bool
+     *               The name of the stage
      */
     public static function stageNeedsRunningApp($stage): bool
     {

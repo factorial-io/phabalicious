@@ -11,8 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class GetPropertyCommand extends BaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 
@@ -73,10 +72,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -92,10 +87,7 @@ Examples:
 
         $format = strtolower($input->getOption('format') ?: 'plain');
         if (!in_array($format, ['plain', 'json', 'yaml'])) {
-            throw new \RuntimeException(sprintf(
-                'Unknown value `%s` for format-option, only `plain`, `json` or `yaml` are supported!',
-                $format
-            ));
+            throw new \RuntimeException(sprintf('Unknown value `%s` for format-option, only `plain`, `json` or `yaml` are supported!', $format));
         }
 
         $property = $input->getArgument('property');
@@ -105,7 +97,8 @@ Examples:
             null
         );
         if (is_null($value)) {
-            $output->writeln('<error>Could not get property `' . $property . '`!</error>');
+            $output->writeln('<error>Could not get property `'.$property.'`!</error>');
+
             return 1;
         }
         $value = $this->getConfiguration()->getPasswordManager()->resolveSecrets($value);
@@ -130,6 +123,7 @@ Examples:
         } else {
             $output->writeln($result);
         }
+
         return 0;
     }
 }

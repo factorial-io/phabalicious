@@ -40,13 +40,13 @@ class PlatformMethod extends BaseMethod
         $config['executables']['platform'] = '~/.platformsh/bin/platform';
         $config['platformRemote'] = 'platform';
 
-        return $parent->merge(new Node($config, $this->getName() . ' method defaults'));
+        return $parent->merge(new Node($config, $this->getName().' method defaults'));
     }
 
     public function isRunningAppRequired(HostConfig $host_config, TaskContextInterface $context, string $task): bool
     {
-        return parent::isRunningAppRequired($host_config, $context, $task) ||
-            in_array($task, ['deploy', 'reset', 'drush']);
+        return parent::isRunningAppRequired($host_config, $context, $task)
+            || in_array($task, ['deploy', 'reset', 'drush']);
     }
 
     protected function runCommand(HostConfig $host_config, TaskContextInterface $context, string $command)
@@ -83,8 +83,6 @@ class PlatformMethod extends BaseMethod
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      */
@@ -92,7 +90,7 @@ class PlatformMethod extends BaseMethod
     {
         // As we are overriding the drush-method, this reset gets called twice.
         // Make sure to run it only one time.
-        if ($context->get('currentMethod', false) != 'platform') {
+        if ('platform' != $context->get('currentMethod', false)) {
             return;
         }
 
@@ -108,7 +106,7 @@ class PlatformMethod extends BaseMethod
                 'git',
                 'push',
                 $host_config['platformRemote'],
-                $host_config['branch']
+                $host_config['branch'],
             ],
             $context,
             true,
@@ -123,7 +121,7 @@ class PlatformMethod extends BaseMethod
         sleep(20);
     }
 
-    public function requestDatabaseCredentialsAndWorkingDir(HostConfig $host_config, TaskContextInterface  $context)
+    public function requestDatabaseCredentialsAndWorkingDir(HostConfig $host_config, TaskContextInterface $context)
     {
         $this->drushMethod->requestDatabaseCredentialsAndWorkingDir($host_config, $context);
     }

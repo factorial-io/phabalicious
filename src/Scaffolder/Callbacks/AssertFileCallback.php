@@ -6,25 +6,16 @@ use Phabalicious\Method\TaskContextInterface;
 
 class AssertFileCallback implements CallbackInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getName(): string
     {
         return 'assert_file';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function requires(): string
     {
         return '3.5.10';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function handle(TaskContextInterface $context, ...$arguments)
     {
         $this->assertFile($context, $arguments[0], $arguments[1]);
@@ -33,11 +24,10 @@ class AssertFileCallback implements CallbackInterface
     public function assertFile(
         TaskContextInterface $context,
         $file_path,
-        $error_message
+        $error_message,
     ) {
-
         if (!$context->getShell()->exists($file_path)) {
-            throw new \RuntimeException(sprintf("%s does not exist! %s", $file_path, $error_message));
+            throw new \RuntimeException(sprintf('%s does not exist! %s', $file_path, $error_message));
         }
     }
 }

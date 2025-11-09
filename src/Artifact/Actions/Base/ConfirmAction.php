@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\Artifact\Actions\Base;
 
 use Phabalicious\Artifact\Actions\ActionBase;
@@ -10,7 +9,6 @@ use Phabalicious\Validation\ValidationService;
 
 class ConfirmAction extends ActionBase
 {
-
     protected function validateArgumentsConfig(array $action_arguments, ValidationService $validation)
     {
         $validation->hasKey('question', 'The confirm action needs a question to ask.');

@@ -8,9 +8,8 @@ use Twig\TwigFilter;
 
 class EncryptExtension extends AbstractExtension
 {
-
     /**
-     * @var \Phabalicious\Utilities\PasswordManagerInterface
+     * @var PasswordManagerInterface
      */
     private $passwordManager;
 
@@ -22,8 +21,8 @@ class EncryptExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('encrypt', [$this, "encrypt"]),
-            new TwigFilter('decrypt', [$this, "decrypt"]),
+            new TwigFilter('encrypt', [$this, 'encrypt']),
+            new TwigFilter('decrypt', [$this, 'decrypt']),
         ];
     }
 

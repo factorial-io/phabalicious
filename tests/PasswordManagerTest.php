@@ -11,12 +11,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class PasswordManagerTest extends PhabTestCase
 {
-
     protected $context;
 
     public function setup(): void
     {
-
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
             $this->getMockBuilder(InputInterface::class)->getMock(),
@@ -27,7 +25,6 @@ class PasswordManagerTest extends PhabTestCase
 
     public function test1PasswordPayload()
     {
-
         $payload = <<<JSON
 {"uuid":"jevlzzmoza4cyuab2vfhsgiy64","templateUuid":"102","trashed":"N","createdAt":"2022-02-24T08:56:36Z",
 "updatedAt":"2022-02-24T09:33:11Z","changerUuid":"EEL7JCOQEFBLXJHRDGXOCSQAKI","itemVersion":2,"vaultUuid":
@@ -42,11 +39,10 @@ class PasswordManagerTest extends PhabTestCase
 "Verwandte Objekte"}]},"overview":{"ainfo":"85.215.230.93","ps":100,"title":"datacenter__prod"}}
 JSON;
 
-
         $mng = new PasswordManager();
         $mng->setContext($this->context);
 
-        $this->assertEquals("my-very-special-secret", $mng->extractSecretFrom1PasswordPayload($payload, 1, 'password'));
+        $this->assertEquals('my-very-special-secret', $mng->extractSecretFrom1PasswordPayload($payload, 1, 'password'));
     }
 
     public function test1PasswordCustomPropName()
@@ -117,8 +113,8 @@ JSON;
         $mng = new PasswordManager();
         $mng->setContext($this->context);
 
-        $this->assertEquals("zackbummpeng", $mng->extractSecretFrom1PasswordPayload($payload, 0, 'credential'));
-        $this->assertEquals("MM_ACCESS_TOKEN", $mng->extractSecretFrom1PasswordPayload($payload, 0, 'username'));
+        $this->assertEquals('zackbummpeng', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'credential'));
+        $this->assertEquals('MM_ACCESS_TOKEN', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'username'));
     }
 
     public function test1PasswordCliCustomPropName()
@@ -198,7 +194,159 @@ JSON;
         $mng = new PasswordManager();
         $mng->setContext($this->context);
 
-        $this->assertEquals("zackbummpeng", $mng->extractSecretFrom1PasswordPayload($payload, 2, 'credential'));
-        $this->assertEquals("MM_ACCESS_TOKEN", $mng->extractSecretFrom1PasswordPayload($payload, 2, 'username'));
+        $this->assertEquals('zackbummpeng', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'credential'));
+        $this->assertEquals('MM_ACCESS_TOKEN', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'username'));
+    }
+
+    public function test1PasswordCustomFieldLabels()
+    {
+        $payload = <<<JSON
+{
+  "id": "q5xmiish26fmmkafcu5fdk3fse",
+  "title": "Foo Bar credentials",
+  "version": 1,
+  "vault": {
+    "id": "n33i6edy47edsntxuj3a7lgiz4",
+    "name": "Server-Infrastructure"
+  },
+  "category": "LOGIN",
+  "last_edited_by": "EEL7JCOQEFBLXJHRDGXOCSQAKI",
+  "created_at": "2025-10-06T15:08:57Z",
+  "updated_at": "2025-10-06T15:08:57Z",
+  "additional_information": "—",
+  "sections": [
+    {
+      "id": "add more"
+    }
+  ],
+  "fields": [
+    {
+      "id": "username",
+      "type": "STRING",
+      "purpose": "USERNAME",
+      "label": "username",
+      "value": "testuser",
+      "reference": "op://Server-Infrastructure/Foo Bar credentials/username"
+    },
+    {
+      "id": "password",
+      "type": "CONCEALED",
+      "purpose": "PASSWORD",
+      "label": "password",
+      "value": "testpass",
+      "reference": "op://Server-Infrastructure/Foo Bar credentials/password",
+      "password_details": {
+        "history": ["bYZsdGPxM3XBCWokhiqMwwAz"]
+      }
+    },
+    {
+      "id": "notesPlain",
+      "type": "STRING",
+      "purpose": "NOTES",
+      "label": "notesPlain",
+      "value": "Please add all passwords for that instance in that item, to reduce clutter.",
+      "reference": "op://Server-Infrastructure/Foo Bar credentials/notesPlain"
+    },
+    {
+      "id": "4qcaxgvbcist7yse6kn5qr6mpu",
+      "section": {
+        "id": "add more"
+      },
+      "type": "CONCEALED",
+      "label": "mm_access_token",
+      "value": "1234",
+      "reference": "op://Server-Infrastructure/Foo Bar credentials/add more/mm_access_token"
+    },
+    {
+      "id": "lye3r6wihjq5bevwpm2shjccci",
+      "section": {
+        "id": "add more"
+      },
+      "type": "CONCEALED",
+      "label": "oauth_client_secret",
+      "value": "5678",
+      "reference": "op://Server-Infrastructure/Foo Bar credentials/add more/oauth_client_secret"
+    },
+    {
+      "id": "z4sjb7vdeqplu2xabdbb74raxm",
+      "section": {
+        "id": "add more"
+      },
+      "type": "CONCEALED",
+      "label": "email_pw",
+      "value": "9012",
+      "reference": "op://Server-Infrastructure/Foo Bar credentials/add more/email_pw"
+    },
+    {
+      "id": "y4upoih7zkgwumkxvxwico3mxu",
+      "section": {
+        "id": "add more"
+      },
+      "type": "CONCEALED",
+      "label": "database",
+      "value": "3456",
+      "reference": "op://Server-Infrastructure/Foo Bar credentials/add more/database"
+    },
+    {
+      "id": "amrph2cf7xanxvx24zq7d5sxoa",
+      "section": {
+        "id": "add more"
+      },
+      "type": "CONCEALED",
+      "label": "postgres_string",
+      "value": "7890",
+      "reference": "op://Server-Infrastructure/Foo Bar credentials/add more/postgres_string"
+    },
+    {
+        "id": "ojv5verxo5ueh4qwfbyhzsqpfy",
+        "section": {
+         "id": "add more"
+        },
+        "type": "CONCEALED",
+        "label": "app_allowed_domains",
+        "value": "9999",
+        "reference": "op://Server-Infrastructure/Foo bar credentials/add more/app_allowed_domains"
+    }
+    ]
+}
+JSON;
+
+        $mng = new PasswordManager();
+        $mng->setContext($this->context);
+
+        // Test matching by label for custom fields in sections
+        $this->assertEquals('1234', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'mm_access_token'));
+        $this->assertEquals('5678', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'oauth_client_secret'));
+        $this->assertEquals('9012', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'email_pw'));
+        $this->assertEquals('3456', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'database'));
+        $this->assertEquals('7890', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'postgres_string'));
+        $this->assertEquals('9999', $mng->extractSecretFrom1PasswordPayload($payload, 2, 'app_allowed_domains'));
+    }
+
+    public function test1PasswordConnectCustomFieldLabels()
+    {
+        $payload = <<<JSON
+{"additionalInformation":"—","category":"LOGIN","createdAt":"2025-10-06T15:08:57Z","fields":[{"id":"username","label":"username","purpose":"USERNAME","type":"STRING","value":"testuser"},{"id":"password","label":"password","passwordDetails":{"history":["bYZsdGPxM3XBCWokhiqMwwAz"]},"purpose":"PASSWORD","type":"CONCEALED","value":"testpass"},{"id":"notesPlain","label":"notesPlain","purpose":"NOTES","type":"STRING","value":"Please add all passwords for that instance in that item, to reduce clutter."},{"id":"4qcaxgvbcist7yse6kn5qr6mpu","label":"mm_access_token","section":{"id":"add more"},"type":"CONCEALED","value":"1234"},{"id":"lye3r6wihjq5bevwpm2shjccci","label":"oauth_client_secret","section":{"id":"add more"},"type":"CONCEALED","value":"5678"},{"id":"z4sjb7vdeqplu2xabdbb74raxm","label":"email_pw","section":{"id":"add more"},"type":"CONCEALED","value":"9012"},{"id":"icgamdd2oe73mqjg3o7cf6stpi","label":"app_allowed_domains","section":{"id":"add more"},"type":"CONCEALED"},{"id":"y4upoih7zkgwumkxvxwico3mxu","label":"database","section":{"id":"add more"},"type":"CONCEALED","value":"3456"},{"id":"amrph2cf7xanxvx24zq7d5sxoa","label":"postgres_string","section":{"id":"add more"},"type":"CONCEALED","value":"7890"}],"id":"q5xmiish26fmmkafcu5fdk3fse","lastEditedBy":"EEL7JCOQEFBLXJHRDGXOCSQAKI","sections":[{"id":"add more"}],"title":"Foo Bar staging credentials","updatedAt":"2025-10-06T15:08:57Z","vault":{"id":"n33i6edy47edsntxuj3a7lgiz4","name":"Server-Infrastructure"},"version":1}
+JSON;
+
+        $mng = new PasswordManager();
+        $mng->setContext($this->context);
+
+        // Test 1Password Connect format (cli_version = 0 or false)
+        // Test default password field extraction
+        $this->assertEquals('testpass', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'password'));
+
+        // Test username field by id
+        $this->assertEquals('testuser', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'username'));
+
+        // Test custom fields by label
+        $this->assertEquals('1234', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'mm_access_token'));
+        $this->assertEquals('5678', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'oauth_client_secret'));
+        $this->assertEquals('9012', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'email_pw'));
+        $this->assertEquals('3456', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'database'));
+        $this->assertEquals('7890', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'postgres_string'));
+
+        // Test notes field
+        $this->assertEquals('Please add all passwords for that instance in that item, to reduce clutter.', $mng->extractSecretFrom1PasswordPayload($payload, 0, 'notesPlain'));
     }
 }

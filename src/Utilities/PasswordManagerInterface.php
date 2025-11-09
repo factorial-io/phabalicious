@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Utilities;
 
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
 
 interface PasswordManagerInterface
@@ -28,4 +27,6 @@ interface PasswordManagerInterface
     public function getFileContentFrom1Password($token_id, $vault_id, $item_id);
 
     public function obfuscateSecrets(string $message): string;
+
+    public function registerCustomSecretToObfuscate(string $secret): void;
 }

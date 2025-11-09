@@ -4,14 +4,14 @@ namespace Phabalicious\Tests;
 
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\Storage\Node;
-use Phabalicious\Method\BaseMethod;
+use Phabalicious\Exception\FabfileNotFoundException;
+use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Method\DrushMethod;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\MysqlMethod;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\SshMethod;
-use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Utilities\TestableLogger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -19,7 +19,6 @@ use Symfony\Component\Console\Application;
 
 class ConfigurationServiceTest extends PhabTestCase
 {
-
     /**
      * @var ConfigurationService
      */
@@ -55,64 +54,62 @@ class ConfigurationServiceTest extends PhabTestCase
     {
         $result = $this->config->readConfiguration(
             __DIR__,
-            __DIR__ . '/assets/custom-fabfile-tests/custom_fabfile.yaml'
+            __DIR__.'/assets/custom-fabfile-tests/custom_fabfile.yaml'
         );
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), __DIR__ . '/assets/custom-fabfile-tests');
+        $this->assertEquals($this->config->getFabfilePath(), __DIR__.'/assets/custom-fabfile-tests');
     }
 
     public function testNonExistingCustomFabfile()
     {
-        $this->expectException(\Phabalicious\Exception\FabfileNotFoundException::class);
+        $this->expectException(FabfileNotFoundException::class);
         $result = $this->config->readConfiguration(
             __DIR__,
-            __DIR__ . '/assets/custom__not_existing.yaml'
+            __DIR__.'/assets/custom__not_existing.yaml'
         );
     }
 
     public function testRegularFabfile()
     {
-
-        $result = $this->config->readConfiguration(__DIR__ . '/assets/fabfile-hierarchy-tests');
+        $result = $this->config->readConfiguration(__DIR__.'/assets/fabfile-hierarchy-tests');
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), __DIR__ . '/assets/fabfile-hierarchy-tests');
+        $this->assertEquals($this->config->getFabfilePath(), __DIR__.'/assets/fabfile-hierarchy-tests');
     }
 
     public function testRegularFabfileInSubfolder()
     {
-        $result = $this->config->readConfiguration(__DIR__ . '/assets/fabfile-hierarchy-tests/folder1');
+        $result = $this->config->readConfiguration(__DIR__.'/assets/fabfile-hierarchy-tests/folder1');
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), __DIR__ . '/assets/fabfile-hierarchy-tests');
+        $this->assertEquals($this->config->getFabfilePath(), __DIR__.'/assets/fabfile-hierarchy-tests');
     }
 
     public function testRegularFabfileInSubSubFolder()
     {
-
-        $result = $this->config->readConfiguration(__DIR__ . '/assets/fabfile-hierarchy-tests/folder1/folder2');
+        $result = $this->config->readConfiguration(__DIR__.'/assets/fabfile-hierarchy-tests/folder1/folder2');
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), __DIR__ . '/assets/fabfile-hierarchy-tests');
+        $this->assertEquals($this->config->getFabfilePath(), __DIR__.'/assets/fabfile-hierarchy-tests');
     }
 
     public function testRegularFabfileInSubSubSubFolder()
     {
         $result = $this->config->readConfiguration(
-            __DIR__ . '/assets/fabfile-hierarchy-tests/folder1/folder2/folder3'
+            __DIR__.'/assets/fabfile-hierarchy-tests/folder1/folder2/folder3'
         );
         $this->assertTrue($result);
-        $this->assertEquals($this->config->getFabfilePath(), __DIR__ . '/assets/fabfile-hierarchy-tests');
+        $this->assertEquals($this->config->getFabfilePath(), __DIR__.'/assets/fabfile-hierarchy-tests');
     }
 
     public function testNonExistingFabfile()
     {
-        $this->expectException(\Phabalicious\Exception\FabfileNotFoundException::class);
+        $this->expectException(FabfileNotFoundException::class);
         $result = $this->config->readConfiguration(
-            __DIR__ . '/assets/non-existing-fabfile-tests/one/two/three'
+            __DIR__.'/assets/non-existing-fabfile-tests/one/two/three'
         );
     }
 
     public function testNonMatchingVersion()
     {
-        $this->expectException(\Phabalicious\Exception\MismatchedVersionException::class);
+        $this->expectException(MismatchedVersionException::class);
         $application = $this->getMockBuilder(Application::class)
             ->setMethods(['getVersion'])
             ->getMock();
@@ -123,12 +120,12 @@ class ConfigurationServiceTest extends PhabTestCase
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         $config = new ConfigurationService($application, $logger);
-        $result = $config->readConfiguration(__DIR__ . '/assets/fabfile-hierarchy-tests');
+        $result = $config->readConfiguration(__DIR__.'/assets/fabfile-hierarchy-tests');
     }
 
     public function testGlobalInheritance()
     {
-        $this->config->readConfiguration(__DIR__ . '/assets/inherits');
+        $this->config->readConfiguration(__DIR__.'/assets/inherits');
         $this->assertEquals(123, $this->config->getSetting('fromFile1.value1'));
         $this->assertEquals(456, $this->config->getSetting('fromFile1.value2.value'));
 
@@ -141,14 +138,14 @@ class ConfigurationServiceTest extends PhabTestCase
 
     public function testDeprecatedInheritance()
     {
-        $this->config->readConfiguration(__DIR__ . '/assets/inherits');
+        $this->config->readConfiguration(__DIR__.'/assets/inherits');
         $host_config = $this->config->getHostConfig('hostDeprecated');
         $this->assertTrue($this->logger->containsMessage(LogLevel::WARNING, 'Please use a newer version of this file'));
     }
 
     public function testHostInheritance()
     {
-        $this->config->readConfiguration(__DIR__ . '/assets/inherits');
+        $this->config->readConfiguration(__DIR__.'/assets/inherits');
         $this->assertEquals('host-a', $this->config->getHostConfig('hostA')['host']);
         $this->assertEquals('user-a', $this->config->getHostConfig('hostA')['user']);
         $this->assertEquals('host-b', $this->config->getHostConfig('hostB')['host']);
@@ -158,7 +155,7 @@ class ConfigurationServiceTest extends PhabTestCase
 
     public function testDockerHostInheritance()
     {
-        $this->config->readConfiguration(__DIR__ . '/assets/inherits');
+        $this->config->readConfiguration(__DIR__.'/assets/inherits');
         $this->assertEquals('dockerhost-a', $this->config->getDockerConfig('hostA')['host']);
         $this->assertEquals('user-a', $this->config->getDockerConfig('hostA')['user']);
         $this->assertEquals('dockerhost-b', $this->config->getDockerConfig('hostB')['host']);
@@ -170,7 +167,7 @@ class ConfigurationServiceTest extends PhabTestCase
         $this->config->getMethodFactory()->addMethod(new MysqlMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new DrushMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
-        $this->config->readConfiguration(__DIR__ . '/assets/executables-tests');
+        $this->config->readConfiguration(__DIR__.'/assets/executables-tests');
         $this->assertEquals('/usr/bin/drush', $this->config->getHostConfig('unaltered')['executables']['drush']);
         $this->assertEquals(
             '/usr/local/bin/drush',
@@ -183,7 +180,7 @@ class ConfigurationServiceTest extends PhabTestCase
     {
         $this->config->getMethodFactory()->addMethod(new SshMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
-        $this->config->readConfiguration(__DIR__ . '/assets/sshtunnel-tests');
+        $this->config->readConfiguration(__DIR__.'/assets/sshtunnel-tests');
         $ssh_tunnel = $this->config->getHostConfig('unaltered')->get('sshTunnel');
         $this->assertEquals('1.2.3.4', $ssh_tunnel['destHost']);
         $this->assertEquals('1234', $ssh_tunnel['destPort']);
@@ -193,16 +190,15 @@ class ConfigurationServiceTest extends PhabTestCase
 
     public function testMissingRemoteYamlOfflineMode()
     {
-
         $this->expectException("Phabalicious\Exception\FabfileNotReadableException");
 
         $this->config->getMethodFactory()->addMethod(new LocalMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
-        $this->config->readConfiguration(__DIR__ . '/assets/remote-yaml-tests');
+        $this->config->readConfiguration(__DIR__.'/assets/remote-yaml-tests');
         $this->config->setStrictRemoteHandling(true);
         $this->config->setOffline(true);
 
-        $config = $this->config->getHostConfig("test");
+        $config = $this->config->getHostConfig('test');
     }
 
     public function testMissingRemoteYaml()
@@ -211,18 +207,17 @@ class ConfigurationServiceTest extends PhabTestCase
 
         $this->config->getMethodFactory()->addMethod(new LocalMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
-        $this->config->readConfiguration(__DIR__ . '/assets/remote-yaml-tests');
+        $this->config->readConfiguration(__DIR__.'/assets/remote-yaml-tests');
         $this->config->setStrictRemoteHandling(true);
 
-        $config = $this->config->getHostConfig("test");
+        $config = $this->config->getHostConfig('test');
     }
 
     public function testAdditionalNeeds()
     {
-
         $this->config->getMethodFactory()->addMethod(new SshMethod($this->logger));
         $this->config->getMethodFactory()->addMethod(new ScriptMethod($this->logger));
-        $this->config->readConfiguration(__DIR__ . '/assets/additional-needs-tests');
+        $this->config->readConfiguration(__DIR__.'/assets/additional-needs-tests');
         $needs = $this->config->getHostConfig('test')->get('needs');
         $this->assertContains('ssh', $needs);
         $this->assertContains('script', $needs);
@@ -236,7 +231,7 @@ class ConfigurationServiceTest extends PhabTestCase
                 'inheritsFrom' => '../../two.yml',
             ],
             'bar' => [
-                'inheritsFrom' => '@/three.yml'
+                'inheritsFrom' => '@/three.yml',
             ],
         ], 'https://two.example.com/foo/bar/index.yml');
 
@@ -255,7 +250,7 @@ class ConfigurationServiceTest extends PhabTestCase
                 'inheritsFrom' => '../../two.yml',
             ],
             'bar' => [
-                'inheritsFrom' => '@/three.yml'
+                'inheritsFrom' => '@/three.yml',
             ],
         ], '/home/foo/bar/index.yml');
 
@@ -274,7 +269,7 @@ class ConfigurationServiceTest extends PhabTestCase
                 'inheritsFrom' => '../../two.yml',
             ],
             'bar' => [
-                'inheritsFrom' => '@/three.yml'
+                'inheritsFrom' => '@/three.yml',
             ],
         ], '../config/public/index.yml');
 

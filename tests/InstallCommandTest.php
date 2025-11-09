@@ -27,7 +27,7 @@ class InstallCommandTest extends PhabTestCase
         $method_factory->addMethod(new FilesMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $configuration->readConfiguration(__DIR__ . '/assets/install-command/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__.'/assets/install-command/fabfile.yaml');
 
         $this->application->add(new InstallCommand($configuration, $method_factory));
     }
@@ -36,11 +36,11 @@ class InstallCommandTest extends PhabTestCase
     {
         $command = $this->application->find('install');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'testProd',
             '--force' => true,
-        ));
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
@@ -51,11 +51,11 @@ class InstallCommandTest extends PhabTestCase
     {
         $command = $this->application->find('install');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $commandTester->execute([
+            'command' => $command->getName(),
             '--config' => 'testStage',
             '--force' => true,
-        ));
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();

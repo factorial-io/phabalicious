@@ -11,9 +11,6 @@ class UnknownReplacementPatternException extends \Exception
 
     /**
      * ValidationFailedException constructor.
-     *
-     * @param \Phabalicious\Utilities\ReplacementValidationError $error
-     * @param array $patterns
      */
     public function __construct(ReplacementValidationError $error, array $patterns)
     {
@@ -32,31 +29,26 @@ class UnknownReplacementPatternException extends \Exception
     {
         if ($argument = $this->error->getMissingArgument()) {
             return sprintf(
-                "Missing command-line-argument `%s`!\n\n" .
-                "Please add `--arguments %s=<YOUR-VALUE>` to the invocation of the command",
+                "Missing command-line-argument `%s`!\n\n".
+                'Please add `--arguments %s=<YOUR-VALUE>` to the invocation of the command',
                 $argument,
                 $argument
             );
         }
+
         return implode("\n", [
-            sprintf("Unknown pattern `%s` in", $this->error->getFailedPattern()),
-            "",
+            sprintf('Unknown pattern `%s` in', $this->error->getFailedPattern()),
+            '',
             $this->error->getFailedLineWithinContext(),
         ]);
     }
 
-    /**
-     * @return string
-     */
     public function getOffendingLine(): string
     {
         return $this->error->getLineNumber();
     }
 
-    /**
-     * @return \Phabalicious\Utilities\ReplacementValidationError
-     */
-    public function getError(): \Phabalicious\Utilities\ReplacementValidationError
+    public function getError(): ReplacementValidationError
     {
         return $this->error;
     }

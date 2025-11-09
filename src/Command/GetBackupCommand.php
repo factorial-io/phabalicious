@@ -2,18 +2,13 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class GetBackupCommand extends BackupBaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('get:backup')
@@ -62,9 +57,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -93,8 +85,8 @@ Examples:
                 continue;
             }
             if ($shell->getFile(
-                $this->getHostConfig()['backupFolder'] . '/' . $elem['file'],
-                getcwd() . '/' . $elem['file'],
+                $this->getHostConfig()['backupFolder'].'/'.$elem['file'],
+                getcwd().'/'.$elem['file'],
                 $context
             )) {
                 $files[] = [

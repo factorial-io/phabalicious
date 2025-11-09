@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
+
+/** @noinspection PhpParamsInspection */
 
 namespace Phabalicious\Tests;
 
@@ -18,7 +20,6 @@ use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptExecutionContext;
 use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContext;
-use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Utilities\Utilities;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Application;
@@ -27,14 +28,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ScriptMethodTest extends PhabTestCase
 {
-
-    /** @var ScriptMethod */
     private ScriptMethod $method;
 
-    /** @var ConfigurationService */
     private ConfigurationService $configurationService;
 
-    /** @var TaskContext */
     private TaskContext $context;
 
     /**
@@ -55,7 +52,7 @@ class ScriptMethodTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $this->configurationService->readConfiguration(__DIR__ . '/assets/script-tests/fabfile.yaml');
+        $this->configurationService->readConfiguration(__DIR__.'/assets/script-tests/fabfile.yaml');
 
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),
@@ -80,7 +77,7 @@ class ScriptMethodTest extends PhabTestCase
         $this->context->set(ScriptMethod::SCRIPT_DATA, [
             'echo "hello"',
             'echo "world"',
-            'echo "hello world"'
+            'echo "hello world"',
         ]);
 
         $this->method->runScript($this->configurationService->getHostConfig('hostA'), $this->context);
@@ -104,7 +101,7 @@ class ScriptMethodTest extends PhabTestCase
     {
         $this->context->set(ScriptMethod::SCRIPT_DATA, [
             '(exit 42)',
-            '(exit 0)'
+            '(exit 0)',
         ]);
 
         $this->method->runScript($this->configurationService->getHostConfig('hostA'), $this->context);
@@ -129,7 +126,7 @@ class ScriptMethodTest extends PhabTestCase
             'break_on_first_error(0)',
             '(exit 42)',
             '(exit 0)',
-            'break_on_first_error(1)'
+            'break_on_first_error(1)',
         ]);
 
         $host_config = $this->configurationService->getHostConfig('hostA');
@@ -216,11 +213,10 @@ class ScriptMethodTest extends PhabTestCase
 
         $this->assertNotNull($this->context->getCommandResult());
         $this->assertEquals(
-            [__DIR__ . '/assets/script-tests'],
+            [__DIR__.'/assets/script-tests'],
             $this->context->getCommandResult()->getOutput()
         );
     }
-
 
     public function testMissingCallbackImplementation(): void
     {
@@ -255,12 +251,10 @@ class ScriptMethodTest extends PhabTestCase
         $host_config = $this->configurationService->getHostConfig('hostA');
         $this->method->runScript($host_config, $this->context);
 
-
-
-        $this->assertEquals(["hello world"], $callback->debugOutput[0]);
-        $this->assertEquals(["hello world"], $callback->debugOutput[1]);
-        $this->assertEquals(["hello", "world"], $callback->debugOutput[2]);
-        $this->assertEquals(["hello, world", "Foo, bar"], $callback->debugOutput[3]);
+        $this->assertEquals(['hello world'], $callback->debugOutput[0]);
+        $this->assertEquals(['hello world'], $callback->debugOutput[1]);
+        $this->assertEquals(['hello', 'world'], $callback->debugOutput[2]);
+        $this->assertEquals(['hello, world', 'Foo, bar'], $callback->debugOutput[3]);
     }
 
     public function testTaskSpecificScripts(): void
@@ -282,39 +276,36 @@ class ScriptMethodTest extends PhabTestCase
             'deploy on dev',
             'deploy on hostA',
             'deployFinished on dev',
-            'deployFinished on hostA'
+            'deployFinished on hostA',
         ], $callback->debugOutput);
     }
 
-
     public function testValidateReplacements(): void
     {
-
         $this->assertTrue(Utilities::validateReplacements([
-            "kjhdakadjh\%blaa\%bla"
+            "kjhdakadjh\%blaa\%bla",
         ]));
         $this->assertTrue(Utilities::validateReplacements([
-            "\%blaa\%bla"
+            "\%blaa\%bla",
         ]));
         $this->assertTrue(Utilities::validateReplacements([
-            "bla\%blaa\%"
+            "bla\%blaa\%",
         ]));
 
         $error = Utilities::validateReplacements([
-            "lhkjdhkadhj",
-            "%here%",
-            "khjkhjkjhkjh",
+            'lhkjdhkadhj',
+            '%here%',
+            'khjkhjkjhkjh',
         ]);
 
         $this->assertNotTrue($error);
         $this->assertEquals(1, $error->getLineNumber());
         $this->assertEquals('%here%', $error->getFailedPattern());
 
-
         $error = Utilities::validateReplacements([
-            "lhkjdhkadhj",
-            "huhu %here%",
-            "khjkhjkjhkjh",
+            'lhkjdhkadhj',
+            'huhu %here%',
+            'khjkhjkjhkjh',
         ]);
 
         $this->assertNotTrue($error);
@@ -322,9 +313,9 @@ class ScriptMethodTest extends PhabTestCase
         $this->assertEquals(' %here%', $error->getFailedPattern());
 
         $error = Utilities::validateReplacements([
-            "lhkjdhkadhj",
-            "khjkhjkjhkjh",
-            "%here%haha",
+            'lhkjdhkadhj',
+            'khjkhjkjhkjh',
+            '%here%haha',
         ]);
 
         $this->assertNotTrue($error);
@@ -332,9 +323,9 @@ class ScriptMethodTest extends PhabTestCase
         $this->assertEquals('%here%', $error->getFailedPattern());
 
         $error = Utilities::validateReplacements([
-            "lhkjdhkadhj",
-            "%here%%huhu%",
-            "khjkhjkjhkjh",
+            'lhkjdhkadhj',
+            '%here%%huhu%',
+            'khjkhjkjhkjh',
         ]);
 
         $this->assertNotTrue($error);
@@ -344,32 +335,32 @@ class ScriptMethodTest extends PhabTestCase
         $this->assertEquals('%here%%huhu%', $error->getFailedLine());
 
         $error = Utilities::validateReplacements([
-            "lhkjdhkadhj",
-            "there is an missing argument here: %arguments.foobar% and more text",
-            "khjkhjkjhkjh",
+            'lhkjdhkadhj',
+            'there is an missing argument here: %arguments.foobar% and more text',
+            'khjkhjkjhkjh',
         ]);
 
         $this->assertNotTrue($error);
-        $this->assertEquals("foobar", $error->getMissingArgument());
+        $this->assertEquals('foobar', $error->getMissingArgument());
         $this->assertEquals(1, $error->getLineNumber());
         $this->assertEquals(' %arguments.foobar%', $error->getFailedPattern());
 
         $this->assertTrue(Utilities::validateReplacements([
-            "lhkjdhkadhj",
-            "echo %secret.googlemaps_api_dev_key%",
-            "khjkhjkjhkjh",
+            'lhkjdhkadhj',
+            'echo %secret.googlemaps_api_dev_key%',
+            'khjkhjkjhkjh',
         ]));
 
         $this->assertTrue(Utilities::validateReplacements([
-            "lhkjdhkadhj",
-            "echo smtp-password is //%secret.smtp-password%//",
-            "khjkhjkjhkjh",
+            'lhkjdhkadhj',
+            'echo smtp-password is //%secret.smtp-password%//',
+            'khjkhjkjhkjh',
         ]));
 
         $this->assertTrue(Utilities::validateReplacements([
-            "lhkjdhkadhj",
+            'lhkjdhkadhj',
             "echo smtp-password is //\%secret.smtp-password%//",
-            "khjkhjkjhkjh",
+            'khjkhjkjhkjh',
         ]));
     }
 
@@ -390,9 +381,8 @@ class ScriptMethodTest extends PhabTestCase
 
         $output = $this->context->getCommandResult()->getOutput();
 
-        $this->assertContains("PHAB_SUB_SHELL=1", $output);
+        $this->assertContains('PHAB_SUB_SHELL=1', $output);
     }
-
 
     public function testCleanupScriptSection(): void
     {
@@ -400,7 +390,7 @@ class ScriptMethodTest extends PhabTestCase
             '(exit 42)',
         ]);
         $this->context->set(ScriptMethod::SCRIPT_CLEANUP, [
-            'echo "$ROOT_FOLDER"'
+            'echo "$ROOT_FOLDER"',
         ]);
 
         $host_config = $this->configurationService->getHostConfig('hostA');
@@ -409,7 +399,7 @@ class ScriptMethodTest extends PhabTestCase
 
         $this->assertNotNull($this->context->getCommandResult());
         $this->assertEquals(
-            [__DIR__ . '/assets/script-tests'],
+            [__DIR__.'/assets/script-tests'],
             $this->context->getCommandResult()->getOutput()
         );
     }
