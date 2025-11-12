@@ -7,10 +7,9 @@ use Symfony\Component\Yaml\Yaml;
 
 abstract class YamlTransformer extends FileContentsTransformer
 {
-
     public function appliesTo(string $filename): bool
     {
-         return in_array(pathinfo($filename, PATHINFO_EXTENSION), ['yml', 'yaml']);
+        return in_array(pathinfo($filename, PATHINFO_EXTENSION), ['yml', 'yaml']);
     }
 
     public function readFile(string $filename): array
@@ -20,13 +19,11 @@ abstract class YamlTransformer extends FileContentsTransformer
 
     /**
      * Return result as yaml-data.
-     *
-     * @param array $result
-     * @return array
      */
     protected function asYamlFiles(array $result): array
     {
         $dumper = new Dumper(2);
+
         return array_map(function ($data) use ($dumper) {
             return $dumper->dump($data, PHP_INT_MAX, 0);
         }, $result);

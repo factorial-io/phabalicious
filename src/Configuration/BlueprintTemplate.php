@@ -3,32 +3,23 @@
 namespace Phabalicious\Configuration;
 
 use Phabalicious\Configuration\Storage\Node;
-use Phabalicious\Exception\ValidationFailedException;
 use Phabalicious\Utilities\Utilities;
-use Phabalicious\Validation\ValidationErrorBag;
-use Phabalicious\Validation\ValidationService;
 
 class BlueprintTemplate
 {
-
     /** @var Node */
     private $template;
 
     /** @var Node */
     private $parent;
 
-    /** @var ConfigurationService  */
+    /** @var ConfigurationService */
     private $configuration;
 
     protected $name;
 
     /**
      * BlueprintTemplate constructor.
-     *
-     * @param $name
-     * @param ConfigurationService $service
-     * @param \Phabalicious\Configuration\Storage\Node $data
-     * @param \Phabalicious\Configuration\Storage\Node $parent
      */
     public function __construct($name, ConfigurationService $service, Node $data, Node $parent)
     {
@@ -47,7 +38,7 @@ class BlueprintTemplate
 
         $replacements = Utilities::expandVariables([
             'template' => $this->template->getValue(),
-            'parent' => $this->parent->getValue()
+            'parent' => $this->parent->getValue(),
         ]);
 
         $replacements['%identifier%'] = $identifier;
@@ -76,8 +67,6 @@ class BlueprintTemplate
     }
 
     /**
-     * @param \Phabalicious\Configuration\Storage\Node $templates
-     *
      * @throws \Phabalicious\Exception\FabfileNotReadableException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      */

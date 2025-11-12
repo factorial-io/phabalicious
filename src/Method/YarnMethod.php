@@ -10,7 +10,6 @@ use Phabalicious\Validation\ValidationService;
 
 class YarnMethod extends RunCommandBaseMethod
 {
-
     public function getName(): string
     {
         return 'yarn';
@@ -20,6 +19,7 @@ class YarnMethod extends RunCommandBaseMethod
     {
         $mapping = parent::getDeprecationMapping();
         $prefix = $this->getConfigPrefix();
+
         return array_merge($mapping, [
             "{$prefix}BuildCommand" => "{$prefix}.buildCommand",
         ]);
@@ -28,22 +28,18 @@ class YarnMethod extends RunCommandBaseMethod
     public function validateConfig(
         ConfigurationService $configuration_service,
         Node $config,
-        ValidationErrorBagInterface $errors
-    ) {
-
+        ValidationErrorBagInterface $errors,
+    ): void {
         parent::validateConfig($configuration_service, $config, $errors);
 
         $service = new ValidationService($config, $errors, 'Yarn');
         $service->deprecate([
-        "yarnBuildCommand" => "please change to `yarn.buildCommand`",
+            'yarnBuildCommand' => 'please change to `yarn.buildCommand`',
         ]);
         $service->hasKey('yarn.buildCommand', 'build command to run with yarn');
     }
 
     /**
-     * @param HostConfig $host_config
-     * @param TaskContextInterface $context
-     *
      * @throws \Phabalicious\Exception\MethodNotFoundException
      * @throws \Phabalicious\Exception\MismatchedVersionException
      * @throws \Phabalicious\Exception\MissingDockerHostConfigException
@@ -68,7 +64,7 @@ class YarnMethod extends RunCommandBaseMethod
             throw new \InvalidArgumentException('Missing currentStage on context!');
         }
 
-        if ($current_stage === 'installDependencies') {
+        if ('installDependencies' === $current_stage) {
             $this->resetPrepare($host_config, $context);
         }
     }

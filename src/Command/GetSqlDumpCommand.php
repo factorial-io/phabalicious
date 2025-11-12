@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
@@ -21,13 +20,34 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class GetSqlDumpCommand extends BaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('get:sql-dump')
             ->setDescription('Get a current dump of the database')
-            ->setHelp('Gets a dump of the database and copies it to your local computer');
+            ->setHelp('
+Creates a database dump on the remote host and copies it to your local computer.
+
+This command creates a SQL dump of the remote database, downloads it to your
+local machine, and then removes the temporary dump file from the remote server.
+
+Behavior:
+- Creates a SQL dump on the remote host
+- Downloads the dump file to the current working directory
+- Removes the temporary dump file from the remote host
+- Optionally renames the file if --output is specified
+- Displays a list of downloaded files
+
+The dump file naming and compression depend on the database method configuration.
+
+Options:
+- --output, -o: Rename the downloaded file to this name
+
+Examples:
+<info>phab --config=myconfig get:sql-dump</info>
+<info>phab --config=production get:sql-dump --output=prod-backup.sql.gz</info>
+<info>phab --config=myconfig getSQLDump</info>  # Using alias
+            ');
         $this->setAliases(['getSQLDump']);
         $this->addOption(
             'output',
@@ -40,9 +60,6 @@ class GetSqlDumpCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -69,7 +86,7 @@ class GetSqlDumpCommand extends BaseCommand
         foreach ($to_copy as $file) {
             if ($shell->getFile(
                 $file,
-                getcwd() . '/' . basename($file),
+                getcwd().'/'.basename($file),
                 $context
             )) {
                 $files[] = basename($file);
@@ -80,7 +97,7 @@ class GetSqlDumpCommand extends BaseCommand
             $local_shell = new LocalShellProvider($this->configuration->getLogger());
             $local_shell->setHostConfig(new HostConfig([
                 'rootFolder' => getcwd(),
-                'shellExecutable' => '/bin/bash'
+                'shellExecutable' => '/bin/bash',
             ], $local_shell, $this->configuration));
 
             $file = reset($files);
@@ -96,7 +113,6 @@ class GetSqlDumpCommand extends BaseCommand
             $io->title('Copied dumps to:');
             $io->listing($files);
         }
-
 
         return 0;
     }

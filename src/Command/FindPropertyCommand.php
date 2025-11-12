@@ -10,16 +10,16 @@ use Symfony\Component\Yaml\Yaml;
 
 class FindPropertyCommand extends BaseCommand
 {
-    protected static $defaultName = 'about';
+    protected static $defaultName = 'find:property';
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
             ->setName('find:property')
             ->setDescription('Helps the user to find a specific property and shows some details about it')
             ->setHelp('
-Provides an interactive way to search for a specific property whithout knowing
+Provides an interactive way to search for a specific property without knowing
 its exact name or location. Just type parts of the property after the prompt,
 phab will try to autocomplete your input. If the autocomplete does not reveal
 what you are looking for, just hit enter, phab will show a list of possible
@@ -39,18 +39,14 @@ Examples:
             ');
     }
 
-  /**
-   * @param InputInterface $input
-   * @param OutputInterface $output
-   *
-   * @return int
-   * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-   * @throws \Phabalicious\Exception\FabfileNotFoundException
-   * @throws \Phabalicious\Exception\FabfileNotReadableException
-   * @throws \Phabalicious\Exception\MismatchedVersionException
-   * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-   * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-   */
+    /**
+     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotFoundException
+     * @throws \Phabalicious\Exception\FabfileNotReadableException
+     * @throws \Phabalicious\Exception\MismatchedVersionException
+     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
+     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $context = $this->createContext($input, $output);
@@ -71,7 +67,7 @@ Examples:
         }
         foreach ($sources as $prefix => $source) {
             foreach ($source->visit() as $data) {
-                $full_key = $prefix . implode('.', $data->getStack());
+                $full_key = $prefix.implode('.', $data->getStack());
                 $autocompletes[] = $full_key;
                 $flat_nodes[$full_key] = $data->getValue();
             }
@@ -80,14 +76,14 @@ Examples:
         $question = new Question('Search for');
         $question->setAutocompleterValues($autocompletes);
         do {
-            $context->io()->comment("Search for a specific property, prefix your search whith `host.`" .
-             " or `dockerHost.` if you want to limit your search to the current (docker-)host-configuration.");
+            $context->io()->comment('Search for a specific property, prefix your search whith `host.`'.
+             ' or `dockerHost.` if you want to limit your search to the current (docker-)host-configuration.');
             $context->io()->comment('To exit leave your answer blank.');
             $key = $context->io()->askQuestion($question);
             if ($key && !isset($flat_nodes[$key])) {
                 $possible_choices = [];
                 foreach ($autocompletes as $k) {
-                    if (strpos($k, $key) !== false) {
+                    if (false !== strpos($k, $key)) {
                         $possible_choices[] = $k;
                     }
                 }
@@ -98,15 +94,15 @@ Examples:
                     );
                     $key = $context->io()->askQuestion($choice_question);
                 } else {
-                    $context->io()->error(sprintf("could not find `%s`!", $key));
+                    $context->io()->error(sprintf('could not find `%s`!', $key));
                 }
             }
             if ($key && isset($flat_nodes[$key])) {
                 $keys = explode('.', $key);
-                if ($keys[0] == 'host') {
+                if ('host' == $keys[0]) {
                     array_shift($keys);
                     array_unshift($keys, 'hosts', $this->getHostConfig()->getConfigName());
-                } elseif ($keys[0] == 'dockerHost') {
+                } elseif ('dockerHost' == $keys[0]) {
                     array_shift($keys);
                     array_unshift(
                         $keys,
@@ -119,7 +115,7 @@ Examples:
                 $context->io()->title('Property info');
                 $context->io()->table([], [
                     ['Key', $last_key],
-                    ['Value', Yaml::dump($flat_nodes[$key]->getValue(), 4, 2) ],
+                    ['Value', Yaml::dump($flat_nodes[$key]->getValue(), 4, 2)],
                     ['Ancestors', implode(' > ', $keys)],
                     ['Read from ', $flat_nodes[$key]->getSource()->getSource()],
                 ]);

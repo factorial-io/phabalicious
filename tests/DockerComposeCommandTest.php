@@ -29,7 +29,7 @@ class DockerComposeCommandTest extends PhabTestCase
         $method_factory->addMethod(new DockerMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $configuration->readConfiguration(__DIR__ . '/assets/docker-compose-command/fabfile.yaml');
+        $configuration->readConfiguration(__DIR__.'/assets/docker-compose-command/fabfile.yaml');
 
         $this->application->add(new DockerComposeCommand($configuration, $method_factory));
     }
@@ -41,11 +41,10 @@ class DockerComposeCommandTest extends PhabTestCase
     {
         $command = $this->application->find('docker-compose');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command-arguments'  => ['run', 'app'],
+        $commandTester->execute([
+            'command-arguments' => ['run', 'app'],
             '--config' => 'test',
-
-        ));
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
@@ -59,11 +58,10 @@ class DockerComposeCommandTest extends PhabTestCase
     {
         $command = $this->application->find('docker-compose');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command-arguments'  => ['-f', 'docker-compose-with-env-vars.yml', 'config'],
+        $commandTester->execute([
+            'command-arguments' => ['-f', 'docker-compose-with-env-vars.yml', 'config'],
             '--config' => 'testEnvVar',
-
-        ));
+        ]);
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();

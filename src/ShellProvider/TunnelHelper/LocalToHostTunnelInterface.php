@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\ShellProvider\TunnelHelper;
 
 use Phabalicious\Configuration\HostConfig;
@@ -11,6 +10,6 @@ interface LocalToHostTunnelInterface
     public function createLocalToHostTunnel(
         HostConfig $config,
         TaskContextInterface $context,
-        TunnelDataInterface $tunnel_data = null
+        ?TunnelDataInterface $tunnel_data = null,
     ): TunnelDataInterface;
 }

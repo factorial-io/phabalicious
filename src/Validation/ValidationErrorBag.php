@@ -16,7 +16,7 @@ class ValidationErrorBag implements ValidationErrorBagInterface
 
     public function hasErrors(): bool
     {
-        return count($this->errors) !== 0;
+        return 0 !== count($this->errors);
     }
 
     public function getErrors(): array

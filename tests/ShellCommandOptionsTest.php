@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: stephan
  * Date: 10.09.18
- * Time: 22:03
+ * Time: 22:03.
  */
 
 namespace Phabalicious\Tests;
@@ -23,8 +24,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ShellCommandOptionsTest extends PhabTestCase
 {
-
-    const PORT = 12311;
+    public const PORT = 12311;
 
     protected $application;
 
@@ -32,9 +32,8 @@ class ShellCommandOptionsTest extends PhabTestCase
 
     protected $shell;
 
-    public function setup():void
+    public function setup(): void
     {
-
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
@@ -48,12 +47,11 @@ class ShellCommandOptionsTest extends PhabTestCase
 
         $this->application->add(new DrushCommand($this->configuration, $method_factory));
 
-        $this->configuration->readConfiguration(__DIR__ . '/assets/shell-command-options-tests/fabfile.yaml');
+        $this->configuration->readConfiguration(__DIR__.'/assets/shell-command-options-tests/fabfile.yaml');
 
         $this->shell = new LocalShellProvider($logger);
         $this->shell->setHostConfig($this->configuration->getHostConfig('local-shell'));
     }
-
 
     /**
      * @group shell-provider
@@ -103,8 +101,6 @@ class ShellCommandOptionsTest extends PhabTestCase
     /**
      * @group shell-provider
      * @group docker
-     *
-     * @param $config
      */
     protected function runDrush($config, $override_shell_provider_options): void
     {
@@ -117,23 +113,23 @@ class ShellCommandOptionsTest extends PhabTestCase
             'command-arguments' => ['version'],
         ];
         if ($override_shell_provider_options) {
-            $filepath =__DIR__ . '/assets/shell-command-options-tests/testruns';
+            $filepath = __DIR__.'/assets/shell-command-options-tests/testruns';
             $args['--set'] = sprintf('host.shellProviderOptions.1=%s', $filepath);
         }
 
         $command_tester->execute($args);
 
         $output = $command_tester->getDisplay();
-        $this->assertStringContainsStringIgnoringCase("Drush version", $output);
+        $this->assertStringContainsStringIgnoringCase('Drush version', $output);
     }
 
     private function startDocker()
     {
         $this->stopRunningDocker();
-        $this->shell->cd(__DIR__ . '/..');
+        $this->shell->cd(__DIR__.'/..');
         $this->shell->run(
             sprintf(
-                "docker run -d -p %d:22 --name test-shell-command-options factorial/drupal-docker:php-73",
+                'docker run -d -p %d:22 --name test-shell-command-options factorial/drupal-docker:php-73',
                 self::PORT
             )
         );
@@ -143,11 +139,11 @@ class ShellCommandOptionsTest extends PhabTestCase
         );
         $this->shell->run('chmod 600 tests/assets/shell-command-options-tests/testruns');
         $this->shell->run(
-            'docker cp tests/assets/shell-command-options-tests/testruns.pub ' .
+            'docker cp tests/assets/shell-command-options-tests/testruns.pub '.
             'test-shell-command-options:/root/.ssh/authorized_keys'
         );
         $this->shell->run(
-            'docker exec test-shell-command-options /bin/bash -c "chmod 600 /root/.ssh/authorized_keys ' .
+            'docker exec test-shell-command-options /bin/bash -c "chmod 600 /root/.ssh/authorized_keys '.
             '&& chown root:root /root/.ssh/authorized_keys"'
         );
         sleep(5);
@@ -155,7 +151,7 @@ class ShellCommandOptionsTest extends PhabTestCase
 
     private function stopRunningDocker(): void
     {
-        $this->shell->run("docker stop test-shell-command-options > /dev/null 2>&1 || true");
-        $this->shell->run("docker rm test-shell-command-options > /dev/null 2>&1 || true");
+        $this->shell->run('docker stop test-shell-command-options > /dev/null 2>&1 || true');
+        $this->shell->run('docker rm test-shell-command-options > /dev/null 2>&1 || true');
     }
 }

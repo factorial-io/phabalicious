@@ -10,7 +10,6 @@ use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\TaskNotFoundInMethodException;
-use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class WebhookCommand extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -37,31 +36,52 @@ class WebhookCommand extends BaseCommand
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'Pass optional arguments to the webhook'
             )
-            ->setHelp('Invokes a webhook from the global section.');
+            ->setHelp('
+Invokes a webhook defined in the global section of your fabfile.
+
+Webhooks are custom tasks defined in the "webhooks" section of your fabfile.yaml
+that can be triggered on-demand or by external systems.
+
+Behavior:
+- If no <webhook> argument is provided, lists all available webhooks
+- If <webhook> is specified, invokes that webhook
+- Throws an error if the specified webhook does not exist
+- Optional arguments can be passed to the webhook using --arguments
+
+Arguments:
+- <webhook>: Name of the webhook to invoke (optional)
+
+Options:
+- --arguments, -a: Pass key=value arguments to the webhook (can be used multiple times)
+
+Examples:
+<info>phab webhook</info>                                    # List all available webhooks
+<info>phab webhook deploy-notification</info>                # Invoke the deploy-notification webhook
+<info>phab webhook my-webhook --arguments foo=bar</info>     # Invoke webhook with arguments
+<info>phab webhook my-webhook -a key1=val1 -a key2=val2</info>
+            ');
     }
 
     public function completeArgumentValues($argumentName, CompletionContext $context): array
     {
-        if (($argumentName == 'webhook') && ($context instanceof FishShellCompletionContext)) {
+        if (('webhook' == $argumentName) && ($context instanceof FishShellCompletionContext)) {
             $scripts = $this->getConfiguration()->getSetting('webhooks', []);
+
             return array_keys($scripts);
         }
+
         return parent::completeArgumentValues($argumentName, $context);
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MethodNotFoundException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\TaskNotFoundInMethodException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MethodNotFoundException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws TaskNotFoundInMethodException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -70,6 +90,7 @@ class WebhookCommand extends BaseCommand
         }
         if (!$input->getArgument('webhook')) {
             $this->listAllWebhooks($output);
+
             return 1;
         } else {
             $webhook_name = $input->getArgument('webhook');
@@ -96,10 +117,10 @@ class WebhookCommand extends BaseCommand
         $webhooks = $this->getConfiguration()->getSetting('webhooks', []);
         $output->writeln('<options=bold>Available webhooks</>');
         foreach ($webhooks as $name => $webhook) {
-            if ($name == 'defaults') {
+            if ('defaults' == $name) {
                 continue;
             }
-            $output->writeln('  - ' . $name);
+            $output->writeln('  - '.$name);
         }
     }
 }

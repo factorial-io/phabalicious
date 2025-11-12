@@ -5,25 +5,17 @@ namespace Phabalicious\Tests;
 use Phabalicious\Command\WorkspaceCreateCommand;
 use Phabalicious\Command\WorkspaceUpdateCommand;
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\LocalMethod;
 use Phabalicious\Method\MethodFactory;
 use Phabalicious\Method\ScriptMethod;
-use Phabalicious\Method\TaskContext;
-use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Scaffolder\Options;
-use Phabalicious\Scaffolder\Scaffolder;
 use Phabalicious\Utilities\Utilities;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Yaml\Yaml;
 
 class WorkspaceCreateUpdateTest extends PhabTestCase
 {
-
     use ProphecyTrait;
 
     /** @var Application */
@@ -48,13 +40,13 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
 
     private function prepareTarget()
     {
-
-        $target_folder = $this->getTmpDir() . '/workspace';
+        $target_folder = $this->getTmpDir().'/workspace';
         exec(sprintf('rm -rf "%s"', $target_folder));
         if (!is_dir($target_folder)) {
             mkdir($target_folder);
         }
         chdir($target_folder);
+
         return $target_folder;
     }
 
@@ -63,17 +55,18 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
         $target_folder = $this->prepareTarget();
         $command = $this->application->find('workspace:create');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
+        $commandTester->execute([
             'command' => $command->getName(),
             '--branch' => 'main',
             '--platform' => 'linux',
             '--run-setup' => '',
-        ));
+        ]);
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Happy hacking!', $output);
 
-        $this->checkFileContent($target_folder . '/multibasebox/fabfile.local.yaml', 'runLocally: true');
+        $this->checkFileContent($target_folder.'/multibasebox/fabfile.local.yaml', 'runLocally: true');
+
         return $target_folder;
     }
 
@@ -83,16 +76,16 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
         chdir('multibasebox');
         $command = $this->application->find('workspace:update');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
+        $commandTester->execute([
             'command' => $command->getName(),
             '--branch' => 'main',
             '--platform' => 'linux',
             '--run-setup' => '',
-        ));
+        ]);
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Happy hacking!', $output);
 
-        $this->checkFileContent($target_folder . '/multibasebox/fabfile.local.yaml', 'runLocally: true');
+        $this->checkFileContent($target_folder.'/multibasebox/fabfile.local.yaml', 'runLocally: true');
     }
 }

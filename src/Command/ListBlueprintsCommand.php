@@ -2,40 +2,46 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Exception\BlueprintTemplateNotFoundException;
 use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Method\MethodFactory;
-use Phabalicious\Method\TaskContext;
-use Phabalicious\Utilities\Utilities;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ListBlueprintsCommand extends BaseOptionsCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('list:blueprints')
             ->setDescription('List all blueprints')
-            ->setHelp('Displays a list of all found blueprints from a fabfile');
+            ->setHelp('
+Displays a list of all blueprint templates defined in the fabfile.
+
+Blueprints are configuration templates that can be dynamically expanded
+to create host configurations. They allow you to define parameterized
+configurations that can be instantiated with different values.
+
+Behavior:
+- Reads all blueprint templates from the fabfile
+- Extracts blueprint names from template keys
+- Displays them in a simple list format
+
+Blueprints are defined in the fabfile under the "blueprints" section
+and can be used with --blueprint flag on various commands.
+
+Examples:
+<info>phab list:blueprints</info>
+<info>phab --fabfile=other.yaml list:blueprints</info>
+            ');
 
         parent::configure();
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -49,6 +55,7 @@ class ListBlueprintsCommand extends BaseOptionsCommand
 
         $blueprints = array_map(function ($key) {
             $a = explode(':', $key);
+
             return array_pop($a);
         }, array_keys($this->configuration->getBlueprints()->getTemplates()));
 

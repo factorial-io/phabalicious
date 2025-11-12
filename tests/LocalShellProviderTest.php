@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
+
+/** @noinspection PhpParamsInspection */
 
 namespace Phabalicious\Tests;
 
@@ -8,24 +10,20 @@ use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Validation\ValidationErrorBag;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class LocalShellProviderTest extends PhabTestCase
 {
-    /** @var \Phabalicious\ShellProvider\ShellProviderInterface */
     private ShellProviderInterface $shellProvider;
 
     private ConfigurationService $config;
 
-    /**
-     * @var \Phabalicious\Method\TaskContext
-     */
     private TaskContext $context;
 
     public function setUp(): void
@@ -36,7 +34,7 @@ class LocalShellProviderTest extends PhabTestCase
 
         $this
             ->config
-            ->method("getPasswordManager")
+            ->method('getPasswordManager')
             ->willReturn(new PasswordManager());
 
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
@@ -87,16 +85,16 @@ class LocalShellProviderTest extends PhabTestCase
     {
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/sh',
-            'rootFolder' => __DIR__
+            'rootFolder' => __DIR__,
         ], $this->shellProvider, $this->config);
 
-        $test_dir = __DIR__ . '/assets/local-shell-provider';
+        $test_dir = __DIR__.'/assets/local-shell-provider';
 
         $this->shellProvider->setHostConfig($host_config);
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('ls -la', true);
+            ->run('ls -la', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->succeeded());
@@ -114,16 +112,16 @@ class LocalShellProviderTest extends PhabTestCase
     {
         $host_config = new HostConfig([
             'shellExecutable' => '/bin/bash',
-            'rootFolder' => __DIR__
+            'rootFolder' => __DIR__,
         ], $this->shellProvider, $this->config);
 
-        $test_dir = __DIR__ . '/assets/local-shell-providerxxx';
+        $test_dir = __DIR__.'/assets/local-shell-providerxxx';
 
         $this->shellProvider->setHostConfig($host_config);
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('ls -la', true, false);
+            ->run('ls -la', RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->failed());
@@ -143,13 +141,13 @@ class LocalShellProviderTest extends PhabTestCase
             ],
         ], $this->shellProvider, $this->config);
 
-        $test_dir = __DIR__ . '/assets/local-shell-provider';
+        $test_dir = __DIR__.'/assets/local-shell-provider';
 
         $this->shellProvider->setHostConfig($host_config);
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('echo $VAR_A', true, false);
+            ->run('echo $VAR_A', RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->succeeded());
@@ -158,14 +156,14 @@ class LocalShellProviderTest extends PhabTestCase
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('echo "XX${VAR_B}XX"', true, false);
+            ->run('echo "XX${VAR_B}XX"', RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertStringContainsString('XXvariable_bXX', $output);
 
         $result = $this->shellProvider
             ->cd($test_dir)
-            ->run('echo "XX${VAR_C}XX"', true, false);
+            ->run('echo "XX${VAR_C}XX"', RunOptions::CAPTURE_AND_HIDE_OUTPUT, false);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertStringContainsString('XXvariable_cXX', $output);

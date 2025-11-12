@@ -8,22 +8,14 @@ use Phabalicious\Scaffolder\Transformers\DataTransformerInterface;
 
 class TransformCallback implements CallbackInterface
 {
-
-    const TRANSFORMER_INPUT_FILENAME = 'transformer_input_file';
+    public const TRANSFORMER_INPUT_FILENAME = 'transformer_input_file';
     protected static $transformers = [];
 
-
-    /**
-     * @inheritDoc
-     */
     public static function getName(): string
     {
         return 'transform';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function requires(): string
     {
         return '3.4';
@@ -36,9 +28,6 @@ class TransformCallback implements CallbackInterface
         }
     }
 
-    /**
-     * @inheritDoc
-     */
     public function handle(TaskContextInterface $context, ...$arguments)
     {
         $this->transform($context, $arguments[0], $arguments[1], $arguments[2]);
@@ -47,10 +36,6 @@ class TransformCallback implements CallbackInterface
     /**
      * Transform a bunch of files to another bunch of files.
      *
-     * @param TaskContextInterface $context
-     * @param $transformer_key
-     * @param $files_key
-     * @param $target_folder
      * @throws TransformFailedException
      */
     protected function transform(TaskContextInterface $context, $transformer_key, $files_key, $target_folder)
@@ -62,14 +47,10 @@ class TransformCallback implements CallbackInterface
         $transformer = self::$transformers[$transformer_key] ?? false;
 
         if (!$transformer) {
-            throw new \InvalidArgumentException(sprintf(
-                'Unknown transformer %s, available transformers are %s!',
-                $transformer_key,
-                implode(', ', array_keys(self::$transformers))
-            ));
+            throw new \InvalidArgumentException(sprintf('Unknown transformer %s, available transformers are %s!', $transformer_key, implode(', ', array_keys(self::$transformers))));
         }
 
-        $target_path = $tokens['rootFolder'] . '/' . $target_folder;
+        $target_path = $tokens['rootFolder'].'/'.$target_folder;
 
         $context->io()->comment(sprintf('Transforming %s ...', $files_key));
 
@@ -85,13 +66,13 @@ class TransformCallback implements CallbackInterface
         $context->io()->progressStart(count($result));
         $shell = $context->getShell();
         foreach ($result as $file_name => $file_content) {
-            $full_path =  $target_path . '/' . $file_name;
+            $full_path = $target_path.'/'.$file_name;
             $dir = dirname($full_path);
             if (!$shell->exists($dir)) {
                 $shell->run(sprintf('mkdir -p %s && chmod 0775 %s', $dir, $dir));
             }
             if (false === $shell->putFileContents($full_path, $file_content, $context)) {
-                throw new \RuntimeException(sprintf("Could not write to file `%s`", $full_path));
+                throw new \RuntimeException(sprintf('Could not write to file `%s`', $full_path));
             }
             $context->io()->progressAdvance();
         }

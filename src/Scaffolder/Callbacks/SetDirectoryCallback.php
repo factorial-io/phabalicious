@@ -2,31 +2,20 @@
 
 namespace Phabalicious\Scaffolder\Callbacks;
 
-use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\Utilities\Utilities;
 
 class SetDirectoryCallback implements CallbackInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getName(): string
     {
         return 'set_directory';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function requires(): string
     {
         return '3.4';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function handle(TaskContextInterface $context, ...$arguments)
     {
         $this->setDirectory($context, $arguments[0]);
@@ -34,7 +23,7 @@ class SetDirectoryCallback implements CallbackInterface
 
     public function setDirectory(
         TaskContextInterface $context,
-        $directory
+        $directory,
     ) {
         $shell = $context->getShell();
         if (!$shell->exists($directory)) {

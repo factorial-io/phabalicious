@@ -19,14 +19,46 @@ use Symfony\Component\Yaml\Dumper;
 
 class OutputCommand extends BaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
             ->setName('output')
-            ->setDescription('Outputs the configurarion as yaml')
-            ->setHelp('Outputs the configuration as yaml');
+            ->setDescription('Outputs the configuration as yaml')
+            ->setHelp('
+Outputs the computed configuration as YAML or JSON.
+
+This command displays the fully resolved and computed configuration for debugging
+and inspection purposes. It shows how phabalicious interprets your fabfile after
+applying all inheritance, blueprints, and transformations.
+
+Behavior:
+- Resolves all inheritance and configuration merging
+- Expands blueprints if applicable
+- Resolves secrets (shows actual secret values)
+- Outputs in the specified format (YAML or JSON)
+
+Options:
+- --what: What to output (default: blueprint)
+  - blueprint: Applied blueprint configuration (requires --blueprint)
+  - host: Host configuration (single host)
+  - docker: Docker configuration
+  - global: Global fabfile settings
+- --format: Output format (default: yaml)
+  - yaml: YAML format
+  - json: JSON format
+
+Arguments:
+- --config: Which host configuration to output
+- --blueprint: Blueprint variant to expand (required for --what=blueprint)
+
+Examples:
+<info>phab --config=myconfig --blueprint=develop output</info>
+<info>phab --config=myconfig output --what=host</info>
+<info>phab --config=myconfig output --what=host --format=json</info>
+<info>phab output --what=global</info>
+<info>phab --config=myconfig output --what=docker</info>
+            ');
 
         $this->addOption(
             'what',
@@ -46,18 +78,14 @@ class OutputCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotFoundException
-     * @throws \Phabalicious\Exception\FabfileNotReadableException
-     * @throws \Phabalicious\Exception\MismatchedVersionException
-     * @throws \Phabalicious\Exception\MissingDockerHostConfigException
-     * @throws \Phabalicious\Exception\MissingHostConfigException
-     * @throws \Phabalicious\Exception\ShellProviderNotFoundException
-     * @throws \Phabalicious\Exception\ValidationFailedException
+     * @throws BlueprintTemplateNotFoundException
+     * @throws FabfileNotFoundException
+     * @throws FabfileNotReadableException
+     * @throws MismatchedVersionException
+     * @throws MissingDockerHostConfigException
+     * @throws MissingHostConfigException
+     * @throws ShellProviderNotFoundException
+     * @throws ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -67,10 +95,7 @@ class OutputCommand extends BaseCommand
 
         $available_options = ['blueprint', 'host', 'docker', 'global'];
         if (!in_array($what, $available_options)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Unknown option for `what`. Allwoed values are %s',
-                '`' . implode('`, `', $available_options)  . '`'
-            ));
+            throw new \InvalidArgumentException(sprintf('Unknown option for `what`. Allowed values are %s', '`'.implode('`, `', $available_options).'`'));
         }
 
         $this->readConfiguration($input);
@@ -78,17 +103,17 @@ class OutputCommand extends BaseCommand
         $title = '';
         $context = new TaskContext($this, $input, $output);
 
-        if ($what == 'blueprint') {
+        if ('blueprint' == $what) {
             if (empty($blueprint)) {
                 throw new \InvalidArgumentException('The required option --blueprint is not set or is empty');
             }
             $template = $this->getConfiguration()->getBlueprints()->getTemplate($config);
             $data = $template->expand($blueprint);
             $data = [
-                $data['configName'] => $data->asArray()
+                $data['configName'] => $data->asArray(),
             ];
-            $title = 'Output of applied blueprint `' . $config . '`';
-        } elseif ($what == 'host') {
+            $title = 'Output of applied blueprint `'.$config.'`';
+        } elseif ('host' == $what) {
             if (!empty($blueprint)) {
                 $data = $this->getConfiguration()->getHostConfigFromBlueprint($config, $blueprint);
             } else {
@@ -97,8 +122,8 @@ class OutputCommand extends BaseCommand
             $data = [
                 $data['configName'] => $data->asArray(),
             ];
-            $title = 'Output of host-configuration `' . $config . '`';
-        } elseif ($what == 'docker') {
+            $title = 'Output of host-configuration `'.$config.'`';
+        } elseif ('docker' == $what) {
             try {
                 $data = $this->getConfiguration()
                     ->getDockerConfig($config)
@@ -108,16 +133,16 @@ class OutputCommand extends BaseCommand
                 $config = $host_config['docker']['configuration'];
                 $data = $this->getConfiguration()->getDockerConfig($config)->asArray();
             }
-            $data = [ $config => $data];
-            $title = 'Output of docker-configuration `' . $config . '`';
-        } elseif ($what == 'global') {
-            $title = 'Output of global configuration `' . $config . '`';
+            $data = [$config => $data];
+            $title = 'Output of docker-configuration `'.$config.'`';
+        } elseif ('global' == $what) {
+            $title = 'Output of global configuration `'.$config.'`';
             $data = $this->getConfiguration()->getAllSettings();
         }
 
         $data = $this->configuration->getPasswordManager()->resolveSecrets($data);
 
-        if ($input->getOption('format') == 'json') {
+        if ('json' == $input->getOption('format')) {
             $content = json_encode($data, JSON_PRETTY_PRINT);
         } else {
             $dumper = new Dumper(2);

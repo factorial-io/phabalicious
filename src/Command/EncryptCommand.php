@@ -12,12 +12,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EncryptCommand extends BaseOptionsCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
             ->setName('encrypt')
             ->setDescription('Encrypts a list of files with a password')
+            ->setHelp('
+Encrypts files with a password.
+
+The source files will be encrypted and stored in the target location.
+If no password is provided via the --password option, phab will prompt for one.
+
+Examples:
+<info>phab encrypt secrets.txt /path/to/output</info>
+<info>phab encrypt config.yaml /encrypted --password=mypassword</info>
+            ')
             ->addArgument(
                 'source',
                 InputArgument::REQUIRED,
@@ -32,24 +42,19 @@ class EncryptCommand extends BaseOptionsCommand
                 'password',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                "the password to use to encrypt the files",
+                'the password to use to encrypt the files',
                 false
             );
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws \Phabalicious\Exception\MissingScriptCallbackImplementation
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      * @throws \Phabalicious\Exception\ValidationFailedException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $source = realpath(dirname($input->getArgument('source'))) . '/' . basename($input->getArgument('source'));
+        $source = realpath(dirname($input->getArgument('source'))).'/'.basename($input->getArgument('source'));
         $target = realpath($input->getArgument('target'));
         $script = [
             sprintf(
@@ -63,7 +68,7 @@ class EncryptCommand extends BaseOptionsCommand
             'mysecret' => [
                 'question' => 'Please provide a password to use for encryption',
                 'hidden' => true,
-            ]
+            ],
         ]);
 
         if (!empty($input->getOption('password'))) {

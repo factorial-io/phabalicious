@@ -59,7 +59,7 @@ Phab will output the current value of the searched property and from which resou
 ## output
 
 ``` bash
-Phab config=<your-config> --blueprint=<your-blueprint-config> output
+phab --config=<your-config> --blueprint=<your-blueprint-config> output
 ```
 
 This command will print the computed configuration from a blueprint as yams. You can copy it and paste it back to the fabfile to make it permanent.
@@ -105,11 +105,25 @@ Will open an interactive shell with `your-config`. It will utilize all necessary
 ``` bash
 phab --config=<your-config> deploy
 phab --config=<your-config> deploy <branch-to-deploy>
+phab --config=<your-config> deploy --arguments <optional-arguments>
 ```
 
-This command will deploy the latest code to the given installation. If the installation-type is not `dev` or `test` the `backupDB`-command is run before the deployment starts. If `<branch-to-deploy>` is stated the specific branch gets deployed.
+This command will deploy the latest code to the given installation.
 
-After a successfull deployment the `reset`-command will be run.
+**Behavior:**
+
+- If `<branch-to-deploy>` is specified, it will deploy that specific branch (overriding the branch configured in the host config)
+- If the host configuration has `backupBeforeDeploy` set to `true`, a database backup will be created before deployment starts
+- After a successful deployment, the `reset`-command will be run
+- Optional arguments can be passed to the deployment process using the `--arguments` (or `-a`) option
+
+**Arguments:**
+
+- `<branch-to-deploy>` (optional) - Specific branch to deploy, if not set the branch from host-config is used
+
+**Options:**
+
+- `--arguments` / `-a` - Pass optional arguments to the deployment process
 
 **Available methods:**
 
@@ -151,18 +165,31 @@ This command will reset your installation
 ## install
 
 ``` bash
-phab config=<your-config> install
+phab --config=<your-config> install
+phab --config=<your-config> install --skip-reset
+phab --config=<your-config> install --force
 ```
 
-This command will install a new Drupal installation with the minimal-distribution. You can install different distributions, see the examples.
+This command will install a new instance on an existing code-base. It runs all tasks necessary to install the application (e.g., installing a database, setting up configuration).
+
+**Behavior:**
+
+- The configuration must have `supportsInstalls` not set to `false` (configurations can explicitly disallow installs)
+- Prompts for confirmation before installing (unless `--force` is used)
+- After installation, runs the `reset` task (unless `--skip-reset` is specified)
+
+**Options:**
+
+- `--skip-reset` - Skip running the reset task after installation
+- `--force` - Skip confirmation prompt
 
 **Available methods:**
 
-*  `drush`
+*  `drush` - for Drupal installations
 
 **Configuration:**
 
-You can add a `installOptions`-section to your fabfile.yaml. Here's an example:
+You can add an `installOptions` section to your fabfile.yaml. For Drupal installations:
 
 ```yaml
 installOptions:
@@ -172,8 +199,9 @@ installOptions:
 
 **Examples:**
 
-* `phab --config=mbb install` will install a new Drupal installation
-* `phab --config=mbb install --skip-reset=1` will install a new Drupal installation and will not run the reset-command afterwards.
+* `phab --config=mbb install` will install a new instance (with confirmation prompt)
+* `phab --config=mbb install --force` will install without confirmation
+* `phab --config=mbb install --skip-reset` will install and skip the reset task afterwards
 
 
 
@@ -231,7 +259,7 @@ If `<what>` is omitted, files and db gets backupped, you can limit this by provi
 
 * `phab -cmbb backup` will backup everything
 * `phab -cmbb backup files` will backup only public and private files.
-* `phan -cmbb backup db` will backup the database only.
+* `phab -cmbb backup db` will backup the database only.
 
 
 ## list:backups
@@ -278,16 +306,33 @@ This command will copy a remote backup-set to your local computer into the curre
 ## copy-from
 
 ``` bash
+phab --config=<dest-config> copy-from <source-config>
 phab --config=<dest-config> copy-from <source-config> <what>
 phab --config=<dest-config> copy-from <source-config> <what> --skip-reset
 phab --config=<dest-config> copy-from <source-config> <what> --skip-drop-db
 ```
 
-This command will copy all files via rsync from `source-config` to `dest-config` and will dump the database from `source-config` and restore it to `dest-config` when `<what>` is omitted.
+This command will copy database and/or files from `source-config` to `dest-config`. The source configuration must have `supportsCopyFrom` set to `true`.
 
-After that the `reset`-command gets executed (if `--skip-reset` is not specified). This is the ideal command to copy a complete installation from one host to another.
+**Behavior:**
 
-You can limit what to copy by adding `db` or `files`  as arguments. `--skip-drop-db` will instrcut phab to not drop the db before the import.
+- If `<what>` is omitted, both database and files will be copied (default: `db` and `files`)
+- Files are copied via rsync from source to destination
+- Database is dumped from source and restored to destination
+- After copying the database, the `reset`-command gets executed (unless `--skip-reset` is specified)
+- By default, the destination database is dropped before import (unless `--skip-drop-db` is specified)
+
+This is the ideal command to copy a complete installation from one host to another.
+
+**Arguments:**
+
+- `<source-config>` (required) - The configuration to copy from
+- `<what>` (optional) - What to copy: `db` and/or `files`. If omitted, both are copied.
+
+**Options:**
+
+- `--skip-reset` - Skip running the reset task after importing the database
+- `--skip-drop-db` - Skip dropping the destination database before importing
 
 **Available methods**
 
@@ -323,6 +368,10 @@ This command will execute the `drush-command` on the remote host specified in `<
 
 ## drupal
 
+``` bash
+phab --config=<config> drupal "<drupal-command>"
+```
+
 This command will execute a drupal-console command on the remote host. Please note, that you'll have to quote the command when it contains spaces.
 
 **Available methods**
@@ -333,6 +382,38 @@ This command will execute a drupal-console command on the remote host. Please no
 
 * `phab --config=local drupal cache:rebuild`
 * `phab --config=local drupal "generate:module --module helloworld"`
+
+## composer
+
+``` bash
+phab --config=<config> composer "<composer-command>"
+```
+
+This command will execute a composer command on the remote host specified in `<config>`. Please note, that you'll have to quote the composer-command when it contains spaces.
+
+**Available methods**
+
+* Only available for the `composer`-method
+
+**Examples**
+
+* `phab --config=staging composer "require drupal/module_name"`
+* `phab --config=local composer update`
+* `phab --config=production composer "install --no-dev"`
+
+## encrypt
+
+``` bash
+phab encrypt <source> <target>
+phab encrypt <source> <target> --password=<password>
+```
+
+This command will encrypt a list of files with a password. The source files will be encrypted and stored in the target location. If no password is provided, phab will prompt for one.
+
+**Examples**
+
+* `phab encrypt secrets.txt secrets.txt.enc` will encrypt secrets.txt and prompt for a password
+* `phab encrypt config.yaml config.yaml.enc --password=mypassword` will encrypt with the specified password
 
 ## platform
 
@@ -518,24 +599,48 @@ phab app:scaffold <path/url-to-scaffold-files> \
   --override="1|0"
 ```
 
-This command will scaffold a new project from a set of scaffold-files. See the dedicated documentation for how to create these files.
+This command will scaffold a new project from a set of scaffold-files. The scaffold-file might contain questions to set options. Values for these questions can be set via environment variables (in upper case snake case) or by passing them via the command line options (using kebab-case).
+
+For more information about scaffolding new apps, please visit the [dedicated documentation](app-scaffold.md).
 
 **Examples**
 * `phab app:scaffold path/to/scaffold.yml` will scaffold the app in the current folder. Phab will ask for the name and the short-name
 * `phab app:scaffold path/to/scaffold.yml --name="Hello World" --short-name="HW"` will scaffold the app with name "Hello World and short-name "HW"
-* `phab app:scaffold https://config.factorial.io/scaffold/drupal/d8.yml` will scaffold a Drupal app from the remote configuration.
+* `phab app:scaffold https://config.factorial.io/scaffold/d9/d9.yml` will scaffold a Drupal 9 app from the remote configuration
+* `phab app:scaffold https://config.factorial.io/scaffold/d9/d9.yml --name "test drupal" --short-name td --php-version 8.1` will scaffold with predefined options
 
 ## app:create
 
 ``` bash
-phab --config=<config> app:create --config-from=<other-config>
+phab --config=<config> app:create
+phab --config=<config> app:create --copy-from=<other-config>
+phab --blueprint=<blueprint-name> --config=<config> app:create
+phab --config=<config> app:create --force
 ```
 
-This command will create a new app instance from a given config. Most useful with the usage of blueprints.
+This command will create a new app instance from an existing config. Phabalicious executes a list of customizable stages:
 
-The creation is done in several steps which can be customized. If you apply the `--config-from`-option an additional copyFrom is done afterwards.
+- preparing the destination
+- install the current code base
+- start the application
+- install its dependencies
+- install the app
 
-For a deeper explanation please have a look into the dedicated documentation
+**Behavior:**
+
+- If the target directory already exists, phab will prompt for confirmation (unless `--force` is used)
+- If phab detects an already created app (via `.projectCreated` lock file), it will deploy the current application instead of creating a new one
+- After creation completes, phab will run either `copy-from` (if `--copy-from` option provided) or `reset`
+- The stages can be customized via the `appStages.create` configuration setting
+
+**Options:**
+
+- `--copy-from=<other-config>` - Copy data from another configuration after creation
+- `--force` - Skip confirmation prompt if target directory exists
+
+**Most useful with blueprints** - Using blueprints makes it possible to create a new application which is derived from a single variable (most often the branch name). Useful for feature-based deployments.
+
+For a deeper explanation please have a look into the [dedicated documentation](app-create-destroy.md)
 
 ## app:update
 
@@ -543,7 +648,7 @@ For a deeper explanation please have a look into the dedicated documentation
 phab --config=<config> app:update
 ```
 
-This command will update the code-base to the latest changes. When using the crush-method, drupal core will be updated to the latest version, if using `composer` then composer will be used to update the existing code.
+This command will update the code-base to the latest changes. When using the drush-method, Drupal core will be updated to the latest version (but only if `composer` is not used). If using `composer`, then composer will be used to update the existing code.
 
 **Available methods**
 
@@ -554,9 +659,20 @@ This command will update the code-base to the latest changes. When using the cru
 
 ``` bash
 phab --config=<config> app:destroy
+phab --blueprint=<blueprint-name> --config=<config> app:destroy
 ```
 
-This command will destroy an app from a given configuration. The process has several steps. Caution: there will be no backup!
+This command will destroy an existing app from a given configuration. The process executes several stages:
+
+- spin down the application
+- delete the containers/pods
+- delete the code base
+
+Using blueprints makes it possible to delete an existing application which is derived from a single variable (most often the branch name). Useful for feature-based deployments.
+
+**Caution: there will be no backup!**
+
+For more information please have a look into the [dedicated documentation](app-create-destroy.md)
 
 ## self-update
 
@@ -603,15 +719,15 @@ phab yarn lint --config hostB
 
 This will run a yarn command on the given configuration. Make sure, that your host config has `yarn` as a need a `yarn.rootFolder` points to the folder containing package.json.
 
-##variable:pull
+## variable:pull
 
 ```bash
 phab -chost variable:pull path/to/yaml.file
 ```
 
-This will pull all variables listed in `path/to/yaml.file` and put the values into the yaml file and store it again. (Works currently only for D7). `variable:pull` and `variable:push` are usefull to retrieve a list of variables and restore them at some point in the future.
+This will pull all variables listed in `path/to/yaml.file` and put the values into the yaml file and store it again. (Works currently only for D7). `variable:pull` and `variable:push` are useful to retrieve a list of variables and restore them at some point in the future.
 
-##variable:push
+## variable:push
 
 ```bash
 phab -chost variable:push path/to/yaml.file
@@ -643,10 +759,23 @@ This command will install a new database.
 ## db:drop
 
 ```bash
-phab -chost db:install
+phab -chost db:drop
 ```
 
 This command will drop all tables in a database.
+
+## db:query
+
+```bash
+phab -chost db:query "<sql-query>"
+```
+
+This command will run a query against the database and display the results.
+
+**Examples**
+
+* `phab -chost db:query "SELECT * FROM users LIMIT 10"`
+* `phab -chost db:query "SHOW TABLES"`
 
 ## db:shell
 

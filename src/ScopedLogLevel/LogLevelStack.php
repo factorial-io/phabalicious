@@ -4,7 +4,6 @@ namespace Phabalicious\ScopedLogLevel;
 
 class LogLevelStack implements LoglevelStackInterface
 {
-
     private $stack = [];
     private $defaultLogLevel;
 

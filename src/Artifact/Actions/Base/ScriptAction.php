@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\Artifact\Actions\Base;
 
 use Phabalicious\Artifact\Actions\ActionBase;
@@ -39,7 +38,7 @@ class ScriptAction extends ActionBase
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $install_dir,
-        string $target_dir
+        string $target_dir,
     ) {
         $dir = $this->runInTargetDir ? $target_dir : $install_dir;
         $shell->pushWorkingDir($dir);
@@ -51,12 +50,12 @@ class ScriptAction extends ActionBase
         $script = $context->getConfigurationService()->getMethodFactory()->getMethod('script');
 
         if (!$script_data = $this->getArgument('script')) {
-            if (!$script_name  = $this->getArgument('name')) {
+            if (!$script_name = $this->getArgument('name')) {
                 $script_data = $this->getArguments();
             } else {
                 $script_data = $context->getConfigurationService()->findScript($host_config, $script_name);
                 if (!$script_data) {
-                    throw new \InvalidArgumentException(sprintf("Could not find named script `%s`", $script_name));
+                    throw new \InvalidArgumentException(sprintf('Could not find named script `%s`', $script_name));
                 }
             }
         }

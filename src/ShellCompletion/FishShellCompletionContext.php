@@ -3,21 +3,9 @@
 namespace Phabalicious\ShellCompletion;
 
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Exception\BlueprintTemplateNotFoundException;
-use Phabalicious\Exception\FabfileNotFoundException;
-use Phabalicious\Exception\FabfileNotReadableException;
-use Phabalicious\Exception\MismatchedVersionException;
-use Phabalicious\Exception\MissingDockerHostConfigException;
-use Phabalicious\Exception\MissingHostConfigException;
-use Phabalicious\Exception\ShellProviderNotFoundException;
-use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Facade;
-use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 
 class FishShellCompletionContext extends CompletionContext

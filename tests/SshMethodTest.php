@@ -10,7 +10,6 @@ use Psr\Log\AbstractLogger;
 
 class SshMethodTest extends PhabTestCase
 {
-
     /**
      * @var SshMethod
      */
@@ -32,7 +31,7 @@ class SshMethodTest extends PhabTestCase
             'port' => 22,
             'rootFolder' => '/',
             'shellExecutable' => '/usr/bin/ssh',
-            'configName' => 'test'
+            'configName' => 'test',
         ], '');
         $this->method->createShellProvider([])->validateConfig($config, $errors);
         $this->assertEquals($errors->hasErrors(), false);
@@ -44,7 +43,7 @@ class SshMethodTest extends PhabTestCase
 
         $this->method->createShellProvider([])->validateConfig(new Node([
             'host' => 'localhost',
-            'configName' => 'test'
+            'configName' => 'test',
         ], ''), $errors);
         $this->assertEquals(true, $errors->hasErrors());
         $this->assertEqualsCanonicalizing(
@@ -60,7 +59,7 @@ class SshMethodTest extends PhabTestCase
         $this->method->createShellProvider([])->validateConfig(new Node([
             'host' => 'localhost',
             'configName' => 'test',
-            'rootFolder' => '/some/rootFolder/'
+            'rootFolder' => '/some/rootFolder/',
         ], ''), $errors);
         $this->assertEquals(true, $errors->hasErrors());
         $this->assertEqualsCanonicalizing(
@@ -92,7 +91,6 @@ class SshMethodTest extends PhabTestCase
         );
     }
 
-
     public function testGetDefaultConfig()
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
@@ -105,7 +103,7 @@ class SshMethodTest extends PhabTestCase
             'user' => 'user',
             'host' => 'host',
             'sshTunnel' => [
-            ]
+            ],
         ], '');
         $shell_provider = $this->method->createShellProvider([]);
         $result = $shell_provider->getDefaultConfig($configuration_service, $config);
@@ -135,7 +133,7 @@ class SshMethodTest extends PhabTestCase
                 'name' => 'test',
             ],
             'sshTunnel' => [
-            ]
+            ],
         ], '');
         $shell_provider = $this->method->createShellProvider([]);
         $result = $shell_provider->getDefaultConfig($configuration_service, $config);

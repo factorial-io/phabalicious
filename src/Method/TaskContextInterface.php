@@ -2,7 +2,6 @@
 
 namespace Phabalicious\Method;
 
-use Phabalicious\Command\BaseCommand;
 use Phabalicious\Command\BaseOptionsCommand;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\ShellProvider\CommandResult;
@@ -34,11 +33,11 @@ interface TaskContextInterface
 
     public function setCommand(BaseOptionsCommand $command);
 
-    public function getCommand() : BaseOptionsCommand;
+    public function getCommand(): BaseOptionsCommand;
 
     public function setConfigurationService(ConfigurationService $service);
 
-    public function getConfigurationService(): ConfigurationService;
+    public function getConfigurationService(): ?ConfigurationService;
 
     public function setCommandResult(CommandResult $command_result);
 
@@ -50,8 +49,6 @@ interface TaskContextInterface
 
     /**
      * @param string $key
-     * @param mixed $default
-     * @return mixed
      */
     public function getResult($key, $default = null): mixed;
 
@@ -59,10 +56,7 @@ interface TaskContextInterface
 
     public function clearResults();
 
-    /**
-     * @return ShellProviderInterface|null
-     */
-    public function getShell() : ?ShellProviderInterface;
+    public function getShell(): ?ShellProviderInterface;
 
     public function setShell(ShellProviderInterface $shell);
 
@@ -72,13 +66,7 @@ interface TaskContextInterface
 
     public function askQuestion(string $string);
 
-    /**
-     * @return PasswordManagerInterface
-     */
-    public function getPasswordManager(): PasswordManagerInterface;
+    public function getPasswordManager(): ?PasswordManagerInterface;
 
-    /**
-     * @return SymfonyStyle
-     */
     public function io(): SymfonyStyle;
 }

@@ -4,31 +4,25 @@ namespace Phabalicious\Utilities;
 
 use Composer\Autoload\ClassLoader;
 use Composer\Semver\Comparator;
-use MyProject\Container;
+use Exception;
 use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Exception\MismatchedVersionException;
-use Phabalicious\Method\MethodFactory;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Reference;
 
 class PluginDiscovery
 {
-
-    /**
-     * @var ClassLoader|null;
-     */
-    protected static $autoloader = null;
+    protected static ?ClassLoader $autoloader;
 
     public static function discover(
         $application_version,
         $paths,
         $interface_to_implement,
         $prefix,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ) {
         $result = [];
         foreach ($paths as $path) {
@@ -44,12 +38,13 @@ class PluginDiscovery
         $path,
         $interface_to_implement,
         $prefix,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ) {
         $application_version = Utilities::getNextStableVersion($application_version);
 
         if (!is_dir($path)) {
             $logger->warning(sprintf('PluginDiscovery: %s is not a directory, aborting...', $path));
+
             return;
         }
 
@@ -66,12 +61,12 @@ class PluginDiscovery
 
         $contents = scandir($path);
         foreach ($contents as $filename) {
-            if (pathinfo($filename, PATHINFO_EXTENSION) !== 'php') {
+            if ('php' !== pathinfo($filename, PATHINFO_EXTENSION)) {
                 continue;
             }
-            $logger->debug('Inspecting php-file ' . $filename);
+            $logger->debug('Inspecting php-file '.$filename);
             $st = get_declared_classes();
-            require_once $path . '/' . $filename;
+            require_once $path.'/'.$filename;
             $diff = array_diff(get_declared_classes(), $st);
 
             foreach ($diff as $class) {
@@ -83,20 +78,20 @@ class PluginDiscovery
                     ->implementsInterface($interface_to_implement);
 
                 $logger->debug(sprintf(
-                    "%s is instantiable: %s",
+                    '%s is instantiable: %s',
                     $class,
-                    $is_instantiable ? "YES" : "NO"
+                    $is_instantiable ? 'YES' : 'NO'
                 ));
                 $logger->debug(sprintf(
-                    "%s implements PluginInterface: %s",
+                    '%s implements PluginInterface: %s',
                     $class,
-                    $implements_plugin_interface ? "YES" : "NO"
+                    $implements_plugin_interface ? 'YES' : 'NO'
                 ));
                 $logger->debug(sprintf(
-                    "%s implements implements %s: %s",
+                    '%s implements implements %s: %s',
                     $class,
                     $interface_to_implement,
-                    $implements_needed_interface ? "YES" : "NO"
+                    $implements_needed_interface ? 'YES' : 'NO'
                 ));
 
                 if ($is_instantiable
@@ -111,19 +106,12 @@ class PluginDiscovery
                             $application_version
                         ));
 
-                        throw new MismatchedVersionException(
-                            sprintf(
-                                'Could not use plugin from %s. %s is required, current app is %s',
-                                $path . '/' . $filename,
-                                $class::requires(),
-                                $application_version
-                            )
-                        );
+                        throw new MismatchedVersionException(sprintf('Could not use plugin from %s. %s is required, current app is %s', $path.'/'.$filename, $class::requires(), $application_version));
                     }
 
-                    $instance = new $class;
+                    $instance = new $class();
                     $result[$instance->getName()] = $instance;
-                    $logger->notice('Adding phabalicious plugin ' . $reflection->getName());
+                    $logger->notice('Adding phabalicious plugin '.$reflection->getName());
                 }
             }
         }
@@ -131,7 +119,7 @@ class PluginDiscovery
 
     public static function discoverFromFabfile(
         ContainerInterface $container,
-        OutputInterface $output
+        OutputInterface $output,
     ) {
         $application = $container->get(Application::class);
         $logger = $container->get(Logger::class);
@@ -144,12 +132,12 @@ class PluginDiscovery
             $base_path = $config->getFabfilePath();
             if ($plugins = $config->getSetting('plugins', false)) {
                 if (!is_array($plugins)) {
-                    $plugins = [ $plugins ];
+                    $plugins = [$plugins];
                 }
-                /** @var \Phabalicious\Utilities\AvailableMethodsAndCommandsPluginInterface[] $result */
+                /** @var AvailableMethodsAndCommandsPluginInterface[] $result */
                 $result = [];
                 foreach ($plugins as $path) {
-                    $path = $base_path . DIRECTORY_SEPARATOR . $path;
+                    $path = $base_path.DIRECTORY_SEPARATOR.$path;
                     $prev_count = count($result);
                     self::scanAndRegister(
                         $application->getVersion(),
@@ -160,16 +148,17 @@ class PluginDiscovery
                         $logger
                     );
                     if (count($result) == $prev_count) {
-                        $output->writeln(sprintf("<fg=yellow>Could not load plugins from `%s`...</>", $path));
+                        $output->writeln(sprintf('<fg=yellow>Could not load plugins from `%s`...</>', $path));
                     }
                 }
                 $config = $container->get(ConfigurationService::class);
                 $methods = $config->getMethodFactory();
 
+                /* @var AvailableMethodsAndCommandsPluginInterface plugin */
                 foreach ($result as $plugin) {
                     if ($output->isVerbose()) {
                         $output->writeln(sprintf(
-                            "<fg=Blue>Registering found plugin <fg=yellow>%s</> ...</>",
+                            '<fg=Blue>Registering found plugin <fg=yellow>%s</> ...</>',
                             $plugin->getName()
                         ));
                     }
@@ -185,7 +174,7 @@ class PluginDiscovery
                 }
             }
         } catch (\Exception $e) {
-            ; // Ignore exception
+            // Ignore exception
         }
     }
 }

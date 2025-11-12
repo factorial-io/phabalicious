@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -14,21 +16,30 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class WorkspaceUpdateCommand extends ScaffoldBaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
             ->setName('workspace:update')
             ->setDescription('Updates a multibasebox workspace')
-            ->setHelp('Updates a multibasebox workspace on your local.');
+            ->setHelp('
+Updates a multibasebox workspace on your local machine.
+
+This command updates the configuration and setup scripts for a multibasebox workspace.
+A multibasebox workspace is a local development environment for managing multiple projects.
+
+Behavior:
+- Searches for the workspace root folder by looking for setup-docker.sh
+  (traverses up to 10 directory levels from current directory)
+- Uses the mbb/mbb-update.yml scaffold template to update workspace files
+- Updates workspace configuration based on the workspace name
+
+Examples:
+<info>phab workspace:update</info>
+            ');
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws MismatchedVersionException
      * @throws ValidationFailedException
      * @throws FabfileNotReadableException
@@ -40,7 +51,7 @@ class WorkspaceUpdateCommand extends ScaffoldBaseCommand
     {
         $context = $this->createContext($input, $output);
 
-        $url  = $this->scaffolder->getLocalScaffoldFile('mbb/mbb-update.yml');
+        $url = $this->scaffolder->getLocalScaffoldFile('mbb/mbb-update.yml');
         $root_folder = $this->findRootFolder(getcwd());
         if (!$root_folder) {
             throw new \InvalidArgumentException('Could not find multibasebox root folder!');
@@ -51,19 +62,21 @@ class WorkspaceUpdateCommand extends ScaffoldBaseCommand
         $options = new Options();
         $options->setUseCacheTokens(false);
         $this->scaffold($url, $root_folder, $context, ['name' => $name], $options);
+
         return 0;
     }
 
     private function findRootFolder($start_folder, $max_level = 10)
     {
-        if (file_exists($start_folder . '/setup-docker.sh')) {
+        if (file_exists($start_folder.'/setup-docker.sh')) {
             return $start_folder;
         }
-        $max_level--;
+        --$max_level;
         $start_folder = dirname($start_folder);
-        if ($max_level == 0 || $start_folder == DIRECTORY_SEPARATOR) {
+        if (0 == $max_level || DIRECTORY_SEPARATOR == $start_folder) {
             return false;
         }
+
         return $this->findRootFolder($start_folder, $max_level - 1);
     }
 }

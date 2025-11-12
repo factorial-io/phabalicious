@@ -1,4 +1,7 @@
 grumphp:
+    environment:
+      variables:
+        PHP_CS_FIXER_IGNORE_ENV: "1"
     process_timeout: 180
     stop_on_failure: true
     tasks:
@@ -13,3 +16,9 @@ grumphp:
         group: ['default']
       phpstan:
         memory_limit: "2G"
+      phpcsfixer:
+        config_contains_finder: true
+        config: .php-cs-fixer.php
+        verbose: true
+        diff: false
+        triggered_by: ['php']

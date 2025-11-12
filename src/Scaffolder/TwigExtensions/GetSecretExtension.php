@@ -4,12 +4,12 @@ namespace Phabalicious\Scaffolder\TwigExtensions;
 
 use Phabalicious\Utilities\PasswordManagerInterface;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 class GetSecretExtension extends AbstractExtension
 {
-
     /**
-     * @var \Phabalicious\Utilities\PasswordManagerInterface
+     * @var PasswordManagerInterface
      */
     private $passwordManager;
 
@@ -21,7 +21,7 @@ class GetSecretExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new \Twig\TwigFunction('secret', [$this, "getSecret"]),
+            new TwigFunction('secret', [$this, 'getSecret']),
         ];
     }
 

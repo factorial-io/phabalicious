@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: stephan
  * Date: 10.09.18
- * Time: 22:03
+ * Time: 22:03.
  */
 
 namespace Phabalicious\Tests;
@@ -12,27 +13,23 @@ use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Configuration\Storage\Store;
 use Phabalicious\Exception\ArgumentParsingException;
 use Phabalicious\Utilities\Utilities;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 
 class UtilitiesTest extends PhabTestCase
 {
-
     public function testMergeData(): void
     {
-
         $a = [
             'a' => 1,
             'b' => 2,
             'y' => ['a' => '1', 'b' => '2'],
-            'z' => [1, 2, 3]
+            'z' => [1, 2, 3],
         ];
 
         $b = [
             'b' => 3,
             'c' => 4,
             'y' => false,
-            'z' => [4, 5, 6]
+            'z' => [4, 5, 6],
         ];
 
         $this->assertEquals([
@@ -40,7 +37,7 @@ class UtilitiesTest extends PhabTestCase
             'b' => 3,
             'c' => 4,
             'y' => false,
-            'z' => [4, 5, 6]
+            'z' => [4, 5, 6],
         ], Utilities::mergeData($a, $b));
 
         $this->assertEquals([
@@ -48,7 +45,7 @@ class UtilitiesTest extends PhabTestCase
             'b' => 2,
             'c' => 4,
             'y' => ['a' => '1', 'b' => '2'],
-            'z' => [1, 2, 3]
+            'z' => [1, 2, 3],
         ], Utilities::mergeData($b, $a));
 
         $this->assertEquals(
@@ -56,7 +53,7 @@ class UtilitiesTest extends PhabTestCase
                 'a' => [
                     0 => 1,
                     1 => 2,
-                    'db' => 1
+                    'db' => 1,
                 ],
             ],
             Utilities::mergeData(
@@ -67,7 +64,7 @@ class UtilitiesTest extends PhabTestCase
 
         $this->assertEquals(
             [
-                'a' => false
+                'a' => false,
             ],
             Utilities::mergeData(
                 ['a' => ['a' => 1, 'b' => 2]],
@@ -85,20 +82,21 @@ class UtilitiesTest extends PhabTestCase
             )
         );
     }
+
     public function testNodeMergeData(): void
     {
         $a = new Node([
             'a' => 1,
             'b' => 2,
             'y' => ['a' => '1', 'b' => '2'],
-            'z' => [1, 2, 3]
-        ], "a");
+            'z' => [1, 2, 3],
+        ], 'a');
 
         $b = new Node([
             'b' => 3,
             'c' => 4,
             'y' => false,
-            'z' => [4, 5, 6]
+            'z' => [4, 5, 6],
         ], 'b');
 
         $this->assertEquals([
@@ -106,7 +104,7 @@ class UtilitiesTest extends PhabTestCase
             'b' => 3,
             'c' => 4,
             'y' => false,
-            'z' => [4, 5, 6]
+            'z' => [4, 5, 6],
         ], Node::mergeData($a, $b)->asArray());
 
         $this->assertEquals([
@@ -114,7 +112,7 @@ class UtilitiesTest extends PhabTestCase
             'b' => 2,
             'c' => 4,
             'y' => ['a' => '1', 'b' => '2'],
-            'z' => [1, 2, 3]
+            'z' => [1, 2, 3],
         ], Node::mergeData($b, $a)->asArray());
 
         $this->assertEquals(
@@ -122,7 +120,7 @@ class UtilitiesTest extends PhabTestCase
                 'a' => [
                     0 => 1,
                     1 => 2,
-                    'db' => 1
+                    'db' => 1,
                 ],
             ],
             Node::mergeData(
@@ -133,7 +131,7 @@ class UtilitiesTest extends PhabTestCase
 
         $this->assertEquals(
             [
-                'a' => false
+                'a' => false,
             ],
             Utilities::mergeData(
                 ['a' => ['a' => 1, 'b' => 2]],
@@ -155,34 +153,33 @@ class UtilitiesTest extends PhabTestCase
     public function testProtectedProperties(): void
     {
         $a = new Node([
-            "protected" => [
-                "foo.bar",
-                "foo.foobar",
-                "bar.two"
+            'protected' => [
+                'foo.bar',
+                'foo.foobar',
+                'bar.two',
             ],
-            "foo" => [
-                "bar" => "I am protected",
-                "baz" => "I will be overridden",
-                "foobar" => "I am also protected",
+            'foo' => [
+                'bar' => 'I am protected',
+                'baz' => 'I will be overridden',
+                'foobar' => 'I am also protected',
             ],
-            "bar" => [
-                "one" => 1,
-                "two" => 2,
-            ]
+            'bar' => [
+                'one' => 1,
+                'two' => 2,
+            ],
         ], 'a');
 
-
         $b = new Node([
-            "foo" => [
-                "bar" => "Does not matter",
-                "baz" => "I am overridden",
-                "foobar" => "Does not matter either",
+            'foo' => [
+                'bar' => 'Does not matter',
+                'baz' => 'I am overridden',
+                'foobar' => 'Does not matter either',
             ],
-            "bar" => [
-                "one" => 11,
-                "two" => 22,
-            ]
-        ], "b");
+            'bar' => [
+                'one' => 11,
+                'two' => 22,
+            ],
+        ], 'b');
 
         $result = Node::mergeData($a, $b);
 
@@ -220,15 +217,14 @@ class UtilitiesTest extends PhabTestCase
         $b = new Node([
             'a' => 0,
             'b' => [
-                'd' => 'foobarbaz'
+                'd' => 'foobarbaz',
             ],
             'c' => ['a' => 'bla', 'b' => 'blubb'],
-
         ], 'base');
 
         $c = $a->baseonTop($b);
 
-        $this->assertEquals([0,1], $c['a']); // non associative arrays may not be merged.
+        $this->assertEquals([0, 1], $c['a']); // non associative arrays may not be merged.
         $this->assertEquals('foo', $c['b']['a']);
         $this->assertEquals('bar', $c['b']['b']);
         $this->assertEquals('foobar', $c['b']['c']);
@@ -246,14 +242,14 @@ class UtilitiesTest extends PhabTestCase
         $commands = [
             'First %one.two% example',
             'Second %one.two% %one.two% example',
-            'This %one.two% %one.three% example'
+            'This %one.two% %one.three% example',
         ];
         $result = Utilities::expandStrings($commands, $replacements);
 
         $this->assertEquals([
             'First Example 1 example',
             'Second Example 1 Example 1 example',
-            'This Example 1 Example 2 example'
+            'This Example 1 Example 2 example',
         ], $result);
     }
 
@@ -271,9 +267,9 @@ class UtilitiesTest extends PhabTestCase
                 'three' => [
                     'one' => 'One',
                     'two' => 'Two',
-                    'three' => 'Three'
-                ]
-            ]
+                    'three' => 'Three',
+                ],
+            ],
         ];
         $result = Utilities::expandVariables($data);
 
@@ -304,17 +300,17 @@ class UtilitiesTest extends PhabTestCase
     }
 
     /**
-     * @throws \Phabalicious\Exception\ArgumentParsingException
+     * @throws ArgumentParsingException
      */
     public function testExtractArguments(): void
     {
-        $this->assertEquals(["hello world"], Utilities::extractArguments('hello world'));
-        $this->assertEquals(["hello world"], Utilities::extractArguments('"hello world"'));
-        $this->assertEquals(["hello world", "10"], Utilities::extractArguments('"hello world", 10'));
-        $this->assertEquals(["10", "hello world", "20"], Utilities::extractArguments('10, "hello world", 20'));
-        $this->assertEquals(["10", "hello, world", "20"], Utilities::extractArguments('10, "hello, world", 20'));
+        $this->assertEquals(['hello world'], Utilities::extractArguments('hello world'));
+        $this->assertEquals(['hello world'], Utilities::extractArguments('"hello world"'));
+        $this->assertEquals(['hello world', '10'], Utilities::extractArguments('"hello world", 10'));
+        $this->assertEquals(['10', 'hello world', '20'], Utilities::extractArguments('10, "hello world", 20'));
+        $this->assertEquals(['10', 'hello, world', '20'], Utilities::extractArguments('10, "hello, world", 20'));
         $this->assertEquals(
-            [1, "  hello, world  ", "foo bar"],
+            [1, '  hello, world  ', 'foo bar'],
             Utilities::extractArguments('1, "  hello, world  ", foo bar')
         );
     }
@@ -322,13 +318,13 @@ class UtilitiesTest extends PhabTestCase
     public function testExtractInvalidArguments(): void
     {
         $this->expectException(ArgumentParsingException::class);
-        $this->assertEquals(["hello world", "10"], Utilities::extractArguments('"hello world, 10'));
+        $this->assertEquals(['hello world', '10'], Utilities::extractArguments('"hello world, 10'));
     }
 
     public function testExtractInvalidArguments2(): void
     {
         $this->expectException(ArgumentParsingException::class);
-        $this->assertEquals(["hello world", "10"], Utilities::extractArguments('"hello world", "10'));
+        $this->assertEquals(['hello world', '10'], Utilities::extractArguments('"hello world", "10'));
     }
 
     public function testSlugify(): void
@@ -339,19 +335,19 @@ class UtilitiesTest extends PhabTestCase
 
     public function testGetNextStableVersion(): void
     {
-        $this->assertEquals("3.6.1", Utilities::getNextStableVersion("3.6.1"));
-        $this->assertEquals("3.6", Utilities::getNextStableVersion("3.6"));
-        $this->assertEquals("3.6.0", Utilities::getNextStableVersion("3.6.0-beta.1"));
-        $this->assertEquals("3.6.10", Utilities::getNextStableVersion("3.6.10-beta.5"));
-        $this->assertEquals("3.7.10", Utilities::getNextStableVersion("3.7.10-alpha.5"));
+        $this->assertEquals('3.6.1', Utilities::getNextStableVersion('3.6.1'));
+        $this->assertEquals('3.6', Utilities::getNextStableVersion('3.6'));
+        $this->assertEquals('3.6.0', Utilities::getNextStableVersion('3.6.0-beta.1'));
+        $this->assertEquals('3.6.10', Utilities::getNextStableVersion('3.6.10-beta.5'));
+        $this->assertEquals('3.7.10', Utilities::getNextStableVersion('3.7.10-alpha.5'));
     }
 
     public function testCleanupString(): void
     {
         $mappings = [
-            "1.0" => "1.0",
-            "whatever it takes/foo bar" => "whatever-it-takes-foo-bar",
-            "[äöü]" => "-äöü"
+            '1.0' => '1.0',
+            'whatever it takes/foo bar' => 'whatever-it-takes-foo-bar',
+            '[äöü]' => '-äöü',
         ];
 
         foreach ($mappings as $input => $result) {
@@ -361,8 +357,8 @@ class UtilitiesTest extends PhabTestCase
 
     public function testArgumentsParsing(): void
     {
-        $args = Utilities::parseArguments("password=aFQd=BDq_ys9j72frDgM");
-        $this->assertEquals("aFQd=BDq_ys9j72frDgM", $args['password']);
+        $args = Utilities::parseArguments('password=aFQd=BDq_ys9j72frDgM');
+        $this->assertEquals('aFQd=BDq_ys9j72frDgM', $args['password']);
     }
 
     /**

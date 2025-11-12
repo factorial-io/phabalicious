@@ -10,7 +10,6 @@ use Phabalicious\Validation\ValidationService;
 
 class DdevMethod extends BaseMethod implements MethodInterface
 {
-
     public function getName(): string
     {
         return 'ddev';
@@ -23,8 +22,8 @@ class DdevMethod extends BaseMethod implements MethodInterface
 
     public function getGlobalSettings(ConfigurationService $configuration): Node
     {
-        $node = new Node([], $this->getName() . ' global settings');
-        $config_file = $configuration->getFabfilePath() . '/.ddev/config.yaml';
+        $node = new Node([], $this->getName().' global settings');
+        $config_file = $configuration->getFabfilePath().'/.ddev/config.yaml';
         if (file_exists($config_file)) {
             $data = Node::parseYamlFile($config_file);
             $node->set('ddev', $data);
@@ -33,7 +32,7 @@ class DdevMethod extends BaseMethod implements MethodInterface
         return $node;
     }
 
-    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors)
+    public function validateGlobalSettings(Node $settings, ValidationErrorBagInterface $errors): void
     {
         if ($settings->has('ddev')) {
             $ddev = $settings['ddev'];
@@ -42,9 +41,9 @@ class DdevMethod extends BaseMethod implements MethodInterface
         }
     }
 
-    public function alterConfig(ConfigurationService $configuration_service, Node $data)
+    public function alterConfig(ConfigurationService $configuration_service, Node $data): void
     {
-        $tokens =[
+        $tokens = [
             'global' => Utilities::getGlobalReplacements($configuration_service),
             'settings' => $configuration_service->getAllSettings(),
             'host' => $data->asArray(),
@@ -61,7 +60,7 @@ class DdevMethod extends BaseMethod implements MethodInterface
     public function getMethodDependencies(MethodFactory $factory, \ArrayAccess $data): array
     {
         return [
-            DockerMethod::METHOD_NAME
+            DockerMethod::METHOD_NAME,
         ];
     }
 }

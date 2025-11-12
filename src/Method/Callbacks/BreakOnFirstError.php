@@ -8,7 +8,6 @@ use Phabalicious\Scaffolder\Callbacks\CallbackInterface;
 
 class BreakOnFirstError implements CallbackInterface
 {
-
     protected $method;
 
     public static function getName(): string
@@ -18,7 +17,7 @@ class BreakOnFirstError implements CallbackInterface
 
     public static function requires(): string
     {
-        return "3.6";
+        return '3.6';
     }
 
     public function __construct(ScriptMethod $method)

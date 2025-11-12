@@ -1,10 +1,11 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
+
+/** @noinspection PhpParamsInspection */
 
 namespace Phabalicious\Tests;
 
 use Phabalicious\Command\BaseCommand;
 use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
@@ -14,21 +15,15 @@ use Phabalicious\Validation\ValidationErrorBag;
 use Psr\Log\AbstractLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\InputStream;
-use Symfony\Component\Process\Process;
 
 class SshShellProviderTest extends PhabTestCase
 {
-    /** @var \Phabalicious\ShellProvider\SshShellProvider */
     private SshShellProvider $shellProvider;
 
     private $config;
 
     private $logger;
 
-    /**
-     * @var \Phabalicious\Method\TaskContext
-     */
     private TaskContext $context;
 
     public function setup(): void
@@ -37,7 +32,7 @@ class SshShellProviderTest extends PhabTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->config->method("getPasswordManager")->willReturn(new PasswordManager());
+        $this->config->method('getPasswordManager')->willReturn(new PasswordManager());
 
         $logger = $this->logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 
@@ -62,7 +57,7 @@ class SshShellProviderTest extends PhabTestCase
         $errors = new ValidationErrorBag();
         $this->shellProvider->validateConfig(new Node([], ''), $errors);
         $this->assertEqualsCanonicalizing(
-            ['host', 'port', 'rootFolder', 'rootFolder', 'shellExecutable','user'],
+            ['host', 'port', 'rootFolder', 'rootFolder', 'shellExecutable', 'user'],
             $errors->getKeysWithErrors()
         );
     }
@@ -88,7 +83,6 @@ class SshShellProviderTest extends PhabTestCase
         $this->assertEquals('ssh', $this->shellProvider->getName());
     }
 
-
     /**
      * @group docker
      */
@@ -113,7 +107,6 @@ class SshShellProviderTest extends PhabTestCase
         $this->assertTrue(count($result->getOutput()) >= 1);
         $this->assertEquals($test_dir, trim($result->getOutput()[0]));
     }
-
 
     /**
      * @group docker

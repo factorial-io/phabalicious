@@ -9,31 +9,22 @@ use Twig\Environment;
 
 class CopyAssetsCallback extends CopyAssetsBaseCallback
 {
-
     public function __construct(ConfigurationService $configuration, Environment $twig)
     {
         parent::__construct($configuration, $twig);
         $this->addNewFileContentsHandler(new TwigFileContentsHandler($twig));
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getName(): string
     {
         return 'copy_assets';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function requires(): string
     {
         return '3.4';
     }
-    /**
-     * @inheritDoc
-     */
+
     public function handle(TaskContextInterface $context, ...$arguments)
     {
         $this->copyAssets($context, $arguments[0], $arguments[1] ?? 'assets', $arguments[2] ?? false);

@@ -1,32 +1,36 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
 use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AppUpdateCommand extends BaseCommand
 {
-    protected static $defaultName = 'about';
+    protected static $defaultName = 'app:update';
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
             ->setName('app:update')
             ->setDescription('Updates the code-base of a project')
-            ->setHelp('Updates the code-base of a project');
+            ->setHelp('
+Updates the code-base to the latest changes.
+
+When using the drush method, Drupal core will be updated to the latest version
+(but only if composer is not used). If using composer, then composer will be
+used to update the existing code.
+
+Examples:
+<info>phab --config=myconfig app:update</info>
+            ');
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException

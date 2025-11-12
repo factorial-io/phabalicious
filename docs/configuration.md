@@ -51,6 +51,7 @@ List here all needed methods for that type of project. Available methods are:
   * `sqlite` to add support for a sqlite database
   * `laravel` for laravel-based applications
   * `k8s` to interact with an application hosted in a Kubernetes cluster
+  * `scotty` for deploying to Scotty mPaaS
 
 Needs can be set also per `host`. You can also declare `additionalNeeds` per host. If you need to "remove" a need on a per host-bases you need to completely override `needs`.
 
@@ -679,5 +680,107 @@ configurationManagement:
 rsyncOptions:
   - --delete
 ```
+
+## scotty
+
+Configuration options for deploying applications to Scotty mPaaS. Make sure to add `scotty` to your `needs` section.
+
+### Required Configuration
+
+* `server`: The URL of your Scotty server
+* `access-token`: Authentication token for the Scotty server
+
+### Optional Configuration
+
+* `app-name`: Name of the application in Scotty (defaults to the host configuration name)
+* `app-blueprint`: Blueprint to use for deployment (e.g., `nginx-lagoon`, `drupal-lagoon`)
+* `basic-auth`: HTTP basic authentication for the deployed application
+* `registry`: Docker registry name to use for images
+* `ttl`: Time-to-live for the application (`1h`, `7d`, `forever`)
+* `allow-robots`: Boolean flag to allow/disallow robot indexing
+* `services`: Mapping of service names to port numbers
+* `environment`: Environment variables for the application
+* `custom-domains`: Custom domain mappings to services
+* `scaffold`: Configuration for copying files and assets
+
+### Basic Example
+
+```yaml
+needs:
+  - scotty
+
+scotty:
+  server: https://scotty.example.com
+  access-token: your-access-token
+
+hosts:
+  production:
+    scotty:
+      app-name: my-app-prod
+      services:
+        nginx: 80
+      environment:
+        APP_ENV: production
+```
+
+### Advanced Example
+
+```yaml
+scotty:
+  server: https://scotty.example.com
+  access-token: "%secrets.SCOTTY_TOKEN%"
+  app-blueprint: nginx-lagoon
+  registry: myregistry
+  basic-auth:
+    username: admin
+    password: "%secrets.BASIC_AUTH_PASSWORD%"
+
+hosts:
+  production:
+    scotty:
+      app-name: my-web-app-prod
+      ttl: forever
+      allow-robots: true
+      services:
+        nginx: 80
+        api: 3000
+      environment:
+        APP_ENV: production
+        DATABASE_URL: "%host.secrets.DATABASE_URL%"
+        API_KEY: "%secrets.API_KEY%"
+      custom-domains:
+        www.example.com: nginx
+        api.example.com: api
+      scaffold:
+        docker:
+          - ./docker-compose.yml
+          - ./Dockerfile
+        public:
+          - ./public/index.html
+          - ./public/assets/*
+        scaffold:
+          - copy_assets(%rootFolder%)
+          - copy_assets(%rootFolder%/public, public)
+```
+
+### Configuration Reference
+
+| Option | Type | Description | Example |
+|--------|------|-------------|---------|
+| `server` | string | Scotty server URL | `https://scotty.example.com` |
+| `access-token` | string | Authentication token | `your-secret-token` |
+| `app-name` | string | Application name | `my-app` |
+| `app-blueprint` | string | Deployment blueprint | `nginx-lagoon` |
+| `basic-auth.username` | string | Basic auth username | `admin` |
+| `basic-auth.password` | string | Basic auth password | `secret` |
+| `registry` | string | Docker registry | `factorial` |
+| `ttl` | string | Time-to-live | `1h`, `7d`, `forever` |
+| `allow-robots` | boolean | Allow robot indexing | `true` |
+| `services` | object | Service port mappings | `nginx: 80` |
+| `environment` | object | Environment variables | `APP_ENV: production` |
+| `custom-domains` | object | Domain to service mapping | `www.example.com: nginx` |
+| `scaffold` | object | File copying configuration | See scaffold docs |
+
+For complete documentation and examples, see the [Scotty integration guide](scotty.md).
 
 

@@ -2,23 +2,45 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Exception\EarlyTaskExitException;
-use Phabalicious\Method\TaskContext;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class GetBackupCommand extends BackupBaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('get:backup')
             ->setDescription('Get a specific backup-set')
-            ->setHelp('Copies a backup-set to the local computer');
+            ->setHelp('
+Copies a specific backup set from the remote host to your local computer.
+
+This command downloads backup files (database dumps and/or file archives)
+from the remote backupFolder to your local machine. Use list:backups to
+find available backup hashes.
+
+Behavior:
+- Looks up the backup set by the provided hash
+- Downloads the specified backup files (db and/or files)
+- Saves them to the current working directory
+- Displays a table of downloaded backup files
+- Does not remove the backups from the remote server
+
+The hash can be obtained from the list:backups command output.
+
+Arguments:
+- <hash>: Hash identifier of the backup set to download
+- <what>: What to download (optional, defaults to both db and files)
+         Valid values: db, files
+         Can specify one or both
+
+Examples:
+<info>phab --config=myconfig get:backup abc123</info>
+<info>phab --config=myconfig get:backup abc123 db</info>       # Only download database
+<info>phab --config=myconfig get:backup abc123 files</info>    # Only download files
+<info>phab --config=myconfig getBackup abc123</info>           # Using alias
+            ');
         $this->addArgument(
             'hash',
             InputArgument::REQUIRED,
@@ -35,9 +57,6 @@ class GetBackupCommand extends BackupBaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -66,8 +85,8 @@ class GetBackupCommand extends BackupBaseCommand
                 continue;
             }
             if ($shell->getFile(
-                $this->getHostConfig()['backupFolder'] . '/' . $elem['file'],
-                getcwd() . '/' . $elem['file'],
+                $this->getHostConfig()['backupFolder'].'/'.$elem['file'],
+                getcwd().'/'.$elem['file'],
                 $context
             )) {
                 $files[] = [

@@ -8,18 +8,15 @@ use Phabalicious\ShellCompletion\FishShellCompletionDescriptor;
 use Psr\Log\NullLogger;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
-use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionHandler;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class CompletionCommand
+ * Class CompletionCommand.
  *
  * We are overriding CompletionCommand to provide rich fish-shell autocompletions without dynamic lookup.
- *
- * @package Phabalicious\Command
  */
 class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletion\CompletionCommand
 {
@@ -74,19 +71,21 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
         $shell_type = $input->getOption('shell-type') ?: $this->getShellType();
 
         if ($input->getOption('generate-hook')) {
-            if ($shell_type == 'fish') {
-                return $this->handleFishShellCompletions($output);
+            if ('fish' === $shell_type) {
+                $this->handleFishShellCompletions($output);
+
+                return 0;
             }
         }
 
-        if ($shell_type == 'fish') {
+        if ('fish' === $shell_type) {
             $command_line = $input->getOption('command-line');
             $option = $input->getOption('complete-option');
-            $command_name =$input->getOption('complete-command');
+            $command_name = $input->getOption('complete-command');
             $argument = $input->getOption('complete-argument');
             $command = $this->getApplication()->find($command_name);
             if (!($command instanceof CompletionAwareInterface)) {
-                throw new \InvalidArgumentException('Could not find command '. $command_name);
+                throw new \InvalidArgumentException('Could not find command '.$command_name);
             }
 
             $context = new FishShellCompletionContext($this->configuration, $this->getApplication(), $command_line);
@@ -99,16 +98,21 @@ class CompletionCommand extends \Stecman\Component\Symfony\Console\BashCompletio
             }
             if (is_array($return) && !empty($return)) {
                 $output->writeln(implode("\n", $return));
+
                 return 0;
             }
+
             return 1;
         }
+
         return parent::execute($input, $output);
     }
 
-    private function handleFishShellCompletions(OutputInterface $output)
+    private function handleFishShellCompletions(OutputInterface $output): int
     {
         $helper = new FishShellCompletionDescriptor();
         $helper->describe($output, $this->getApplication());
+
+        return 0;
     }
 }

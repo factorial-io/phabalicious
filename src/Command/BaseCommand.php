@@ -9,9 +9,9 @@ use Phabalicious\Exception\FabfileNotFoundException;
 use Phabalicious\Exception\FabfileNotReadableException;
 use Phabalicious\Exception\MismatchedVersionException;
 use Phabalicious\Exception\MissingDockerHostConfigException;
+use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Exception\ShellProviderNotFoundException;
 use Phabalicious\Exception\ValidationFailedException;
-use Phabalicious\Exception\MissingHostConfigException;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellCompletion\FishShellCompletionContext;
 use Phabalicious\ShellProvider\ShellOptions;
@@ -34,9 +34,7 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     private $dockerConfig;
 
-
-
-    protected function configure()
+    protected function configure(): void
     {
         $default_conf = getenv('PHABALICIOUS_DEFAULT_CONFIG');
         if (empty($default_conf)) {
@@ -98,7 +96,7 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     public function completeOptionValues($optionName, CompletionContext $context): array
     {
-        if ($optionName === 'config') {
+        if ('config' === $optionName) {
             $config = new ConfigurationService($this->getApplication(), new NullLogger());
             $config->setOffline(true);
             try {
@@ -113,9 +111,10 @@ abstract class BaseCommand extends BaseOptionsCommand
                 }
                 $hosts[] = $key;
             }
+
             return $hosts;
         }
-        if ($optionName === 'set' && $context instanceof FishShellCompletionContext) {
+        if ('set' === $optionName && $context instanceof FishShellCompletionContext) {
             $dotted = [];
             if ($host_config = $context->getHostConfig()) {
                 Utilities::pushKeysAsDotNotation($host_config->asArray(), $dotted, ['host']);
@@ -125,13 +124,14 @@ abstract class BaseCommand extends BaseOptionsCommand
                     Utilities::pushKeysAsDotNotation($docker_config->asArray(), $dotted, ['docker']);
                 }
             }
+
             return $dotted;
         }
+
         return parent::completeOptionValues($optionName, $context);
     }
 
     /**
-     * {@inheritdoc}
      * @throws MismatchedVersionException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -146,7 +146,7 @@ abstract class BaseCommand extends BaseOptionsCommand
 
         $this->checkAllRequiredOptionsAreNotEmpty($input);
 
-        $config_name = '' . $input->getOption('config');
+        $config_name = ''.$input->getOption('config');
 
         try {
             $this->readConfiguration($input);
@@ -165,6 +165,7 @@ abstract class BaseCommand extends BaseOptionsCommand
 
             if ($input->getOption('variants')) {
                 $this->handleVariants($input->getOption('variants'), $input, $output);
+
                 return 2;
             }
             if ($input->getOption('set')) {
@@ -172,6 +173,7 @@ abstract class BaseCommand extends BaseOptionsCommand
             }
         } catch (MissingHostConfigException $e) {
             $io->error(sprintf('Could not find host-config named `%s`', $config_name));
+
             return 1;
         } catch (ValidationFailedException $e) {
             $io->error(sprintf(
@@ -179,6 +181,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                 $config_name,
                 implode("\n", $e->getValidationErrors())
             ));
+
             return 1;
         }
 
@@ -187,15 +190,13 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     /**
      * Get host config.
-     *
-     * @return HostConfig
      */
     protected function getHostConfig(): HostConfig
     {
         return $this->hostConfig;
     }
 
-    protected function getDockerConfig() : ?HostConfig
+    protected function getDockerConfig(): ?HostConfig
     {
         return $this->dockerConfig;
     }
@@ -205,10 +206,9 @@ abstract class BaseCommand extends BaseOptionsCommand
         array $args,
         InputInterface $original_input,
         OutputInterface $output,
-        TaskContextInterface $context_to_pass = null
+        ?TaskContextInterface $context_to_pass = null,
     ) {
         $cmd = $this->getApplication()->find($command);
-
 
         $args['command'] = $command;
 
@@ -218,49 +218,42 @@ abstract class BaseCommand extends BaseOptionsCommand
                 continue;
             }
 
-            $option_key = '--' . $key;
+            $option_key = '--'.$key;
             if (empty($args[$option_key])) {
                 $args[$option_key] = $value;
             }
-        };
+        }
         $input = new ArrayInput($args);
 
         // Pass the data of the existing context down the lane.
         if ($context_to_pass && $cmd instanceof BaseCommand) {
             $cmd->setContext(clone $context_to_pass);
         }
+
         return $cmd->run($input, $output);
     }
 
-    /**
-     * @param OutputInterface $output
-     * @return ShellOptions
-     */
     protected function getSuitableShellOptions(OutputInterface $output): ShellOptions
     {
         $options = new ShellOptions();
         $options
             ->setUseTty($output->isDecorated())
             ->setQuiet($output->isQuiet());
+
         return $options;
     }
 
     /**
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     * @param ShellProviderInterface $shell
-     * @param array $command
-     * @param ShellOptions|null $options
-     *
      * @return Process
      */
     protected function startInteractiveShell(
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         array $command = [],
-        ShellOptions $options = null
+        ?ShellOptions $options = null,
     ) {
         $fn = function ($type, $buffer) use ($context) {
-            if ($type == Process::ERR) {
+            if (Process::ERR == $type) {
                 $context->io()->error($buffer);
             } else {
                 $context->getOutput()->write($buffer);
@@ -296,17 +289,12 @@ abstract class BaseCommand extends BaseOptionsCommand
 
     /**
      * Handle variants.
-     *
-     * @param string $variants
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int
      */
     private function handleVariants(string $variants, InputInterface $input, OutputInterface $output): bool|int
     {
         global $argv;
         $executable = $argv[0];
-        if (basename($executable) !== 'phab') {
+        if ('phab' !== basename($executable)) {
             $executable = 'bin/phab';
         }
         if (getenv('PHABALICIOUS_EXECUTABLE')) {
@@ -317,13 +305,10 @@ abstract class BaseCommand extends BaseOptionsCommand
 
         $available_variants = $this->configuration->getBlueprints()->getVariants($this->hostConfig->getConfigName());
         if (!$available_variants) {
-            throw new \InvalidArgumentException(sprintf(
-                'Could not find variants for `%s` in `blueprints`',
-                $this->hostConfig->getConfigName()
-            ));
+            throw new \InvalidArgumentException(sprintf('Could not find variants for `%s` in `blueprints`', $this->hostConfig->getConfigName()));
         }
 
-        if ($variants === 'all') {
+        if ('all' === $variants) {
             $variants = $available_variants;
         } else {
             $variants = explode(',', $variants);
@@ -332,10 +317,7 @@ abstract class BaseCommand extends BaseOptionsCommand
             });
 
             if (!empty($not_found)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Could not find variants `%s` in `blueprints`',
-                    implode('`, `', $not_found)
-                ));
+                throw new \InvalidArgumentException(sprintf('Could not find variants `%s` in `blueprints`', implode('`, `', $not_found)));
             }
         }
 
@@ -358,7 +340,7 @@ abstract class BaseCommand extends BaseOptionsCommand
                         $value = [$value];
                     }
                     foreach ($value as $vv) {
-                        $cmd[] = '--' . $name;
+                        $cmd[] = '--'.$name;
                         if (!in_array($name, ['no-interaction', 'no-ansi'])) {
                             $cmd[] = $vv;
                         }
@@ -385,35 +367,35 @@ abstract class BaseCommand extends BaseOptionsCommand
         $io = new SymfonyStyle($input, $output);
         $io->table(['variant', 'command'], $rows);
 
-        if ($input->getOption('force') !== false || $io->confirm('Do you want to run these commands? ', false)) {
+        if (false !== $input->getOption('force') || $io->confirm('Do you want to run these commands? ', false)) {
             $io->comment('Running ...');
             $executor = new ParallelExecutor($cmd_lines, $output, $input->getOption('num-threads'));
+
             return $executor->execute($input, $output, $input->getOption('json'));
         }
-
 
         return 1;
     }
 
     private function handleSetOption($option_value)
     {
-        $options = is_array($option_value) ? $option_value : explode(" ", $option_value);
+        $options = is_array($option_value) ? $option_value : explode(' ', $option_value);
         foreach ($options as $option) {
-            [$key_combined, $value] = array_pad(explode("=", $option, 2), 2, false);
+            [$key_combined, $value] = array_pad(explode('=', $option, 2), 2, false);
             if (!$value) {
-                throw new \RuntimeException(sprintf("could not parse option `%s`!", implode(',', $option_value)));
+                throw new \RuntimeException(sprintf('could not parse option `%s`!', implode(',', $option_value)));
             }
-            [$what, $key] = array_pad(explode(".", $key_combined, 2), 2, false);
+            [$what, $key] = array_pad(explode('.', $key_combined, 2), 2, false);
             if (!in_array($what, ['host', 'dockerHost'])) {
                 $what = 'host';
                 $key = $key_combined;
             }
-            if ($what == 'host') {
+            if ('host' == $what) {
                 if (is_null($this->hostConfig->getProperty($key, null))) {
                     throw new \InvalidArgumentException('Can only set existing values!');
                 }
                 $this->hostConfig->setProperty($key, $value);
-            } elseif ($what == 'docker') {
+            } elseif ('docker' == $what) {
                 $docker_config = $this->getDockerConfig();
                 if ($docker_config) {
                     if (is_null($docker_config->getProperty($key, null))) {
@@ -433,21 +415,22 @@ abstract class BaseCommand extends BaseOptionsCommand
      * Prepare arguments, so they dan consumed as cmd arguments again.
      *
      * @param array|string[] $input_arguments
-     * @return string
      */
     protected function prepareArguments(array $input_arguments): string
     {
         $arguments = array_map(function ($elem) {
-            if (strpos($elem, ' ') !== false) {
+            if (false !== strpos($elem, ' ')) {
                 return escapeshellarg($elem);
             }
+
             return $elem;
         }, $input_arguments);
+
         return implode(' ', $arguments);
     }
 
     protected function hasForceOption(InputInterface $input): bool
     {
-         return Utilities::hasBoolOptionSet($input, 'force');
+        return Utilities::hasBoolOptionSet($input, 'force');
     }
 }

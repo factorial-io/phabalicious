@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Phabalicious\ShellProvider\TunnelHelper;
 
 use Phabalicious\Configuration\HostConfig;
@@ -14,11 +13,10 @@ class TunnelHelperFactory
     protected $logger;
     protected $creatingTunnel = false;
 
-    public function __construct(LoggerInterface  $logger)
+    public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
-
 
     public function prepareTunnels($task, HostConfig $config, TaskContextInterface $context)
     {
@@ -44,10 +42,11 @@ class TunnelHelperFactory
     {
         if (!empty($this->tunnels[$tunnel_name])) {
             $tunnel = $this->tunnels[$tunnel_name];
-            if ($tunnel->getState() == TunnelDataInterface::CREATED_STATE) {
+            if (TunnelDataInterface::CREATED_STATE == $tunnel->getState()) {
                 return $tunnel;
             }
         }
+
         return null;
     }
 
@@ -58,7 +57,7 @@ class TunnelHelperFactory
             return null;
         }
 
-        $tunnel_name = 'local--' . $config->getConfigName();
+        $tunnel_name = 'local--'.$config->getConfigName();
         if ($tunnel = $this->getTunnel($tunnel_name)) {
             return $tunnel;
         }
@@ -73,21 +72,21 @@ class TunnelHelperFactory
         $tunnel = $helper->createLocalToHostTunnel($config, $context, null);
 
         $this->tunnels[$tunnel_name] = $tunnel;
+
         return $tunnel;
     }
 
     private function createHostToHostTunnel(
         HostConfig $source_config,
         HostConfig $target_config,
-        TaskContextInterface $context
+        TaskContextInterface $context,
     ): ?TunnelDataInterface {
-
         $tunnel_helper_class = $this->getTunnelHelperClass($source_config);
         if (!$tunnel_helper_class || !$tunnel_helper_class::isConfigSupported($target_config)) {
             return null;
         }
 
-        $tunnel_name = $source_config->getConfigName() . '--' . $target_config->getConfigName();
+        $tunnel_name = $source_config->getConfigName().'--'.$target_config->getConfigName();
 
         if ($tunnel = $this->getTunnel($tunnel_name)) {
             return $tunnel;
@@ -103,16 +102,17 @@ class TunnelHelperFactory
         $tunnel = $helper->createHostToHostTunnel($source_config, $target_config, $context, null);
 
         $this->tunnels[$tunnel_name] = $tunnel;
+
         return $tunnel;
     }
 
     private function getTunnelHelperClass(HostConfig $config)
     {
-        if ($config->shell() instanceof TunnelSupportInterface) {
-            /** @var TunnelSupportInterface $shell */
-            $shell = $config->shell();
+        $shell = $config->shell();
+        if ($shell instanceof TunnelSupportInterface) {
             return $shell->getTunnelHelperClass();
         }
+
         return false;
     }
 
@@ -121,6 +121,7 @@ class TunnelHelperFactory
         if (empty($this->factory[$tunnel_helper_class])) {
             $this->factory[$tunnel_helper_class] = new $tunnel_helper_class($this->logger);
         }
+
         return $this->factory[$tunnel_helper_class];
     }
 }

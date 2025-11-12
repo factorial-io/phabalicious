@@ -4,21 +4,18 @@ namespace Phabalicious\Artifact\Actions\Base;
 
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationService;
-use Psr\Log\LoggerInterface;
 
 class LogAction extends ActionBase
 {
-    const SEVERITY_MAPPINGS = [
+    public const SEVERITY_MAPPINGS = [
         'error' => 'error',
         'warning' => 'warning',
         'notice' => 'notice',
         'info' => 'info',
-        'debug' => 'debug'
+        'debug' => 'debug',
     ];
 
     public function __construct()
@@ -41,7 +38,7 @@ class LogAction extends ActionBase
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $install_dir,
-        string $target_dir
+        string $target_dir,
     ) {
         $severity = $this->getArguments()['severity'] ?? 'notice';
         $message = $this->getArguments()['message'];

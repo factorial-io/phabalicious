@@ -15,101 +15,68 @@ class ScriptDataBag
     protected $environment = [];
     protected $rootFolder;
 
-
-    /**
-     * @param array $commands
-     *
-     * @return ScriptDataBag
-     */
     public function setCommands(array $commands): ScriptDataBag
     {
         $this->commands = $commands;
+
         return $this;
     }
 
-    /**
-     * @param array $cleanupCommands
-     *
-     * @return ScriptDataBag
-     */
     public function setCleanupCommands(array $cleanupCommands): ScriptDataBag
     {
         $this->cleanupCommands = $cleanupCommands;
+
         return $this;
     }
 
-    /**
-     * @param \Phabalicious\Method\TaskContextInterface $context
-     *
-     * @return ScriptDataBag
-     */
     public function setContext(TaskContextInterface $context): ScriptDataBag
     {
         $this->context = $context;
+
         return $this;
     }
 
-    /**
-     * @param array $environment
-     *
-     * @return ScriptDataBag
-     */
     public function setEnvironment(array $environment): ScriptDataBag
     {
         $this->environment = $environment;
+
         return $this;
     }
 
-    /**
-     * @param string $rootFolder
-     *
-     * @return ScriptDataBag
-     */
     public function setRootFolder(string $rootFolder): ScriptDataBag
     {
         $this->rootFolder = $rootFolder;
+
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getReplacements(): array
     {
         return Utilities::expandVariables($this->variables);
     }
 
-    /**
-     * @return array
-     */
     public function getCommands(): array
     {
         return $this->commands;
     }
 
-    /**
-     * @return array
-     */
     public function getCleanupCommands(): array
     {
         return $this->cleanupCommands;
     }
 
-    /**
-     * @return \Phabalicious\Method\TaskContextInterface
-     */
-    public function getContext(): \Phabalicious\Method\TaskContextInterface
+    public function getContext(): TaskContextInterface
     {
         return $this->context;
     }
 
     /**
-     * @return array
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
     public function getEnvironment(): array
     {
         $environment = $this->environment;
+
         return $this->expandStrings($environment);
     }
 
@@ -117,10 +84,10 @@ class ScriptDataBag
      * Expand replacements in array.
      *
      * @param array $data
-     *   array with strings.
+     *                    array with strings
      *
      * @return array
-     *   the expanded array.
+     *               the expanded array
      *
      * @throws \Phabalicious\Exception\UnknownReplacementPatternException
      */
@@ -143,67 +110,44 @@ class ScriptDataBag
     public function getScriptContextData(): array
     {
         $data = $this->context->get(ScriptMethod::SCRIPT_CONTEXT_DATA, []);
+
         return $this->expandStrings($data);
     }
-    /**
-     * @return string
-     */
+
     public function getRootFolder(): string
     {
         return $this->rootFolder;
     }
 
-    /**
-     * @return array
-     */
     public function getVariables(): array
     {
         return $this->variables;
     }
 
-    /**
-     * @param array $variables
-     *
-     * @return ScriptDataBag
-     */
     public function setVariables(array $variables): ScriptDataBag
     {
         $this->variables = $variables;
+
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getCallbacks(): array
     {
         return $this->callbacks;
     }
 
-    /**
-     * @param array $callbacks
-     *
-     * @return ScriptDataBag
-     */
     public function setCallbacks(array $callbacks): ScriptDataBag
     {
         $this->callbacks = $callbacks;
+
         return $this;
     }
 
-    /**
-     * @return ShellProviderInterface
-     */
     public function getShell(): ShellProviderInterface
     {
         return $this->getContext()->getShell();
     }
 
-    /**
-     * @param string $command
-     *
-     * @return string
-     */
     public function applyReplacements(string $command): string
     {
         $command = trim($command);

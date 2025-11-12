@@ -8,7 +8,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DatabaseShellCommandCommand extends DatabaseSubCommand
 {
-
     public function getSubcommandInfo(): array
     {
         return [
@@ -20,7 +19,6 @@ class DatabaseShellCommandCommand extends DatabaseSubCommand
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-
         if ($result = BaseCommand::execute($input, $output)) {
             return $result;
         }
@@ -44,9 +42,8 @@ class DatabaseShellCommandCommand extends DatabaseSubCommand
         $options->setQuiet(false);
         $options->setShellExecutableProvided(true);
 
-        $shell_command = $shell->getShellCommand([ implode(' ', $shell_command) ], $options);
+        $shell_command = $shell->getShellCommand([implode(' ', $shell_command)], $options);
         $output->writeln(implode(' ', $shell_command));
-
 
         return 0;
     }

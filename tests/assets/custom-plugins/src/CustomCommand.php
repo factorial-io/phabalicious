@@ -8,18 +8,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CustomCommand extends BaseCommand
 {
-    public function configure()
+    public function configure(): void
     {
         parent::configure();
         $this->setName('custom');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($result = parent::execute($input, $output)) {
             return $result;
         }
-        $output->writeln("hello world");
+        $output->writeln('hello world');
+
         return 0;
     }
 }

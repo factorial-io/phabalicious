@@ -11,9 +11,9 @@ use Phabalicious\Validation\ValidationService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
-class KubectlShellProvider extends LocalShellProvider implements ShellProviderInterface
+class KubectlShellProvider extends LocalShellProvider
 {
-    const PROVIDER_NAME = 'kubectl';
+    public const PROVIDER_NAME = 'kubectl';
 
     public function __construct(LoggerInterface $logger)
     {
@@ -28,7 +28,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
 
     public function getDefaultConfig(ConfigurationService $configuration_service, Node $host_config): Node
     {
-        $parent =  parent::getDefaultConfig($configuration_service, $host_config);
+        $parent = parent::getDefaultConfig($configuration_service, $host_config);
         $result = [];
         $result['kubectlExecutable'] = 'kubectl';
         $result['kubectlOptions'] = [];
@@ -39,10 +39,10 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
             'service_name=%host.kube.serviceName%',
         ];
 
-        return $parent->merge(new Node($result, $this->getName() . ' shellprovider defaults'));
+        return $parent->merge(new Node($result, $this->getName().' shellprovider defaults'));
     }
 
-    public function validateConfig(Node $config, ValidationErrorBagInterface $errors)
+    public function validateConfig(Node $config, ValidationErrorBagInterface $errors): void
     {
         parent::validateConfig($config, $errors);
 
@@ -51,10 +51,9 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
                 $config,
                 $config->get('kubectlExecutable', 'kubectl')->getValue()
             );
-            $this->logger->info(sprintf("Found kubectl with version %d.%d", $version['major'], $version['minor']));
+            $this->logger->info(sprintf('Found kubectl with version %d.%d', $version['major'], $version['minor']));
             $config->set('kubectlVersion', new Node($version, 'kubectl version info'));
         }
-
 
         $validation = new ValidationService($config, $errors, 'host-config');
         $validation->hasKeys(['kube' => 'The kubernetes config to use']);
@@ -64,8 +63,8 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
             $version_validation = new ValidationService($config['kubectlVersion'], $errors, 'host.kubectlVersion');
             $version_validation->hasKeys([
                 'minor' => 'minor version number of kubectl',
-                'major' => 'major version number of kubectl'
-                ]);
+                'major' => 'major version number of kubectl',
+            ]);
         }
 
         if (!$errors->hasErrors()) {
@@ -75,35 +74,37 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         }
     }
 
-    public function createShellProcess(array $command = [], ShellOptions $options = null): Process
+    public function createShellProcess(array $command = [], ?ShellOptions $options = null): Process
     {
         // Apply kubectl environment vars.
         $this->setShellEnvironmentVars($this->hostConfig['kube']['environment']);
+
         return parent::createShellProcess($command, $options);
     }
 
-    public static function getKubectlCmd(Node $config, $kubectl_cmd = '#!kubectl', $exclude = [])
+    public static function getKubectlCmd(Node $config, $kubectl_cmd = '#!kubectl', $exclude = []): array
     {
-        $cmd = [ $kubectl_cmd ];
+        $cmd = [$kubectl_cmd];
         if (!empty($config['kubectlOptions'])) {
             foreach ($config['kubectlOptions'] as $k => $v) {
                 $cmd[] = $k;
-                if ($v !== "") {
+                if ('' !== $v) {
                     $cmd[] = $v;
                 }
             }
         }
 
-        foreach (array('kubeconfig', 'namespace', 'context') as $key) {
+        foreach (['kubeconfig', 'namespace', 'context'] as $key) {
             if (!empty($config['kube'][$key]) && !in_array($key, $exclude)) {
-                $cmd[] = '--' . $key;
+                $cmd[] = '--'.$key;
                 $cmd[] = $config['kube'][$key];
             }
         }
 
         return $cmd;
     }
-    protected function getKubeCmd()
+
+    protected function getKubeCmd(): array
     {
         return self::getKubectlCmd($this->getHostConfig()->getData(), 'kubectl');
     }
@@ -111,7 +112,7 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
     public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
         if (empty($this->hostConfig['kube']['podForCli'])) {
-            throw new \RuntimeException("Could not get shell, as podForCli is empty!");
+            throw new \RuntimeException('Could not get shell, as podForCli is empty!');
         }
         $command = $this->getKubeCmd();
         $command[] = 'exec';
@@ -133,32 +134,30 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
     }
 
     /**
-     * @param string $dir
-     * @return bool
+     * @param string $file
+     *
      * @throws \Exception
      */
-    public function exists($dir): bool
+    public function exists($file): bool
     {
-        $result = $this->run(sprintf('stat %s > /dev/null 2>&1', $dir), false, false);
-        return $result->succeeded();
+        return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::HIDE_OUTPUT, false)
+            ->succeeded();
     }
 
     public function putFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $command = $this->getPutFileCommand($source, $dest);
+
         return $this->runProcess($command, $context, false, true);
     }
 
     public function getFile(string $source, string $dest, TaskContextInterface $context, bool $verbose = false): bool
     {
         $command = $this->getGetFileCommand($source, $dest);
+
         return $this->runProcess($command, $context, false, true);
     }
 
-
-    /**
-     * {@inheritdoc}
-     */
     public function wrapCommandInLoginShell(array $command): array
     {
         array_unshift(
@@ -167,14 +166,14 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
             '--login',
             '-c'
         );
+
         return $command;
     }
 
     private function kubectlCpSupportsRetries(): bool
     {
-
-        if ($this->hostConfig->getProperty('kubectlVersion.major', 1)  >= 1 &&
-            ($this->hostConfig->getProperty('kubectlVersion.minor', 0)  >= 23)) {
+        if ($this->hostConfig->getProperty('kubectlVersion.major', 1) >= 1
+            && ($this->hostConfig->getProperty('kubectlVersion.minor', 0) >= 23)) {
             return true;
         }
 
@@ -182,14 +181,12 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
     }
 
     /**
-     * @param string $source
-     * @param string $dest
      * @return string[]
      */
     public function getPutFileCommand(string $source, string $dest): array
     {
         if ($this->hostConfig->getProperty('kube.useRsync')) {
-            return $this->getRsyncFileCommand($source, 'rsync:' . $dest);
+            return $this->getRsyncFileCommand($source, 'rsync:'.$dest);
         }
         $command = $this->getKubeCmd();
         $command[] = 'cp';
@@ -197,28 +194,25 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
             $command[] = '--retries=999';
         }
         $command[] = trim($source);
-        $command[] = $this->hostConfig['kube']['podForCli'] . ':' . trim($dest);
+        $command[] = $this->hostConfig['kube']['podForCli'].':'.trim($dest);
 
         return $command;
     }
 
     /**
-     * @param string $source
-     * @param string $dest
      * @return string[]
      */
     public function getGetFileCommand(string $source, string $dest): array
     {
-
         if ($this->hostConfig->getProperty('kube.useRsync')) {
-            return $this->getRsyncFileCommand('rsync:' . $source, $dest);
+            return $this->getRsyncFileCommand('rsync:'.$source, $dest);
         }
         $command = $this->getKubeCmd();
         $command[] = 'cp';
         if ($this->kubectlCpSupportsRetries()) {
             $command[] = '--retries=999';
         }
-        $command[] = $this->hostConfig['kube']['podForCli'] . ':' . trim($source);
+        $command[] = $this->hostConfig['kube']['podForCli'].':'.trim($source);
         $command[] = trim($dest);
 
         return $command;
@@ -244,24 +238,14 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
         return $command;
     }
 
-    /**
-     * @param string $ip
-     * @param int $port
-     * @param string $public_ip
-     * @param int $public_port
-     * @param HostConfig $config
-     * @param TaskContextInterface $context
-     *
-     * @return bool
-     */
     public function startRemoteAccess(
         string $ip,
         int $port,
         string $public_ip,
         int $public_port,
         HostConfig $config,
-        TaskContextInterface $context
-    ) {
+        TaskContextInterface $context,
+    ): bool {
         $command = $this->getKubeCmd();
         $command[] = 'port-forward';
         $command[] = sprintf('pod/%s', $config['kube']['podForCli']);
@@ -272,22 +256,24 @@ class KubectlShellProvider extends LocalShellProvider implements ShellProviderIn
 
     private function getKubectlClientVersion(Node $config, string $kubectl_command): array
     {
-        $fallback_version = [ "major" => 1, "minor" => 0 ];
+        $fallback_version = ['major' => 1, 'minor' => 0];
         $command = self::getKubectlCmd($config, $kubectl_command);
         $command[] = 'version';
         $command[] = '--output=json';
 
         $process = new Process($command);
-        $process->setTimeout(60*60);
+        $process->setTimeout(60 * 60);
         $process->run();
-        if ($process->getExitCode() !== 0) {
+        if (0 !== $process->getExitCode()) {
             $this->logger->log($this->errorLogLevel->get(), $process->getErrorOutput());
+
             return $fallback_version;
         }
 
         $output = $process->getOutput();
 
         $client_version = json_decode($output, true, 512, JSON_THROW_ON_ERROR);
+
         return $client_version['clientVersion'] ?? $fallback_version;
     }
 }

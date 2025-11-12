@@ -2,20 +2,12 @@
 
 namespace Phabalicious\Command;
 
-use Phabalicious\Configuration\ConfigurationService;
-use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Method\TaskContext;
-use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Tests\Compiler\OptionalParameter;
-use Symfony\Component\Process\Process;
 
 class ShellCommandCommand extends BaseCommand
 {
-
     protected function configure(): void
     {
         parent::configure();
@@ -23,14 +15,33 @@ class ShellCommandCommand extends BaseCommand
         $this
             ->setName('shell:command')
             ->setDescription('Prints the command to run an interactive shell')
-            ->setHelp('Prints the command to run an interactive shell');
+            ->setHelp('
+Prints the shell command that would be used to open an interactive shell.
+
+This command outputs the actual shell command (e.g., SSH command) that phabalicious
+would execute to connect to the remote host. It does NOT actually open the shell,
+but just displays the command for inspection or manual use.
+
+This is useful when you want to:
+- See what SSH/shell command phab would run
+- Copy the command to use in your own scripts
+- Debug connection issues
+- Understand the shell provider configuration
+
+For actually opening an interactive shell, use the "shell" command instead.
+
+Behavior:
+- Determines the appropriate shell command based on configuration
+- Prints the command to stdout
+- Does not execute the shell command
+
+Examples:
+<info>phab --config=myconfig shell:command</info>
+<info>phab --config=production sshCommand</info>  # Using alias
+            ');
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException
@@ -57,7 +68,7 @@ class ShellCommandCommand extends BaseCommand
         $options = $this->getSuitableShellOptions($output);
         $ssh_command = $context->getResult('ssh_command', $shell->getShellCommand([], $options));
 
-        $context->io()->text('$ ' . implode(' ', $ssh_command));
+        $context->io()->text('$ '.implode(' ', $ssh_command));
 
         return 0;
     }

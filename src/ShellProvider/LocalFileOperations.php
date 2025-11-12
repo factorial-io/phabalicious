@@ -6,7 +6,6 @@ use Phabalicious\Method\TaskContextInterface;
 
 class LocalFileOperations implements FileOperationsInterface
 {
-
     public function getFileContents($filename, TaskContextInterface $context)
     {
         return file_get_contents($filename);
@@ -17,7 +16,7 @@ class LocalFileOperations implements FileOperationsInterface
         return file_put_contents($filename, $data);
     }
 
-    public function realPath($filename)
+    public function realPath($filename): string|false
     {
         return realpath($filename);
     }

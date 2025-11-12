@@ -6,8 +6,6 @@ use Phabalicious\Method\TaskContextInterface;
 
 class NoopFileOperations implements FileOperationsInterface
 {
-
-
     public function getFileContents($filename, TaskContextInterface $context)
     {
         return file_get_contents($filename);
@@ -18,7 +16,7 @@ class NoopFileOperations implements FileOperationsInterface
         return false;
     }
 
-    public function realPath($filename)
+    public function realPath($filename): string|false
     {
         return $filename;
     }

@@ -10,23 +10,16 @@ use Twig\Environment;
 
 class DecryptAssetsCallback extends CopyAssetsBaseCallback
 {
-
     public function __construct(ConfigurationService $configuration, Environment $twig)
     {
         parent::__construct($configuration, $twig);
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getName(): string
     {
         return 'decrypt_assets';
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function requires(): string
     {
         return '3.7';
@@ -34,10 +27,8 @@ class DecryptAssetsCallback extends CopyAssetsBaseCallback
 
     public function handle(TaskContextInterface $context, ...$arguments)
     {
-
-        if (count($arguments) !== 4) {
-            throw new \RuntimeException('decrypt_asserts needs exactly 4 arguments: '
-                . 'targetFolder, dataKey, secretName, twigExtension');
+        if (4 !== count($arguments)) {
+            throw new \RuntimeException('decrypt_asserts needs exactly 4 arguments: targetFolder, dataKey, secretName, twigExtension');
         }
 
         $secret = $this->configuration->getPasswordManager()->getPasswordFor($arguments[2]);

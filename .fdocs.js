@@ -45,6 +45,7 @@ export default function (defaultConfig) {
                     "app-scaffold",
                     "app-create-destroy",
                     "deploying-artifacts",
+                    "scotty",
                     "kubernetes",
                     "offsite-backups",
                     "local-overrides",

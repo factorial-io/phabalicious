@@ -1,0 +1,8 @@
+services:
+  nginx:
+    image: nginx
+    environment:
+      APP_OTHER_SECRET: my-other-secret
+      APP_SECRET: {{host.secrets.APP_SECRET}}
+    volumes:
+      - ./html:/usr/share/nginx/html

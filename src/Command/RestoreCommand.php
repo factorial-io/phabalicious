@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -10,13 +12,41 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RestoreCommand extends BackupBaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
             ->setName('restore')
             ->setDescription('Restores a given backup-set')
-            ->setHelp('Restores a given backup-set for a given configuration');
+            ->setHelp('
+Restores a backup set created with the backup command.
+
+This command restores a previously created backup by its hash or git commit SHA.
+Backups are created with the "backup" command and stored in the configured backupFolder.
+
+Behavior:
+- Looks up the backup set by the provided hash (can be a short hash or full hash)
+- If using git, you can reference backups by git commit SHA
+- Restores database and/or files from the backup
+- Displays a table showing which files were restored
+- If <what> is omitted, both database and files are restored
+
+The hash can be:
+- The backup filename (without extension)
+- A git commit hash (if backups are git-tagged)
+- A short version of either
+
+Arguments:
+- <hash>: Hash or identifier of the backup set to restore
+- <what>: Space-separated list of what to restore (optional, defaults to "db files")
+         Valid values: db, files
+
+Examples:
+<info>phab --config=myconfig restore abc123</info>
+<info>phab --config=myconfig restore abc123 db</info>        # Only restore database
+<info>phab --config=myconfig restore abc123 files</info>     # Only restore files
+<info>phab --config=myconfig restore abc123 db files</info>  # Restore both
+            ');
         $this->addArgument(
             'hash',
             InputArgument::REQUIRED,
@@ -25,17 +55,12 @@ class RestoreCommand extends BackupBaseCommand
         $this->addArgument(
             'what',
             InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
-            'What to restore, if ommitted files and db will be restored',
+            'What to restore, if omitted files and db will be restored',
             []
         );
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-
      * @throws \Phabalicious\Exception\BlueprintTemplateNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotFoundException
      * @throws \Phabalicious\Exception\FabfileNotReadableException

@@ -1,7 +1,6 @@
 <?php
-namespace Phabalicious\Exception;
 
-use Throwable;
+namespace Phabalicious\Exception;
 
 class MissingScriptCallbackImplementation extends \Exception
 {
@@ -12,7 +11,7 @@ class MissingScriptCallbackImplementation extends \Exception
     {
         $this->callback = $callback;
         $this->callbacks = $callbacks;
-        parent::__construct('Missing callback implementation for `' . $callback . '`');
+        parent::__construct('Missing callback implementation for `'.$callback.'`');
     }
 
     public function getCallback()

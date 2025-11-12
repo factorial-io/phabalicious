@@ -8,19 +8,29 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DatabaseShellCommand extends DatabaseSubCommand
 {
-
     public function getSubcommandInfo(): array
     {
         return [
             'subcommand' => 'shell',
             'description' => 'Get a sql shell',
-            'help' => 'Get a shell to the database to execute commands directly.',
+            'help' => '
+Opens an interactive SQL shell to the database.
+
+This command will open an interactive database shell (e.g., mysql, psql) allowing you to
+execute SQL commands directly against the database. The shell runs in TTY mode for
+interactive use.
+
+The specific shell command (mysql, psql, etc.) is determined by the database method
+configured for your host.
+
+Examples:
+<info>phab --config=myconfig db:shell</info>
+            ',
         ];
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-
         if ($result = BaseCommand::execute($input, $output)) {
             return $result;
         }
@@ -36,7 +46,7 @@ class DatabaseShellCommand extends DatabaseSubCommand
             throw new \RuntimeException('Could not get shell-command from database method!');
         }
 
-        $output->writeln('<info>Starting database shell on `' . $this->getHostConfig()->getConfigName() . '`');
+        $output->writeln('<info>Starting database shell on `'.$this->getHostConfig()->getConfigName().'`');
 
         /** @var \Phabalicious\ShellProvider\ShellProviderInterface $shell */
         $shell = $context->getResult('shell', $this->getHostConfig()->shell());
@@ -45,7 +55,8 @@ class DatabaseShellCommand extends DatabaseSubCommand
         $options->setUseTty(true);
         $options->setQuiet(false);
 
-        $process = $this->startInteractiveShell($context, $shell, [ implode(' ', $shell_command) ], $options);
+        $process = $this->startInteractiveShell($context, $shell, [implode(' ', $shell_command)], $options);
+
         return $process->getExitCode();
     }
 }

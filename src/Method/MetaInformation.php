@@ -6,7 +6,6 @@ use ThibaudDauce\Mattermost\Attachment;
 
 class MetaInformation
 {
-
     private $key;
     private $value;
     private $short;

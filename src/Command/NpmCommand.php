@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -12,7 +14,7 @@ class NpmCommand extends SimpleExecutableInvocationCommand
         parent::__construct($configuration, $method_factory, 'npm');
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->setHelp('

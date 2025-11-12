@@ -1,11 +1,11 @@
 <?php
 
-
 namespace Phabalicious\Artifact\Actions\Base;
 
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Method\TaskContextInterface;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationService;
@@ -42,11 +42,12 @@ class DockerCopyAction extends ActionBase
             'docker run --entrypoint /bin/ls --rm %s -1a %s',
             $this->dockerImageName,
             $path
-        ), true);
+        ), RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         if ($result->failed()) {
             $result->throwException('Could not get directory contents from docker image!');
         }
+
         return $result->getOutput();
     }
 
@@ -55,7 +56,7 @@ class DockerCopyAction extends ActionBase
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $install_dir,
-        string $target_dir
+        string $target_dir,
     ) {
         $shell->pushWorkingDir($install_dir);
 
@@ -67,7 +68,7 @@ class DockerCopyAction extends ActionBase
         $files_to_copy = $this->getArgument('from');
 
         if (!is_array($files_to_copy)) {
-            if ($files_to_copy === '*') {
+            if ('*' === $files_to_copy) {
                 $files_to_copy = array_filter(
                     $this->getDirectoryContents($shell, $image_root_path),
                     static function ($e) {
@@ -82,21 +83,21 @@ class DockerCopyAction extends ActionBase
         $files_to_skip = $context->getConfigurationService()->getSetting('excludeFiles.gitSync', []);
 
         // Make sure that git-related files are skipped.
-        $files_to_skip[] = ".git";
-        $to = $target_dir . '/' . $this->getArgument('to');
+        $files_to_skip[] = '.git';
+        $to = $target_dir.'/'.$this->getArgument('to');
 
         // Make sure the target directory exists before copying.
         $shell->run(sprintf('mkdir -p %s', $to));
 
         $docker_container = Utilities::getTempNamePrefixFromString('phab-docker-copy');
-        $shell->run(sprintf('docker create --name %s %s', $docker_container, $this->dockerImageName), false, true);
+        $shell->run(sprintf('docker create --name %s %s', $docker_container, $this->dockerImageName), RunOptions::NONE, true);
         foreach ($files_to_copy as $file) {
             if (!in_array($file, $files_to_skip)) {
-                $shell->run(sprintf('rm -rf %s', $to . '/' . basename($file)));
+                $shell->run(sprintf('rm -rf %s', $to.'/'.basename($file)));
                 $shell->run(sprintf('docker cp -a %s:%s/%s %s', $docker_container, $image_root_path, $file, $to));
             }
         }
-        $shell->run(sprintf('docker rm %s', $docker_container), false, true);
+        $shell->run(sprintf('docker rm %s', $docker_container), RunOptions::NONE, true);
 
         $shell->popWorkingDir();
     }

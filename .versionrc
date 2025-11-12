@@ -2,7 +2,7 @@
   "bumpFiles": [
     {
       "filename": "src/Utilities/Utilities.php",
-      "updater": "utilities-updater.js"
+      "updater": "utilities-updater.cjs"
     },
     {
       "filename": "package.json",

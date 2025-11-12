@@ -28,30 +28,20 @@ class Node implements \IteratorAggregate, \ArrayAccess
     public static function parseYamlFile(string $file): Node
     {
         $data = Yaml::parseFile($file);
+
         return new Node($data, $file);
     }
 
-    /**
-     * @return mixed
-     */
     public function getValue(): mixed
     {
         return $this->isArray() ? $this->asArray() : $this->value;
     }
 
-    /**
-     * @return Source
-     */
     public function getSource(): Source
     {
         return $this->source;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return Node
-     */
     public function setValue($value): Node
     {
         if (is_array($value)) {
@@ -61,17 +51,14 @@ class Node implements \IteratorAggregate, \ArrayAccess
         } else {
             $this->value = $value;
         }
+
         return $this;
     }
 
-    /**
-     * @param mixed $source
-     *
-     * @return Node
-     */
     public function setSource($source): Node
     {
         $this->source = $source;
+
         return $this;
     }
 
@@ -92,6 +79,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
         if (!empty($saved)) {
             Store::restoreProtectedProperties($result, $saved);
         }
+
         return $result;
     }
 
@@ -125,6 +113,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
         if (!empty($saved)) {
             Store::restoreProtectedProperties($result, $saved);
         }
+
         return $result;
     }
 
@@ -149,12 +138,12 @@ class Node implements \IteratorAggregate, \ArrayAccess
         return $this;
     }
 
-
     public function getOrCreate(string $key, $default): Node
     {
         if (!$this->has($key)) {
             $this->set($key, new Node($default, $this->getSource()));
         }
+
         return $this->get($key);
     }
 
@@ -225,7 +214,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
     public function iterateBackwardsOverValues(): \Generator
     {
         if ($this->isArray()) {
-            for (end($this->value); ($key=key($this->value))!==null; prev($this->value)) {
+            for (end($this->value); ($key = key($this->value)) !== null; prev($this->value)) {
                 yield $key => current($this->value)->getValue();
             }
         } else {
@@ -236,6 +225,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
     public static function mergeData(Node $a, Node $b): Node
     {
         $c = self::clone($a);
+
         return $c->merge($b);
     }
 
@@ -245,12 +235,13 @@ class Node implements \IteratorAggregate, \ArrayAccess
         foreach ($this->value as $key => $value) {
             $result[$key] = $value->isArray() ? $value->asArray() : $value->getValue();
         }
+
         return $result;
     }
 
     public static function clone(Node $node): Node
     {
-        return clone ($node);
+        return clone $node;
     }
 
     public function find(string $dotted_key): ?Node
@@ -263,13 +254,15 @@ class Node implements \IteratorAggregate, \ArrayAccess
             }
             $node = $node->get($key);
         }
+
         return $node;
     }
 
     public function getProperty(string $dotted_key, $default_value = null)
     {
         $node = $this->find($dotted_key);
-        return  $node ? $node->getValue() ?? $default_value : $default_value;
+
+        return $node ? $node->getValue() ?? $default_value : $default_value;
     }
 
     public function setProperty(string $dotted_key, $new_value)
@@ -277,7 +270,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
         $node = $this->find($dotted_key);
         if (!$node) {
             $node = $this;
-            $keys = explode(".", $dotted_key);
+            $keys = explode('.', $dotted_key);
             $last_key = array_pop($keys);
             foreach ($keys as $key) {
                 if (!$node->has($key)) {
@@ -299,7 +292,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
     public function ensureArray()
     {
         if (!$this->isArray()) {
-            $this->value = [ new Node($this->value, $this->source)];
+            $this->value = [new Node($this->value, $this->source)];
         }
     }
 
@@ -319,6 +312,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
             if (is_string($this->value)) {
                 $this->value = Utilities::expandString($this->value, $replacements);
             }
+
             return;
         }
         foreach ($this->value as $key => $value) {
@@ -346,6 +340,7 @@ class Node implements \IteratorAggregate, \ArrayAccess
         if ($this->isArray()) {
             return array_keys($this->value);
         }
+
         return [];
     }
 }

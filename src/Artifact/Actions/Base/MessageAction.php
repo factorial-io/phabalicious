@@ -4,21 +4,18 @@ namespace Phabalicious\Artifact\Actions\Base;
 
 use Phabalicious\Artifact\Actions\ActionBase;
 use Phabalicious\Configuration\HostConfig;
-use Phabalicious\Method\ScriptMethod;
 use Phabalicious\Method\TaskContextInterface;
-use Phabalicious\ShellProvider\CommandResult;
 use Phabalicious\ShellProvider\ShellProviderInterface;
 use Phabalicious\Validation\ValidationService;
-use Psr\Log\LoggerInterface;
 
 class MessageAction extends ActionBase
 {
-    const MESSAGE_TYPE_MAPPING = [
+    public const MESSAGE_TYPE_MAPPING = [
         'error' => 'error',
         'warning' => 'warning',
         'note' => 'note',
         'comment' => 'comment',
-        'success' => 'success'
+        'success' => 'success',
     ];
 
     public function __construct()
@@ -41,7 +38,7 @@ class MessageAction extends ActionBase
         TaskContextInterface $context,
         ShellProviderInterface $shell,
         string $install_dir,
-        string $target_dir
+        string $target_dir,
     ) {
         $severity = $this->getArguments()['type'] ?? 'note';
         $message = $this->getArguments()['message'];

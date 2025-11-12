@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantCatchClauseInspection */
+<?php
+
+/** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Phabalicious\Command;
 
@@ -20,8 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AppCreateCommand extends AppBaseCommand
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -64,10 +65,6 @@ Examples:
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      * @throws BlueprintTemplateNotFoundException
      * @throws FabfileNotFoundException
      * @throws FabfileNotReadableException
@@ -85,7 +82,7 @@ Examples:
             return $result;
         }
 
-        if ($copy_from = $input->getOption("copy-from")) {
+        if ($copy_from = $input->getOption('copy-from')) {
             // Make sure config exists.
             $copy_from = $this->getConfiguration()->getHostConfig($copy_from);
         }
@@ -96,91 +93,90 @@ Examples:
 
         $this->configuration
             ->getMethodFactory()
-            ->runTask("appCheckExisting", $host_config, $context);
+            ->runTask('appCheckExisting', $host_config, $context);
         $outer_shell = false;
 
-        $install_dir = $context->getResult("installDir", false);
+        $install_dir = $context->getResult('installDir', false);
         if ($install_dir) {
             /** @var ShellProviderInterface $outer_shell */
             $outer_shell = $context->getResult(
-                "outerShell",
+                'outerShell',
                 $host_config->shell()
             );
-            if ($outer_shell->exists($install_dir) &&
-                $input->getOption("force") === false
+            if ($outer_shell->exists($install_dir)
+                && false === $input->getOption('force')
             ) {
                 $continue = $context
                     ->io()
-                    ->confirm("Target directory exists", false);
+                    ->confirm('Target directory exists', false);
                 if (!$continue) {
                     $context
                         ->io()
                         ->warning(
                             sprintf(
-                                "Stopping, as target-folder `%s` already exists on `%s`.",
+                                'Stopping, as target-folder `%s` already exists on `%s`.',
                                 $install_dir,
                                 $host_config->getConfigName()
                             )
                         );
+
                     return 1;
                 }
             }
-            $lock_file = $install_dir . "/.projectCreated";
+            $lock_file = $install_dir.'/.projectCreated';
             $app_exists = $outer_shell->exists($lock_file);
         } else {
-            $app_exists = $context->getResult("appExists", null);
+            $app_exists = $context->getResult('appExists', null);
             if (is_null($app_exists)) {
-                throw new \InvalidArgumentException(
-                    "No result for `appExists`, stopping execution!"
-                );
+                throw new \InvalidArgumentException('No result for `appExists`, stopping execution!');
             }
         }
 
-        $context->set("outerShell", $outer_shell);
-        $context->set("installDir", $context->getResult("installDir"));
+        $context->set('outerShell', $outer_shell);
+        $context->set('installDir', $context->getResult('installDir'));
         $context->clearResults();
 
         if ($app_exists && !$this->hasForceOption($input)) {
             $this->configuration
                 ->getLogger()
-                ->notice("Existing app found, deploying instead!");
+                ->notice('Existing app found, deploying instead!');
 
             $stages = $this->configuration->getSetting(
-                "appStages.deploy",
+                'appStages.deploy',
                 AppDefaultStages::DEPLOY
             );
             $this->executeStages(
                 $stages,
-                "appCreate",
+                'appCreate',
                 $context,
-                "Creating app"
+                'Creating app'
             );
-            $this->runCommand("deploy", [], $input, $output);
+            $this->runCommand('deploy', [], $input, $output);
         } else {
             $stages = $this->configuration->getSetting(
-                "appStages.create",
+                'appStages.create',
                 AppDefaultStages::CREATE
             );
 
             $this->executeStages(
                 $stages,
-                "appCreate",
+                'appCreate',
                 $context,
-                "Creating app"
+                'Creating app'
             );
 
             if ($copy_from) {
                 $this->runCommand(
-                    "copy-from",
-                    ["from" => $copy_from->getConfigName()],
+                    'copy-from',
+                    ['from' => $copy_from->getConfigName()],
                     $input,
                     $output
                 );
             } else {
-                $this->runCommand("reset", [], $input, $output);
+                $this->runCommand('reset', [], $input, $output);
             }
         }
 
-        return $context->getResult("exitCode", 0);
+        return $context->getResult('exitCode', 0);
     }
 }
