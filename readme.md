@@ -75,16 +75,18 @@ github-action automatically. Phab is using [standard-version](https://github.com
 to automate preparing a release. It will take care of bumping version numbers and
 updating the changelog.
 
+**Note:** Since version 4.0.0, all release tags use the `v` prefix (e.g., `v4.0.0`).
+
 To prepare a new release, run the following commands:
 
 ```
-bun install && bun run release --no-verify
+bun install && bun run standard-version -- --no-verify
 ```
 
 To prepare a preview-release (e.g. a beta-version)
 
 ```
-bun install && bun run standard-version -- -t '' --sign --prerelease --no-verify
+bun install && bun run standard-version -- --prerelease --no-verify
 ```
 
 

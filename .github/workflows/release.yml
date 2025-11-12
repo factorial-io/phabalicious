@@ -87,14 +87,16 @@ jobs:
               id: version
               run: |
                   VERSION=${GITHUB_REF#refs/tags/}
+                  # Strip v prefix if present (supports both v4.0.0 and 4.0.0)
+                  VERSION_NUMBER=${VERSION#v}
                   echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
-                  # Determine which formula to update based on version
-                  if [[ $VERSION =~ ^4\. ]]; then
+                  # Determine which formula to update based on version number
+                  if [[ $VERSION_NUMBER =~ ^4\. ]]; then
                     # Version 4.x -> phab@4.rb
                     echo "formula=phab@4.rb" >> "$GITHUB_OUTPUT"
                     echo "template=phabalicious-v4.rb.tpl" >> "$GITHUB_OUTPUT"
-                  elif [[ $VERSION =~ ^3\.8 ]]; then
+                  elif [[ $VERSION_NUMBER =~ ^3\.8 ]]; then
                     # Version 3.8.x -> phab.rb only
                     echo "formula=phab.rb" >> "$GITHUB_OUTPUT"
                     echo "template=phabalicious.rb.tpl" >> "$GITHUB_OUTPUT"
