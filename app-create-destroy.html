@@ -1,0 +1,392 @@
+<!DOCTYPE html><html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Creating/ destroying an app from existing configuration</title>
+                  <link rel="preconnect" href="https://BH4D9OD16A-dsn.algolia.net" crossorigin="">
+          <script>
+            window.fdocs = {
+              algolia: {
+                appId: "BH4D9OD16A",
+                apiKey: "69abc87124806b56252e00022c94f392",
+                indexName: "phab"
+              }
+            };
+          </script>
+                <link rel="stylesheet" href="/fdocs/common.css">
+          <link rel="stylesheet" href="/fdocs/docs.css">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-Regular.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-SemiBold.woff2" as="font" crossorigin="">
+                <script src="/fdocs/search.js" defer=""></script>
+                <meta property="og:title" content=" Creating/ destroying an app from existing configuration">
+        <meta name="twitter:title" content=" Creating/ destroying an app from existing configuration">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://docs.phab.io/app-create-destroy.html">
+                <meta property="og:site_name" content="Phabalicious">
+        <meta property="twitter:card" content="summary_large_image">
+                <meta property="og:image" content="https://docs.phab.io/assets/hero.png">
+        <meta property="twitter:image" content="https://docs.phab.io/assets/hero.png">
+                        <meta property="twitter:site" content="@phabalicious">
+                <meta property="twitter:creator" content="@factorial_io">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    </head>
+    <body>
+        <header class="Header">
+  <a class="SkipToContentLink" href="#content">Jump to content</a>
+  <div class="Header-content u-container">
+          <a href="#nav" class="Header-navLink">
+      <svg class="Header-navLinkIcon" width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect y="12" width="17" height="2"></rect>
+          <rect y="6" width="17" height="2"></rect>
+          <rect width="17" height="2"></rect>
+        </svg>
+        <span class="u-hiddenVisually">Jump to navigation</span>
+      </a>
+              <a href="https://docs.phab.io" class="Header-logo">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Header-logoImage" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+              <div class="Header-meta">
+                  <div id="docsearch" class="Header-search Header-search--noscript">
+            <form action="https://duckduckgo.com/" method="get" role="search" class="Header-searchForm">
+              <input type="hidden" name="sites" value="https://docs.phab.io">
+              <label for="search-q" class="Header-searchLabel">
+                <svg class="Header-searchLabelIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 14.35L11.7094 10.0594C12.4219 9.025 12.8375 7.77187 12.8375 6.42188C12.8406 2.875 9.96562 0 6.41875 0C2.875 0 0 2.875 0 6.41875C0 9.96562 2.875 12.8375 6.41875 12.8375V12.8406C7.77187 12.8406 9.025 12.4219 10.0594 11.7094L14.35 16L16 14.35ZM6.41875 10.5063V10.5031C4.1625 10.5 2.3375 8.675 2.33437 6.41875C2.3375 4.1625 4.1625 2.3375 6.41875 2.33437C8.675 2.3375 10.5 4.1625 10.5031 6.41875C10.5 8.675 8.675 10.5 6.41875 10.5063Z"></path>
+                </svg>
+                <span class="u-hiddenVisually">Search</span>
+              </label>
+              <input type="text" class="Header-searchInput" name="q" id="search-q" value="">
+              <button type="submit" class="Header-searchSubmit">Search with DuckDuckGo</button>
+            </form>
+          </div>
+                          <div class="Header-githubLink">
+            <a href="https://github.com/factorial-io/phabalicious" rel="noopener" target="_blank">GitHub</a>
+          </div>
+              </div>
+      </div>
+</header>
+        <div class="Content">
+        <main class="Docs">
+      <div class="Docs-nav" id="nav">
+        
+<nav class="Nav">
+  <a href="#content" class="Nav-contentLink">
+    <svg class="Nav-contentLinkIcon" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2.19531" y="0.282471" width="17" height="2" transform="rotate(45 2.19531 0.282471)"></rect>
+      <rect x="0.78125" y="12.3033" width="17" height="2" transform="rotate(-45 0.78125 12.3033)"></rect>
+    </svg>
+    <span class="u-hiddenVisually">Jump to content</span>
+  </a>  <ul class="Nav-list">            <li class="Nav-listItem" style="--level: 0">
+            <a href="/documentation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel">Documentation</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/guide.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How does phabalicious work in two sentences</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/installation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Installation</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/usage.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/configuration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Structure of the configuration file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/commands.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/inheritance.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/docker-integration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Docker integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/workspace.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Setup a local dev environment (multibasebox)</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scripts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scaffolder.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding arbitrary files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-scaffold.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding a new app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a aria-current="page" href="/app-create-destroy.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating/ destroying an app from existing configuration</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-create-destroy.html#the-standard-stages" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> the standard stages</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-create-destroy.html#creating-a-new-app" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating a new app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-create-destroy.html#destroying-an-app" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Destroying an app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-create-destroy.html#blueprints" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blueprints</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-create-destroy.html#customizing-via-scripts" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Customizing via scripts</span>
+      </a></li>
+          </ul></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/deploying-artifacts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Deploying artifacts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scotty.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scotty mPaaS Integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/kubernetes.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Kubernetes integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/offsite-backups.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Offsite backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/local-overrides.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Local overrides</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/passwords.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Passwords and secrets</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/contribute.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Contributing to Phabalicious</span>
+      </a></li>
+          </ul></li>            <li class="Nav-listItem" style="--level: 0">
+            <a href="/blog.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blog</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/introduction.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A short introduction into phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/architecture.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Introduction and overall architecture</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-7.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.7?</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-secrets.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Handling secrets with phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-phab-beta-in-parallel.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How to test a beta version of phabalicious in parallel</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-8.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.8?</span>
+      </a></li>
+          </ul></li>  </ul>
+  <script>
+    const nav = document.querySelector("#nav");
+    const activeLink = document.querySelector('nav [aria-current="page"]');
+
+    if (nav && activeLink) {
+      if (activeLink.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom) {
+        activeLink.scrollIntoView();
+      }
+    }
+  </script>
+</nav>
+      </div>
+      <div class="Docs-content" id="content">
+          <div class="RichText">
+    <h1 id="creating%2F-destroying-an-app-from-existing-configuration" tabindex="-1"><a class="header-anchor" href="#creating%2F-destroying-an-app-from-existing-configuration">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Creating/ destroying an app from existing configuration</h1>
+<p>Phabalicious can create or delete a complete app with two commands:</p>
+<ul>
+<li><code>phab --config=&lt;config&gt; app:create --copy-from=&lt;other-config&gt;</code></li>
+<li><code>phab --config=&lt;config&gt; app:destroy</code></li>
+</ul>
+<p>Both commands executes a list of stages, which can be influenced via configuration. Every method can react to the different stages and run some tasks if needed.</p>
+<h2 id="the-standard-stages" tabindex="-1"><a class="header-anchor" href="#the-standard-stages">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> the standard stages</h2>
+<p>These are the standard stages. You can override them by adding them to the global section of your fabfile:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">appStages</span><span class="token punctuation">:</span>
+  <span class="token key atrule">create</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> prepareDestination
+    <span class="token punctuation">-</span> installCode
+    <span class="token punctuation">-</span> spinUp
+    <span class="token punctuation">-</span> installDependencies
+    <span class="token punctuation">-</span> install
+  <span class="token key atrule">deploy</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> spinUp
+  <span class="token key atrule">destroy</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> spinDown
+    <span class="token punctuation">-</span> deleteContainers
+  <span class="token comment"># ftpSync and gitSync are only used for deploying artifacts.</span>
+  <span class="token key atrule">artifacts.ftp</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> installCode
+    <span class="token punctuation">-</span> installDependencies
+    <span class="token punctuation">-</span> runActions
+    <span class="token punctuation">-</span> runDeployScript
+    <span class="token punctuation">-</span> syncToFtp
+  <span class="token key atrule">artifacts.git</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> installCode
+    <span class="token punctuation">-</span> installDependencies
+    <span class="token punctuation">-</span> getSourceCommitInfo
+    <span class="token punctuation">-</span> pullTargetRepository
+    <span class="token punctuation">-</span> runActions
+    <span class="token punctuation">-</span> runDeployScript
+    <span class="token punctuation">-</span> pushToTargetRepository</code></pre>
+<h2 id="creating-a-new-app" tabindex="-1"><a class="header-anchor" href="#creating-a-new-app">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Creating a new app</h2>
+<p>Run the phab-command as usual. If you want to copy from an existing installation, add the <code>--copy-from</code>-option.</p>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> app:create</code></pre>
+<p>If the app is already created (there's an existing <code>.projectCreated</code>-file in the root of the installation), only the <code>deploy</code>-stage will be executed, and afterwards the deploy-task will be executed.</p>
+<p>If the app is not created yet, all <code>create</code>-stages will be executed. If nothing went wrong you should have a running installation of the given configuration</p>
+<h2 id="destroying-an-app" tabindex="-1"><a class="header-anchor" href="#destroying-an-app">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Destroying an app</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> app:destroy</code></pre>
+<p>This will execute all <code>destroy</code>-stages and delete the project-folder afterwards.</p>
+<h2 id="blueprints" tabindex="-1"><a class="header-anchor" href="#blueprints">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Blueprints</h2>
+<p>Both commands work best when using blueprints. This will allow to create a config and an app from a single string like a name of a feature.</p>
+<p>Some examples:</p>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span>some-config <span class="token parameter variable">--blueprint</span><span class="token operator">=</span>feature/<span class="token operator">&lt;</span>some-feature<span class="token operator">&gt;</span> create:app</code></pre>
+<p>Will create a new app from a blueprinted config.</p>
+<h2 id="customizing-via-scripts" tabindex="-1"><a class="header-anchor" href="#customizing-via-scripts">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Customizing via scripts</h2>
+<ul>
+<li>
+<p>You can add custom scripts to your host-configuration which will be run before a stage is entered or after a stage is finished. They follow a naming-convention:</p>
+<ul>
+<li><code>appCreate&lt;NameOfStage&gt;Before</code></li>
+<li><code>appCreate&lt;NameOfStage&gt;Finished</code></li>
+</ul>
+<p>e.g. <code>appCreateInstallDependenciesBefore</code> or <code>appCreateSpinDownFinished</code>. All context variables are exposed to scripts as <code>context.data.*</code> or <code>context.results.*</code></p>
+</li>
+</ul>
+
+  </div>
+        <nav aria-label="article" class="Pagination">
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--prev">
+      <a class="Pagination-link" rel="prev" href="/app-scaffold.html"> Scaffolding a new app</a>
+    </div>
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--next">
+      <a class="Pagination-link" rel="next" href="/deploying-artifacts.html"> Deploying artifacts</a>
+    </div>
+  </nav>
+      </div>
+    </main>
+  </div>
+      
+<footer class="Footer">
+  <div class="Footer-wrapper">
+          <a href="https://docs.phab.io">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Footer-logo" src="/assets/logo-white.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+        <p class="Footer-credit">An open source project by <a href="https://www.factorial.io" rel="noopener" target="_blank">Factorial</a></p>
+  </div>
+  <div class="Footer-wrapper Footer-wrapper--links">
+    <h2 class="u-hiddenVisually">Additional information</h2>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-links">
+  <h3 class="u-hiddenVisually" id="footer-nav-links">links</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="https://www.factorial.io/en/imprint" class="FooterList-link FooterList-link--links">
+                  Imprint
+              </a>
+    </li>
+        <li>
+      <a href="https://www.factorial.io/en/privacy-policy" class="FooterList-link FooterList-link--links">
+                  Privacy
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-social">
+  <h3 class="u-hiddenVisually" id="footer-nav-social">follow us</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="mailto:hello@factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Email address</span>
+          <span class="Icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.57 21.43H3.43A3.44 3.44 0 0 1 0 18V6a3.44 3.44 0 0 1 3.43-3.43h17.14A3.44 3.44 0 0 1 24 6v12a3.44 3.44 0 0 1-3.43 3.43zM1.71 9.25V18c0 .95.77 1.71 1.72 1.71h17.14c.95 0 1.72-.76 1.72-1.71V9.25l-8.5 5.22a3.4 3.4 0 0 1-3.58 0zm0-2.98c0 .6.31 1.16.82 1.47l8.57 5.28a1.7 1.7 0 0 0 1.8 0l8.56-5.28c.5-.31.81-.87.81-1.47V6a1.7 1.7 0 0 0-1.71-1.71H3.43c-.95 0-1.72.76-1.72 1.71z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://github.com/factorial-io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">GitHub</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M12 0C5.37 0 0 5.506 0 12.303c0 5.445 3.435 10.043 8.205 11.674.6.107.825-.262.825-.585 0-.292-.015-1.261-.015-2.291C6 21.67 5.22 20.346 4.98 19.654c-.135-.354-.72-1.446-1.23-1.738-.42-.23-1.02-.8-.015-.815.945-.015 1.62.892 1.845 1.261 1.08 1.86 2.805 1.338 3.495 1.015.105-.8.42-1.338.765-1.645-2.67-.308-5.46-1.37-5.46-6.075 0-1.338.465-2.446 1.23-3.307-.12-.308-.54-1.569.12-3.26 0 0 1.005-.323 3.3 1.26.96-.276 1.98-.415 3-.415s2.04.139 3 .416c2.295-1.6 3.3-1.261 3.3-1.261.66 1.691.24 2.952.12 3.26.765.861 1.23 1.953 1.23 3.307 0 4.721-2.805 5.767-5.475 6.075.435.384.81 1.122.81 2.276 0 1.645-.015 2.968-.015 3.383 0 .323.225.707.825.585a12.046 12.046 0 0 0 5.919-4.489A12.534 12.534 0 0 0 24 12.304C24 5.505 18.63 0 12 0Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.drupal.org/factorial-gmbh" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Drupal community</span>
+          <span class="Icon"><svg width="22" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.625 3.578c.567.257 1.142.518 1.732.886l.023.014c.806.504 5.25 3.283 5.245 9.35C21.625 19.954 16.791 24 11.217 24S.625 19.608.625 13.643c0-5.965 4.65-8.738 5.507-9.179.25-.136.484-.256.71-.372.701-.359 1.34-.686 2.228-1.386.556-.463 1.045-1.11 1.207-2.706.829.993 1.824 2.148 2.542 2.634.596.396 1.196.668 1.806.944Zm-.605 19.06c1.251-.117 2.314-.854 2.43-.97.16-.16.119-.298.091-.392l-.001-.005c-.023-.095-.117-.234-.323-.073-.462.352-1.508.765-2.987.765-1.48 0-2.175-.301-2.637-.67a1.174 1.174 0 0 1-.023-.016.186.186 0 0 0-.03-.019c-.022-.01-.048-.01-.13-.01-.14 0-.229.068-.346.162-.116.095-.161.324 0 .486 1.018.926 2.704.86 3.956.742Zm-1.573-2.918c.256-.235.673-.603 1.068-.765.35-.143.552-.142.85-.14h.118c.367 0 .762.023 1.04.213.276.183.437.597.526.827l.002.004c.095.235 0 .369-.183.463-.16.09-.184.046-.341-.25l-.004-.006-.013-.024c-.156-.293-.309-.579-1.1-.579-.735 0-1.013.232-1.355.518l-.102.085-.013.01c-.385.316-.523.429-.66.247-.134-.185-.09-.369.167-.603Zm7.559-1.59c.556-.81.784-2.104.784-2.819 0-.714-.323-1.92-1.48-1.92-.54 0-1.36.559-2.19 1.123-.841.574-1.694 1.155-2.277 1.166-.568.009-1.224-.454-1.993-.996-1.076-.76-2.37-1.673-3.948-1.66-2.125.022-3.816 1.713-3.838 3.515-.023 1.016.322 1.758 1.018 2.243.461.302.873.508 2.264.508 1.283 0 2.762-.892 4.05-1.67 1.013-.61 1.907-1.15 2.497-1.131.57.024 1.312.779 2.006 1.485.602.612 1.167 1.188 1.554 1.221.651.045 1.002-.256 1.553-1.066Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://twitter.com/factorial_io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">X</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.317 7.274v.591c0 6.35-4.92 13.735-13.864 13.735-2.832 0-5.366-.738-7.453-2.215h1.193c2.236 0 4.472-.739 6.111-2.068-2.087 0-3.875-1.477-4.62-3.397.297 0 .595.148.894.148.447 0 .894 0 1.341-.148a4.779 4.779 0 0 1-3.876-4.726c.597.296 1.342.591 2.237.591-1.342-.886-2.237-2.363-2.237-3.988 0-.886.299-1.772.597-2.51C4.025 6.24 7.602 8.16 11.776 8.308c-.149-.295-.149-.738-.149-1.034 0-2.658 2.236-4.874 4.92-4.874 1.341 0 2.683.591 3.577 1.477a8.077 8.077 0 0 0 3.13-1.181c-.298 1.181-1.192 2.067-2.086 2.658 1.043-.147 1.938-.443 2.832-.738-.894 1.181-1.789 2.067-2.683 2.658Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.facebook.com/factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Facebook</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M24 12c0-6.627-5.373-12-12-12S0 5.373 0 12c0 5.628 3.875 10.35 9.101 11.647v-7.98H6.627V12H9.1v-1.58c0-4.084 1.849-5.978 5.859-5.978.76 0 2.072.15 2.608.298v3.324a15.38 15.38 0 0 0-1.386-.044c-1.967 0-2.728.745-2.728 2.683V12h3.92l-.673 3.667h-3.247v8.245C19.396 23.195 24 18.135 24 12Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.instagram.com/factorial.io/" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Instagram</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.982c2.937 0 3.285.011 4.445.064 1.073.05 1.655.228 2.043.379.477.176.91.457 1.264.823.366.355.647.787.823 1.265.15.387.33.97.379 2.042.053 1.16.064 1.508.064 4.445 0 2.937-.011 3.285-.064 4.445-.049 1.073-.228 1.655-.379 2.043a3.64 3.64 0 0 1-2.087 2.087c-.388.151-.97.33-2.043.38-1.16.052-1.508.063-4.445.063-2.937 0-3.285-.01-4.445-.064-1.073-.049-1.655-.228-2.043-.379a3.407 3.407 0 0 1-1.264-.822 3.408 3.408 0 0 1-.823-1.265c-.15-.388-.33-.97-.379-2.043-.053-1.16-.064-1.508-.064-4.445 0-2.937.011-3.285.064-4.445.049-1.072.228-1.655.379-2.042.176-.478.457-.91.823-1.265a3.408 3.408 0 0 1 1.265-.823c.387-.15.97-.33 2.042-.379 1.16-.053 1.508-.064 4.445-.064M12 1c-2.987 0-3.362.013-4.535.066-1.171.054-1.97.24-2.67.512a5.392 5.392 0 0 0-1.949 1.268 5.392 5.392 0 0 0-1.269 1.949c-.271.7-.457 1.499-.51 2.67C1.012 8.638 1 9.013 1 12c0 2.988.013 3.362.066 4.535.054 1.171.24 1.97.512 2.67.276.734.709 1.4 1.268 1.949.55.56 1.215.992 1.949 1.268.7.272 1.5.458 2.67.512C8.638 22.987 9.013 23 12 23c2.988 0 3.362-.013 4.535-.066 1.171-.054 1.97-.24 2.67-.512a5.625 5.625 0 0 0 3.218-3.217c.272-.7.458-1.499.511-2.67.053-1.173.066-1.548.066-4.535s-.012-3.362-.066-4.535c-.053-1.171-.24-1.97-.511-2.67a5.392 5.392 0 0 0-1.27-1.949 5.393 5.393 0 0 0-1.947-1.269c-.7-.271-1.5-.457-2.67-.51C15.361 1.012 14.986 1 12 1Z"></path><path d="M12 6.352a5.649 5.649 0 1 0 0 11.297 5.649 5.649 0 0 0 0-11.297Zm0 9.315a3.666 3.666 0 1 1 0-7.333 3.666 3.666 0 0 1 0 7.333Zm5.87-8.218a1.32 1.32 0 1 0 0-2.64 1.32 1.32 0 0 0 0 2.64Z"></path></svg>
+</span>
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+      </div>
+</footer>
+    
+
+</body></html>
