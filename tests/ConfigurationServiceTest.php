@@ -33,7 +33,7 @@ class ConfigurationServiceTest extends PhabTestCase
             ->getMock();
         $application->expects($this->any())
             ->method('getVersion')
-            ->will($this->returnValue('3.0.0'));
+            ->willReturn('3.0.0');
 
         $logger = new TestableLogger();
         $this->logger = $logger;
@@ -45,7 +45,7 @@ class ConfigurationServiceTest extends PhabTestCase
             ->getMock();
         $method_factory->expects($this->any())
             ->method('all')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->config->setMethodFactory($method_factory);
     }
@@ -115,7 +115,7 @@ class ConfigurationServiceTest extends PhabTestCase
             ->getMock();
         $application->expects($this->any())
             ->method('getVersion')
-            ->will($this->returnValue('2.4.1'));
+            ->willReturn('2.4.1');
 
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 

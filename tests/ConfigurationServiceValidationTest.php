@@ -23,7 +23,7 @@ class ConfigurationServiceValidationTest extends PhabTestCase
             ->getMock();
         $application->expects($this->any())
             ->method('getVersion')
-            ->will($this->returnValue('3.0.0'));
+            ->willReturn('3.0.0');
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
         $this->logger = $logger;
         $this->config = new ConfigurationService($application, $logger);
