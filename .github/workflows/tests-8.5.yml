@@ -31,3 +31,5 @@ jobs:
 
             - name: Run unit tests
               run: ./vendor/bin/phpunit tests --exclude-group docker
+              env:
+                  SYMFONY_DEPRECATIONS_HELPER: weak
