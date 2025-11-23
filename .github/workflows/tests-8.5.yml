@@ -19,9 +19,10 @@ jobs:
                   extensions: intl, zip, zlib
                   coverage: none
                   ini-values: memory_limit=1G, phar.readonly=0
+              continue-on-error: false
 
             - name: Install Project Dependencies
-              run: composer install --no-interaction --no-ansi --no-progress --no-suggest
+              run: composer install --no-interaction --no-ansi --no-progress --no-suggest --ignore-platform-reqs
 
             - name: setup git
               run: git config --global user.email "phpunit@factorial.io" && git config --global user.name "phpunit" && git config --global init.defaultBranch master
