@@ -3,7 +3,7 @@
     "description": "A deployment helper cli",
     "type": "project",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "symfony/console": "^7.1",
         "psr/log": "^3",
         "symfony/event-dispatcher": "^7.1",
@@ -79,7 +79,7 @@
     },
     "config": {
         "platform": {
-            "php": "8.2"
+            "php": "8.3"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
