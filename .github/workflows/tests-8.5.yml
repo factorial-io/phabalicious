@@ -16,13 +16,15 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: "8.5"
-                  extensions: intl, zip, zlib
+                  extensions: intl, zip, zlib, json, openssl, posix
                   coverage: none
                   ini-values: memory_limit=1G, phar.readonly=0
-              continue-on-error: false
+
+            - name: Verify PHP version
+              run: php -v && composer -V
 
             - name: Install Project Dependencies
-              run: composer install --no-interaction --no-ansi --no-progress --no-suggest --ignore-platform-reqs
+              run: composer install --no-interaction --no-ansi --no-progress --ignore-platform-req=php
 
             - name: setup git
               run: git config --global user.email "phpunit@factorial.io" && git config --global user.name "phpunit" && git config --global init.defaultBranch master
