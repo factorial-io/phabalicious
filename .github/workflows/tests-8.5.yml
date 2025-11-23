@@ -32,4 +32,8 @@ jobs:
             - name: Run unit tests
               run: ./vendor/bin/phpunit tests --exclude-group docker
               env:
+                  # Allow deprecations for PHP 8.5 as dependencies need time to adapt
+                  # Deprecations from dependencies (not phabalicious code):
+                  # - curl_close() in GuzzleHTTP (transitive dependency)
+                  # - null array offset in Twig/Symfony components
                   SYMFONY_DEPRECATIONS_HELPER: weak
