@@ -19,7 +19,7 @@ class WebhookCommandTest extends PhabTestCase
     /** @var Application */
     protected $application;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);

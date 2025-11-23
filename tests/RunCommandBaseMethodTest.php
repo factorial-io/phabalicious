@@ -41,7 +41,7 @@ class RunCommandBaseMethodTest extends PhabTestCase
      */
     private $methodFactory;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $this->logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $app = $this->getMockBuilder(Application::class)->getMock();

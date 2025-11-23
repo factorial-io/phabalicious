@@ -19,7 +19,7 @@ class ConfigurationServiceValidationTest extends PhabTestCase
     public function setUp(): void
     {
         $application = $this->getMockBuilder(Application::class)
-            ->setMethods(['getVersion'])
+            ->onlyMethods(['getVersion'])
             ->getMock();
         $application->expects($this->any())
             ->method('getVersion')

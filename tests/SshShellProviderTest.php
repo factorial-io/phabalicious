@@ -26,7 +26,7 @@ class SshShellProviderTest extends PhabTestCase
 
     private TaskContext $context;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $this->config = $this->getMockBuilder(ConfigurationService::class)
             ->disableOriginalConstructor()
