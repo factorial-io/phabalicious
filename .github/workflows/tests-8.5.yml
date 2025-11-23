@@ -1,0 +1,30 @@
+name: Run phpunit tests on 8.5
+
+on: [push]
+
+jobs:
+    phpunit:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v5
+              with:
+                  fetch-depth: 1
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: "8.5"
+                  extensions: intl, zip, zlib
+                  coverage: none
+                  ini-values: memory_limit=1G, phar.readonly=0
+
+            - name: Install Project Dependencies
+              run: composer install --no-interaction --no-ansi --no-progress --no-suggest
+
+            - name: setup git
+              run: git config --global user.email "phpunit@factorial.io" && git config --global user.name "phpunit" && git config --global init.defaultBranch master
+
+            - name: Run unit tests
+              run: ./vendor/bin/phpunit tests --exclude-group docker
