@@ -20,7 +20,7 @@ class DeployCommandTest extends PhabTestCase
 
     protected $callback;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $this->callback = new DebugCallback(false);
 

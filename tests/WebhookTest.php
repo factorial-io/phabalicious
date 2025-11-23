@@ -25,7 +25,7 @@ class WebhookTest extends PhabTestCase
      */
     private $context;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $app = $this->getMockBuilder(Application::class)->getMock();

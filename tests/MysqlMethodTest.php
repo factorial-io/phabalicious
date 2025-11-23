@@ -37,7 +37,7 @@ class MysqlMethodTest extends PhabTestCase
     private ShellProviderInterface $shell;
     private HostConfig $hostConfig;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 
@@ -187,9 +187,9 @@ class MysqlMethodTest extends PhabTestCase
         $cmd = $this->getExecuteSQLCommand(true, 'SHOW TABLES');
         $result = $this->shell->run(implode(' ', $cmd));
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertContains('customers', $result->getOutput());
-        $this->assertContains('employees', $result->getOutput());
-        $this->assertContains('offices', $result->getOutput());
+        $this->assertStringContainsString('customers', $result->getOutput());
+        $this->assertStringContainsString('employees', $result->getOutput());
+        $this->assertStringContainsString('offices', $result->getOutput());
 
         // Now export the sql again.
 
@@ -220,7 +220,7 @@ class MysqlMethodTest extends PhabTestCase
         $cmd = $this->getExecuteSQLCommand(true, 'SHOW DATABASES');
         $result = $this->shell->run(implode(' ', $cmd));
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertContains('test-phabalicious', $result->getOutput());
+        $this->assertStringContainsString('test-phabalicious', $result->getOutput());
 
         $cmd = $this->getExecuteSQLCommand(true, 'USE test-phabalicious;');
         $result = $this->shell->run(implode(' ', $cmd));
@@ -232,7 +232,7 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->shell->run(implode(' ', $cmd));
 
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertContains('test_table', $result->getOutput());
+        $this->assertStringContainsString('test_table', $result->getOutput());
 
         $this->context->set('what', 'drop');
         $result = $this->method->database($this->hostConfig, $this->context);
@@ -261,7 +261,7 @@ class MysqlMethodTest extends PhabTestCase
         $result = $this->method->database($this->hostConfig, $this->context);
 
         $this->assertEquals(0, $result->getExitCode());
-        $this->assertContains($expected, $result->getOutput());
+        $this->assertStringContainsString($expected, $result->getOutput());
     }
 
     public function providerSqlQueries(): array

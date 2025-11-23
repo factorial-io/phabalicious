@@ -24,7 +24,7 @@ class ScriptActionTest extends TestCase
 
     private TaskContext $context;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $app = $this->getMockBuilder(Application::class)
             ->getMock();
@@ -130,7 +130,7 @@ class ScriptActionTest extends TestCase
         $action->run($this->hostConfig, $this->context);
         $output = $this->context->getCommandResult()->getOutput();
 
-        $this->assertContains('PHAB_SUB_SHELL=1', $output);
+        $this->assertStringContainsString('PHAB_SUB_SHELL=1', $output);
     }
 
     /**

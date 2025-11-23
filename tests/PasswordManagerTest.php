@@ -13,7 +13,7 @@ class PasswordManagerTest extends PhabTestCase
 {
     protected $context;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)->disableOriginalConstructor()->getMock(),

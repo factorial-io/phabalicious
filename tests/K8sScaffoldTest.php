@@ -28,7 +28,7 @@ class K8sScaffoldTest extends PhabTestCase
 
     protected ConfigurationService $configuration;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $this->application = new Application();
         $this->application->setVersion(Utilities::FALLBACK_VERSION);

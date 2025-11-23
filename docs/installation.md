@@ -5,7 +5,7 @@ parent: documentation
 
 ## Dependencies
 
-Phabalicious needs at least PHP 7.3 with the json- and openssl-extensions. Most of the methods dependes on installed cli commands, you will get an error-message if they can't be found.
+Phabalicious needs at least PHP 8.3 with the json- and openssl-extensions. Most of the methods dependes on installed cli commands, you will get an error-message if they can't be found.
 
 ## Installation via homebrew (mac os x)
 

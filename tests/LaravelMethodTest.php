@@ -19,7 +19,7 @@ class LaravelMethodTest extends PhabTestCase
 
     private ConfigurationService $configurationService;
 
-    public function setup(): void
+    public function setUp(): void
     {
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $app = $this->getMockBuilder(Application::class)->getMock();
