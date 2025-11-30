@@ -16,7 +16,7 @@
         "symfony/flex": "^2",
         "symfony/dotenv": "^7.1",
         "ext-json": "*",
-        "stecman/symfony-console-completion": "^0.14",
+        "stecman/symfony-console-completion": "^0.15",
         "symfony/finder": "^7.1",
         "thibaud-dauce/mattermost-php": "^1.2",
         "twig/twig": "^3.0",

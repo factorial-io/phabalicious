@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "99cc2ee053530ca11f1c00f9c8b5e6b2",
+    "content-hash": "a820b9481a97405d61e2f01b7e876b6e",
     "packages": [
         {
             "name": "composer/semver",
@@ -1526,21 +1526,21 @@
         },
         {
             "name": "stecman/symfony-console-completion",
-            "version": "v0.14.0",
+            "version": "v0.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stecman/symfony-console-completion.git",
-                "reference": "93b88586e50c05b7375a547031f535bf1ea970f5"
+                "reference": "f66c1a90f802ebe779e9f1255e938b44074a40d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/93b88586e50c05b7375a547031f535bf1ea970f5",
-                "reference": "93b88586e50c05b7375a547031f535bf1ea970f5",
+                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/f66c1a90f802ebe779e9f1255e938b44074a40d5",
+                "reference": "f66c1a90f802ebe779e9f1255e938b44074a40d5",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
-                "symfony/console": "~6.4 || ^7.1"
+                "symfony/console": "~6.4 || ^7.1 || ^8.0"
             },
             "require-dev": {
                 "dms/phpunit-arraysubset-asserts": "^0.4.0",
@@ -1570,9 +1570,9 @@
             "description": "Automatic BASH completion for Symfony Console Component based applications.",
             "support": {
                 "issues": "https://github.com/stecman/symfony-console-completion/issues",
-                "source": "https://github.com/stecman/symfony-console-completion/tree/v0.14.0"
+                "source": "https://github.com/stecman/symfony-console-completion/tree/v0.15.0"
             },
-            "time": "2024-11-09T03:07:26+00:00"
+            "time": "2025-11-30T08:20:15+00:00"
         },
         {
             "name": "symfony/cache",
@@ -9031,5 +9031,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
