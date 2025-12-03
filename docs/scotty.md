@@ -33,7 +33,45 @@ needs:
 scotty:
   server: https://scotty.example.com
   access-token: your-access-token
+  shellService: nginx
 ```
+
+## Shell Provider Integration
+
+When you add `scotty` to your `needs` section, phabalicious automatically sets `shellProvider: scotty`. This means all commands (deploy, backup, shell, etc.) execute inside your scotty containers via `scottyctl app:shell`.
+
+The `shellService` configuration specifies which service to use for command execution. This is typically your main application service (e.g., `nginx`, `php`, `app`).
+
+**Example:**
+
+```yaml
+hosts:
+  production:
+    needs:
+      - scotty
+    # shellProvider: scotty  # Set automatically
+    scotty:
+      shellService: nginx  # Commands execute in nginx service
+      services:
+        nginx: 80
+        api: 3000
+```
+
+**Shell Commands:**
+
+```bash
+# Open interactive shell in scotty container
+phab --config=production shell
+
+# Run a single command
+phab --config=production shell:command
+
+# Other commands also run in the container
+phab --config=production deploy
+phab --config=production backup
+```
+
+**Note:** File operations (`getFile`, `putFile`) are not yet supported by scottyctl. For file transfers, temporarily use `shellProvider: local` or access files through volume mounts.
 
 ## Configuration Reference
 
@@ -43,6 +81,7 @@ scotty:
 |--------|-------------|---------|
 | `server` | Scotty server URL | `https://scotty.example.com` |
 | `access-token` | Authentication token | `your-secret-token` |
+| `shellService` | Service to use for shell commands | `nginx` |
 
 ### Optional Configuration
 
@@ -217,6 +256,7 @@ executables:
 scotty:
   server: https://scotty.example.com
   access-token: "%secrets.SCOTTY_TOKEN%"
+  shellService: nginx
   app-blueprint: nginx-lagoon
   basic-auth:
     username: admin
