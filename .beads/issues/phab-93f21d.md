@@ -1,10 +1,11 @@
 ---
 title: Implement scotty shell provider support
-status: open
+status: closed
 priority: 2
 issue_type: task
 created_at: 2025-12-03T11:01:45.870310+00:00
-updated_at: 2025-12-03T12:36:44.611344+00:00
+updated_at: 2025-12-03T12:41:37.706863+00:00
+closed_at: 2025-12-03T12:41:37.706863+00:00
 ---
 
 # Description
