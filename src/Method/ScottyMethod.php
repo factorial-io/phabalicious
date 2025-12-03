@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\RunOptions;
+use Phabalicious\ShellProvider\ScottyShellProvider;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -34,6 +35,7 @@ class ScottyMethod extends BaseMethod
         );
         $config = [
             'scotty' => $configuration_service->getSetting('scotty', []),
+            'shellProvider' => ScottyShellProvider::PROVIDER_NAME,
         ];
         $config['executables']['scottyctl'] = 'scottyctl';
         $config['scotty']['scaffold'] = $this->getScaffoldDefaultConfig(
@@ -67,6 +69,10 @@ class ScottyMethod extends BaseMethod
         $validation_service->hasKey(
             'server',
             'The scotty configuration needs a `server` key'
+        );
+        $validation_service->hasKey(
+            'shellService',
+            'The scotty configuration needs a `shellService` key'
         );
     }
 

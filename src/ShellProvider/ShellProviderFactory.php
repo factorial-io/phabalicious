@@ -29,6 +29,10 @@ class ShellProviderFactory
                 $shell_provider = new KubectlShellProvider($logger);
                 break;
 
+            case ScottyShellProvider::PROVIDER_NAME:
+                $shell_provider = new ScottyShellProvider($logger);
+                break;
+
             default:
                 $shell_provider = null;
         }

@@ -11,6 +11,7 @@ scotty:
   registry: factorial
   server: http://localhost:21342
   access-token: hello-world
+  shellService: nginx
   services:
     nginx: 80
 
