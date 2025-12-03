@@ -67,3 +67,7 @@ hosts:
       custom-domains:
         example.com: nginx
         www.example.com: nginx
+  hostShellProvider:
+    inheritsFrom: hostA
+    needs:
+      - scotty

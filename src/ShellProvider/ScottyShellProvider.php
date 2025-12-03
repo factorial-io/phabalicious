@@ -53,10 +53,9 @@ class ScottyShellProvider extends LocalShellProvider
     {
         $command = [
             $this->hostConfig['executables']['scottyctl'] ?? 'scottyctl',
-            'app:shell',
         ];
 
-        // Add server and access-token options
+        // Add global options before subcommand
         $command[] = '--server';
         $command[] = $this->hostConfig['scotty']['server'];
 
@@ -65,6 +64,10 @@ class ScottyShellProvider extends LocalShellProvider
             $command[] = $this->hostConfig['scotty']['access-token'];
         }
 
+        // Add subcommand
+        $command[] = 'app:shell';
+
+        // Add app name and service
         $command[] = $this->hostConfig['scotty']['app-name'];
         $command[] = $this->hostConfig['scotty']['shellService'];
 
