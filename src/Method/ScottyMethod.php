@@ -6,6 +6,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\ShellProvider\RunOptions;
+use Phabalicious\ShellProvider\ScottyShellProvider;
 use Phabalicious\Utilities\Utilities;
 use Phabalicious\Validation\ValidationErrorBagInterface;
 use Phabalicious\Validation\ValidationService;
@@ -13,6 +14,8 @@ use Phabalicious\Validation\ValidationService;
 class ScottyMethod extends BaseMethod
 {
     use ScaffoldHelperTrait;
+
+    private array $authChecked = [];
 
     public function getName(): string
     {
@@ -32,10 +35,19 @@ class ScottyMethod extends BaseMethod
             $configuration_service,
             $host_config
         );
+        $global_settings = $configuration_service->getSetting('scotty', []);
         $config = [
-            'scotty' => $configuration_service->getSetting('scotty', []),
+            // Scotty shellProvider takes precedence over local
+            'shellProvider' => ScottyShellProvider::PROVIDER_NAME,
         ];
         $config['executables']['scottyctl'] = 'scottyctl';
+
+        // Merge global scotty settings with host-specific settings
+        $config['scotty'] = Utilities::mergeData(
+            $global_settings,
+            $host_config->get('scotty', [])->asArray()
+        );
+
         $config['scotty']['scaffold'] = $this->getScaffoldDefaultConfig(
             $host_config,
             $config,
@@ -68,6 +80,10 @@ class ScottyMethod extends BaseMethod
             'server',
             'The scotty configuration needs a `server` key'
         );
+        $validation_service->hasKey(
+            'shellService',
+            'The scotty configuration needs a `shellService` key'
+        );
     }
 
     public function alterConfig(
@@ -85,6 +101,83 @@ class ScottyMethod extends BaseMethod
         ]);
 
         $data->expandReplacements($replacements, []);
+    }
+
+    public function preflightTask(string $task, HostConfig $config, TaskContextInterface $context): void
+    {
+        parent::preflightTask($task, $config, $context);
+
+        // Only check if scotty method is actually being used
+        if (!$config->isMethodSupported($this)) {
+            return;
+        }
+
+        // Skip for non-operational tasks
+        $skip_tasks = ['about', 'list', 'version', 'output', 'list:hosts'];
+        if (in_array($task, $skip_tasks)) {
+            return;
+        }
+
+        // Check once per config per execution
+        $config_name = $config->getConfigName();
+        if (!empty($this->authChecked[$config_name])) {
+            return;
+        }
+
+        $this->authChecked[$config_name] = true;
+        $this->verifyAuthentication($config, $context);
+    }
+
+    /**
+     * Verify authentication by making a real API call.
+     *
+     * We use app:list instead of auth:status because auth:status
+     * can incorrectly return success even when the token is expired.
+     */
+    protected function verifyAuthentication(HostConfig $config, TaskContextInterface $context): void
+    {
+        $scotty_data = $config->getData()->get('scotty');
+
+        // Allow disabling auth check via configuration
+        if (false === $scotty_data->get('verifyAuth', true)->getValue()) {
+            $this->logger->debug('Scotty auth verification disabled via configuration');
+
+            return;
+        }
+
+        // If access-token is explicitly provided, skip the check
+        // (assume token-based auth via config)
+        if (!empty($scotty_data->get('access-token')?->getValue())) {
+            $this->logger->debug('Skipping auth verification - using configured access-token');
+
+            return;
+        }
+
+        // Perform a lightweight operation that requires valid authentication
+        // Using app:list as it's fast and will fail immediately if auth is invalid
+        $shell = $config->shell();
+        $server = $scotty_data->get('server')->getValue();
+
+        $context->io()->comment('Verifying scotty authentication...');
+
+        $result = $shell->run(
+            sprintf('#!scottyctl --server %s app:list', $server),
+            RunOptions::CAPTURE_AND_HIDE_OUTPUT,
+            false
+        );
+
+        if ($result->failed()) {
+            $context->io()->error([
+                'Failed to authenticate with scotty server.',
+                '',
+                'Your authentication token may be expired or invalid.',
+                sprintf('Please login again: scottyctl --server %s auth:login', $server),
+            ]);
+
+            throw new \RuntimeException(sprintf('Scotty authentication failed. Run: scottyctl --server %s auth:login', $server));
+        }
+
+        $context->io()->success('Scotty authentication verified');
     }
 
     public function scaffoldApp(

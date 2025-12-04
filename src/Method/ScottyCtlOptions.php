@@ -37,6 +37,48 @@ class ScottyCtlOptions
             $scotty_data['app-name'] ?? '%host.configName%';
     }
 
+    /**
+     * Build scottyctl command arguments for any subcommand.
+     *
+     * @param array                     $config     Host configuration array
+     * @param string                    $subcommand The scottyctl subcommand (e.g., 'app:shell', 'app:create')
+     * @param array                     $args       Additional arguments for the subcommand
+     * @param TaskContextInterface|null $context    Optional context for variable expansion and secret resolution
+     *
+     * @return array Command arguments array
+     */
+    public static function buildCommand(
+        array $config,
+        string $subcommand,
+        array $args = [],
+        ?TaskContextInterface $context = null,
+    ): array {
+        $scotty = $config['scotty'] ?? [];
+        $server = $scotty['server'] ?? throw new \InvalidArgumentException('Missing scotty.server configuration');
+        $access_token = $scotty['access-token'] ?? null;
+
+        // Resolve secrets if context available
+        if ($context && $access_token) {
+            $access_token = $context->getPasswordManager()->resolveSecrets($access_token);
+        }
+
+        $command = ['--server', $server];
+
+        if ($access_token) {
+            $command[] = '--access-token';
+            $command[] = $access_token;
+        }
+
+        $command[] = $subcommand;
+
+        // Add additional arguments
+        foreach ($args as $value) {
+            $command[] = $value;
+        }
+
+        return $command;
+    }
+
     public function getAppName(): string
     {
         return $this->data['app-name'];
@@ -60,20 +102,22 @@ class ScottyCtlOptions
             $replacements
         );
 
+        // Resolve secrets (e.g., %secret.scotty-token%)
+        $data = $this->context->getPasswordManager()->resolveSecrets($data);
+
         return $this->buildImpl($data, $command);
     }
 
     protected function buildImpl(array $data, string $command): array
     {
-        $options = ['--server', $this->data['server']];
-        if ($data['access-token']) {
-            $options[] = '--access-token';
-            $options[] = $data['access-token'];
-        }
-        $options[] = $command;
-        $options[] = $data['app-name'];
+        $args = [$data['app-name']];
 
-        return $options;
+        return self::buildCommand(
+            ['scotty' => $data],
+            $command,
+            $args,
+            null // Secrets already resolved
+        );
     }
 
     public function runInShell(

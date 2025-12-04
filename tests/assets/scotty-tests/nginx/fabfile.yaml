@@ -3,6 +3,10 @@ name: scotty-tests
 executables:
   scottyctl: /Users/stephan/dev/rust/scotty/target/debug/scottyctl
 
+secrets:
+  scotty-token:
+    env: SCOTTY_TOKEN
+
 scotty:
   app-blueprint: nginx-lagoon
   basic-auth:
@@ -11,6 +15,7 @@ scotty:
   registry: factorial
   server: http://localhost:21342
   access-token: hello-world
+  shellService: nginx
   services:
     nginx: 80
 
@@ -66,3 +71,11 @@ hosts:
       custom-domains:
         example.com: nginx
         www.example.com: nginx
+  hostShellProvider:
+    inheritsFrom: hostA
+    needs:
+      - scotty
+  hostWithSecret:
+    inheritsFrom: hostA
+    scotty:
+      access-token: "%secret.scotty-token%"
