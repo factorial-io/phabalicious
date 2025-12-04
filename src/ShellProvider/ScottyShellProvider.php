@@ -68,9 +68,7 @@ class ScottyShellProvider extends LocalShellProvider
             $args[] = implode(' ', $program_to_call);
         }
 
-        // Use ScottyCtlOptions to build the command (handles secrets, etc.)
-        // Note: Context is not available in shell provider, but secrets are resolved
-        // via LocalShellProvider's expandCommand() which calls resolveSecrets()
+        // Use ScottyCtlOptions to build the command
         $scottyctl_args = \Phabalicious\Method\ScottyCtlOptions::buildCommand(
             $this->hostConfig->asArray(),
             'app:shell',
@@ -78,10 +76,19 @@ class ScottyShellProvider extends LocalShellProvider
             null // No context available in shell provider
         );
 
-        return array_merge(
+        $command = array_merge(
             [$this->hostConfig['executables']['scottyctl'] ?? 'scottyctl'],
             $scottyctl_args
         );
+
+        // Resolve secrets in command array (e.g., %secret.scotty-token%)
+        // This must be done here because array commands don't go through expandCommand()
+        $password_manager = $this->hostConfig->getConfigurationService()->getPasswordManager();
+        if ($password_manager) {
+            $command = $password_manager->resolveSecrets($command);
+        }
+
+        return $command;
     }
 
     public function exists($file): bool
