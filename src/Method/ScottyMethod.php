@@ -148,7 +148,7 @@ class ScottyMethod extends BaseMethod
         // If access-token is explicitly provided, skip the check
         // (assume token-based auth via config)
         if (!empty($scotty_data->get('access-token')?->getValue())) {
-            $this->logger->debug('Using configured access-token for scotty authentication');
+            $this->logger->debug('Skipping auth verification - using configured access-token');
 
             return;
         }
@@ -158,7 +158,7 @@ class ScottyMethod extends BaseMethod
         $shell = $config->shell();
         $server = $scotty_data->get('server')->getValue();
 
-        $this->logger->debug('Verifying scotty authentication...');
+        $context->io()->comment('Verifying scotty authentication...');
 
         $result = $shell->run(
             sprintf('#!scottyctl --server %s app:list', $server),
@@ -177,7 +177,7 @@ class ScottyMethod extends BaseMethod
             throw new \RuntimeException(sprintf('Scotty authentication failed. Run: scottyctl --server %s auth:login', $server));
         }
 
-        $this->logger->info('Scotty authentication verified successfully');
+        $context->io()->success('Scotty authentication verified');
     }
 
     public function scaffoldApp(
