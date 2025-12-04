@@ -39,14 +39,32 @@ class ScottyMethodTest extends PhabTestCase
 
         $this->configurationService->readConfiguration(__DIR__.'/assets/scotty-tests/nginx/fabfile.yaml');
 
+        $input = $this->getMockBuilder(InputInterface::class)->getMock();
+        $input->method('getOption')->willReturnCallback(function ($option) {
+            if ('secret' === $option) {
+                return [];
+            }
+
+            return null;
+        });
+
         $this->context = new TaskContext(
             $this->getMockBuilder(BaseCommand::class)
                 ->disableOriginalConstructor()
                 ->getMock(),
-            $this->getMockBuilder(InputInterface::class)->getMock(),
+            $input,
             $this->getMockBuilder(OutputInterface::class)->getMock()
         );
         $this->context->setConfigurationService($this->configurationService);
+
+        // Set environment variable for secret resolution test
+        putenv('SCOTTY_TOKEN=my-secret-token-from-vault');
+    }
+
+    public function tearDown(): void
+    {
+        // Clean up environment variable
+        putenv('SCOTTY_TOKEN');
     }
 
     public function testConfigValidation(): void
@@ -220,5 +238,18 @@ class ScottyMethodTest extends PhabTestCase
             'nginx-lagoon',
             '--registry',
             'factorial'], $result);
+    }
+
+    public function testSecretResolution(): void
+    {
+        $host_config = $this->configurationService->getHostConfig('hostWithSecret');
+
+        $options = new ScottyCtlCreateOptions($host_config, $this->context);
+        $result = $options->build('create', ['app_folder' => '/app/folder']);
+
+        // Verify secret placeholder is resolved to actual value
+        $this->assertContains('--access-token', $result);
+        $this->assertContains('my-secret-token-from-vault', $result);
+        $this->assertNotContains('%secret.scotty-token%', $result);
     }
 }

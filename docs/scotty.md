@@ -19,7 +19,7 @@ Scotty is a lightweight platform for managing Docker-based applications with fea
 
 To use Scotty integration, you need:
 - A running Scotty server
-- Access token for authentication
+- Authentication (OAuth or access token)
 - `scottyctl` CLI tool installed and accessible
 
 ## Basic Configuration
@@ -32,8 +32,14 @@ needs:
 
 scotty:
   server: https://scotty.example.com
-  access-token: your-access-token
   shellService: nginx
+  
+  # Option A: OAuth authentication (interactive)
+  # Run once: scottyctl --server https://scotty.example.com auth:login
+  
+  # Option B: Token-based authentication (CI/automation)
+  access-token: your-access-token
+  # Or use secrets: access-token: "%secret.scotty-token%"
 ```
 
 ## Shell Provider Integration
@@ -75,22 +81,58 @@ phab --config=production backup
 
 ## Authentication
 
-Phabalicious automatically verifies your scotty authentication before executing operations by running a lightweight API call (`app:list`). This ensures your authentication token hasn't expired.
+Phabalicious supports two authentication methods for scotty:
 
-**Authentication is skipped when:**
-- An `access-token` is explicitly configured (token-based auth)
-- The `verifyAuth` option is set to `false`
+### OAuth Authentication (Recommended for Interactive Use)
 
-**If authentication fails:**
+OAuth provides seamless authentication without managing tokens:
+
 ```bash
-# Login to scotty server
+# Login once per server
 scottyctl --server https://scotty.example.com auth:login
 ```
 
-**Disable authentication check (not recommended):**
 ```yaml
 scotty:
-  verifyAuth: false
+  server: https://scotty.example.com
+  # No access-token needed - uses OAuth
+```
+
+Phabalicious automatically verifies authentication before operations using `app:list`. If your OAuth token expires, you'll get a clear error message with login instructions.
+
+### Token-Based Authentication (Required for CI/Automation)
+
+For CI pipelines and automated deployments, use access tokens:
+
+```yaml
+scotty:
+  server: https://scotty.example.com
+  access-token: your-token-here
+  
+  # Or use secret management:
+  # access-token: "%secret.scotty-token%"
+```
+
+**Using Secrets:**
+
+```yaml
+secrets:
+  scotty-token:
+    env: SCOTTY_ACCESS_TOKEN
+    # Or use 1Password, etc.
+
+scotty:
+  server: https://scotty.example.com
+  access-token: "%secret.scotty-token%"
+```
+
+When an `access-token` is configured, authentication verification is skipped (token assumed valid).
+
+### Disable Authentication Check
+
+```yaml
+scotty:
+  verifyAuth: false  # Not recommended
   server: https://scotty.example.com
 ```
 

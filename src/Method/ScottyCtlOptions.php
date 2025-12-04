@@ -60,6 +60,9 @@ class ScottyCtlOptions
             $replacements
         );
 
+        // Resolve secrets (e.g., %secret.scotty-token%)
+        $data = $this->context->getPasswordManager()->resolveSecrets($data);
+
         return $this->buildImpl($data, $command);
     }
 
