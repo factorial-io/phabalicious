@@ -73,6 +73,27 @@ phab --config=production backup
 
 **Note:** File operations (`getFile`, `putFile`) are not yet supported by scottyctl. For file transfers, temporarily use `shellProvider: local` or access files through volume mounts.
 
+## Authentication
+
+Phabalicious automatically verifies your scotty authentication before executing operations by running a lightweight API call (`app:list`). This ensures your authentication token hasn't expired.
+
+**Authentication is skipped when:**
+- An `access-token` is explicitly configured (token-based auth)
+- The `verifyAuth` option is set to `false`
+
+**If authentication fails:**
+```bash
+# Login to scotty server
+scottyctl --server https://scotty.example.com auth:login
+```
+
+**Disable authentication check (not recommended):**
+```yaml
+scotty:
+  verifyAuth: false
+  server: https://scotty.example.com
+```
+
 ## Configuration Reference
 
 ### Required Configuration
@@ -95,6 +116,7 @@ phab --config=production backup
 | `allow-robots` | Allow robot indexing | `false` | `true` |
 | `destroy-on-ttl` | Auto-destroy after TTL | `false` | `true` |
 | `env-file` | Environment variables file | - | `.env.scotty` |
+| `verifyAuth` | Verify authentication before operations | `true` | `false` |
 | `services` | Service port mappings | - | See below |
 | `environment` | Environment variables | - | See below |
 | `custom-domains` | Custom domain mappings | - | See below |
