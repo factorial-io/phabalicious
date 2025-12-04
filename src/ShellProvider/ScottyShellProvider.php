@@ -51,39 +51,37 @@ class ScottyShellProvider extends LocalShellProvider
 
     public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
-        $command = [
-            $this->hostConfig['executables']['scottyctl'] ?? 'scottyctl',
+        $args = [
+            $this->hostConfig['scotty']['app-name'],
+            $this->hostConfig['scotty']['shellService'],
         ];
-
-        // Add global options before subcommand
-        $command[] = '--server';
-        $command[] = $this->hostConfig['scotty']['server'];
-
-        if (!empty($this->hostConfig['scotty']['access-token'])) {
-            $command[] = '--access-token';
-            $command[] = $this->hostConfig['scotty']['access-token'];
-        }
-
-        // Add subcommand
-        $command[] = 'app:shell';
-
-        // Add app name and service
-        $command[] = $this->hostConfig['scotty']['app-name'];
-        $command[] = $this->hostConfig['scotty']['shellService'];
 
         // For interactive shells with TTY
         if ($options->useTty() && !$options->isShellExecutableProvided()) {
-            $command[] = '--shell';
-            $command[] = $this->hostConfig['shellExecutable'];
+            $args[] = '--shell';
+            $args[] = $this->hostConfig['shellExecutable'];
         }
 
         // Add any program to call
         if (count($program_to_call)) {
-            $command[] = '--command';
-            $command[] = implode(' ', $program_to_call);
+            $args[] = '--command';
+            $args[] = implode(' ', $program_to_call);
         }
 
-        return $command;
+        // Use ScottyCtlOptions to build the command (handles secrets, etc.)
+        // Note: Context is not available in shell provider, but secrets are resolved
+        // via LocalShellProvider's expandCommand() which calls resolveSecrets()
+        $scottyctl_args = \Phabalicious\Method\ScottyCtlOptions::buildCommand(
+            $this->hostConfig->asArray(),
+            'app:shell',
+            $args,
+            null // No context available in shell provider
+        );
+
+        return array_merge(
+            [$this->hostConfig['executables']['scottyctl'] ?? 'scottyctl'],
+            $scottyctl_args
+        );
     }
 
     public function exists($file): bool
