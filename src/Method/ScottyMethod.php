@@ -35,16 +35,17 @@ class ScottyMethod extends BaseMethod
         );
         $global_settings = $configuration_service->getSetting('scotty', []);
         $config = [
+            // Scotty shellProvider takes precedence over local
             'shellProvider' => ScottyShellProvider::PROVIDER_NAME,
         ];
         $config['executables']['scottyctl'] = 'scottyctl';
-        
+
         // Merge global scotty settings with host-specific settings
         $config['scotty'] = Utilities::mergeData(
             $global_settings,
             $host_config->get('scotty', [])->asArray()
         );
-        
+
         $config['scotty']['scaffold'] = $this->getScaffoldDefaultConfig(
             $host_config,
             $config,
