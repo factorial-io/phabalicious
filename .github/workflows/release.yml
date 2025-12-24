@@ -21,7 +21,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Code
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
               with:
                   fetch-depth: 0
 
@@ -74,10 +74,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout this repo (phabalicious)
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
 
             - name: Checkout tap repo
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
               with:
                   repository: factorial-io/homebrew-phabalicious
                   token: ${{ secrets.ACCESS_TOKEN }}
