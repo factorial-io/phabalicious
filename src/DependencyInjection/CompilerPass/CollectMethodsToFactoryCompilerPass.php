@@ -14,7 +14,11 @@ class CollectMethodsToFactoryCompilerPass implements CompilerPassInterface
     {
         $applicationDefinition = $containerBuilder->getDefinition(MethodFactory::class);
         foreach ($containerBuilder->getDefinitions() as $name => $definition) {
-            if (is_a($definition->getClass(), MethodInterface::class, true)) {
+            if ($definition->isAbstract()) {
+                continue;
+            }
+            $class = $definition->getClass();
+            if ($class && is_a($class, MethodInterface::class, true)) {
                 $applicationDefinition->addMethodCall('addMethod', [new Reference($name)]);
             }
         }
