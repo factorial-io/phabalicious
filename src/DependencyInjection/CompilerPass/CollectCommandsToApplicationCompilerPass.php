@@ -14,7 +14,11 @@ class CollectCommandsToApplicationCompilerPass implements CompilerPassInterface
     {
         $applicationDefinition = $containerBuilder->getDefinition(Application::class);
         foreach ($containerBuilder->getDefinitions() as $name => $definition) {
-            if (is_a($definition->getClass(), Command::class, true)) {
+            if ($definition->isAbstract()) {
+                continue;
+            }
+            $class = $definition->getClass();
+            if ($class && is_a($class, Command::class, true)) {
                 $applicationDefinition->addMethodCall('add', [new Reference($name)]);
             }
         }

@@ -3,7 +3,7 @@
     "description": "A deployment helper cli",
     "type": "project",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "symfony/console": "^7.1",
         "psr/log": "^3",
         "symfony/event-dispatcher": "^7.1",
@@ -38,7 +38,7 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "phpunit/phpunit": "^9.3",
+        "phpunit/phpunit": "^12.0",
         "symfony/phpunit-bridge": "^7.1",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "squizlabs/php_codesniffer": "^4.0",
@@ -79,7 +79,7 @@
     },
     "config": {
         "platform": {
-            "php": "8.2"
+            "php": "8.3"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,

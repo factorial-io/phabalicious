@@ -29,23 +29,23 @@ class ConfigurationServiceTest extends PhabTestCase
     public function setUp(): void
     {
         $application = $this->getMockBuilder(Application::class)
-            ->setMethods(['getVersion'])
+            ->onlyMethods(['getVersion'])
             ->getMock();
         $application->expects($this->any())
             ->method('getVersion')
-            ->will($this->returnValue('3.0.0'));
+            ->willReturn('3.0.0');
 
         $logger = new TestableLogger();
         $this->logger = $logger;
         $this->config = new ConfigurationService($application, $logger);
 
         $method_factory = $this->getMockBuilder(MethodFactory::class)
-            ->setMethods(['all'])
+            ->onlyMethods(['all'])
             ->disableOriginalConstructor()
             ->getMock();
         $method_factory->expects($this->any())
             ->method('all')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->config->setMethodFactory($method_factory);
     }
@@ -111,11 +111,11 @@ class ConfigurationServiceTest extends PhabTestCase
     {
         $this->expectException(MismatchedVersionException::class);
         $application = $this->getMockBuilder(Application::class)
-            ->setMethods(['getVersion'])
+            ->onlyMethods(['getVersion'])
             ->getMock();
         $application->expects($this->any())
             ->method('getVersion')
-            ->will($this->returnValue('2.4.1'));
+            ->willReturn('2.4.1');
 
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 

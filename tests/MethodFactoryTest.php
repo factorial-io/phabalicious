@@ -26,7 +26,7 @@ class MethodFactoryTest extends PhabTestCase
     public function testGetMethod(): void
     {
         $method = $this->getMockBuilder(BaseMethod::class)
-            ->setMethods(['getName', 'supports'])
+            ->onlyMethods(['getName', 'supports'])
             ->disableOriginalConstructor()
             ->getMock();
         $method
