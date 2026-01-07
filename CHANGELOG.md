@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.3](https://github.com/factorial-io/phabalicious/compare/v4.0.2...v4.0.3) (2026-01-07)
+
+
+### Bug Fixes
+
+* add void return type to CompletionCommand::configure() ([f959548](https://github.com/factorial-io/phabalicious/commit/f959548936e7787b3bb922db4440391367dc0e53))
+
 ### [4.0.2](https://github.com/factorial-io/phabalicious/compare/v4.0.1...v4.0.2) (2026-01-07)
 
 
