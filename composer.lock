@@ -5279,28 +5279,28 @@
         },
         {
             "name": "phpro/grumphp-shim",
-            "version": "v2.13.0",
+            "version": "v2.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpro/grumphp-shim.git",
-                "reference": "f41a7476e19aae6bfd82de4dabd0b5bebae3c4c4"
+                "reference": "6a46a594ec3a9e46c0b586d414c32d6b01ea923c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpro/grumphp-shim/zipball/f41a7476e19aae6bfd82de4dabd0b5bebae3c4c4",
-                "reference": "f41a7476e19aae6bfd82de4dabd0b5bebae3c4c4",
+                "url": "https://api.github.com/repos/phpro/grumphp-shim/zipball/6a46a594ec3a9e46c0b586d414c32d6b01ea923c",
+                "reference": "6a46a594ec3a9e46c0b586d414c32d6b01ea923c",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "~2.0",
                 "ext-json": "*",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
             },
             "replace": {
                 "phpro/grumphp": "self.version"
             },
             "require-dev": {
-                "humbug/box": "^3.16"
+                "humbug/box": "^4.6"
             },
             "bin": [
                 "grumphp",
@@ -5332,9 +5332,9 @@
             "description": "GrumPHP Phar distribution",
             "support": {
                 "issues": "https://github.com/phpro/grumphp-shim/issues",
-                "source": "https://github.com/phpro/grumphp-shim/tree/v2.13.0"
+                "source": "https://github.com/phpro/grumphp-shim/tree/v2.18.0"
             },
-            "time": "2025-06-04T13:47:23+00:00"
+            "time": "2025-12-05T09:34:51+00:00"
         },
         {
             "name": "phpspec/prophecy",
