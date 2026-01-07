@@ -1,0 +1,72 @@
+name: backup-tests
+
+restic:
+  repository: /tmp/restic-repo
+  environment:
+    RESTIC_PASSWORD: test
+
+hosts:
+  # Host using default files backup strategy
+  hostWithFiles:
+    type: dev
+    rootFolder: /tmp
+    backupFolder: /tmp/backups
+    filesFolder: /tmp/files
+    needs:
+      - local
+      - files
+
+  # Host using restic backup strategy
+  hostWithRestic:
+    type: dev
+    rootFolder: /tmp
+    backupFolder: /tmp/backups
+    filesFolder: /tmp/files
+    needs:
+      - local
+      - restic
+
+  # Host with both methods in needs (restic takes precedence via fileBackupStrategy)
+  hostWithBoth:
+    type: dev
+    rootFolder: /tmp
+    backupFolder: /tmp/backups
+    filesFolder: /tmp/files
+    needs:
+      - local
+      - files
+      - restic
+
+  # Host with database and files
+  hostWithDbAndFiles:
+    type: dev
+    rootFolder: /tmp
+    backupFolder: /tmp/backups
+    filesFolder: /tmp/files
+    needs:
+      - local
+      - mysql
+      - files
+    database:
+      host: localhost
+      name: testdb
+      user: testuser
+      pass: testpass
+      workingDir: /tmp
+
+  # Host with database and restic
+  hostWithDbAndRestic:
+    type: dev
+    rootFolder: /tmp
+    backupFolder: /tmp/backups
+    filesFolder: /tmp/files
+    needs:
+      - local
+      - mysql
+      - restic
+    database:
+      host: localhost
+      name: testdb
+      user: testuser
+      pass: testpass
+      workingDir: /tmp

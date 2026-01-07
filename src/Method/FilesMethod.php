@@ -326,6 +326,8 @@ class FilesMethod extends BaseMethod implements MethodInterface
 
     public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
     {
-        $context->addResult('backupMethods', ['files']);
+        if ('files' === $config->get('fileBackupStrategy', 'files')) {
+            $context->addResult('backupMethods', ['files']);
+        }
     }
 }
