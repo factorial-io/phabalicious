@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.2](https://github.com/factorial-io/phabalicious/compare/v4.0.1...v4.0.2) (2026-01-07)
+
+
+### Features
+
+* add automated testing workflow for PHP 8.5 ([eab382a](https://github.com/factorial-io/phabalicious/commit/eab382af8a1a14c783bfbae541395506e3786e74))
+
+
+### Bug Fixes
+
+* allow deprecation warnings in PHP 8.5 tests ([cc519ea](https://github.com/factorial-io/phabalicious/commit/cc519ead03f5f93188df26816199c13eaed3a5ea))
+* allow deprecations in PHP 8.5 tests from dependencies ([2544871](https://github.com/factorial-io/phabalicious/commit/254487166816772cc547041b43583bccea135c01))
+* **backup:** use 'files' instead of 'restic' in what parameter ([3fc2e70](https://github.com/factorial-io/phabalicious/commit/3fc2e709ac8968b6edd64094dee395e4a25c4495))
+* **deps:** update dependency stecman/symfony-console-completion to ^0.15 ([25a5301](https://github.com/factorial-io/phabalicious/commit/25a5301d29526eae55ec070214c7e629931a2b99))
+* improve PHP 8.5 workflow configuration ([818eadb](https://github.com/factorial-io/phabalicious/commit/818eadb67b97fd1c89b1abe37549e0a81f9b5cae))
+* update PHP 8.5 workflow to bypass platform requirements ([4cfe090](https://github.com/factorial-io/phabalicious/commit/4cfe090cc24e79476d2818bbd6a14e1b4c0d17ed))
+
 ### [4.0.1](https://github.com/factorial-io/phabalicious/compare/v4.0.0...v4.0.1) (2025-11-13)
 
 
