@@ -1,0 +1,1182 @@
+<!DOCTYPE html><html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Available commands</title>
+                  <link rel="preconnect" href="https://BH4D9OD16A-dsn.algolia.net" crossorigin="">
+          <script>
+            window.fdocs = {
+              algolia: {
+                appId: "BH4D9OD16A",
+                apiKey: "69abc87124806b56252e00022c94f392",
+                indexName: "phab"
+              }
+            };
+          </script>
+                <link rel="stylesheet" href="/fdocs/common.css">
+          <link rel="stylesheet" href="/fdocs/docs.css">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-Regular.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-SemiBold.woff2" as="font" crossorigin="">
+                <script src="/fdocs/search.js" defer=""></script>
+                <meta property="og:title" content=" Available commands">
+        <meta name="twitter:title" content=" Available commands">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://docs.phab.io/commands.html">
+                <meta property="og:site_name" content="Phabalicious">
+        <meta property="twitter:card" content="summary_large_image">
+                <meta property="og:image" content="https://docs.phab.io/assets/hero.png">
+        <meta property="twitter:image" content="https://docs.phab.io/assets/hero.png">
+                        <meta property="twitter:site" content="@phabalicious">
+                <meta property="twitter:creator" content="@factorial_io">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    </head>
+    <body>
+        <header class="Header">
+  <a class="SkipToContentLink" href="#content">Jump to content</a>
+  <div class="Header-content u-container">
+          <a href="#nav" class="Header-navLink">
+      <svg class="Header-navLinkIcon" width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect y="12" width="17" height="2"></rect>
+          <rect y="6" width="17" height="2"></rect>
+          <rect width="17" height="2"></rect>
+        </svg>
+        <span class="u-hiddenVisually">Jump to navigation</span>
+      </a>
+              <a href="https://docs.phab.io" class="Header-logo">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Header-logoImage" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+              <div class="Header-meta">
+                  <div id="docsearch" class="Header-search Header-search--noscript">
+            <form action="https://duckduckgo.com/" method="get" role="search" class="Header-searchForm">
+              <input type="hidden" name="sites" value="https://docs.phab.io">
+              <label for="search-q" class="Header-searchLabel">
+                <svg class="Header-searchLabelIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 14.35L11.7094 10.0594C12.4219 9.025 12.8375 7.77187 12.8375 6.42188C12.8406 2.875 9.96562 0 6.41875 0C2.875 0 0 2.875 0 6.41875C0 9.96562 2.875 12.8375 6.41875 12.8375V12.8406C7.77187 12.8406 9.025 12.4219 10.0594 11.7094L14.35 16L16 14.35ZM6.41875 10.5063V10.5031C4.1625 10.5 2.3375 8.675 2.33437 6.41875C2.3375 4.1625 4.1625 2.3375 6.41875 2.33437C8.675 2.3375 10.5 4.1625 10.5031 6.41875C10.5 8.675 8.675 10.5 6.41875 10.5063Z"></path>
+                </svg>
+                <span class="u-hiddenVisually">Search</span>
+              </label>
+              <input type="text" class="Header-searchInput" name="q" id="search-q" value="">
+              <button type="submit" class="Header-searchSubmit">Search with DuckDuckGo</button>
+            </form>
+          </div>
+                          <div class="Header-githubLink">
+            <a href="https://github.com/factorial-io/phabalicious" rel="noopener" target="_blank">GitHub</a>
+          </div>
+              </div>
+      </div>
+</header>
+        <div class="Content">
+        <main class="Docs">
+      <div class="Docs-nav" id="nav">
+        
+<nav class="Nav">
+  <a href="#content" class="Nav-contentLink">
+    <svg class="Nav-contentLinkIcon" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2.19531" y="0.282471" width="17" height="2" transform="rotate(45 2.19531 0.282471)"></rect>
+      <rect x="0.78125" y="12.3033" width="17" height="2" transform="rotate(-45 0.78125 12.3033)"></rect>
+    </svg>
+    <span class="u-hiddenVisually">Jump to content</span>
+  </a>  <ul class="Nav-list">            <li class="Nav-listItem" style="--level: 0">
+            <a href="/documentation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel">Documentation</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/guide.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How does phabalicious work in two sentences</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/installation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Installation</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/usage.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/configuration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Structure of the configuration file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a aria-current="page" href="/commands.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available commands</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#list" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> list</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#help" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> help</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#list%3Ahosts" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> list:hosts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#list%3Ablueprints" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> list:blueprints</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#about" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> about</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#find%3Aproperty" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> find:property</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#output" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> output</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#get%3Aproperty" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> get:property</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#version" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> version</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#shell" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> shell</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#deploy" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> deploy</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#reset" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> reset</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#install" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> install</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#install%3Afrom" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> install:from</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#install%3Afrom-sql-file" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> install:from-sql-file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#backup" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> backup</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#list%3Abackups" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> list:backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#restore" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> restore</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#get%3Abackup" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> get:backup</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#copy-from" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> copy-from</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#drush" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> drush</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#drupal" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> drupal</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#composer" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> composer</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#encrypt" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> encrypt</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#platform" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> platform</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#get%3Afile" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> get:file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#put%3Afile" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> put:file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#get%3Afiles-dump" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> get:files-dump</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#get%3Asql-dump" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> get:sql-dump</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#restore%3Asql-from-file" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> restore:sql-from-file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#script" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> script</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#docker" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> docker</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#start-remote-access" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> start-remote-access</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#docker-compose" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> docker-compose</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#notify" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> notify</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#app%3Ascaffold" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> app:scaffold</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#app%3Acreate" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> app:create</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#app%3Aupdate" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> app:update</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#app%3Adestroy" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> app:destroy</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#self-update" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> self-update</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#jira" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> jira</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#webhook" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> webhook</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#npm" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> npm</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#yarn" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> yarn</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#variable%3Apull" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> variable:pull</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#variable%3Apush" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> variable:push</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#k8s" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> k8s</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#artisan" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> artisan</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#db%3Ainstall" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> db:install</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#db%3Adrop" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> db:drop</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#db%3Aquery" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> db:query</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#db%3Ashell" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> db:shell</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#restic" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> restic</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/commands.html#workspace%3Acreate-%2F-workspace%3Aupdate" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> workspace:create / workspace:update</span>
+      </a></li>
+          </ul></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/inheritance.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/docker-integration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Docker integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/workspace.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Setup a local dev environment (multibasebox)</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scripts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scaffolder.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding arbitrary files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-scaffold.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding a new app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-create-destroy.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating/ destroying an app from existing configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/deploying-artifacts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Deploying artifacts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scotty.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scotty mPaaS Integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/kubernetes.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Kubernetes integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/offsite-backups.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Offsite backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/local-overrides.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Local overrides</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/passwords.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Passwords and secrets</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/contribute.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Contributing to Phabalicious</span>
+      </a></li>
+          </ul></li>            <li class="Nav-listItem" style="--level: 0">
+            <a href="/blog.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blog</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/introduction.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A short introduction into phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/architecture.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Introduction and overall architecture</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-7.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.7?</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-secrets.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Handling secrets with phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-phab-beta-in-parallel.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How to test a beta version of phabalicious in parallel</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-8.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.8?</span>
+      </a></li>
+          </ul></li>  </ul>
+  <script>
+    const nav = document.querySelector("#nav");
+    const activeLink = document.querySelector('nav [aria-current="page"]');
+
+    if (nav && activeLink) {
+      if (activeLink.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom) {
+        activeLink.scrollIntoView();
+      }
+    }
+  </script>
+</nav>
+      </div>
+      <div class="Docs-content" id="content">
+          <div class="RichText">
+    <h1 id="available-commands" tabindex="-1"><a class="header-anchor" href="#available-commands">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Available commands</h1>
+<h2 id="list" tabindex="-1"><a class="header-anchor" href="#list">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> list</h2>
+<pre class="language-bash"><code class="language-bash">phab list</code></pre>
+<p>This command will list all available commands. You can get specific help for a command with the next command:</p>
+<h2 id="help" tabindex="-1"><a class="header-anchor" href="#help">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> help</h2>
+<pre class="language-bash"><code class="language-bash">phab help:<span class="token operator">&lt;</span>command<span class="token operator">&gt;</span></code></pre>
+<p>Will display all available arguments and options for that given <code>&lt;command&gt;</code> and some explanatory text.</p>
+<h2 id="list%3Ahosts" tabindex="-1"><a class="header-anchor" href="#list%3Ahosts">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> list:hosts</h2>
+<pre class="language-bash"><code class="language-bash">phab list:hosts
+phab list:hosts <span class="token parameter variable">-v</span></code></pre>
+<p>This command will list all your hosts defined in your <code>hosts</code>-section of your <code>fabfile.yaml</code>. If you increase verbosity via <code>-v</code> phab will output the descriptions and list of public urls for every found configuration.</p>
+<h2 id="list%3Ablueprints" tabindex="-1"><a class="header-anchor" href="#list%3Ablueprints">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> list:blueprints</h2>
+<pre class="language-bash"><code class="language-bash">Phab list:blueprints</code></pre>
+<p>This command will list all found blueprint configurations.</p>
+<h2 id="about" tabindex="-1"><a class="header-anchor" href="#about">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> about</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> about
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> about <span class="token parameter variable">-v</span></code></pre>
+<p>will display the configuration of host <code>&lt;your-config&gt;</code> and the corresponding dockerHost-config, if any. If you increase the verbosity <code>about</code> will also show from where the values are consumed.</p>
+<h2 id="find%3Aproperty" tabindex="-1"><a class="header-anchor" href="#find%3Aproperty">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> find:property</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> find:property</code></pre>
+<p>Provides an interactive way to search for a specific property whithout knowing its exact name or location. Just type parts of the property after the prompt, phab will try to autocomplete your input. If the autocomplete does not reveal what you are looking for, just hit enter, phab will show a list of possible candidates, from which you can choose one.</p>
+<p>You can limit the search to the current (docker-)host-configuration by prefixing your input with <code>host.</code> or <code>dockerHost.</code>.</p>
+<p>Phab will output the current value of the searched property and from which resource it was inherited. Please note, if your searched property is a branch (means it has child values) then the inheritance source does only reflect the source of the property itself, not necessarily for its enclosed children.</p>
+<h2 id="output" tabindex="-1"><a class="header-anchor" href="#output">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> output</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> <span class="token parameter variable">--blueprint</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-blueprint-config<span class="token operator">&gt;</span> output</code></pre>
+<p>This command will print the computed configuration from a blueprint as yams. You can copy it and paste it back to the fabfile to make it permanent.</p>
+<h2 id="get%3Aproperty" tabindex="-1"><a class="header-anchor" href="#get%3Aproperty">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> get:property</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> get:property <span class="token operator">&lt;</span>name-of-property<span class="token operator">&gt;</span>
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> get:property <span class="token operator">&lt;</span>name-of-property<span class="token operator">&gt;</span> <span class="token parameter variable">--format</span> json
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> get:property <span class="token operator">&lt;</span>name-of-property<span class="token operator">&gt;</span> <span class="token parameter variable">--format</span> yaml</code></pre>
+<p>This will print the property-value to the console. Suitable if you want to use phabalicious from within other scripts. You can use the <code>format</code>-option to get the results formatted in a specific way so its easier to reuse and parse the values.</p>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab --config=mbb get:property host</code> will print the hostname of configuration <code>mbb</code>.</li>
+<li><code>phab -cmbb get:property docker.service</code> will print the service of the docker-configuration of <code>mbb</code>.</li>
+</ul>
+<h2 id="version" tabindex="-1"><a class="header-anchor" href="#version">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> version</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> version</code></pre>
+<p>This command will display the installed version of the code on the installation <code>&lt;your-config&gt;</code>.</p>
+<p><strong>Available methods</strong>:</p>
+<ul>
+<li><code>git</code>. The command will get the installed version via <code>git describe</code>, so if you tag your source properly (.e.g. by using  git flow), you'll get a nice version-number.</li>
+</ul>
+<h2 id="shell" tabindex="-1"><a class="header-anchor" href="#shell">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> shell</h2>
+<pre class="language-shell"><code class="language-shell">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> shell</code></pre>
+<p>Will open an interactive shell with <code>your-config</code>. It will utilize all necessary steps to connect to the remote or local instance and provide a shell.</p>
+<h2 id="deploy" tabindex="-1"><a class="header-anchor" href="#deploy">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> deploy</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> deploy
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> deploy <span class="token operator">&lt;</span>branch-to-deploy<span class="token operator">&gt;</span>
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> deploy <span class="token parameter variable">--arguments</span> <span class="token operator">&lt;</span>optional-arguments<span class="token operator">&gt;</span></code></pre>
+<p>This command will deploy the latest code to the given installation.</p>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>If <code>&lt;branch-to-deploy&gt;</code> is specified, it will deploy that specific branch (overriding the branch configured in the host config)</li>
+<li>If the host configuration has <code>backupBeforeDeploy</code> set to <code>true</code>, a database backup will be created before deployment starts</li>
+<li>After a successful deployment, the <code>reset</code>-command will be run</li>
+<li>Optional arguments can be passed to the deployment process using the <code>--arguments</code> (or <code>-a</code>) option</li>
+</ul>
+<p><strong>Arguments:</strong></p>
+<ul>
+<li><code>&lt;branch-to-deploy&gt;</code> (optional) - Specific branch to deploy, if not set the branch from host-config is used</li>
+</ul>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>--arguments</code> / <code>-a</code> - Pass optional arguments to the deployment process</li>
+</ul>
+<p><strong>Available methods:</strong></p>
+<ul>
+<li><code>git</code> will deploy to the latest commit for the given branch defined in the host-configuration. Submodules will be synced, and updated.</li>
+<li><code>platform</code> will push the current branch to the <code>platform</code> remote, which will start the deployment-process on platform.sh</li>
+<li><code>artifacts--ftpc</code> will create a copy of the app in a temporary folder and syncs this folder with the help of <code>lftp</code> with a remote ftp-server.</li>
+<li><code>artifacts--git</code> will create a copy of the app in a temporary folder and push it to another git-repository</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>phab --config=mbb deploy</code> will deploy the app via the config found in <code>mob</code></li>
+<li><code>phab --config=mbb deploy feature/some-feature</code> will deploy the branch <code>feature/some-feature</code> regardless the setting in the fabfile.</li>
+</ul>
+<h2 id="reset" tabindex="-1"><a class="header-anchor" href="#reset">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> reset</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token assign-left variable">config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> reset</code></pre>
+<p>This command will reset your installation</p>
+<p><strong>Available methods:</strong></p>
+<ul>
+<li><code>composer</code> will run <code>composer install</code> to update any dependencies before doing the reset</li>
+<li><code>drush</code> will
+<ul>
+<li>set the site-uuid from fabfile.yaml (drupal 8)</li>
+<li>enable a deployment-module if any stated in the fabfile.yaml</li>
+<li>enable modules listed in file <code>modules_enabled.txt</code></li>
+<li>disable modules listed in file <code>modules_disabled.txt</code></li>
+<li>revert features (drupal 7) if <code>revertFeatures</code> is true / import the configuration (drupal 8),</li>
+<li>run update-hooks</li>
+<li>and does a cache-clear.</li>
+<li>if your host-type is <code>dev</code> the password gets reset to admin/admin</li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>phab --config=mbb reset</code> will reset the installation and will not reset the password.</li>
+</ul>
+<h2 id="install" tabindex="-1"><a class="header-anchor" href="#install">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> install</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> <span class="token function">install</span>
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> <span class="token function">install</span> --skip-reset
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> <span class="token function">install</span> <span class="token parameter variable">--force</span></code></pre>
+<p>This command will install a new instance on an existing code-base. It runs all tasks necessary to install the application (e.g., installing a database, setting up configuration).</p>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>The configuration must have <code>supportsInstalls</code> not set to <code>false</code> (configurations can explicitly disallow installs)</li>
+<li>Prompts for confirmation before installing (unless <code>--force</code> is used)</li>
+<li>After installation, runs the <code>reset</code> task (unless <code>--skip-reset</code> is specified)</li>
+</ul>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>--skip-reset</code> - Skip running the reset task after installation</li>
+<li><code>--force</code> - Skip confirmation prompt</li>
+</ul>
+<p><strong>Available methods:</strong></p>
+<ul>
+<li><code>drush</code> - for Drupal installations</li>
+</ul>
+<p><strong>Configuration:</strong></p>
+<p>You can add an <code>installOptions</code> section to your fabfile.yaml. For Drupal installations:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">installOptions</span><span class="token punctuation">:</span>
+  <span class="token key atrule">distribution</span><span class="token punctuation">:</span> thunder
+  <span class="token key atrule">locale</span><span class="token punctuation">:</span> es</code></pre>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>phab --config=mbb install</code> will install a new instance (with confirmation prompt)</li>
+<li><code>phab --config=mbb install --force</code> will install without confirmation</li>
+<li><code>phab --config=mbb install --skip-reset</code> will install and skip the reset task afterwards</li>
+</ul>
+<h2 id="install%3Afrom" tabindex="-1"><a class="header-anchor" href="#install%3Afrom">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> install:from</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> install:from <span class="token operator">&lt;</span>source-config<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>what<span class="token operator">&gt;</span></code></pre>
+<p>This command will install a new installation (see the <code>install</code>-command) and afterwards will do a <code>copyFrom</code>. The <code>reset</code>-command after the <code>install</code>-command will be skipped and executed after the <code>copyFrom</code>-command. You can limit, what should be copied from: <code>db</code> or <code>files</code>. If <code>&lt;what&gt;</code> is omitted, then everything is copied from.</p>
+<p><strong>See also:</strong></p>
+<ul>
+<li>install</li>
+<li>install:from-sql-file</li>
+<li>copyFrom</li>
+</ul>
+<h2 id="install%3Afrom-sql-file" tabindex="-1"><a class="header-anchor" href="#install%3Afrom-sql-file">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> install:from-sql-file</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> install:from-sql-file <span class="token operator">&lt;</span>sql-file-path<span class="token operator">&gt;</span>
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> install:from-sql-file <span class="token operator">&lt;</span>sql-file-path<span class="token operator">&gt;</span> --skip-drop-db</code></pre>
+<p>This command will install an application from a local sql-file, by running the three standalone commands <code>install</code>, <code>restore:from-sql-file</code> and <code>reset</code>. It will skip any configuration-import while running install to speed things up.</p>
+<p>Passing the option <code>--skip-drop-db</code> will keep the existing DB intact, but this might result in problems while importing the SQL-file, so use with care.</p>
+<p><strong>See also:</strong></p>
+<ul>
+<li>install</li>
+<li>install:from</li>
+</ul>
+<h2 id="backup" tabindex="-1"><a class="header-anchor" href="#backup">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> backup</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> backup <span class="token operator">&lt;</span>what<span class="token operator">&gt;</span></code></pre>
+<p>This command will backup your files and database into the specified <code>backup</code>-directory. The file-names will include configuration-name, a timestamp and the git-SHA1. Every backup can be referenced by its filename (w/o extension) or, when git is abailable via the git-commit-hash.</p>
+<p>If <code>&lt;what&gt;</code> is omitted, files and db gets backupped, you can limit this by providing <code>db</code> and/ or <code>files</code>.</p>
+<p><strong>Available methods:</strong></p>
+<ul>
+<li><code>git</code> will prepend the file-names with a hash of the current revision.</li>
+<li><code>files</code> will tar all files in the <code>filesFolder</code> and save it into the <code>backupFolder</code></li>
+<li><code>drush</code> will dump the databases and save it to the <code>backupFolder</code></li>
+<li><code>restic</code> will backup the files into a restic repository instead. See <a href="offsite-backups.html">offsite backups</a> for more infos.</li>
+</ul>
+<p><strong>Configuration:</strong></p>
+<ul>
+<li>your host-configuration will need a <code>backupFolder</code> and a <code>filesFolder</code></li>
+</ul>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab -cmbb backup</code> will backup everything</li>
+<li><code>phab -cmbb backup files</code> will backup only public and private files.</li>
+<li><code>phab -cmbb backup db</code> will backup the database only.</li>
+</ul>
+<h2 id="list%3Abackups" tabindex="-1"><a class="header-anchor" href="#list%3Abackups">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> list:backups</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> list:backups</code></pre>
+<p>This command will print all available backups to the console.</p>
+<p><strong>Available methods</strong></p>
+<ul>
+<li><code>restic</code> the restic implementation will filter the list of snapshots by configuration and project name.</li>
+</ul>
+<h2 id="restore" tabindex="-1"><a class="header-anchor" href="#restore">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> restore</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span> restore <span class="token operator">&lt;</span>commit-hash<span class="token operator">|</span>file-name<span class="token operator">&gt;</span></code></pre>
+<p>This will restore a backup-set. A backup-set consists typically of a database-dump and a gzipped file-archive. You can a list of candidates via <code>phab --config=&lt;config&gt; list:backups</code></p>
+<p><strong>Available methods</strong></p>
+<ul>
+<li><code>git</code> git will checkout the given hash encoded in the filename.</li>
+<li><code>files</code> all files will be restored. An existing files-folder will be renamed for safety reasons.</li>
+<li><code>mysql</code>, <code>sqlite</code> will import the database-dump.</li>
+<li><code>restic</code> will restore the files and saved db dumps (You might need to run another restore to restore a sql-dump)</li>
+</ul>
+<h2 id="get%3Abackup" tabindex="-1"><a class="header-anchor" href="#get%3Abackup">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> get:backup</h2>
+<pre class="language-bash"><code class="language-bash">phab --config:<span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> get:backup <span class="token operator">&lt;</span>commit-hash<span class="token operator">|</span>file-name<span class="token operator">&gt;</span></code></pre>
+<p>This command will copy a remote backup-set to your local computer into the current working-directory.</p>
+<p><strong>See also:</strong></p>
+<ul>
+<li>restore</li>
+<li>backup</li>
+</ul>
+<h2 id="copy-from" tabindex="-1"><a class="header-anchor" href="#copy-from">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> copy-from</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>dest-config<span class="token operator">&gt;</span> copy-from <span class="token operator">&lt;</span>source-config<span class="token operator">&gt;</span>
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>dest-config<span class="token operator">&gt;</span> copy-from <span class="token operator">&lt;</span>source-config<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>what<span class="token operator">&gt;</span>
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>dest-config<span class="token operator">&gt;</span> copy-from <span class="token operator">&lt;</span>source-config<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>what<span class="token operator">&gt;</span> --skip-reset
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>dest-config<span class="token operator">&gt;</span> copy-from <span class="token operator">&lt;</span>source-config<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>what<span class="token operator">&gt;</span> --skip-drop-db</code></pre>
+<p>This command will copy database and/or files from <code>source-config</code> to <code>dest-config</code>. The source configuration must have <code>supportsCopyFrom</code> set to <code>true</code>.</p>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>If <code>&lt;what&gt;</code> is omitted, both database and files will be copied (default: <code>db</code> and <code>files</code>)</li>
+<li>Files are copied via rsync from source to destination</li>
+<li>Database is dumped from source and restored to destination</li>
+<li>After copying the database, the <code>reset</code>-command gets executed (unless <code>--skip-reset</code> is specified)</li>
+<li>By default, the destination database is dropped before import (unless <code>--skip-drop-db</code> is specified)</li>
+</ul>
+<p>This is the ideal command to copy a complete installation from one host to another.</p>
+<p><strong>Arguments:</strong></p>
+<ul>
+<li><code>&lt;source-config&gt;</code> (required) - The configuration to copy from</li>
+<li><code>&lt;what&gt;</code> (optional) - What to copy: <code>db</code> and/or <code>files</code>. If omitted, both are copied.</li>
+</ul>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>--skip-reset</code> - Skip running the reset task after importing the database</li>
+<li><code>--skip-drop-db</code> - Skip dropping the destination database before importing</li>
+</ul>
+<p><strong>Available methods</strong></p>
+<ul>
+<li><code>ssh</code> will create all necessary tunnels to access the hosts.</li>
+<li><code>files</code> will rsync all new and changed files from source to dest</li>
+<li><code>mysql</code>, <code>sqlite</code> will dump the database and restore it on the dest-host.</li>
+</ul>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab -cmbb copy-from remote-host</code> will copy db and files from <code>remote-host</code> to <code>mbb</code></li>
+<li><code>phab -cmbb copy-from remote-host db</code> will copy only the db  from <code>remote-host</code> to <code>mbb</code></li>
+<li><code>phab -cmbb copy-from remote-host db --skip-reset --skip-drop-db</code> will copy only the db  from <code>remote-host</code> to <code>mbb</code>, without dropping the db and without running the reset task afterwards.</li>
+<li><code>phab -cmbb copy-from remote-host files</code> will copy only the files from <code>remote-host</code> to <code>mbb</code></li>
+</ul>
+<h2 id="drush" tabindex="-1"><a class="header-anchor" href="#drush">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> drush</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> drush <span class="token string">"&lt;drush-command&gt;"</span></code></pre>
+<p>This command will execute the <code>drush-command</code> on the remote host specified in <code>&lt;config&gt;</code>. Please note, that you'll have to quote the drush-command when it contains spaces.</p>
+<p><strong>Available methods</strong></p>
+<ul>
+<li>Only available for the <code>drush</code>-method</li>
+</ul>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab --config=staging drush "cc all -y"</code></li>
+<li><code>phab --config=local drush fra</code></li>
+</ul>
+<h2 id="drupal" tabindex="-1"><a class="header-anchor" href="#drupal">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> drupal</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> drupal <span class="token string">"&lt;drupal-command&gt;"</span></code></pre>
+<p>This command will execute a drupal-console command on the remote host. Please note, that you'll have to quote the command when it contains spaces.</p>
+<p><strong>Available methods</strong></p>
+<ul>
+<li>Only available for the <code>drupal</code>-method</li>
+</ul>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab --config=local drupal cache:rebuild</code></li>
+<li><code>phab --config=local drupal "generate:module --module helloworld"</code></li>
+</ul>
+<h2 id="composer" tabindex="-1"><a class="header-anchor" href="#composer">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> composer</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> <span class="token function">composer</span> <span class="token string">"&lt;composer-command&gt;"</span></code></pre>
+<p>This command will execute a composer command on the remote host specified in <code>&lt;config&gt;</code>. Please note, that you'll have to quote the composer-command when it contains spaces.</p>
+<p><strong>Available methods</strong></p>
+<ul>
+<li>Only available for the <code>composer</code>-method</li>
+</ul>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab --config=staging composer "require drupal/module_name"</code></li>
+<li><code>phab --config=local composer update</code></li>
+<li><code>phab --config=production composer "install --no-dev"</code></li>
+</ul>
+<h2 id="encrypt" tabindex="-1"><a class="header-anchor" href="#encrypt">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> encrypt</h2>
+<pre class="language-bash"><code class="language-bash">phab encrypt <span class="token operator">&lt;</span>source<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>target<span class="token operator">&gt;</span>
+phab encrypt <span class="token operator">&lt;</span>source<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>target<span class="token operator">&gt;</span> <span class="token parameter variable">--password</span><span class="token operator">=</span><span class="token operator">&lt;</span>password<span class="token operator">&gt;</span></code></pre>
+<p>This command will encrypt a list of files with a password. The source files will be encrypted and stored in the target location. If no password is provided, phab will prompt for one.</p>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab encrypt secrets.txt secrets.txt.enc</code> will encrypt secrets.txt and prompt for a password</li>
+<li><code>phab encrypt config.yaml config.yaml.enc --password=mypassword</code> will encrypt with the specified password</li>
+</ul>
+<h2 id="platform" tabindex="-1"><a class="header-anchor" href="#platform">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> platform</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> platform <span class="token operator">&lt;</span>command<span class="token operator">&gt;</span></code></pre>
+<p>Runs a specific platform-command.</p>
+<h2 id="get%3Afile" tabindex="-1"><a class="header-anchor" href="#get%3Afile">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> get:file</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> get:file <span class="token operator">&lt;</span>path-to-remote-file<span class="token operator">&gt;</span></code></pre>
+<p>Copy a remote file to the current working directory of your current machine.</p>
+<h2 id="put%3Afile" tabindex="-1"><a class="header-anchor" href="#put%3Afile">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> put:file</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> put:file <span class="token operator">&lt;</span>path-to-local-file<span class="token operator">&gt;</span>
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> put:file <span class="token operator">&lt;</span>path-to-local-file<span class="token operator">&gt;</span> <span class="token parameter variable">--destination</span> <span class="token operator">&lt;</span>remote-destination<span class="token operator">&gt;</span></code></pre>
+<p>Copies a local <code>path-to-local-file</code> to a remote instance specified by the configuration. You can
+specify the full path and filename by providing the <code>--destination</code> option,
+relative paths are relative to the rootFolder-config of the remote instance.</p>
+<p>Per default phab copies the file to the specified <code>rootFolder</code> from the given
+configuration and it keeps the filename.</p>
+<p>Existing files will be overridden without warning.</p>
+<p><strong>Configuration</strong></p>
+<ul>
+<li>this command will use the <code>rootFolder</code>-host-setting for the destination directory, if no destination is given.</li>
+</ul>
+<h2 id="get%3Afiles-dump" tabindex="-1"><a class="header-anchor" href="#get%3Afiles-dump">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> get:files-dump</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> get:files-dump</code></pre>
+<p>This command will tar all files in <code>filesFolder</code> and <code>privateFilesFolder</code> and download it to the local computer.</p>
+<p><strong>Available methods</strong></p>
+<ul>
+<li>currently only implemented for the <code>files</code>-method</li>
+</ul>
+<h2 id="get%3Asql-dump" tabindex="-1"><a class="header-anchor" href="#get%3Asql-dump">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> get:sql-dump</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> get:sql-dump</code></pre>
+<p>Get a current dump of the remote database and copy it to the local machine into the current working directory.</p>
+<p><strong>Available methods</strong></p>
+<ul>
+<li><code>mysql</code></li>
+<li><code>sqlite</code></li>
+</ul>
+<h2 id="restore%3Asql-from-file" tabindex="-1"><a class="header-anchor" href="#restore%3Asql-from-file">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> restore:sql-from-file</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> restore:sql-from-file <span class="token operator">&lt;</span>path-to-local-sql-dump<span class="token operator">&gt;</span>
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> restore:sql-from-file <span class="token operator">&lt;</span>path-to-local-sql-dump<span class="token operator">&gt;</span> --skip-drop-db</code></pre>
+<p>This command will copy the dump-file <code>path-to-local-sql-dump</code> to the remote machine, drop the database (if the <code>--skip-drop-db</code>-option is not passed) and import it into the database.</p>
+<p><strong>Available methods</strong></p>
+<ul>
+<li><code>mysql</code></li>
+<li><code>sqlite</code></li>
+</ul>
+<h2 id="script" tabindex="-1"><a class="header-anchor" href="#script">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> script</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> script <span class="token operator">&lt;</span>script-name<span class="token operator">&gt;</span></code></pre>
+<p>This command will run custom scripts on a remote machine. You can declare scripts globally or per host. If the <code>script-name</code> can't be found in the fabfile.yaml you'll get a list of all available scripts.</p>
+<p>Additional arguments get passed to the script. See the examples.</p>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab --config=mbb script</code>. List all available scripts for configuration <code>mbb</code></li>
+<li><code>phab --config=mbb script behat</code> Run the <code>behat</code>-script</li>
+<li><code>phab --config=mbb script behat "--name="Login feature" --format=pretty"</code> Run the behat-test, apply <code>--name</code> and <code>--format</code> parameters to the script</li>
+</ul>
+<p>The <code>script</code>-command is rather powerful, have a read about it in the extra section.</p>
+<h2 id="docker" tabindex="-1"><a class="header-anchor" href="#docker">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> docker</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> <span class="token function">docker</span> <span class="token operator">&lt;</span>docker-subcommand<span class="token operator">&gt;</span></code></pre>
+<p>The docker command is suitable for orchestrating and administering remote instances of docker-containers. The basic setup is that your host-configuration has a <code>docker</code>-section, which contains a <code>configuration</code>-key. The <code>dockerHosts</code>-section of your fabfile.yaml has a list of commands which are executed on the "parent-host" of the configuration. Please have a look at the docker-section for more information.</p>
+<p>Most of the time the docker-container do not have a public or known ip-address. phabalicious tries to find out the ip-address of a given instance and use that for communicating with its services.</p>
+<p>There are three implicit subcommands available:</p>
+<h3 id="copysshkeys" tabindex="-1"><a class="header-anchor" href="#copysshkeys">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> copySSHKeys</h3>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span>mbb <span class="token function">docker</span> copySSHKeys</code></pre>
+<p>This will copy the ssh-keys into the docker-instance. You'll need to provide the paths to the files via the three configurations:</p>
+<ul>
+<li><code>dockerKeyFile</code>, the path to the private ssh-key to use.</li>
+<li><code>dockerAuthorizedKeysFile</code>, the path to the file for <code>authoried_keys</code> or a url.</li>
+<li><code>dockerKnownHostsFile</code>, the path to the file for <code>known_hosts</code></li>
+<li><code>dockerNetRcFile</code>, the path to a <code>.netrc</code>-file to copy into the container. This is helpful if you are using https-repositories and want to authenticate against them.</li>
+</ul>
+<p>As docker-container do not have any state, this command is used to copy any necessary ssh-configuration into the docker-container, so communication per ssh does not need any passwords.</p>
+<h3 id="waitforservices" tabindex="-1"><a class="header-anchor" href="#waitforservices">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> waitForServices</h3>
+<p>This command will try to run <code>supervisorctl status</code> in the container and  waits until all services are running. This is useful in scripts to wait for any services that need some time to start up. This command depends on <code>supervisorctl</code>.</p>
+<h2 id="start-remote-access" tabindex="-1"><a class="header-anchor" href="#start-remote-access">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> start-remote-access</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> start-remote-access
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> start-remote-access <span class="token punctuation">\</span>
+  <span class="token parameter variable">--port</span><span class="token operator">=</span><span class="token operator">&lt;</span>port<span class="token operator">&gt;</span> <span class="token punctuation">\</span>
+  --public-port<span class="token operator">=</span><span class="token operator">&lt;</span>public-port<span class="token operator">&gt;</span> <span class="token punctuation">\</span>
+  --public-ip<span class="token operator">=</span><span class="token operator">&lt;</span>public-ip<span class="token operator">&gt;</span></code></pre>
+<p>This command will run a command to forward a local port to a remote port. It starts a new ssh-session which will do the forwarding. When finished, type <code>exit</code>.</p>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab --config=mbb start-remote-access</code> will forward <code>localhost:8888</code> to port <code>80</code> of the docker-container</li>
+<li><code>phab --config=mbb start-remote-access --port=3306 --public-port=33060</code> will forward <code>localhost:33060</code>to port <code>3306</code></li>
+</ul>
+<h2 id="docker-compose" tabindex="-1"><a class="header-anchor" href="#docker-compose">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> docker-compose</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> <span class="token function">docker-compose</span> <span class="token operator">&lt;</span>docker-compose-arguments<span class="token operator">&gt;</span></code></pre>
+<p>The docker-compose-command will run <code>docker-compose</code> in the mentioned environment, passing all given arguments to it. Phab will also set all environment variables beforehand.</p>
+<p>Some examples:</p>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-cmbb</span> <span class="token function">docker-compose</span> <span class="token function">ps</span>
+phab <span class="token parameter variable">-cmbb</span> <span class="token function">docker-compose</span> -- <span class="token builtin class-name">exec</span> web <span class="token function">ls</span> <span class="token parameter variable">-la</span>
+phab <span class="token parameter variable">-clive</span> <span class="token function">docker-compose</span> run e2e</code></pre>
+<h2 id="notify" tabindex="-1"><a class="header-anchor" href="#notify">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> notify</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> notify <span class="token operator">&lt;</span>message<span class="token operator">&gt;</span> <span class="token operator">&lt;</span>channel<span class="token operator">&gt;</span></code></pre>
+<p>This command will send the notification <code>&lt;message&gt;</code> to Mattermosts channel <code>&lt;channel&gt;</code>. For a detailed description have a look into the dedicated documentation.</p>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab config:mbb notify "hello world" "off-topic"</code>: sends <code>hello world</code> to <code>#off-topic</code></li>
+</ul>
+<h2 id="app%3Ascaffold" tabindex="-1"><a class="header-anchor" href="#app%3Ascaffold">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> app:scaffold</h2>
+<pre class="language-bash"><code class="language-bash">phab app:scaffold <span class="token operator">&lt;</span>path/url-to-scaffold-files<span class="token operator">&gt;</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">--name</span><span class="token operator">=</span><span class="token operator">&lt;</span>name of app<span class="token operator">&gt;</span> <span class="token punctuation">\</span>
+  --short-name<span class="token operator">=</span><span class="token string">"short name of app"</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">--output</span><span class="token operator">=</span><span class="token operator">&lt;</span>path to output<span class="token operator">&gt;</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">--override</span><span class="token operator">=</span><span class="token string">"1|0"</span></code></pre>
+<p>This command will scaffold a new project from a set of scaffold-files. The scaffold-file might contain questions to set options. Values for these questions can be set via environment variables (in upper case snake case) or by passing them via the command line options (using kebab-case).</p>
+<p>For more information about scaffolding new apps, please visit the <a href="app-scaffold.html">dedicated documentation</a>.</p>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab app:scaffold path/to/scaffold.yml</code> will scaffold the app in the current folder. Phab will ask for the name and the short-name</li>
+<li><code>phab app:scaffold path/to/scaffold.yml --name="Hello World" --short-name="HW"</code> will scaffold the app with name "Hello World and short-name "HW"</li>
+<li><code>phab app:scaffold https://config.factorial.io/scaffold/d9/d9.yml</code> will scaffold a Drupal 9 app from the remote configuration</li>
+<li><code>phab app:scaffold https://config.factorial.io/scaffold/d9/d9.yml --name "test drupal" --short-name td --php-version 8.1</code> will scaffold with predefined options</li>
+</ul>
+<h2 id="app%3Acreate" tabindex="-1"><a class="header-anchor" href="#app%3Acreate">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> app:create</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> app:create
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> app:create --copy-from<span class="token operator">=</span><span class="token operator">&lt;</span>other-config<span class="token operator">&gt;</span>
+phab <span class="token parameter variable">--blueprint</span><span class="token operator">=</span><span class="token operator">&lt;</span>blueprint-name<span class="token operator">&gt;</span> <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> app:create
+phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> app:create <span class="token parameter variable">--force</span></code></pre>
+<p>This command will create a new app instance from an existing config. Phabalicious executes a list of customizable stages:</p>
+<ul>
+<li>preparing the destination</li>
+<li>install the current code base</li>
+<li>start the application</li>
+<li>install its dependencies</li>
+<li>install the app</li>
+</ul>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>If the target directory already exists, phab will prompt for confirmation (unless <code>--force</code> is used)</li>
+<li>If phab detects an already created app (via <code>.projectCreated</code> lock file), it will deploy the current application instead of creating a new one</li>
+<li>After creation completes, phab will run either <code>copy-from</code> (if <code>--copy-from</code> option provided) or <code>reset</code></li>
+<li>The stages can be customized via the <code>appStages.create</code> configuration setting</li>
+</ul>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>--copy-from=&lt;other-config&gt;</code> - Copy data from another configuration after creation</li>
+<li><code>--force</code> - Skip confirmation prompt if target directory exists</li>
+</ul>
+<p><strong>Most useful with blueprints</strong> - Using blueprints makes it possible to create a new application which is derived from a single variable (most often the branch name). Useful for feature-based deployments.</p>
+<p>For a deeper explanation please have a look into the <a href="app-create-destroy.html">dedicated documentation</a></p>
+<h2 id="app%3Aupdate" tabindex="-1"><a class="header-anchor" href="#app%3Aupdate">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> app:update</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> app:update</code></pre>
+<p>This command will update the code-base to the latest changes. When using the drush-method, Drupal core will be updated to the latest version (but only if <code>composer</code> is not used). If using <code>composer</code>, then composer will be used to update the existing code.</p>
+<p><strong>Available methods</strong></p>
+<ul>
+<li><code>drush</code> will update Drupal-core, but only if <code>composer</code> is not used</li>
+<li><code>composer</code> will update the codebase by running <code>composer update</code></li>
+</ul>
+<h2 id="app%3Adestroy" tabindex="-1"><a class="header-anchor" href="#app%3Adestroy">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> app:destroy</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> app:destroy
+phab <span class="token parameter variable">--blueprint</span><span class="token operator">=</span><span class="token operator">&lt;</span>blueprint-name<span class="token operator">&gt;</span> <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>config<span class="token operator">&gt;</span> app:destroy</code></pre>
+<p>This command will destroy an existing app from a given configuration. The process executes several stages:</p>
+<ul>
+<li>spin down the application</li>
+<li>delete the containers/pods</li>
+<li>delete the code base</li>
+</ul>
+<p>Using blueprints makes it possible to delete an existing application which is derived from a single variable (most often the branch name). Useful for feature-based deployments.</p>
+<p><strong>Caution: there will be no backup!</strong></p>
+<p>For more information please have a look into the <a href="app-create-destroy.html">dedicated documentation</a></p>
+<h2 id="self-update" tabindex="-1"><a class="header-anchor" href="#self-update">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> self-update</h2>
+<pre class="language-bash"><code class="language-bash">phab self-update
+phab self-update --allow-unstable<span class="token operator">=</span><span class="token number">1</span></code></pre>
+<p>This will download the latest version of phab and replace the current installed one with the downloaded version. If <code>allow-unstable</code> is set, the latest-dev-version will be downloaded.</p>
+<h2 id="jira" tabindex="-1"><a class="header-anchor" href="#jira">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> jira</h2>
+<pre class="language-bash"><code class="language-bash">phab jira</code></pre>
+<p>This command will display your open command for that given project. For this to work, the command needs some configuration-options.</p>
+<h2 id="webhook" tabindex="-1"><a class="header-anchor" href="#webhook">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> webhook</h2>
+<pre class="language-bash"><code class="language-bash">phab webhook <span class="token parameter variable">--config</span> hostA
+phab webhook nameOfWebhook <span class="token parameter variable">--config</span> hostA
+phab webhook nameOfWebhook <span class="token parameter variable">--arguments</span> <span class="token assign-left variable">foo</span><span class="token operator">=</span>bar <span class="token parameter variable">--arguments</span> <span class="token assign-left variable">token</span><span class="token operator">=</span>my-token <span class="token parameter variable">--config</span> hostA</code></pre>
+<p>This command will invoke the webhook named <code>nameOfWebhook</code> and pass the optional arguments to it. Omitting the name of the webhook will list all available webhooks. Have a look into the webhook-documentation.</p>
+<h2 id="npm" tabindex="-1"><a class="header-anchor" href="#npm">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> npm</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token function">npm</span> run build:css <span class="token parameter variable">--config</span> hostA
+phab <span class="token function">npm</span> run lint <span class="token parameter variable">--config</span> hostB</code></pre>
+<p>This will run an npm command on the given configuration. Make sure, that your host config has <code>npm</code> as a need a <code>npm.rootFolder</code> points to the folder containing package.json.</p>
+<h2 id="yarn" tabindex="-1"><a class="header-anchor" href="#yarn">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> yarn</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token function">yarn</span> build:css <span class="token parameter variable">--config</span> hostA
+phab <span class="token function">yarn</span> lint <span class="token parameter variable">--config</span> hostB</code></pre>
+<p>This will run a yarn command on the given configuration. Make sure, that your host config has <code>yarn</code> as a need a <code>yarn.rootFolder</code> points to the folder containing package.json.</p>
+<h2 id="variable%3Apull" tabindex="-1"><a class="header-anchor" href="#variable%3Apull">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> variable:pull</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-chost</span> variable:pull path/to/yaml.file</code></pre>
+<p>This will pull all variables listed in <code>path/to/yaml.file</code> and put the values into the yaml file and store it again. (Works currently only for D7). <code>variable:pull</code> and <code>variable:push</code> are useful to retrieve a list of variables and restore them at some point in the future.</p>
+<h2 id="variable%3Apush" tabindex="-1"><a class="header-anchor" href="#variable%3Apush">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> variable:push</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-chost</span> variable:push path/to/yaml.file</code></pre>
+<p>This will push all variables listed in <code>path/to/yaml.file</code> and set them on the remote instance. (Works currently only for D7)</p>
+<h2 id="k8s" tabindex="-1"><a class="header-anchor" href="#k8s">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> k8s</h2>
+<p>Runs a command against a kubernetes cluster. More info <a href="/kubernetes.html">here</a></p>
+<h2 id="artisan" tabindex="-1"><a class="header-anchor" href="#artisan">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> artisan</h2>
+<p>Runs a laravel artisan command</p>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-chost</span> artisan db:seed
+phab <span class="token parameter variable">-chost</span> artisan migrate</code></pre>
+<h2 id="db%3Ainstall" tabindex="-1"><a class="header-anchor" href="#db%3Ainstall">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> db:install</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-chost</span> db:install</code></pre>
+<p>This command will install a new database.</p>
+<h2 id="db%3Adrop" tabindex="-1"><a class="header-anchor" href="#db%3Adrop">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> db:drop</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-chost</span> db:drop</code></pre>
+<p>This command will drop all tables in a database.</p>
+<h2 id="db%3Aquery" tabindex="-1"><a class="header-anchor" href="#db%3Aquery">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> db:query</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-chost</span> db:query <span class="token string">"&lt;sql-query&gt;"</span></code></pre>
+<p>This command will run a query against the database and display the results.</p>
+<p><strong>Examples</strong></p>
+<ul>
+<li><code>phab -chost db:query "SELECT * FROM users LIMIT 10"</code></li>
+<li><code>phab -chost db:query "SHOW TABLES"</code></li>
+</ul>
+<h2 id="db%3Ashell" tabindex="-1"><a class="header-anchor" href="#db%3Ashell">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> db:shell</h2>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-chost</span> db:shell</code></pre>
+<p>This command will connect the user to a running database client (e.g. mysql) so the user can run interactive commands against the db.</p>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">-chost</span> db:shell:command</code></pre>
+<p>This command will print the shell commands necessary to run so that the user can connect to the db client directly.</p>
+<h2 id="restic" tabindex="-1"><a class="header-anchor" href="#restic">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> restic</h2>
+<pre class="language-bash"><code class="language-bash">phab -cmy-config restic -- snapshots
+phab -cmy-config restic -- restore <span class="token operator">&lt;</span>snapshot-id<span class="token operator">&gt;</span>
+phab -cmy-config restic -- snapshots --host-name my-hostname
+phab -cmy-config restic -- forget <span class="token parameter variable">--prune</span> --keep-daily<span class="token operator">=</span><span class="token number">14</span> --keep-weekly<span class="token operator">=</span><span class="token number">4</span> <span class="token punctuation">\</span>
+  --keep-monthly<span class="token operator">=</span><span class="token number">6</span> --group-by <span class="token function">host</span> <span class="token parameter variable">--prune</span></code></pre>
+<p>If your host has <code>restic</code> listed as its <code>needs</code> then restic will be used to run offsite-backups. You can interact with
+your restic repository using the <code>restic</code>-command. All given arguments and options will be passed down to restic, enriched with the configuration stored in the fabfile (See <a href="/configuration.html#restic">also</a>).</p>
+<h2 id="workspace%3Acreate-%2F-workspace%3Aupdate" tabindex="-1"><a class="header-anchor" href="#workspace%3Acreate-%2F-workspace%3Aupdate">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> workspace:create / workspace:update</h2>
+<p>Please refer to the dedicated <a href="./workspace.html">page here</a></p>
+
+  </div>
+        <nav aria-label="article" class="Pagination">
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--prev">
+      <a class="Pagination-link" rel="prev" href="/configuration.html"> Structure of the configuration file</a>
+    </div>
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--next">
+      <a class="Pagination-link" rel="next" href="/inheritance.html"> Inheritance</a>
+    </div>
+  </nav>
+      </div>
+    </main>
+  </div>
+      
+<footer class="Footer">
+  <div class="Footer-wrapper">
+          <a href="https://docs.phab.io">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Footer-logo" src="/assets/logo-white.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+        <p class="Footer-credit">An open source project by <a href="https://www.factorial.io" rel="noopener" target="_blank">Factorial</a></p>
+  </div>
+  <div class="Footer-wrapper Footer-wrapper--links">
+    <h2 class="u-hiddenVisually">Additional information</h2>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-links">
+  <h3 class="u-hiddenVisually" id="footer-nav-links">links</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="https://www.factorial.io/en/imprint" class="FooterList-link FooterList-link--links">
+                  Imprint
+              </a>
+    </li>
+        <li>
+      <a href="https://www.factorial.io/en/privacy-policy" class="FooterList-link FooterList-link--links">
+                  Privacy
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-social">
+  <h3 class="u-hiddenVisually" id="footer-nav-social">follow us</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="mailto:hello@factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Email address</span>
+          <span class="Icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.57 21.43H3.43A3.44 3.44 0 0 1 0 18V6a3.44 3.44 0 0 1 3.43-3.43h17.14A3.44 3.44 0 0 1 24 6v12a3.44 3.44 0 0 1-3.43 3.43zM1.71 9.25V18c0 .95.77 1.71 1.72 1.71h17.14c.95 0 1.72-.76 1.72-1.71V9.25l-8.5 5.22a3.4 3.4 0 0 1-3.58 0zm0-2.98c0 .6.31 1.16.82 1.47l8.57 5.28a1.7 1.7 0 0 0 1.8 0l8.56-5.28c.5-.31.81-.87.81-1.47V6a1.7 1.7 0 0 0-1.71-1.71H3.43c-.95 0-1.72.76-1.72 1.71z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://github.com/factorial-io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">GitHub</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M12 0C5.37 0 0 5.506 0 12.303c0 5.445 3.435 10.043 8.205 11.674.6.107.825-.262.825-.585 0-.292-.015-1.261-.015-2.291C6 21.67 5.22 20.346 4.98 19.654c-.135-.354-.72-1.446-1.23-1.738-.42-.23-1.02-.8-.015-.815.945-.015 1.62.892 1.845 1.261 1.08 1.86 2.805 1.338 3.495 1.015.105-.8.42-1.338.765-1.645-2.67-.308-5.46-1.37-5.46-6.075 0-1.338.465-2.446 1.23-3.307-.12-.308-.54-1.569.12-3.26 0 0 1.005-.323 3.3 1.26.96-.276 1.98-.415 3-.415s2.04.139 3 .416c2.295-1.6 3.3-1.261 3.3-1.261.66 1.691.24 2.952.12 3.26.765.861 1.23 1.953 1.23 3.307 0 4.721-2.805 5.767-5.475 6.075.435.384.81 1.122.81 2.276 0 1.645-.015 2.968-.015 3.383 0 .323.225.707.825.585a12.046 12.046 0 0 0 5.919-4.489A12.534 12.534 0 0 0 24 12.304C24 5.505 18.63 0 12 0Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.drupal.org/factorial-gmbh" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Drupal community</span>
+          <span class="Icon"><svg width="22" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.625 3.578c.567.257 1.142.518 1.732.886l.023.014c.806.504 5.25 3.283 5.245 9.35C21.625 19.954 16.791 24 11.217 24S.625 19.608.625 13.643c0-5.965 4.65-8.738 5.507-9.179.25-.136.484-.256.71-.372.701-.359 1.34-.686 2.228-1.386.556-.463 1.045-1.11 1.207-2.706.829.993 1.824 2.148 2.542 2.634.596.396 1.196.668 1.806.944Zm-.605 19.06c1.251-.117 2.314-.854 2.43-.97.16-.16.119-.298.091-.392l-.001-.005c-.023-.095-.117-.234-.323-.073-.462.352-1.508.765-2.987.765-1.48 0-2.175-.301-2.637-.67a1.174 1.174 0 0 1-.023-.016.186.186 0 0 0-.03-.019c-.022-.01-.048-.01-.13-.01-.14 0-.229.068-.346.162-.116.095-.161.324 0 .486 1.018.926 2.704.86 3.956.742Zm-1.573-2.918c.256-.235.673-.603 1.068-.765.35-.143.552-.142.85-.14h.118c.367 0 .762.023 1.04.213.276.183.437.597.526.827l.002.004c.095.235 0 .369-.183.463-.16.09-.184.046-.341-.25l-.004-.006-.013-.024c-.156-.293-.309-.579-1.1-.579-.735 0-1.013.232-1.355.518l-.102.085-.013.01c-.385.316-.523.429-.66.247-.134-.185-.09-.369.167-.603Zm7.559-1.59c.556-.81.784-2.104.784-2.819 0-.714-.323-1.92-1.48-1.92-.54 0-1.36.559-2.19 1.123-.841.574-1.694 1.155-2.277 1.166-.568.009-1.224-.454-1.993-.996-1.076-.76-2.37-1.673-3.948-1.66-2.125.022-3.816 1.713-3.838 3.515-.023 1.016.322 1.758 1.018 2.243.461.302.873.508 2.264.508 1.283 0 2.762-.892 4.05-1.67 1.013-.61 1.907-1.15 2.497-1.131.57.024 1.312.779 2.006 1.485.602.612 1.167 1.188 1.554 1.221.651.045 1.002-.256 1.553-1.066Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://twitter.com/factorial_io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">X</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.317 7.274v.591c0 6.35-4.92 13.735-13.864 13.735-2.832 0-5.366-.738-7.453-2.215h1.193c2.236 0 4.472-.739 6.111-2.068-2.087 0-3.875-1.477-4.62-3.397.297 0 .595.148.894.148.447 0 .894 0 1.341-.148a4.779 4.779 0 0 1-3.876-4.726c.597.296 1.342.591 2.237.591-1.342-.886-2.237-2.363-2.237-3.988 0-.886.299-1.772.597-2.51C4.025 6.24 7.602 8.16 11.776 8.308c-.149-.295-.149-.738-.149-1.034 0-2.658 2.236-4.874 4.92-4.874 1.341 0 2.683.591 3.577 1.477a8.077 8.077 0 0 0 3.13-1.181c-.298 1.181-1.192 2.067-2.086 2.658 1.043-.147 1.938-.443 2.832-.738-.894 1.181-1.789 2.067-2.683 2.658Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.facebook.com/factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Facebook</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M24 12c0-6.627-5.373-12-12-12S0 5.373 0 12c0 5.628 3.875 10.35 9.101 11.647v-7.98H6.627V12H9.1v-1.58c0-4.084 1.849-5.978 5.859-5.978.76 0 2.072.15 2.608.298v3.324a15.38 15.38 0 0 0-1.386-.044c-1.967 0-2.728.745-2.728 2.683V12h3.92l-.673 3.667h-3.247v8.245C19.396 23.195 24 18.135 24 12Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.instagram.com/factorial.io/" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Instagram</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.982c2.937 0 3.285.011 4.445.064 1.073.05 1.655.228 2.043.379.477.176.91.457 1.264.823.366.355.647.787.823 1.265.15.387.33.97.379 2.042.053 1.16.064 1.508.064 4.445 0 2.937-.011 3.285-.064 4.445-.049 1.073-.228 1.655-.379 2.043a3.64 3.64 0 0 1-2.087 2.087c-.388.151-.97.33-2.043.38-1.16.052-1.508.063-4.445.063-2.937 0-3.285-.01-4.445-.064-1.073-.049-1.655-.228-2.043-.379a3.407 3.407 0 0 1-1.264-.822 3.408 3.408 0 0 1-.823-1.265c-.15-.388-.33-.97-.379-2.043-.053-1.16-.064-1.508-.064-4.445 0-2.937.011-3.285.064-4.445.049-1.072.228-1.655.379-2.042.176-.478.457-.91.823-1.265a3.408 3.408 0 0 1 1.265-.823c.387-.15.97-.33 2.042-.379 1.16-.053 1.508-.064 4.445-.064M12 1c-2.987 0-3.362.013-4.535.066-1.171.054-1.97.24-2.67.512a5.392 5.392 0 0 0-1.949 1.268 5.392 5.392 0 0 0-1.269 1.949c-.271.7-.457 1.499-.51 2.67C1.012 8.638 1 9.013 1 12c0 2.988.013 3.362.066 4.535.054 1.171.24 1.97.512 2.67.276.734.709 1.4 1.268 1.949.55.56 1.215.992 1.949 1.268.7.272 1.5.458 2.67.512C8.638 22.987 9.013 23 12 23c2.988 0 3.362-.013 4.535-.066 1.171-.054 1.97-.24 2.67-.512a5.625 5.625 0 0 0 3.218-3.217c.272-.7.458-1.499.511-2.67.053-1.173.066-1.548.066-4.535s-.012-3.362-.066-4.535c-.053-1.171-.24-1.97-.511-2.67a5.392 5.392 0 0 0-1.27-1.949 5.393 5.393 0 0 0-1.947-1.269c-.7-.271-1.5-.457-2.67-.51C15.361 1.012 14.986 1 12 1Z"></path><path d="M12 6.352a5.649 5.649 0 1 0 0 11.297 5.649 5.649 0 0 0 0-11.297Zm0 9.315a3.666 3.666 0 1 1 0-7.333 3.666 3.666 0 0 1 0 7.333Zm5.87-8.218a1.32 1.32 0 1 0 0-2.64 1.32 1.32 0 0 0 0 2.64Z"></path></svg>
+</span>
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+      </div>
+</footer>
+    
+
+</body></html>
