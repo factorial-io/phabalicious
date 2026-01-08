@@ -24,7 +24,7 @@ class DryRunShellProviderTest extends PhabTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->config->method('getPasswordManager')->will($this->returnValue(new PasswordManager()));
+        $this->config->method('getPasswordManager')->willReturn(new PasswordManager());
 
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
 

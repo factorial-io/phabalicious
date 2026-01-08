@@ -4,6 +4,12 @@ services:
 
   Phabalicious\:
     resource: '../src'
+    exclude:
+      - '../src/Method/BaseMethod.php'
+      - '../src/Method/BaseNotifyMethod.php'
+      - '../src/Method/DatabaseMethod.php'
+      - '../src/Method/ArtifactsBaseMethod.php'
+      - '../src/Method/RunCommandBaseMethod.php'
 
   Symfony\Component\Console\Application:
     public: true
