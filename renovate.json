@@ -3,6 +3,9 @@
     ":preserveSemverRanges",
     "config:recommended"
   ],
+  "composer": {
+    "rangeStrategy": "update-lockfile"
+  },
   "packageRules": [
     {
       "groupName": "symfony packages",
