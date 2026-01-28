@@ -1,0 +1,574 @@
+<!DOCTYPE html><html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> What's new in phabalicious 3.8?</title>
+                  <link rel="preconnect" href="https://BH4D9OD16A-dsn.algolia.net" crossorigin="">
+          <script>
+            window.fdocs = {
+              algolia: {
+                appId: "BH4D9OD16A",
+                apiKey: "69abc87124806b56252e00022c94f392",
+                indexName: "phab"
+              }
+            };
+          </script>
+                <link rel="stylesheet" href="/fdocs/common.css">
+          <link rel="stylesheet" href="/fdocs/docs.css">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-Regular.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-SemiBold.woff2" as="font" crossorigin="">
+                <script src="/fdocs/search.js" defer=""></script>
+                <meta property="og:title" content=" What's new in phabalicious 3.8?">
+        <meta name="twitter:title" content=" What's new in phabalicious 3.8?">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://docs.phab.io/blog/whats-new-in-phab-3-8.html">
+                <meta property="og:site_name" content="Phabalicious">
+        <meta property="twitter:card" content="summary_large_image">
+                <meta property="og:image" content="https://docs.phab.io/assets/hero.png">
+        <meta property="twitter:image" content="https://docs.phab.io/assets/hero.png">
+                        <meta property="twitter:site" content="@phabalicious">
+                <meta property="twitter:creator" content="@factorial_io">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    </head>
+    <body>
+        <header class="Header">
+  <a class="SkipToContentLink" href="#content">Jump to content</a>
+  <div class="Header-content u-container">
+          <a href="#nav" class="Header-navLink">
+      <svg class="Header-navLinkIcon" width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect y="12" width="17" height="2"></rect>
+          <rect y="6" width="17" height="2"></rect>
+          <rect width="17" height="2"></rect>
+        </svg>
+        <span class="u-hiddenVisually">Jump to navigation</span>
+      </a>
+              <a href="https://docs.phab.io" class="Header-logo">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Header-logoImage" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+              <div class="Header-meta">
+                  <div id="docsearch" class="Header-search Header-search--noscript">
+            <form action="https://duckduckgo.com/" method="get" role="search" class="Header-searchForm">
+              <input type="hidden" name="sites" value="https://docs.phab.io">
+              <label for="search-q" class="Header-searchLabel">
+                <svg class="Header-searchLabelIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 14.35L11.7094 10.0594C12.4219 9.025 12.8375 7.77187 12.8375 6.42188C12.8406 2.875 9.96562 0 6.41875 0C2.875 0 0 2.875 0 6.41875C0 9.96562 2.875 12.8375 6.41875 12.8375V12.8406C7.77187 12.8406 9.025 12.4219 10.0594 11.7094L14.35 16L16 14.35ZM6.41875 10.5063V10.5031C4.1625 10.5 2.3375 8.675 2.33437 6.41875C2.3375 4.1625 4.1625 2.3375 6.41875 2.33437C8.675 2.3375 10.5 4.1625 10.5031 6.41875C10.5 8.675 8.675 10.5 6.41875 10.5063Z"></path>
+                </svg>
+                <span class="u-hiddenVisually">Search</span>
+              </label>
+              <input type="text" class="Header-searchInput" name="q" id="search-q" value="">
+              <button type="submit" class="Header-searchSubmit">Search with DuckDuckGo</button>
+            </form>
+          </div>
+                          <div class="Header-githubLink">
+            <a href="https://github.com/factorial-io/phabalicious" rel="noopener" target="_blank">GitHub</a>
+          </div>
+              </div>
+      </div>
+</header>
+        <div class="Content">
+        <main class="Docs">
+      <div class="Docs-nav" id="nav">
+        
+<nav class="Nav">
+  <a href="#content" class="Nav-contentLink">
+    <svg class="Nav-contentLinkIcon" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2.19531" y="0.282471" width="17" height="2" transform="rotate(45 2.19531 0.282471)"></rect>
+      <rect x="0.78125" y="12.3033" width="17" height="2" transform="rotate(-45 0.78125 12.3033)"></rect>
+    </svg>
+    <span class="u-hiddenVisually">Jump to content</span>
+  </a>  <ul class="Nav-list">            <li class="Nav-listItem" style="--level: 0">
+            <a href="/documentation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel">Documentation</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/guide.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How does phabalicious work in two sentences</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/installation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Installation</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/usage.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/configuration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Structure of the configuration file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/commands.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/inheritance.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/docker-integration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Docker integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/workspace.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Setup a local dev environment (multibasebox)</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scripts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scaffolder.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding arbitrary files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-scaffold.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding a new app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-create-destroy.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating/ destroying an app from existing configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/deploying-artifacts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Deploying artifacts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scotty.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scotty mPaaS Integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/kubernetes.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Kubernetes integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/offsite-backups.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Offsite backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/local-overrides.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Local overrides</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/passwords.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Passwords and secrets</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/contribute.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Contributing to Phabalicious</span>
+      </a></li>
+          </ul></li>            <li class="Nav-listItem" style="--level: 0">
+            <a href="/blog.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blog</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/introduction.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A short introduction into phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/architecture.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Introduction and overall architecture</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-7.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.7?</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-secrets.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Handling secrets with phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-phab-beta-in-parallel.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How to test a beta version of phabalicious in parallel</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a aria-current="page" href="/blog/whats-new-in-phab-3-8.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.8?</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 2">
+            <a href="/blog/whats-new-in-phab-3-8.html#what-has-changed%3F" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What has changed?</span>
+      </a></li>
+          </ul></li>
+          </ul></li>  </ul>
+  <script>
+    const nav = document.querySelector("#nav");
+    const activeLink = document.querySelector('nav [aria-current="page"]');
+
+    if (nav && activeLink) {
+      if (activeLink.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom) {
+        activeLink.scrollIntoView();
+      }
+    }
+  </script>
+</nav>
+      </div>
+      <div class="Docs-content" id="content">
+          <div class="RichText">
+    <h1 id="what's-new-in-phabalicious-3.8%3F" tabindex="-1"><a class="header-anchor" href="#what's-new-in-phabalicious-3.8%3F">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> What's new in phabalicious 3.8?</h1>
+<h2 id="what-has-changed%3F" tabindex="-1"><a class="header-anchor" href="#what-has-changed%3F">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> What has changed?</h2>
+<h3 id="php-7.3-required" tabindex="-1"><a class="header-anchor" href="#php-7.3-required">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> PHP 7.3 required</h3>
+<p>Phabalicious requires now PHP version 7.3. It should work with newer versions, including 8.1</p>
+<h3 id="better-integration-with-1password-cli%2F-connect" tabindex="-1"><a class="header-anchor" href="#better-integration-with-1password-cli%2F-connect">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Better integration with 1Password cli/ connect</h3>
+<ul>
+<li>Support for version 2 of the cli</li>
+<li>added new script callback <code>get_file_from_1password</code> which will retrieve an encrypted file from 1password,
+decrypt it and store it somewhere, suitable when scaffolding.</li>
+</ul>
+<h3 id="encryption-and-decryption" tabindex="-1"><a class="header-anchor" href="#encryption-and-decryption">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Encryption and decryption</h3>
+<p>Phab supports now encryption and decryption of files and strings. It uses <a href="https://github.com/defuse/php-encryption">defuse/php-encryption</a>,
+a widely used library for encryption  under the hood. You can encrypt files in a script with</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">secrets</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name-of-secret</span><span class="token punctuation">:</span>
+    <span class="token key atrule">question</span><span class="token punctuation">:</span> What is the password<span class="token punctuation">?</span>
+
+<span class="token key atrule">scripts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">encrypt</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> encrypt_files(path/to/files/or/folders/to/encrypt/<span class="token important">*.ext</span><span class="token punctuation">,</span> path/to/folder/to/store/encrypted/files<span class="token punctuation">,</span> name<span class="token punctuation">-</span>of<span class="token punctuation">-</span>secret)
+  <span class="token key atrule">decrypt</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> decrypt_files(path/to/files/or/folders/to/decrypt/<span class="token important">*.enc</span><span class="token punctuation">,</span> path/to/folder/to/store/decrypted/files<span class="token punctuation">,</span> name<span class="token punctuation">-</span>of<span class="token punctuation">-</span>secret)</code></pre>
+<p>The scaffolder has a new callback called <code>decrypt_assets</code> which works the same as <code>copy_assets</code> but with an additional
+decryption step</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> decrypt_assets(targetFolder<span class="token punctuation">,</span> dataKey<span class="token punctuation">,</span> secretName<span class="token punctuation">,</span> twigExtension)</code></pre>
+<p>You can also use <code>decrypt()</code> and <code>encrypt()</code> in your scaffold templates using the provided twig-functions:</p>
+<p>test.yml</p>
+<pre class="language-twig"><code class="language-twig">data:
+  my_secret_data: "<span class="token twig language-twig"><span class="token delimiter punctuation">{{</span> decrypt<span class="token punctuation">(</span>my_secret_data<span class="token punctuation">,</span> <span class="token string"><span class="token punctuation">'</span>name-of-secret<span class="token punctuation">'</span></span><span class="token punctuation">)</span> <span class="token delimiter punctuation">}}</span></span>"
+  encrypted: "<span class="token twig language-twig"><span class="token delimiter punctuation">{{</span> encrypt<span class="token punctuation">(</span><span class="token string"><span class="token punctuation">"</span>Hello world<span class="token punctuation">"</span></span><span class="token punctuation">,</span> <span class="token string"><span class="token punctuation">'</span>name-of-secret<span class="token punctuation">'</span></span><span class="token punctuation">)</span> <span class="token delimiter punctuation">}}</span></span>"</code></pre>
+<h3 id="new-command-install%3Afrom-sql-file" tabindex="-1"><a class="header-anchor" href="#new-command-install%3Afrom-sql-file">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> New command <code>install:from-sql-file</code></h3>
+<p>The command <code>install:from</code> and the new command <code>install:from-sql-file</code> get reworked to prevent double-work and to
+streamline the process. You can now install the app from an existing sql-file, which translates into an optimized
+flow of</p>
+<pre class="language-shell"><code class="language-shell">phab -cmy-host-config <span class="token function">install</span>
+phab -cmy-host-config restore:sql-from-file sql.gz
+phab -cmy-host-config reset</code></pre>
+<p>Instead run</p>
+<pre class="language-shell"><code class="language-shell">phab -cmy-host-config install:from-sql-file sql.gz</code></pre>
+<h3 id="refactoring-of-data-handling" tabindex="-1"><a class="header-anchor" href="#refactoring-of-data-handling">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Refactoring of data-handling</h3>
+<p>Phab now handles data differently, by storing from which file or url a piece of data was loaded. This enables phab to
+use relative includes, even for remote configurations. Now you can do things like</p>
+<p>base.yml</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">test</span><span class="token punctuation">:</span>
+    <span class="token key atrule">foo</span><span class="token punctuation">:</span> Hello world
+    <span class="token key atrule">bar</span><span class="token punctuation">:</span> Hello from base.yml
+</code></pre>
+<p>fabfile.yml:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> ./base.yml
+
+<span class="token key atrule">needs</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> local
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">test</span><span class="token punctuation">:</span>
+    <span class="token key atrule">foo</span><span class="token punctuation">:</span> Hello mars</code></pre>
+<p>Running <code>output</code> will show the resolved inheritances:</p>
+<pre class="language-shell"><code class="language-shell">❯ phab38 <span class="token parameter variable">-ctest</span> output <span class="token parameter variable">--what</span> <span class="token function">host</span>
+
+
+Output of host-configuration <span class="token variable"><span class="token variable">`</span><span class="token builtin class-name">test</span><span class="token variable">`</span></span>
+<span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">=</span>
+
+  test:
+    foo: <span class="token string">'Hello mars'</span>
+    bar: <span class="token string">'Hello from base.yml'</span>
+    needs:
+      - <span class="token builtin class-name">local</span>
+      - script
+    type: dev
+    <span class="token builtin class-name">.</span>
+    <span class="token builtin class-name">.</span>
+    <span class="token builtin class-name">.</span></code></pre>
+<p>This enhances also the introspection possibilities:</p>
+<h3 id="the-about-command-got-a--v-flag" tabindex="-1"><a class="header-anchor" href="#the-about-command-got-a--v-flag">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> The about command got a <code>-v</code> flag</h3>
+<p>The <code>about</code> command has another trick up its sleeve now. When inheriting configurations from multiple files, it can now
+display the exact location from which a particular parameter is being picked. Thus, finding out if a value is coming from an inherited file from a remote server or some sensible defaults is at your fingertip.</p>
+<p>Let's have a look at an example to see this in action. The command displays not only the active value for a particular
+key but also the location from which it is picked up.</p>
+<p>In our case the ouput of <code>phab -ctest about</code> will show the inheritance very in the second column:</p>
+<pre><code>❯ phab about -v -ctest
+
+Configuration of test
+=====================
+
++-----------------------------+-------------------------------------+---------------------------------------------------+
+| Key                         | Value                               | Inherited from                                    |
++-----------------------------+-------------------------------------+---------------------------------------------------+
+|   foo                       | Hello mars                          | /Users/stephan/Desktop/phab-38-blog/.fabfile.yaml |
+|   bar                       | Hello from base.yml                 | /Users/stephan/Desktop/phab-38-blog/base.yml      |
+|   needs                     |                                     | /Users/stephan/Desktop/phab-38-blog/.fabfile.yaml |
+|     needs.0                 | local                               | /Users/stephan/Desktop/phab-38-blog/.fabfile.yaml |
+|     needs.1                 | script                              | /Users/stephan/Desktop/phab-38-blog/.fabfile.yaml |
+|   type                      | dev                                 | host defaults                                     |
+.
+.
+.
+</code></pre>
+<h3 id="new-command-find%3Aproperty" tabindex="-1"><a class="header-anchor" href="#new-command-find%3Aproperty">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> New command <code>find:property</code></h3>
+<p>Phab 3.8 contains a new command named <code>find:property</code> which provides a visual prompt where the user can start typing the
+name of a property they are interested in. Phab supports you by offering properties via autocomplete. As an alternative
+you can hit enter to get a list of suggestions. After you found the property you are interested in, hit return, and phab
+will display the actual value of that property, its ancestors and from where it got read.</p>
+<p>Here's a short walkthrough using the files and their config from above.</p>
+<p><img src="./phab-38-find-property.svg" alt="A short walkthrough for the find:property command" loading="lazy" decoding="async"></p>
+<h3 id="enhancements-to-the-database-command" tabindex="-1"><a class="header-anchor" href="#enhancements-to-the-database-command">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Enhancements to the database command</h3>
+<p>There's a new subcommand available <code>db:query</code> where you can run a query against the database of a given configuration
+without starting a database-shell and run the query manually.</p>
+<pre class="language-shell"><code class="language-shell">phab -cmy-host-config db:query <span class="token string">"show tables"</span></code></pre>
+<p>It will try to get the database credentials from the configuration and apply them. This command is only implemented for
+mysql/mariadb for now.</p>
+<h3 id="new-command-restic" tabindex="-1"><a class="header-anchor" href="#new-command-restic">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> New command <code>restic</code></h3>
+<p>Phab 3.7 got support for offsite backups via <a href="https://github.com/restic/restic">restic</a>. But it was still a bit cumbersome to interact with the restic
+repository for a given configuration using restic alone. That's why phab now has the restic command. It is applying the
+configuration and options from the fabfile and you can concentrate on the commands you want to pass to restic. Some
+examples:</p>
+<pre class="language-shell"><code class="language-shell">phab -cmy-host-config restic snapshots
+phab -cmy-host-config restic -- snapshots --host-name my-config
+phab -cmy-host-config restic -- forget --keep-daily<span class="token operator">=</span><span class="token number">14</span> --keep-weekly<span class="token operator">=</span><span class="token number">4</span> --keep-monthly<span class="token operator">=</span><span class="token number">6</span> --group-by <span class="token function">host</span> <span class="token parameter variable">--prune</span></code></pre>
+<h3 id="experimental-integration-with-ddev" tabindex="-1"><a class="header-anchor" href="#experimental-integration-with-ddev">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Experimental integration with ddev</h3>
+<p>ddev is a superb tool for managing local development environments and provides similar features as phabalicious. As it
+takes a lot of time to maintain a local development stack (like multibasebox) we thought it might make more sense to
+embrace existing open-source tools.</p>
+<p>As ddev is also using docker and docker-compose under the hood it was very unproblematic to integrate ddev with phabalicious.
+Phab will read the ddev configuration from <code>.ddev/config.yaml</code> and provide it under the global property <code>ddev</code>. So it's
+very easy to provide a phab configuration for your local ddev instance. Instead of copy-pasting the boilerplate into
+every project we store it on a central place and inherit from it in the fabfile:</p>
+<p>Store this file in a central place, e.g. in your user-folder or on a remote-server. For demonstration purposes we store
+this in the same folder as the fabfile</p>
+<p>the <code>ddev.yml</code>-file:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">requires</span><span class="token punctuation">:</span> 3.8.0
+
+<span class="token key atrule">dockerHosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">ddev</span><span class="token punctuation">:</span>
+    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> .
+    <span class="token key atrule">runLocally</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">ddev</span><span class="token punctuation">:</span>
+    <span class="token key atrule">additionalNeeds</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> ddev
+    <span class="token key atrule">info</span><span class="token punctuation">:</span>
+      <span class="token key atrule">description</span><span class="token punctuation">:</span> Local ddev instance
+      <span class="token key atrule">publicUrls</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token string">"https://%settings.ddev.name%.ddev.site"</span>
+      <span class="token key atrule">category</span><span class="token punctuation">:</span>
+        <span class="token key atrule">id</span><span class="token punctuation">:</span> 01<span class="token punctuation">-</span>local
+        <span class="token key atrule">label</span><span class="token punctuation">:</span> Local development
+    <span class="token key atrule">executables</span><span class="token punctuation">:</span>
+      <span class="token key atrule">drush</span><span class="token punctuation">:</span> /var/www/html/vendor/bin/drush
+
+    <span class="token key atrule">shellProvider</span><span class="token punctuation">:</span> docker<span class="token punctuation">-</span>exec
+    <span class="token key atrule">composerRootFolder</span><span class="token punctuation">:</span> /var/www/html
+    <span class="token key atrule">gitRootFolder</span><span class="token punctuation">:</span> /var/www/html
+    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> /var/www/html/web
+    <span class="token key atrule">backupFolder</span><span class="token punctuation">:</span> /var/www/backups
+    <span class="token key atrule">docker</span><span class="token punctuation">:</span>
+      <span class="token key atrule">configuration</span><span class="token punctuation">:</span> ddev
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> ddev<span class="token punctuation">-</span>%settings.ddev.name%<span class="token punctuation">-</span>web
+      <span class="token key atrule">projectFolder</span><span class="token punctuation">:</span> .</code></pre>
+<p>the actual <code>.fabfile.yml</code>:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> ./ddev.yml
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">ddev</span><span class="token punctuation">:</span>
+    <span class="token comment"># its a drupal installation, so add the drupal-specfic stuff</span>
+    <span class="token key atrule">adminPass</span><span class="token punctuation">:</span> admin
+    <span class="token key atrule">replaceSettingsFile</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+    <span class="token key atrule">alterSettingsFile</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+    <span class="token key atrule">executables</span><span class="token punctuation">:</span>
+      <span class="token key atrule">drush</span><span class="token punctuation">:</span> /var/www/html/vendor/bin/drush
+    <span class="token key atrule">needs</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> git
+      <span class="token punctuation">-</span> docker
+      <span class="token punctuation">-</span> drush
+      <span class="token punctuation">-</span> files</code></pre>
+<p>running <code>phab list:hosts</code> will show sth like this for your ddev-project:</p>
+<pre class="language-shell"><code class="language-shell">❯ phab list:hosts <span class="token parameter variable">-v</span>
+
+Available configurations <span class="token keyword">for</span> your project
+<span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">=</span>
+
+Local development
+-----------------
+
+ ‣ ddev
+   Local ddev instance
+   → https://my-ddev-site.ddev.site</code></pre>
+<p>You can run any command against the ddev site as usual. For controlling app lifetime please use ddev, e.g. <code>ddev start</code>
+or <code>ddev stop</code></p>
+<h3 id="" tabindex="-1"><a class="header-anchor" href="#">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> </h3>
+<p>The configs for <code>yarn</code>, <code>npm</code>, <code>composer</code> and <code>laravel</code> changed. The composite property name like <code>yarnBuildCommand</code> is
+deprecated, please move the config under a section named <code>yarn</code>. This allows us to add more options for the respective
+commands by keeping a structure. Phab will support the old property-names until the next major release, for now you'll
+get a friendly reminder.</p>
+<p>One of the reasons for this change is the extension of the runContext, which got renamed into <code>context</code> which will adapt
+the existing functionality of the script execution contexts. Build commands can now be multiline, but then please
+provide the executable-name by yourself:</p>
+<p>Old:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">test</span><span class="token punctuation">:</span>
+    <span class="token key atrule">yarnBuildCommand</span><span class="token punctuation">:</span> build<span class="token punctuation">:</span>production
+    <span class="token key atrule">yarnRunContext</span><span class="token punctuation">:</span> docker<span class="token punctuation">-</span>host</code></pre>
+<p>New:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">test</span><span class="token punctuation">:</span>
+    <span class="token key atrule">yarn</span><span class="token punctuation">:</span>
+      <span class="token key atrule">buildCommand</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> yarn build<span class="token punctuation">:</span>production
+        <span class="token punctuation">-</span> yarn build<span class="token punctuation">:</span>assets
+      <span class="token key atrule">context</span><span class="token punctuation">:</span> docker<span class="token punctuation">-</span>image
+      <span class="token key atrule">image</span><span class="token punctuation">:</span> node<span class="token punctuation">:</span><span class="token number">16</span></code></pre>
+<p>There are two new contexts available which pigypack on the existing functionality of script execution contexts:</p>
+<ul>
+<li><code>docker-image</code> will execute the yarn build in a docker image (see script execution contexts for configuration options)</li>
+<li><code>docker-image-on-docker-host</code> same as above, but it will be executed on the same instance where docker-commands are
+executed, usually where your dockerConfig points to. (Still experimental)</li>
+</ul>
+<h3 id="smaller-enhancements" tabindex="-1"><a class="header-anchor" href="#smaller-enhancements">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Smaller enhancements</h3>
+<ul>
+<li>Passwords are now obfuscated in phabs output.</li>
+<li>Update-check is now using a maintained [php</li>
+<li>library](https://github.com/consolidation/self-update) and works more reliably. Please that the name of the option for getting a beta-version
+changed too.</li>
+<li>When importing a sql-dump phab freezes the app, and unfreezes it afterwards. For drupal applications the site will be put in
+maintenance mode and back.</li>
+</ul>
+<h3 id="switch-to-conventional-commits-and-semi-automated-releases" tabindex="-1"><a class="header-anchor" href="#switch-to-conventional-commits-and-semi-automated-releases">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Switch to conventional commits and semi-automated releases</h3>
+<p>We switched to the conventional commits convention and introduced <code>standard-release</code> to help us creating proper releases.</p>
+
+  </div>
+        <nav aria-label="article" class="Pagination">
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--prev">
+      <a class="Pagination-link" rel="prev" href="/blog/how-to-use-phab-beta-in-parallel.html"> How to test a beta version of phabalicious in parallel</a>
+    </div>
+    </nav>
+      </div>
+    </main>
+  </div>
+      
+<footer class="Footer">
+  <div class="Footer-wrapper">
+          <a href="https://docs.phab.io">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Footer-logo" src="/assets/logo-white.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+        <p class="Footer-credit">An open source project by <a href="https://www.factorial.io" rel="noopener" target="_blank">Factorial</a></p>
+  </div>
+  <div class="Footer-wrapper Footer-wrapper--links">
+    <h2 class="u-hiddenVisually">Additional information</h2>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-links">
+  <h3 class="u-hiddenVisually" id="footer-nav-links">links</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="https://www.factorial.io/en/imprint" class="FooterList-link FooterList-link--links">
+                  Imprint
+              </a>
+    </li>
+        <li>
+      <a href="https://www.factorial.io/en/privacy-policy" class="FooterList-link FooterList-link--links">
+                  Privacy
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-social">
+  <h3 class="u-hiddenVisually" id="footer-nav-social">follow us</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="mailto:hello@factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Email address</span>
+          <span class="Icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.57 21.43H3.43A3.44 3.44 0 0 1 0 18V6a3.44 3.44 0 0 1 3.43-3.43h17.14A3.44 3.44 0 0 1 24 6v12a3.44 3.44 0 0 1-3.43 3.43zM1.71 9.25V18c0 .95.77 1.71 1.72 1.71h17.14c.95 0 1.72-.76 1.72-1.71V9.25l-8.5 5.22a3.4 3.4 0 0 1-3.58 0zm0-2.98c0 .6.31 1.16.82 1.47l8.57 5.28a1.7 1.7 0 0 0 1.8 0l8.56-5.28c.5-.31.81-.87.81-1.47V6a1.7 1.7 0 0 0-1.71-1.71H3.43c-.95 0-1.72.76-1.72 1.71z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://github.com/factorial-io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">GitHub</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M12 0C5.37 0 0 5.506 0 12.303c0 5.445 3.435 10.043 8.205 11.674.6.107.825-.262.825-.585 0-.292-.015-1.261-.015-2.291C6 21.67 5.22 20.346 4.98 19.654c-.135-.354-.72-1.446-1.23-1.738-.42-.23-1.02-.8-.015-.815.945-.015 1.62.892 1.845 1.261 1.08 1.86 2.805 1.338 3.495 1.015.105-.8.42-1.338.765-1.645-2.67-.308-5.46-1.37-5.46-6.075 0-1.338.465-2.446 1.23-3.307-.12-.308-.54-1.569.12-3.26 0 0 1.005-.323 3.3 1.26.96-.276 1.98-.415 3-.415s2.04.139 3 .416c2.295-1.6 3.3-1.261 3.3-1.261.66 1.691.24 2.952.12 3.26.765.861 1.23 1.953 1.23 3.307 0 4.721-2.805 5.767-5.475 6.075.435.384.81 1.122.81 2.276 0 1.645-.015 2.968-.015 3.383 0 .323.225.707.825.585a12.046 12.046 0 0 0 5.919-4.489A12.534 12.534 0 0 0 24 12.304C24 5.505 18.63 0 12 0Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.drupal.org/factorial-gmbh" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Drupal community</span>
+          <span class="Icon"><svg width="22" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.625 3.578c.567.257 1.142.518 1.732.886l.023.014c.806.504 5.25 3.283 5.245 9.35C21.625 19.954 16.791 24 11.217 24S.625 19.608.625 13.643c0-5.965 4.65-8.738 5.507-9.179.25-.136.484-.256.71-.372.701-.359 1.34-.686 2.228-1.386.556-.463 1.045-1.11 1.207-2.706.829.993 1.824 2.148 2.542 2.634.596.396 1.196.668 1.806.944Zm-.605 19.06c1.251-.117 2.314-.854 2.43-.97.16-.16.119-.298.091-.392l-.001-.005c-.023-.095-.117-.234-.323-.073-.462.352-1.508.765-2.987.765-1.48 0-2.175-.301-2.637-.67a1.174 1.174 0 0 1-.023-.016.186.186 0 0 0-.03-.019c-.022-.01-.048-.01-.13-.01-.14 0-.229.068-.346.162-.116.095-.161.324 0 .486 1.018.926 2.704.86 3.956.742Zm-1.573-2.918c.256-.235.673-.603 1.068-.765.35-.143.552-.142.85-.14h.118c.367 0 .762.023 1.04.213.276.183.437.597.526.827l.002.004c.095.235 0 .369-.183.463-.16.09-.184.046-.341-.25l-.004-.006-.013-.024c-.156-.293-.309-.579-1.1-.579-.735 0-1.013.232-1.355.518l-.102.085-.013.01c-.385.316-.523.429-.66.247-.134-.185-.09-.369.167-.603Zm7.559-1.59c.556-.81.784-2.104.784-2.819 0-.714-.323-1.92-1.48-1.92-.54 0-1.36.559-2.19 1.123-.841.574-1.694 1.155-2.277 1.166-.568.009-1.224-.454-1.993-.996-1.076-.76-2.37-1.673-3.948-1.66-2.125.022-3.816 1.713-3.838 3.515-.023 1.016.322 1.758 1.018 2.243.461.302.873.508 2.264.508 1.283 0 2.762-.892 4.05-1.67 1.013-.61 1.907-1.15 2.497-1.131.57.024 1.312.779 2.006 1.485.602.612 1.167 1.188 1.554 1.221.651.045 1.002-.256 1.553-1.066Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://twitter.com/factorial_io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">X</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.317 7.274v.591c0 6.35-4.92 13.735-13.864 13.735-2.832 0-5.366-.738-7.453-2.215h1.193c2.236 0 4.472-.739 6.111-2.068-2.087 0-3.875-1.477-4.62-3.397.297 0 .595.148.894.148.447 0 .894 0 1.341-.148a4.779 4.779 0 0 1-3.876-4.726c.597.296 1.342.591 2.237.591-1.342-.886-2.237-2.363-2.237-3.988 0-.886.299-1.772.597-2.51C4.025 6.24 7.602 8.16 11.776 8.308c-.149-.295-.149-.738-.149-1.034 0-2.658 2.236-4.874 4.92-4.874 1.341 0 2.683.591 3.577 1.477a8.077 8.077 0 0 0 3.13-1.181c-.298 1.181-1.192 2.067-2.086 2.658 1.043-.147 1.938-.443 2.832-.738-.894 1.181-1.789 2.067-2.683 2.658Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.facebook.com/factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Facebook</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M24 12c0-6.627-5.373-12-12-12S0 5.373 0 12c0 5.628 3.875 10.35 9.101 11.647v-7.98H6.627V12H9.1v-1.58c0-4.084 1.849-5.978 5.859-5.978.76 0 2.072.15 2.608.298v3.324a15.38 15.38 0 0 0-1.386-.044c-1.967 0-2.728.745-2.728 2.683V12h3.92l-.673 3.667h-3.247v8.245C19.396 23.195 24 18.135 24 12Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.instagram.com/factorial.io/" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Instagram</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.982c2.937 0 3.285.011 4.445.064 1.073.05 1.655.228 2.043.379.477.176.91.457 1.264.823.366.355.647.787.823 1.265.15.387.33.97.379 2.042.053 1.16.064 1.508.064 4.445 0 2.937-.011 3.285-.064 4.445-.049 1.073-.228 1.655-.379 2.043a3.64 3.64 0 0 1-2.087 2.087c-.388.151-.97.33-2.043.38-1.16.052-1.508.063-4.445.063-2.937 0-3.285-.01-4.445-.064-1.073-.049-1.655-.228-2.043-.379a3.407 3.407 0 0 1-1.264-.822 3.408 3.408 0 0 1-.823-1.265c-.15-.388-.33-.97-.379-2.043-.053-1.16-.064-1.508-.064-4.445 0-2.937.011-3.285.064-4.445.049-1.072.228-1.655.379-2.042.176-.478.457-.91.823-1.265a3.408 3.408 0 0 1 1.265-.823c.387-.15.97-.33 2.042-.379 1.16-.053 1.508-.064 4.445-.064M12 1c-2.987 0-3.362.013-4.535.066-1.171.054-1.97.24-2.67.512a5.392 5.392 0 0 0-1.949 1.268 5.392 5.392 0 0 0-1.269 1.949c-.271.7-.457 1.499-.51 2.67C1.012 8.638 1 9.013 1 12c0 2.988.013 3.362.066 4.535.054 1.171.24 1.97.512 2.67.276.734.709 1.4 1.268 1.949.55.56 1.215.992 1.949 1.268.7.272 1.5.458 2.67.512C8.638 22.987 9.013 23 12 23c2.988 0 3.362-.013 4.535-.066 1.171-.054 1.97-.24 2.67-.512a5.625 5.625 0 0 0 3.218-3.217c.272-.7.458-1.499.511-2.67.053-1.173.066-1.548.066-4.535s-.012-3.362-.066-4.535c-.053-1.171-.24-1.97-.511-2.67a5.392 5.392 0 0 0-1.27-1.949 5.393 5.393 0 0 0-1.947-1.269c-.7-.271-1.5-.457-2.67-.51C15.361 1.012 14.986 1 12 1Z"></path><path d="M12 6.352a5.649 5.649 0 1 0 0 11.297 5.649 5.649 0 0 0 0-11.297Zm0 9.315a3.666 3.666 0 1 1 0-7.333 3.666 3.666 0 0 1 0 7.333Zm5.87-8.218a1.32 1.32 0 1 0 0-2.64 1.32 1.32 0 0 0 0 2.64Z"></path></svg>
+</span>
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+      </div>
+</footer>
+    
+
+</body></html>
