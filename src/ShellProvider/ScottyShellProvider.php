@@ -91,6 +91,16 @@ class ScottyShellProvider extends LocalShellProvider
         return $command;
     }
 
+    public function wrapCommandInLoginShell(array $command): array
+    {
+        return [
+            '/bin/bash',
+            '--login',
+            '-c',
+            '\''.implode(' ', $command).'\'',
+        ];
+    }
+
     public function exists($file): bool
     {
         return $this->run(sprintf('stat %s > /dev/null 2>&1', $file), RunOptions::HIDE_OUTPUT, false)
