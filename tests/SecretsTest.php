@@ -31,9 +31,9 @@ class SecretsTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__.'/assets/secret-tests/fabfile.yaml');
 
-        $this->application->add(new ScriptCommand($configuration, $method_factory));
-        $this->application->add(new OutputCommand($configuration, $method_factory));
-        $this->application->add(new ScriptCommand($configuration, $method_factory));
+        $this->application->addCommand(new ScriptCommand($configuration, $method_factory));
+        $this->application->addCommand(new OutputCommand($configuration, $method_factory));
+        $this->application->addCommand(new ScriptCommand($configuration, $method_factory));
 
         putenv('SMTP_PASSWORD');
         putenv('MARIADB_PASSWORD');

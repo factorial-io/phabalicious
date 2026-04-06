@@ -10,10 +10,10 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CollectMethodsToFactoryCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $containerBuilder)
+    public function process(ContainerBuilder $container): void
     {
-        $applicationDefinition = $containerBuilder->getDefinition(MethodFactory::class);
-        foreach ($containerBuilder->getDefinitions() as $name => $definition) {
+        $applicationDefinition = $container->getDefinition(MethodFactory::class);
+        foreach ($container->getDefinitions() as $name => $definition) {
             if (is_a($definition->getClass(), MethodInterface::class, true)) {
                 $applicationDefinition->addMethodCall('addMethod', [new Reference($name)]);
             }

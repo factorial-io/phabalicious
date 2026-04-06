@@ -36,8 +36,8 @@ class AppCreateCommandTest extends PhabTestCase
         $configuration->readConfiguration(__DIR__.'/assets/app-create-tests/fabfile.yaml');
         $this->configuration = $configuration;
 
-        $this->application->add(new AppCreateCommand($configuration, $method_factory));
-        $this->application->add(new ResetCommand($configuration, $method_factory));
+        $this->application->addCommand(new AppCreateCommand($configuration, $method_factory));
+        $this->application->addCommand(new ResetCommand($configuration, $method_factory));
 
         AppDefaultStages::setStagesNeedingRunningApp([]);
     }

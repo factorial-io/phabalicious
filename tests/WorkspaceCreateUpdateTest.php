@@ -34,8 +34,8 @@ class WorkspaceCreateUpdateTest extends PhabTestCase
         $method_factory->addMethod(new LocalMethod($logger));
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $this->application->add(new WorkspaceCreateCommand($this->configuration, $method_factory));
-        $this->application->add(new WorkspaceUpdateCommand($this->configuration, $method_factory));
+        $this->application->addCommand(new WorkspaceCreateCommand($this->configuration, $method_factory));
+        $this->application->addCommand(new WorkspaceUpdateCommand($this->configuration, $method_factory));
     }
 
     private function prepareTarget()

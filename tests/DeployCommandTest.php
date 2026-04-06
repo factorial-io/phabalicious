@@ -38,7 +38,7 @@ class DeployCommandTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__.'/assets/script-tests/fabfile.yaml');
 
-        $this->application->add(new DeployCommand($configuration, $method_factory));
+        $this->application->addCommand(new DeployCommand($configuration, $method_factory));
     }
 
     public function scriptDebugCallback(TaskContextInterface $context, $message)

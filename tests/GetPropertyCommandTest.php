@@ -34,7 +34,7 @@ class GetPropertyCommandTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__.'/assets/getproperty-tests/fabfile.yaml');
 
-        $this->application->add(new GetPropertyCommand($configuration, $method_factory));
+        $this->application->addCommand(new GetPropertyCommand($configuration, $method_factory));
     }
 
     public function testGetProperty()

@@ -32,7 +32,7 @@ class ArtifactBasedDeploymentTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__.'/assets/artifact-based-deployment/fabfile.yaml');
 
-        $this->application->add(new DeployCommand($configuration, $method_factory));
+        $this->application->addCommand(new DeployCommand($configuration, $method_factory));
     }
 
     public function testBrokenConfig()

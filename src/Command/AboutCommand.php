@@ -9,8 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AboutCommand extends BaseCommand
 {
-    protected static $defaultName = 'about';
-
     protected function configure(): void
     {
         parent::configure();

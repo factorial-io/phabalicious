@@ -32,7 +32,7 @@ class AppScaffoldCommandTest extends PhabTestCase
         $method_factory = new MethodFactory($configuration, $logger);
         $method_factory->addMethod(new ScriptMethod($logger));
 
-        $this->application->add(new AppScaffoldCommand($configuration, $method_factory));
+        $this->application->addCommand(new AppScaffoldCommand($configuration, $method_factory));
     }
 
     /**

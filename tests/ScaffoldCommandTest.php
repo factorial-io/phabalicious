@@ -29,7 +29,7 @@ class ScaffoldCommandTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $this->application->add(new ScaffoldCommand($this->configuration, $method_factory));
+        $this->application->addCommand(new ScaffoldCommand($this->configuration, $method_factory));
     }
 
     public function testScaffoldCommand(): void

@@ -36,7 +36,7 @@ class VariantBaseCommandTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__.'/assets/variants-base-command-tests/fabfile.yaml');
 
-        $this->application->add(new ScriptCommand($configuration, $method_factory));
+        $this->application->addCommand(new ScriptCommand($configuration, $method_factory));
     }
 
     public function testNoVariants()

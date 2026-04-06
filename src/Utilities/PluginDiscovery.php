@@ -166,7 +166,7 @@ class PluginDiscovery
                         $methods->addMethod(new $class_name($logger));
                     }
                     foreach ($plugin->getCommands() as $class_name) {
-                        $application->add(new $class_name($config, $methods));
+                        $application->addCommand(new $class_name($config, $methods));
                     }
                 }
                 if (count($result)) {

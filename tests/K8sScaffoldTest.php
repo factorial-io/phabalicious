@@ -42,7 +42,7 @@ class K8sScaffoldTest extends PhabTestCase
 
         $this->configuration->readConfiguration(__DIR__.'/assets/k8s-command/fabfile.yaml');
 
-        $this->application->add(new K8sCommand($this->configuration, $method_factory));
+        $this->application->addCommand(new K8sCommand($this->configuration, $method_factory));
     }
 
     public function testK8sScaffold(): void

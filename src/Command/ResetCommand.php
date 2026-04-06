@@ -10,8 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ResetCommand extends BaseCommand
 {
-    protected static $defaultName = 'reset';
-
     protected function configure(): void
     {
         parent::configure();

@@ -10,8 +10,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class FindPropertyCommand extends BaseCommand
 {
-    protected static $defaultName = 'find:property';
-
     protected function configure(): void
     {
         parent::configure();

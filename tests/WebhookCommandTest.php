@@ -35,8 +35,8 @@ class WebhookCommandTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__.'/assets/webhook-tests/fabfile.yaml');
 
-        $this->application->add(new WebhookCommand($configuration, $method_factory));
-        $this->application->add(new DeployCommand($configuration, $method_factory));
+        $this->application->addCommand(new WebhookCommand($configuration, $method_factory));
+        $this->application->addCommand(new DeployCommand($configuration, $method_factory));
     }
 
     public function testNonexistingWebhookCommand()

@@ -35,7 +35,7 @@ class ScriptCommandTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__.'/assets/script-tests/fabfile.yaml');
 
-        $this->application->add(new ScriptCommand($configuration, $method_factory));
+        $this->application->addCommand(new ScriptCommand($configuration, $method_factory));
     }
 
     public function testRunScript(): void

@@ -29,7 +29,7 @@ class InstallCommandTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__.'/assets/install-command/fabfile.yaml');
 
-        $this->application->add(new InstallCommand($configuration, $method_factory));
+        $this->application->addCommand(new InstallCommand($configuration, $method_factory));
     }
 
     public function testSupportsInstallsOnProd()

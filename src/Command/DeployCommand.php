@@ -20,8 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeployCommand extends BaseCommand
 {
-    protected static $defaultName = 'deploy';
-
     protected function configure(): void
     {
         parent::configure();

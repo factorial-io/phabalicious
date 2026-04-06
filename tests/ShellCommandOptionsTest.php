@@ -45,7 +45,7 @@ class ShellCommandOptionsTest extends PhabTestCase
         $method_factory->addMethod(new ScriptMethod($logger));
         $method_factory->addMethod(new LocalMethod($logger));
 
-        $this->application->add(new DrushCommand($this->configuration, $method_factory));
+        $this->application->addCommand(new DrushCommand($this->configuration, $method_factory));
 
         $this->configuration->readConfiguration(__DIR__.'/assets/shell-command-options-tests/fabfile.yaml');
 

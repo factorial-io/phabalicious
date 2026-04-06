@@ -29,7 +29,7 @@ class ScaffoldToRemoteTest extends PhabTestCase
 
         $configuration->readConfiguration(__DIR__.'/assets/test-scaffold-to-remote/fabfile.yaml');
 
-        $this->application->add(new ScriptCommand($configuration, $method_factory));
+        $this->application->addCommand(new ScriptCommand($configuration, $method_factory));
     }
 
     /**
