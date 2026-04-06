@@ -1,6 +1,7 @@
-name: Run phpunit tests on 8.3
+name: Run phpunit tests on 8.3 (disabled, Symfony 8 requires PHP >=8.4)
 
-on: [push]
+on:
+  workflow_dispatch:
 
 
 jobs:
