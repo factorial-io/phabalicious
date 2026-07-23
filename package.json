@@ -10,7 +10,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.0.0",
     "@commitlint/config-conventional": "^20.0.0",
-    "@factorial/docs": "^0.5.3",
+    "@factorial/docs": "^0.5.7",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "3.3.0",
     "cz-customizable": "^7.0.0",
