@@ -19,7 +19,7 @@ Scotty is a lightweight platform for managing Docker-based applications with fea
 
 To use Scotty integration, you need:
 - A running Scotty server
-- Access token for authentication
+- Authentication (OAuth or access token)
 - `scottyctl` CLI tool installed and accessible
 
 ## Basic Configuration
@@ -32,7 +32,108 @@ needs:
 
 scotty:
   server: https://scotty.example.com
+  shellService: nginx
+  
+  # Option A: OAuth authentication (interactive)
+  # Run once: scottyctl --server https://scotty.example.com auth:login
+  
+  # Option B: Token-based authentication (CI/automation)
   access-token: your-access-token
+  # Or use secrets: access-token: "%secret.scotty-token%"
+```
+
+## Shell Provider Integration
+
+When you add `scotty` to your `needs` section, phabalicious automatically sets `shellProvider: scotty`. This means all commands (deploy, backup, shell, etc.) execute inside your scotty containers via `scottyctl app:shell`.
+
+The `shellService` configuration specifies which service to use for command execution. This is typically your main application service (e.g., `nginx`, `php`, `app`).
+
+**Example:**
+
+```yaml
+hosts:
+  production:
+    needs:
+      - scotty
+    # shellProvider: scotty  # Set automatically
+    scotty:
+      shellService: nginx  # Commands execute in nginx service
+      services:
+        nginx: 80
+        api: 3000
+```
+
+**Shell Commands:**
+
+```bash
+# Open interactive shell in scotty container
+phab --config=production shell
+
+# Run a single command
+phab --config=production shell:command
+
+# Other commands also run in the container
+phab --config=production deploy
+phab --config=production backup
+```
+
+**Note:** File operations (`getFile`, `putFile`) are not yet supported by scottyctl. For file transfers, temporarily use `shellProvider: local` or access files through volume mounts.
+
+## Authentication
+
+Phabalicious supports two authentication methods for scotty:
+
+### OAuth Authentication (Recommended for Interactive Use)
+
+OAuth provides seamless authentication without managing tokens:
+
+```bash
+# Login once per server
+scottyctl --server https://scotty.example.com auth:login
+```
+
+```yaml
+scotty:
+  server: https://scotty.example.com
+  # No access-token needed - uses OAuth
+```
+
+Phabalicious automatically verifies authentication before operations using `app:list`. If your OAuth token expires, you'll get a clear error message with login instructions.
+
+### Token-Based Authentication (Required for CI/Automation)
+
+For CI pipelines and automated deployments, use access tokens:
+
+```yaml
+scotty:
+  server: https://scotty.example.com
+  access-token: your-token-here
+  
+  # Or use secret management:
+  # access-token: "%secret.scotty-token%"
+```
+
+**Using Secrets:**
+
+```yaml
+secrets:
+  scotty-token:
+    env: SCOTTY_ACCESS_TOKEN
+    # Or use 1Password, etc.
+
+scotty:
+  server: https://scotty.example.com
+  access-token: "%secret.scotty-token%"
+```
+
+When an `access-token` is configured, authentication verification is skipped (token assumed valid).
+
+### Disable Authentication Check
+
+```yaml
+scotty:
+  verifyAuth: false  # Not recommended
+  server: https://scotty.example.com
 ```
 
 ## Configuration Reference
@@ -43,6 +144,7 @@ scotty:
 |--------|-------------|---------|
 | `server` | Scotty server URL | `https://scotty.example.com` |
 | `access-token` | Authentication token | `your-secret-token` |
+| `shellService` | Service to use for shell commands | `nginx` |
 
 ### Optional Configuration
 
@@ -56,6 +158,7 @@ scotty:
 | `allow-robots` | Allow robot indexing | `false` | `true` |
 | `destroy-on-ttl` | Auto-destroy after TTL | `false` | `true` |
 | `env-file` | Environment variables file | - | `.env.scotty` |
+| `verifyAuth` | Verify authentication before operations | `true` | `false` |
 | `services` | Service port mappings | - | See below |
 | `environment` | Environment variables | - | See below |
 | `custom-domains` | Custom domain mappings | - | See below |
@@ -217,6 +320,7 @@ executables:
 scotty:
   server: https://scotty.example.com
   access-token: "%secrets.SCOTTY_TOKEN%"
+  shellService: nginx
   app-blueprint: nginx-lagoon
   basic-auth:
     username: admin
