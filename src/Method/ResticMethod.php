@@ -106,11 +106,9 @@ class ResticMethod extends BaseMethod
         }
 
         $what = $context->get('what', []);
-        if (!in_array('restic', $what)) {
+        if (!in_array('files', $what)) {
             return;
         }
-
-        $shell = $this->getShellForRestic($host_config, $context);
 
         $keys = $context->get('backupFolderKeys', []);
         $keys = array_merge($keys, FilesMethod::DEFAULT_FILE_SOURCES);
@@ -161,7 +159,7 @@ class ResticMethod extends BaseMethod
     public function restorePrepare(HostConfig $host_config, TaskContextInterface $context): void
     {
         $what = $context->get('what', []);
-        if (!in_array('restic', $what)) {
+        if (!in_array('files', $what)) {
             return;
         }
         $shell = $this->getShellForRestic($host_config, $context);
@@ -310,7 +308,9 @@ class ResticMethod extends BaseMethod
 
     public function collectBackupMethods(HostConfig $config, TaskContextInterface $context)
     {
-        $context->addResult('backupMethods', ['restic']);
+        if ('restic' === $config->get('fileBackupStrategy', 'files')) {
+            $context->addResult('backupMethods', ['files']);
+        }
     }
 
     protected function getShellForRestic(
