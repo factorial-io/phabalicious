@@ -1,0 +1,627 @@
+<!DOCTYPE html><html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Scaffolding a new app</title>
+                  <link rel="preconnect" href="https://BH4D9OD16A-dsn.algolia.net" crossorigin="">
+          <script>
+            window.fdocs = {
+              algolia: {
+                appId: "BH4D9OD16A",
+                apiKey: "69abc87124806b56252e00022c94f392",
+                indexName: "phab"
+              }
+            };
+          </script>
+                <link rel="stylesheet" href="/fdocs/common.css">
+          <link rel="stylesheet" href="/fdocs/docs.css">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-Regular.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-SemiBold.woff2" as="font" crossorigin="">
+                <script src="/fdocs/search.js" defer=""></script>
+                <meta property="og:title" content=" Scaffolding a new app">
+        <meta name="twitter:title" content=" Scaffolding a new app">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://docs.phab.io/app-scaffold.html">
+                <meta property="og:site_name" content="Phabalicious">
+        <meta property="twitter:card" content="summary_large_image">
+                <meta property="og:image" content="https://docs.phab.io/assets/hero.png">
+        <meta property="twitter:image" content="https://docs.phab.io/assets/hero.png">
+                        <meta property="twitter:site" content="@phabalicious">
+                <meta property="twitter:creator" content="@factorial_io">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    </head>
+    <body>
+        <header class="Header">
+  <a class="SkipToContentLink" href="#content">Jump to content</a>
+  <div class="Header-content u-container">
+          <a href="#nav" class="Header-navLink">
+      <svg class="Header-navLinkIcon" width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect y="12" width="17" height="2"></rect>
+          <rect y="6" width="17" height="2"></rect>
+          <rect width="17" height="2"></rect>
+        </svg>
+        <span class="u-hiddenVisually">Jump to navigation</span>
+      </a>
+              <a href="https://docs.phab.io" class="Header-logo">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Header-logoImage" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+              <div class="Header-meta">
+                  <div id="docsearch" class="Header-search Header-search--noscript">
+            <form action="https://duckduckgo.com/" method="get" role="search" class="Header-searchForm">
+              <input type="hidden" name="sites" value="https://docs.phab.io">
+              <label for="search-q" class="Header-searchLabel">
+                <svg class="Header-searchLabelIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 14.35L11.7094 10.0594C12.4219 9.025 12.8375 7.77187 12.8375 6.42188C12.8406 2.875 9.96562 0 6.41875 0C2.875 0 0 2.875 0 6.41875C0 9.96562 2.875 12.8375 6.41875 12.8375V12.8406C7.77187 12.8406 9.025 12.4219 10.0594 11.7094L14.35 16L16 14.35ZM6.41875 10.5063V10.5031C4.1625 10.5 2.3375 8.675 2.33437 6.41875C2.3375 4.1625 4.1625 2.3375 6.41875 2.33437C8.675 2.3375 10.5 4.1625 10.5031 6.41875C10.5 8.675 8.675 10.5 6.41875 10.5063Z"></path>
+                </svg>
+                <span class="u-hiddenVisually">Search</span>
+              </label>
+              <input type="text" class="Header-searchInput" name="q" id="search-q" value="">
+              <button type="submit" class="Header-searchSubmit">Search with DuckDuckGo</button>
+            </form>
+          </div>
+                          <div class="Header-githubLink">
+            <a href="https://github.com/factorial-io/phabalicious" rel="noopener" target="_blank">GitHub</a>
+          </div>
+              </div>
+      </div>
+</header>
+        <div class="Content">
+        <main class="Docs">
+      <div class="Docs-nav" id="nav">
+        
+<nav class="Nav">
+  <a href="#content" class="Nav-contentLink">
+    <svg class="Nav-contentLinkIcon" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2.19531" y="0.282471" width="17" height="2" transform="rotate(45 2.19531 0.282471)"></rect>
+      <rect x="0.78125" y="12.3033" width="17" height="2" transform="rotate(-45 0.78125 12.3033)"></rect>
+    </svg>
+    <span class="u-hiddenVisually">Jump to content</span>
+  </a>  <ul class="Nav-list">            <li class="Nav-listItem" style="--level: 0">
+            <a href="/documentation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel">Documentation</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/guide.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How does phabalicious work in two sentences</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/installation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Installation</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/usage.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/configuration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Structure of the configuration file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/commands.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/inheritance.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/docker-integration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Docker integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/workspace.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Setup a local dev environment (multibasebox)</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scripts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scaffolder.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding arbitrary files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a aria-current="page" href="/app-scaffold.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding a new app</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-scaffold.html#the-questions-section" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> The questions-section</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-scaffold.html#the-scaffold-section" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> The scaffold-section</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-scaffold.html#the-variables-section" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> the variables-section</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-scaffold.html#the-assets-section" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> the assets-section</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-scaffold.html#list-of-supported-internal-commands" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> List of supported internal commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-scaffold.html#inheritance" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/app-scaffold.html#examples" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Examples</span>
+      </a></li>
+          </ul></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-create-destroy.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating/ destroying an app from existing configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/deploying-artifacts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Deploying artifacts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scotty.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scotty mPaaS Integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/kubernetes.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Kubernetes integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/offsite-backups.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Offsite backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/local-overrides.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Local overrides</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/passwords.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Passwords and secrets</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/contribute.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Contributing to Phabalicious</span>
+      </a></li>
+          </ul></li>            <li class="Nav-listItem" style="--level: 0">
+            <a href="/blog.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blog</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/introduction.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A short introduction into phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/architecture.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Introduction and overall architecture</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-7.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.7?</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-secrets.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Handling secrets with phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-phab-beta-in-parallel.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How to test a beta version of phabalicious in parallel</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-8.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.8?</span>
+      </a></li>
+          </ul></li>  </ul>
+  <script>
+    const nav = document.querySelector("#nav");
+    const activeLink = document.querySelector('nav [aria-current="page"]');
+
+    if (nav && activeLink) {
+      if (activeLink.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom) {
+        activeLink.scrollIntoView();
+      }
+    }
+  </script>
+</nav>
+      </div>
+      <div class="Docs-content" id="content">
+          <div class="RichText">
+    <h1 id="scaffolding-a-new-app" tabindex="-1"><a class="header-anchor" href="#scaffolding-a-new-app">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Scaffolding a new app</h1>
+<p>Phabalicious has a simple but powerful app:scaffold-command. It will read a yml-file and interpret the contents. It will use the existing pattern-replacement used for scripts and twig for changing file-contents. The scaffolding and fixture-files can live on a remote server or on your file-system.</p>
+<p>Here's an example of an app scaffold-file:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">questions</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span>
+    <span class="token key atrule">question</span><span class="token punctuation">:</span> <span class="token string">"The Name of this project"</span>
+  <span class="token key atrule">shortName</span><span class="token punctuation">:</span>
+    <span class="token key atrule">question</span><span class="token punctuation">:</span> <span class="token string">"The short-name of this project"</span>
+    <span class="token key atrule">validation</span><span class="token punctuation">:</span> <span class="token string">"/^[A-Za-z0-9]{3,5}$/"</span>
+    <span class="token key atrule">error</span><span class="token punctuation">:</span> <span class="token string">"The shortname may consist of 3 to 5 letters (A-Z) or digits (0-9)"</span>
+    <span class="token comment"># Questions can have a default:</span>
+    <span class="token key atrule">default</span><span class="token punctuation">:</span> <span class="token string">"SP"</span>
+    <span class="token key atrule">transform</span><span class="token punctuation">:</span> lowercase
+
+<span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> drupal<span class="token punctuation">-</span>composer/drupal<span class="token punctuation">-</span>project<span class="token punctuation">:</span>8.x<span class="token punctuation">-</span>dev
+  <span class="token key atrule">webRoot</span><span class="token punctuation">:</span> web
+  <span class="token key atrule">allowOverride</span><span class="token punctuation">:</span> <span class="token number">0</span> <span class="token comment"># Setting it to 1 will not show a warning if the target folder exists.</span>
+  <span class="token key atrule">skipSubfolder</span><span class="token punctuation">:</span> <span class="token number">0</span> <span class="token comment"># Setting it to 1 will instruct phabalicious to not create a subfolder.</span>
+
+<span class="token key atrule">assets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> .fabfile.yaml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose.yml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose<span class="token punctuation">-</span>mbb.yml
+
+<span class="token key atrule">deployModuleAssets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.info.yml
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.module
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.install
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> rm <span class="token punctuation">-</span>rf %rootFolder%
+  <span class="token punctuation">-</span> composer create<span class="token punctuation">-</span>project %composerProject% %rootFolder% <span class="token punctuation">-</span><span class="token punctuation">-</span>stability dev <span class="token punctuation">-</span><span class="token punctuation">-</span>no<span class="token punctuation">-</span>interaction
+  <span class="token punctuation">-</span> cd %rootFolder%; composer require drupal/coffee
+  <span class="token punctuation">-</span> cd %rootFolder%; composer require drupal/devel
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%)
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%/%webRoot%/modules/custom/%shortName%_deploy<span class="token punctuation">,</span> deployModuleAssets)
+  <span class="token punctuation">-</span> cd %rootFolder%; git init .
+  <span class="token punctuation">-</span> cd %rootFolder%; git add .
+  <span class="token punctuation">-</span> cd %rootFolder%; git commit <span class="token punctuation">-</span>m "Initial commit by phabalicious"</code></pre>
+<p>The fabfile needs at least the <code>questions</code>and the <code>scaffold</code>-section. The <code>scaffold</code>-section is a list of commands, executed by phabalicious one by one. It will use the pattern-replacement known for scripts.</p>
+<h2 id="the-questions-section" tabindex="-1"><a class="header-anchor" href="#the-questions-section">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> The <code>questions</code>-section</h2>
+<p>This section contains a list of questions to be asked when running the scaffold-command. The yaml-key will get the value inputted by the user and can be used as a replacement pattern or in twig-templates. Answers can be validated against a regex and/or transformed to lower- or uppercase.</p>
+<p>The following question-types are supported:</p>
+<h3 id="question" tabindex="-1"><a class="header-anchor" href="#question">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>question</code></h3>
+<p>A regular question, with optional default, validation and/ or autocomplete values. If <code>hidden</code> is true then the user wont see their input, ideal for sensitive data like passwords.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">key</span><span class="token punctuation">:</span>
+  <span class="token key atrule">question</span><span class="token punctuation">:</span> the prompot to show
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> question
+  <span class="token key atrule">validation</span><span class="token punctuation">:</span> the regex to use to validate the input
+  <span class="token key atrule">error</span><span class="token punctuation">:</span> the message to display<span class="token punctuation">,</span> if the validation fails
+  <span class="token key atrule">default</span><span class="token punctuation">:</span> the default<span class="token punctuation">-</span>value<span class="token punctuation">,</span> when the user hits return
+  <span class="token key atrule">transform</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>lowercase<span class="token punctuation">|</span>uppercase<span class="token punctuation">]</span>
+  <span class="token key atrule">hidden</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>true<span class="token punctuation">|</span>false<span class="token punctuation">]</span>
+  <span class="token key atrule">autocomplete</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> Option 1
+    <span class="token punctuation">-</span> Option 2
+    <span class="token punctuation">-</span> Option 3</code></pre>
+<h3 id="array" tabindex="-1"><a class="header-anchor" href="#array">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>array</code></h3>
+<p>A question, where the use can supply multiple values. The question gets repeated until the user provides an empty answer. For possible options see <code>question</code>.</p>
+<h3 id="confirm" tabindex="-1"><a class="header-anchor" href="#confirm">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>confirm</code></h3>
+<p>A question which can be answered with yes or no. The value will be <code>1</code> or <code>0</code>. The default value can be <code>true</code> or <code>false</code>.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">key</span><span class="token punctuation">:</span>
+  <span class="token key atrule">question</span><span class="token punctuation">:</span> Should we continue<span class="token punctuation">?</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> confirm
+  <span class="token key atrule">default</span><span class="token punctuation">:</span> <span class="token boolean important">true</span></code></pre>
+<h3 id="choices" tabindex="-1"><a class="header-anchor" href="#choices">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>choices</code></h3>
+<p>Choices provides a list of options, where the user can pick one or many answers from:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">key</span><span class="token punctuation">:</span>
+  <span class="token key atrule">question</span><span class="token punctuation">:</span> What fruits do you want to buy
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> choices
+  <span class="token key atrule">multiselect</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">choices</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> Apples
+    <span class="token punctuation">-</span> Oranges
+    <span class="token punctuation">-</span> Lemons
+    <span class="token punctuation">-</span> Papayas
+    <span class="token punctuation">-</span> Coconuts
+</code></pre>
+<h3 id="non-interactive-usage" tabindex="-1"><a class="header-anchor" href="#non-interactive-usage">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Non-interactive usage</h3>
+<p>For non-interactive usage you can pass the values via commandline-options, where the option-name is dash-cased version of the key, for the above example:</p>
+<table>
+<thead>
+<tr>
+<th>command-line option</th>
+<th>Question key</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--[key]</td>
+<td>[key]</td>
+</tr>
+<tr>
+<td>--name</td>
+<td>name</td>
+</tr>
+<tr>
+<td>--short-name</td>
+<td>shortName</td>
+</tr>
+</tbody>
+</table>
+<p>The scaffolder stores the answers in a hidden file called <code>.phab-scaffold-tokens</code> in the newly created folder and will reuse if the scaffolder runs aagain.</p>
+<h2 id="the-scaffold-section" tabindex="-1"><a class="header-anchor" href="#the-scaffold-section">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> The <code>scaffold</code>-section</h2>
+<p>Phabalicious will provide the following replacement-patterns out of the box:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%rootFolder%</td>
+<td>The folder the app will be installed into</td>
+</tr>
+<tr>
+<td>%name%</td>
+<td>The name of the app</td>
+</tr>
+<tr>
+<td>%projectFolder%</td>
+<td>a cleaned version of the app-name, suitable for machine-names.</td>
+</tr>
+<tr>
+<td>%shortName%</td>
+<td>The short-name</td>
+</tr>
+<tr>
+<td>%uuid%</td>
+<td>a random-uuid</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-variables-section" tabindex="-1"><a class="header-anchor" href="#the-variables-section">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> the <code>variables</code>-section</h2>
+<p>You can add own variables via the <code>variables</code>-section. In the above example, the variable <code>composerProject</code> will be available in the <code>scaffold</code>-section via the pattern <code>%composerProject%</code></p>
+<h2 id="the-assets-section" tabindex="-1"><a class="header-anchor" href="#the-assets-section">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> the <code>assets</code>-section</h2>
+<p>You can have multiple assets-sections, <code>assets</code> is a default one.  It contains a list if template files which will be processed by twig and placed at a specific location. You'll have all variables available as twig-variables inside the template, to use them, use <code>{{ theNameOfVariable }}</code> e.g. <code>{{ name }}</code>
+To add a new asset-section, use a new root-level key (in the above example this would be <code>deploymentModuleAssets</code></p>
+<p>The assets-paths must be relative to the yaml-file containing the scaffold-commands.</p>
+<h2 id="list-of-supported-internal-commands" tabindex="-1"><a class="header-anchor" href="#list-of-supported-internal-commands">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> List of supported internal commands</h2>
+<ul>
+<li><code>copy_assets</code></li>
+<li><code>alter_json_file</code></li>
+<li><code>log_message</code></li>
+</ul>
+<p>These are documented <a href="scaffolder.html">here</a>.</p>
+<h2 id="inheritance" tabindex="-1"><a class="header-anchor" href="#inheritance">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Inheritance</h2>
+<p>Similar to other parts of Phabalicious, scaffold-files can use inheritance, for example to use the above scaffold-file, but install drupal commerce:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> drupal<span class="token punctuation">-</span>8.yml
+  <span class="token punctuation">-</span>
+<span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> drupalcommerce/project<span class="token punctuation">-</span>base</code></pre>
+<p>This will inherit all content from the drupal-8.yml-file and merged with this content. This means, the `composerProject´-variable will be overridden, but everything else will be inherited. This makes it easy to reuse existing scaffold-files</p>
+<h2 id="examples" tabindex="-1"><a class="header-anchor" href="#examples">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Examples</h2>
+<h3 id="drupal-8-(d8.yml)" tabindex="-1"><a class="header-anchor" href="#drupal-8-(d8.yml)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Drupal 8 (d8.yml)</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> drupal<span class="token punctuation">-</span>composer/drupal<span class="token punctuation">-</span>project<span class="token punctuation">:</span>8.x<span class="token punctuation">-</span>dev
+  <span class="token key atrule">webRoot</span><span class="token punctuation">:</span> web
+<span class="token key atrule">assets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> .fabfile.yaml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose.yml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose<span class="token punctuation">-</span>mbb.yml
+
+<span class="token key atrule">deployModuleAssets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.info.yml
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.module
+  <span class="token punctuation">-</span> deployModule/%shortName%_deploy.install
+
+<span class="token key atrule">sshKeys</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> ssh<span class="token punctuation">-</span>keys/docker<span class="token punctuation">-</span>root<span class="token punctuation">-</span>key
+  <span class="token punctuation">-</span> ssh<span class="token punctuation">-</span>keys/docker<span class="token punctuation">-</span>root<span class="token punctuation">-</span>key.pub
+  <span class="token punctuation">-</span> ssh<span class="token punctuation">-</span>keys/known_hosts
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> rm <span class="token punctuation">-</span>rf %rootFolder%
+  <span class="token punctuation">-</span> composer create<span class="token punctuation">-</span>project %composerProject% %rootFolder% <span class="token punctuation">-</span><span class="token punctuation">-</span>stability dev <span class="token punctuation">-</span><span class="token punctuation">-</span>no<span class="token punctuation">-</span>interaction
+  <span class="token punctuation">-</span> cd %rootFolder%; composer require drupal/coffee
+  <span class="token punctuation">-</span> cd %rootFolder%; composer require drupal/devel
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%)
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%/%webRoot%/modules/custom/%shortName%_deploy<span class="token punctuation">,</span> deployModuleAssets)
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%/ssh<span class="token punctuation">-</span>keys<span class="token punctuation">,</span> sshKeys)
+  <span class="token punctuation">-</span> cd %rootFolder%; git init .
+  <span class="token punctuation">-</span> cd %rootFolder%; git add .
+  <span class="token punctuation">-</span> cd %rootFolder%; git commit <span class="token punctuation">-</span>m "Initial commit by phabalicious"</code></pre>
+<h3 id="drupal-commerce" tabindex="-1"><a class="header-anchor" href="#drupal-commerce">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> drupal commerce</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> d8.yml
+
+<span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> drupalcommerce/project<span class="token punctuation">-</span>base</code></pre>
+<h3 id="thunder" tabindex="-1"><a class="header-anchor" href="#thunder">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> thunder</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">inheritsFrom</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> d8.yml
+
+<span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> burdamagazinorg/thunder<span class="token punctuation">-</span>project
+  <span class="token key atrule">webRoot</span><span class="token punctuation">:</span> docroot</code></pre>
+<h3 id="laravel" tabindex="-1"><a class="header-anchor" href="#laravel">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Laravel</h3>
+<h4 id="the-scaffold-file%3A" tabindex="-1"><a class="header-anchor" href="#the-scaffold-file%3A">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> the scaffold-file:</h4>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">variables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">composerProject</span><span class="token punctuation">:</span> laravel/laravel<span class="token punctuation">:</span><span class="token number">5.4</span>
+  <span class="token key atrule">webRoot</span><span class="token punctuation">:</span> public
+
+<span class="token key atrule">assets</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> .fabfile.yaml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose.yml
+  <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose<span class="token punctuation">-</span>mbb.yml
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> rm <span class="token punctuation">-</span>rf %rootFolder%
+  <span class="token punctuation">-</span> composer create<span class="token punctuation">-</span>project %composerProject% %rootFolder% <span class="token punctuation">-</span><span class="token punctuation">-</span>stability dev <span class="token punctuation">-</span><span class="token punctuation">-</span>no<span class="token punctuation">-</span>interaction
+  <span class="token punctuation">-</span> copy_assets(%rootFolder%)
+  <span class="token punctuation">-</span> cd %rootFolder%; git init .
+  <span class="token punctuation">-</span> cd %rootFolder%; git add .
+  <span class="token punctuation">-</span> cd %rootFolder%; git commit <span class="token punctuation">-</span>m "Initial commit by phabalicious"</code></pre>
+<h4 id="the-fabfile-template" tabindex="-1"><a class="header-anchor" href="#the-fabfile-template">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> the fabfile-template</h4>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> name <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token key atrule">key</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> shortName <span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token key atrule">deploymentModule</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> shortName <span class="token punctuation">}</span><span class="token punctuation">}</span>_deploy
+
+<span class="token key atrule">requires</span><span class="token punctuation">:</span> 2.0.0
+
+<span class="token key atrule">needs</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> ssh
+  <span class="token punctuation">-</span> composer
+  <span class="token punctuation">-</span> docker
+  <span class="token punctuation">-</span> git
+  <span class="token punctuation">-</span> files
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">mbb</span><span class="token punctuation">:</span>
+    <span class="token key atrule">host</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> projectFolder <span class="token punctuation">}</span><span class="token punctuation">}</span>.test
+    <span class="token key atrule">user</span><span class="token punctuation">:</span> root
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> 1024 + random(20000) <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> dev
+    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> /var/www/<span class="token punctuation">{</span><span class="token punctuation">{</span> webRoot <span class="token punctuation">}</span><span class="token punctuation">}</span>
+    <span class="token key atrule">gitRootFolder</span><span class="token punctuation">:</span> /var/www
+    <span class="token key atrule">backupFolder</span><span class="token punctuation">:</span> /var/www/backups
+    <span class="token key atrule">branch</span><span class="token punctuation">:</span> develop
+    <span class="token key atrule">database</span><span class="token punctuation">:</span>
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> projectFolder<span class="token punctuation">|</span>replace(<span class="token punctuation">{</span><span class="token key atrule">'-'</span><span class="token punctuation">:</span> <span class="token string">'_'</span><span class="token punctuation">}</span>) <span class="token punctuation">}</span><span class="token punctuation">}</span>_db
+      <span class="token key atrule">user</span><span class="token punctuation">:</span> root
+      <span class="token key atrule">pass</span><span class="token punctuation">:</span> admin
+      <span class="token key atrule">host</span><span class="token punctuation">:</span> mysql</code></pre>
+
+  </div>
+        <nav aria-label="article" class="Pagination">
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--prev">
+      <a class="Pagination-link" rel="prev" href="/scaffolder.html"> Scaffolding arbitrary files</a>
+    </div>
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--next">
+      <a class="Pagination-link" rel="next" href="/app-create-destroy.html"> Creating/ destroying an app from existing configuration</a>
+    </div>
+  </nav>
+      </div>
+    </main>
+  </div>
+      
+<footer class="Footer">
+  <div class="Footer-wrapper">
+          <a href="https://docs.phab.io">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Footer-logo" src="/assets/logo-white.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+        <p class="Footer-credit">An open source project by <a href="https://www.factorial.io" rel="noopener" target="_blank">Factorial</a></p>
+  </div>
+  <div class="Footer-wrapper Footer-wrapper--links">
+    <h2 class="u-hiddenVisually">Additional information</h2>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-links">
+  <h3 class="u-hiddenVisually" id="footer-nav-links">links</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="https://www.factorial.io/en/imprint" class="FooterList-link FooterList-link--links">
+                  Imprint
+              </a>
+    </li>
+        <li>
+      <a href="https://www.factorial.io/en/privacy-policy" class="FooterList-link FooterList-link--links">
+                  Privacy
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-social">
+  <h3 class="u-hiddenVisually" id="footer-nav-social">follow us</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="mailto:hello@factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Email address</span>
+          <span class="Icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.57 21.43H3.43A3.44 3.44 0 0 1 0 18V6a3.44 3.44 0 0 1 3.43-3.43h17.14A3.44 3.44 0 0 1 24 6v12a3.44 3.44 0 0 1-3.43 3.43zM1.71 9.25V18c0 .95.77 1.71 1.72 1.71h17.14c.95 0 1.72-.76 1.72-1.71V9.25l-8.5 5.22a3.4 3.4 0 0 1-3.58 0zm0-2.98c0 .6.31 1.16.82 1.47l8.57 5.28a1.7 1.7 0 0 0 1.8 0l8.56-5.28c.5-.31.81-.87.81-1.47V6a1.7 1.7 0 0 0-1.71-1.71H3.43c-.95 0-1.72.76-1.72 1.71z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://github.com/factorial-io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">GitHub</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M12 0C5.37 0 0 5.506 0 12.303c0 5.445 3.435 10.043 8.205 11.674.6.107.825-.262.825-.585 0-.292-.015-1.261-.015-2.291C6 21.67 5.22 20.346 4.98 19.654c-.135-.354-.72-1.446-1.23-1.738-.42-.23-1.02-.8-.015-.815.945-.015 1.62.892 1.845 1.261 1.08 1.86 2.805 1.338 3.495 1.015.105-.8.42-1.338.765-1.645-2.67-.308-5.46-1.37-5.46-6.075 0-1.338.465-2.446 1.23-3.307-.12-.308-.54-1.569.12-3.26 0 0 1.005-.323 3.3 1.26.96-.276 1.98-.415 3-.415s2.04.139 3 .416c2.295-1.6 3.3-1.261 3.3-1.261.66 1.691.24 2.952.12 3.26.765.861 1.23 1.953 1.23 3.307 0 4.721-2.805 5.767-5.475 6.075.435.384.81 1.122.81 2.276 0 1.645-.015 2.968-.015 3.383 0 .323.225.707.825.585a12.046 12.046 0 0 0 5.919-4.489A12.534 12.534 0 0 0 24 12.304C24 5.505 18.63 0 12 0Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.drupal.org/factorial-gmbh" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Drupal community</span>
+          <span class="Icon"><svg width="22" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.625 3.578c.567.257 1.142.518 1.732.886l.023.014c.806.504 5.25 3.283 5.245 9.35C21.625 19.954 16.791 24 11.217 24S.625 19.608.625 13.643c0-5.965 4.65-8.738 5.507-9.179.25-.136.484-.256.71-.372.701-.359 1.34-.686 2.228-1.386.556-.463 1.045-1.11 1.207-2.706.829.993 1.824 2.148 2.542 2.634.596.396 1.196.668 1.806.944Zm-.605 19.06c1.251-.117 2.314-.854 2.43-.97.16-.16.119-.298.091-.392l-.001-.005c-.023-.095-.117-.234-.323-.073-.462.352-1.508.765-2.987.765-1.48 0-2.175-.301-2.637-.67a1.174 1.174 0 0 1-.023-.016.186.186 0 0 0-.03-.019c-.022-.01-.048-.01-.13-.01-.14 0-.229.068-.346.162-.116.095-.161.324 0 .486 1.018.926 2.704.86 3.956.742Zm-1.573-2.918c.256-.235.673-.603 1.068-.765.35-.143.552-.142.85-.14h.118c.367 0 .762.023 1.04.213.276.183.437.597.526.827l.002.004c.095.235 0 .369-.183.463-.16.09-.184.046-.341-.25l-.004-.006-.013-.024c-.156-.293-.309-.579-1.1-.579-.735 0-1.013.232-1.355.518l-.102.085-.013.01c-.385.316-.523.429-.66.247-.134-.185-.09-.369.167-.603Zm7.559-1.59c.556-.81.784-2.104.784-2.819 0-.714-.323-1.92-1.48-1.92-.54 0-1.36.559-2.19 1.123-.841.574-1.694 1.155-2.277 1.166-.568.009-1.224-.454-1.993-.996-1.076-.76-2.37-1.673-3.948-1.66-2.125.022-3.816 1.713-3.838 3.515-.023 1.016.322 1.758 1.018 2.243.461.302.873.508 2.264.508 1.283 0 2.762-.892 4.05-1.67 1.013-.61 1.907-1.15 2.497-1.131.57.024 1.312.779 2.006 1.485.602.612 1.167 1.188 1.554 1.221.651.045 1.002-.256 1.553-1.066Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://twitter.com/factorial_io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">X</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.317 7.274v.591c0 6.35-4.92 13.735-13.864 13.735-2.832 0-5.366-.738-7.453-2.215h1.193c2.236 0 4.472-.739 6.111-2.068-2.087 0-3.875-1.477-4.62-3.397.297 0 .595.148.894.148.447 0 .894 0 1.341-.148a4.779 4.779 0 0 1-3.876-4.726c.597.296 1.342.591 2.237.591-1.342-.886-2.237-2.363-2.237-3.988 0-.886.299-1.772.597-2.51C4.025 6.24 7.602 8.16 11.776 8.308c-.149-.295-.149-.738-.149-1.034 0-2.658 2.236-4.874 4.92-4.874 1.341 0 2.683.591 3.577 1.477a8.077 8.077 0 0 0 3.13-1.181c-.298 1.181-1.192 2.067-2.086 2.658 1.043-.147 1.938-.443 2.832-.738-.894 1.181-1.789 2.067-2.683 2.658Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.facebook.com/factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Facebook</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M24 12c0-6.627-5.373-12-12-12S0 5.373 0 12c0 5.628 3.875 10.35 9.101 11.647v-7.98H6.627V12H9.1v-1.58c0-4.084 1.849-5.978 5.859-5.978.76 0 2.072.15 2.608.298v3.324a15.38 15.38 0 0 0-1.386-.044c-1.967 0-2.728.745-2.728 2.683V12h3.92l-.673 3.667h-3.247v8.245C19.396 23.195 24 18.135 24 12Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.instagram.com/factorial.io/" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Instagram</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.982c2.937 0 3.285.011 4.445.064 1.073.05 1.655.228 2.043.379.477.176.91.457 1.264.823.366.355.647.787.823 1.265.15.387.33.97.379 2.042.053 1.16.064 1.508.064 4.445 0 2.937-.011 3.285-.064 4.445-.049 1.073-.228 1.655-.379 2.043a3.64 3.64 0 0 1-2.087 2.087c-.388.151-.97.33-2.043.38-1.16.052-1.508.063-4.445.063-2.937 0-3.285-.01-4.445-.064-1.073-.049-1.655-.228-2.043-.379a3.407 3.407 0 0 1-1.264-.822 3.408 3.408 0 0 1-.823-1.265c-.15-.388-.33-.97-.379-2.043-.053-1.16-.064-1.508-.064-4.445 0-2.937.011-3.285.064-4.445.049-1.072.228-1.655.379-2.042.176-.478.457-.91.823-1.265a3.408 3.408 0 0 1 1.265-.823c.387-.15.97-.33 2.042-.379 1.16-.053 1.508-.064 4.445-.064M12 1c-2.987 0-3.362.013-4.535.066-1.171.054-1.97.24-2.67.512a5.392 5.392 0 0 0-1.949 1.268 5.392 5.392 0 0 0-1.269 1.949c-.271.7-.457 1.499-.51 2.67C1.012 8.638 1 9.013 1 12c0 2.988.013 3.362.066 4.535.054 1.171.24 1.97.512 2.67.276.734.709 1.4 1.268 1.949.55.56 1.215.992 1.949 1.268.7.272 1.5.458 2.67.512C8.638 22.987 9.013 23 12 23c2.988 0 3.362-.013 4.535-.066 1.171-.054 1.97-.24 2.67-.512a5.625 5.625 0 0 0 3.218-3.217c.272-.7.458-1.499.511-2.67.053-1.173.066-1.548.066-4.535s-.012-3.362-.066-4.535c-.053-1.171-.24-1.97-.511-2.67a5.392 5.392 0 0 0-1.27-1.949 5.393 5.393 0 0 0-1.947-1.269c-.7-.271-1.5-.457-2.67-.51C15.361 1.012 14.986 1 12 1Z"></path><path d="M12 6.352a5.649 5.649 0 1 0 0 11.297 5.649 5.649 0 0 0 0-11.297Zm0 9.315a3.666 3.666 0 1 1 0-7.333 3.666 3.666 0 0 1 0 7.333Zm5.87-8.218a1.32 1.32 0 1 0 0-2.64 1.32 1.32 0 0 0 0 2.64Z"></path></svg>
+</span>
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+      </div>
+</footer>
+    
+
+</body></html>
