@@ -15,7 +15,7 @@
     "cz-conventional-changelog": "3.3.0",
     "cz-customizable": "^7.0.0",
     "husky": "^8.0.1",
-    "commit-and-tag-version": "^9.5.0"
+    "commit-and-tag-version": "^13.0.0"
   },
   "dependencies": {},
   "scripts": {
