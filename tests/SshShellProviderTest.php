@@ -9,6 +9,7 @@ use Phabalicious\Configuration\ConfigurationService;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContext;
 use Phabalicious\ShellProvider\LocalShellProvider;
+use Phabalicious\ShellProvider\RunOptions;
 use Phabalicious\ShellProvider\SshShellProvider;
 use Phabalicious\Utilities\PasswordManager;
 use Phabalicious\Validation\ValidationErrorBag;
@@ -94,7 +95,7 @@ class SshShellProviderTest extends PhabTestCase
 
         $result = $shell_provider
             ->cd($test_dir)
-            ->run('ls -la', true);
+            ->run('ls -la', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
 
         $output = implode(PHP_EOL, $result->getOutput());
         $this->assertTrue($result->succeeded());
