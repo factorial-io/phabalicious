@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Scaffolding arbitrary files</title>
+                  <link rel="preconnect" href="https://BH4D9OD16A-dsn.algolia.net" crossorigin="">
+          <script>
+            window.fdocs = {
+              algolia: {
+                appId: "BH4D9OD16A",
+                apiKey: "69abc87124806b56252e00022c94f392",
+                indexName: "phab"
+              }
+            };
+          </script>
+                <link rel="stylesheet" href="/fdocs/common.css">
+          <link rel="stylesheet" href="/fdocs/docs.css">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-Regular.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-SemiBold.woff2" as="font" crossorigin="">
+                <script src="/fdocs/search.js" defer=""></script>
+                <meta property="og:title" content=" Scaffolding arbitrary files">
+        <meta name="twitter:title" content=" Scaffolding arbitrary files">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://docs.phab.io/scaffolder.html">
+                <meta property="og:site_name" content="Phabalicious">
+        <meta property="twitter:card" content="summary_large_image">
+                <meta property="og:image" content="https://docs.phab.io/assets/hero.png">
+        <meta property="twitter:image" content="https://docs.phab.io/assets/hero.png">
+                        <meta property="twitter:site" content="@phabalicious">
+                <meta property="twitter:creator" content="@factorial_io">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    </head>
+    <body>
+        <header class="Header">
+  <a class="SkipToContentLink" href="#content">Jump to content</a>
+  <div class="Header-content u-container">
+          <a href="#nav" class="Header-navLink">
+      <svg class="Header-navLinkIcon" width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect y="12" width="17" height="2"></rect>
+          <rect y="6" width="17" height="2"></rect>
+          <rect width="17" height="2"></rect>
+        </svg>
+        <span class="u-hiddenVisually">Jump to navigation</span>
+      </a>
+              <a href="https://docs.phab.io" class="Header-logo">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Header-logoImage" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+              <div class="Header-meta">
+                  <div id="docsearch" class="Header-search Header-search--noscript">
+            <form action="https://duckduckgo.com/" method="get" role="search" class="Header-searchForm">
+              <input type="hidden" name="sites" value="https://docs.phab.io">
+              <label for="search-q" class="Header-searchLabel">
+                <svg class="Header-searchLabelIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 14.35L11.7094 10.0594C12.4219 9.025 12.8375 7.77187 12.8375 6.42188C12.8406 2.875 9.96562 0 6.41875 0C2.875 0 0 2.875 0 6.41875C0 9.96562 2.875 12.8375 6.41875 12.8375V12.8406C7.77187 12.8406 9.025 12.4219 10.0594 11.7094L14.35 16L16 14.35ZM6.41875 10.5063V10.5031C4.1625 10.5 2.3375 8.675 2.33437 6.41875C2.3375 4.1625 4.1625 2.3375 6.41875 2.33437C8.675 2.3375 10.5 4.1625 10.5031 6.41875C10.5 8.675 8.675 10.5 6.41875 10.5063Z"></path>
+                </svg>
+                <span class="u-hiddenVisually">Search</span>
+              </label>
+              <input type="text" class="Header-searchInput" name="q" id="search-q" value="">
+              <button type="submit" class="Header-searchSubmit">Search with DuckDuckGo</button>
+            </form>
+          </div>
+                          <div class="Header-githubLink">
+            <a href="https://github.com/factorial-io/phabalicious" rel="noopener" target="_blank">GitHub</a>
+          </div>
+              </div>
+      </div>
+</header>
+        <div class="Content">
+        <main class="Docs">
+      <div class="Docs-nav" id="nav">
+        
+<nav class="Nav">
+  <a href="#content" class="Nav-contentLink">
+    <svg class="Nav-contentLinkIcon" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2.19531" y="0.282471" width="17" height="2" transform="rotate(45 2.19531 0.282471)"></rect>
+      <rect x="0.78125" y="12.3033" width="17" height="2" transform="rotate(-45 0.78125 12.3033)"></rect>
+    </svg>
+    <span class="u-hiddenVisually">Jump to content</span>
+  </a>  <ul class="Nav-list">            <li class="Nav-listItem" style="--level: 0">
+            <a href="/documentation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel">Documentation</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/guide.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How does phabalicious work in two sentences</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/installation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Installation</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/usage.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/configuration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Structure of the configuration file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/commands.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/inheritance.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/docker-integration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Docker integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/workspace.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Setup a local dev environment (multibasebox)</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scripts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a aria-current="page" href="/scaffolder.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding arbitrary files</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 2">
+            <a href="/scaffolder.html#running-the-command" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running the command</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/scaffolder.html#the-scaffold-file" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> the scaffold-file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/scaffolder.html#computed-values" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Computed values</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/scaffolder.html#callbacks-provided-by-phabalicious" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Callbacks provided by phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/scaffolder.html#encrypt_files" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> encrypt_files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/scaffolder.html#decrypt_files" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> decrypt_files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/scaffolder.html#twig-extensions" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Twig extensions</span>
+      </a></li>
+          </ul></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-scaffold.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding a new app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-create-destroy.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating/ destroying an app from existing configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/deploying-artifacts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Deploying artifacts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scotty.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scotty mPaaS Integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/kubernetes.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Kubernetes integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/offsite-backups.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Offsite backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/local-overrides.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Local overrides</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/passwords.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Passwords and secrets</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/contribute.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Contributing to Phabalicious</span>
+      </a></li>
+          </ul></li>            <li class="Nav-listItem" style="--level: 0">
+            <a href="/blog.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blog</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/introduction.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A short introduction into phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/architecture.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Introduction and overall architecture</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-7.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.7?</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-secrets.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Handling secrets with phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-phab-beta-in-parallel.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How to test a beta version of phabalicious in parallel</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-8.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.8?</span>
+      </a></li>
+          </ul></li>  </ul>
+  <script>
+    const nav = document.querySelector("#nav");
+    const activeLink = document.querySelector('nav [aria-current="page"]');
+
+    if (nav && activeLink) {
+      if (activeLink.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom) {
+        activeLink.scrollIntoView();
+      }
+    }
+  </script>
+</nav>
+      </div>
+      <div class="Docs-content" id="content">
+          <div class="RichText">
+    <h1 id="scaffolding-arbitrary-files" tabindex="-1"><a class="header-anchor" href="#scaffolding-arbitrary-files">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Scaffolding arbitrary files</h1>
+<p>Phabalicious supports not only scaffolding new applications, but arbitrary files. The command allows to be extended by socalled plugins which implements <code>Phabalicious\Utilities\PluginInterface</code>. The following plugin types are currently supported:</p>
+<ul>
+<li><code>transformers</code>, they take a yaml file as input, transform them to something different which will be written to the filesystem. transformer-plugins need to implement <code>Phabalicious\Scaffolder\Transformers\DataTransformerInterface</code>.</li>
+</ul>
+<h2 id="running-the-command" tabindex="-1"><a class="header-anchor" href="#running-the-command">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Running the command</h2>
+<pre class="language-bash"><code class="language-bash">phab scaffold path/to/scaffold-file.yaml</code></pre>
+<p>If you want to preview the command, add the <code>--dry-run</code>-option, this will output all commands to the console instead of executing them.</p>
+<h2 id="the-scaffold-file" tabindex="-1"><a class="header-anchor" href="#the-scaffold-file">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> the scaffold-file</h2>
+<p>The scaffold-file has the same structure as used for scaffolding applications. Here's an example:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">requires</span><span class="token punctuation">:</span> <span class="token number">3.4</span>
+
+<span class="token key atrule">plugins</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> vendor/factorial<span class="token punctuation">-</span>io/phab<span class="token punctuation">-</span>entity<span class="token punctuation">-</span>scaffolder/src/transformers
+
+<span class="token key atrule">image_styles</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> image_style
+
+<span class="token key atrule">block_content</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> block_content
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+   <span class="token punctuation">-</span> transform(block_content<span class="token punctuation">,</span> block_content<span class="token punctuation">,</span> config/sync)
+   <span class="token punctuation">-</span> transform(imagestyles<span class="token punctuation">,</span> image_styles<span class="token punctuation">,</span> config/sync)</code></pre>
+<ul>
+<li><code>requires</code> set the minimal phabalicious version this file works with.</li>
+<li>the <code>plugins</code>-section reference paths to phabalicious-plugins. Every php file in that folder will be tried to be included and checked if they implement the required interfaces.</li>
+<li><code>scaffold</code> contains a list of script lines where replacement patterns a]get replaced and run via bash, if not an internal command is used.</li>
+<li>It may also contain <code>assets</code> and/or <code>questions</code> as described in <a href="app-scaffold.html">here</a>, but they are not required.</li>
+</ul>
+<h3 id="list-of-supported-internal-commands%3A" tabindex="-1"><a class="header-anchor" href="#list-of-supported-internal-commands%3A">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> List of supported internal commands:</h3>
+<ul>
+<li><code>log_message</code> to print a message with a severity</li>
+<li><code>copy_assets</code> to copy assets and apply replacement patterns</li>
+<li><code>decrypt_assets</code> to decrypt and copy assets and apply replacement patterns</li>
+<li><code>alter_json_file</code> which will alter an existing json file and change some data</li>
+<li><code>alter_yaml_file</code> which will alter an existing yaml file and change some data</li>
+<li><code>assert_file</code> throws an exception if the file does not exist</li>
+<li><code>assert_zero</code> will stop the execution if the argument is not zero</li>
+<li><code>assert_non_zero</code> will stop the execution if the argument is zero</li>
+<li><code>assert_contains</code> will stop the execution if the argument does nt contain given string</li>
+<li><code>set_directory</code> sets the working directory  to the argument</li>
+<li><code>encrypt_files</code> encrypt a bunch of files with a password and store them in a different directory</li>
+<li><code>decrypt_files</code> decrypt a bunch of files with a password and store the encrypted content in a different directory</li>
+</ul>
+<h3 id="list-of-commands-which-needs-one-or-more-plugin-implementations" tabindex="-1"><a class="header-anchor" href="#list-of-commands-which-needs-one-or-more-plugin-implementations">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> List of commands which needs one or more plugin implementations</h3>
+<ul>
+<li><code>transform</code> to transform a bunch of yml files to sth different. This command needs an implementation via plugin</li>
+</ul>
+<h2 id="computed-values" tabindex="-1"><a class="header-anchor" href="#computed-values">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Computed values</h2>
+<p>Similar to scripts, scaffolders do support computed values, by adding a <code>computedValues</code>-block to the yaml-file. Computed values get evaluated before the scaffold starts and store the results of the executed commands as variables which can be consumed later on in the script.</p>
+<p>An example:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">computedValues</span><span class="token punctuation">:</span>
+    <span class="token key atrule">usingOutdatedScaffolder</span><span class="token punctuation">:</span> cd %rootFolder% <span class="token important">&amp;&amp;</span> grep <span class="token punctuation">-</span>q drupal<span class="token punctuation">-</span>composer/drupal<span class="token punctuation">-</span>scaffold composer.json
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> assert_nonzero(%computed.usingOutdatedScaffolder%<span class="token punctuation">,</span> "The project is using the outdated drupal scaffolder from contrib<span class="token punctuation">,</span> please upgrade first<span class="token tag">!</span>")</code></pre>
+<p>The value for <code>usingOutdatedScaffolder</code> gets evaluated before the scaffolder starts and get injected as <code>%computed.usingOutdatedScaffolder%</code> which can be used in the script if needed.</p>
+<p>If the command (in this example <code>grep</code>) produces an output, then the output is used for the stored value. If no output is created, then the exitcode will be used for the value. See the documentation about <a href="/scripts.html">scripts</a> for more info.</p>
+<h2 id="callbacks-provided-by-phabalicious" tabindex="-1"><a class="header-anchor" href="#callbacks-provided-by-phabalicious">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Callbacks provided by phabalicious</h2>
+<h3 id="copy_assets" tabindex="-1"><a class="header-anchor" href="#copy_assets">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>copy_assets</code></h3>
+<p><code>copy_assets</code> can be used in the scaffold-section to copy assets  into a specific location. The syntax is</p>
+<pre><code>copy_assets(&lt;targetFolder&gt;, &lt;assetsKey=assets&gt;, &lt;fileExtensionForTwigParsing&gt;)
+</code></pre>
+<p>Phabalicious will load the asset-file, apply the replacement-patterns to the file-name (<a href="app-scaffold.html">see</a> the <code>deploymentAssetsfor</code> an example) and parse the content via twig. The result will be stored inside the <code>&lt;targetFolder&gt;</code>. If <code>&lt;fileExtensionForTwigParsing&gt;</code> is set, then only files with that extension will be handled by twig.</p>
+<h3 id="decrypt_assets" tabindex="-1"><a class="header-anchor" href="#decrypt_assets">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>decrypt_assets</code></h3>
+<p><code>decrypt_assets</code> can be used in the scaffold-section to decrypt and copy assets into a specific location. The syntax is</p>
+<pre><code>decrypt_assets(&lt;targetFolder&gt;, &lt;assetsKey=assets&gt;, &lt;secretName&gt;, &lt;fileExtensionForTwigParsing&gt;)
+</code></pre>
+<p>Phabalicious will load the asset-file, decrypt it and apply the replacement-patterns to the file-name (<a href="app-scaffold.html">see</a> the <code>deploymentAssetsfor</code> an example) and parse the content via twig. The result will be stored inside the <code>&lt;targetFolder&gt;</code>. If <code>&lt;fileExtensionForTwigParsing&gt;</code> is set, then only files with that extension will be handled by twig.</p>
+<h3 id="log_message(severity%2C-message)" tabindex="-1"><a class="header-anchor" href="#log_message(severity%2C-message)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>log_message(severity, message)</code></h3>
+<p><code>log_message</code> will log a string to the output of phabalicious. It supports several notification levels, e.g.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> log_message(info<span class="token punctuation">|</span>warning<span class="token punctuation">|</span>error<span class="token punctuation">|</span>success<span class="token punctuation">,</span> the message to display)</code></pre>
+<h3 id="alter_json_file(file_path%2C-data_ref)" tabindex="-1"><a class="header-anchor" href="#alter_json_file(file_path%2C-data_ref)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>alter_json_file(file_path, data_ref)</code></h3>
+<p>This internal command can alter a json-file. It will merge the data from a yaml section into the json file. Here's an example:</p>
+<pre class="language-yaml"><code class="language-yaml">
+<span class="token key atrule">dataToInject</span><span class="token punctuation">:</span>
+  <span class="token key atrule">one</span><span class="token punctuation">:</span> foo
+  <span class="token key atrule">two</span><span class="token punctuation">:</span> bar
+  <span class="token key atrule">dict</span><span class="token punctuation">:</span>
+    <span class="token key atrule">one</span><span class="token punctuation">:</span> boo
+    <span class="token key atrule">two</span><span class="token punctuation">:</span> far
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  alter_json_file(package.json<span class="token punctuation">,</span> dataToInject)</code></pre>
+<h3 id="alter_yaml_file(file_path%2C-data_ref)" tabindex="-1"><a class="header-anchor" href="#alter_yaml_file(file_path%2C-data_ref)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>alter_yaml_file(file_path, data_ref)</code></h3>
+<p>This internal command can alter a yaml-file. It will merge the data from a yaml section into the yaml file. Note that the order in the resulting yaml file might be different, also comments might get removed. Here's an example:</p>
+<pre class="language-yaml"><code class="language-yaml">
+<span class="token key atrule">dataToInject</span><span class="token punctuation">:</span>
+  <span class="token key atrule">one</span><span class="token punctuation">:</span> foo
+  <span class="token key atrule">two</span><span class="token punctuation">:</span> bar
+  <span class="token key atrule">dict</span><span class="token punctuation">:</span>
+    <span class="token key atrule">one</span><span class="token punctuation">:</span> boo
+    <span class="token key atrule">two</span><span class="token punctuation">:</span> far
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  alter_yaml_file(config.yaml<span class="token punctuation">,</span> dataToInject)</code></pre>
+<h3 id="assert_zero(variable%2C-error_message)" tabindex="-1"><a class="header-anchor" href="#assert_zero(variable%2C-error_message)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>assert_zero(variable, error_message)</code></h3>
+<p>This internal command will throw an exception if the specified argument is not zero.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">variables</span><span class="token punctuation">:</span>
+    <span class="token key atrule">foo</span><span class="token punctuation">:</span> <span class="token number">1</span>
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> assert_zero(%foo%<span class="token punctuation">,</span> foo is not zero)</code></pre>
+<h3 id="assert_non_zero(variable%2C-error_message)" tabindex="-1"><a class="header-anchor" href="#assert_non_zero(variable%2C-error_message)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>assert_non_zero(variable, error_message)</code></h3>
+<p>This internal command will throw an exception if the specified argument is zero.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">variables</span><span class="token punctuation">:</span>
+    <span class="token key atrule">foo</span><span class="token punctuation">:</span> <span class="token number">0</span>
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> assert_non_zero(%foo%<span class="token punctuation">,</span> foo is zero)</code></pre>
+<h3 id="assert_contains(needle%2C-haystack)" tabindex="-1"><a class="header-anchor" href="#assert_contains(needle%2C-haystack)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>assert_contains(needle, haystack)</code></h3>
+<p>This internal command will throw an exception if <code>needle</code> is not found in <code>haystack</code></p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> assert_contains(foo<span class="token punctuation">,</span> bar<span class="token punctuation">,</span> Could not find foo)
+<span class="token punctuation">-</span></code></pre>
+<h3 id="assert_file(file_path%2C-error_message)" tabindex="-1"><a class="header-anchor" href="#assert_file(file_path%2C-error_message)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>assert_file(file_path, error_message)</code></h3>
+<p>This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> assert_file(&lt;file_path<span class="token punctuation">&gt;</span><span class="token punctuation">,</span> &lt;error_message<span class="token punctuation">&gt;</span>)</code></pre>
+<h3 id="assert_file(file_path%2C-error_message)-1" tabindex="-1"><a class="header-anchor" href="#assert_file(file_path%2C-error_message)-1">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>assert_file(file_path, error_message)</code></h3>
+<p>This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> assert_file(&lt;file_path<span class="token punctuation">&gt;</span><span class="token punctuation">,</span> &lt;error_message<span class="token punctuation">&gt;</span>)</code></pre>
+<h3 id="assert_file(file_path%2C-error_message)-2" tabindex="-1"><a class="header-anchor" href="#assert_file(file_path%2C-error_message)-2">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>assert_file(file_path, error_message)</code></h3>
+<p>This internal command will throw an exception if the specified file does not exist. Useful to check if the user is in the right directory.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> assert_file(&lt;file_path<span class="token punctuation">&gt;</span><span class="token punctuation">,</span> &lt;error_message<span class="token punctuation">&gt;</span>)</code></pre>
+<h3 id="set_directory(directory)" tabindex="-1"><a class="header-anchor" href="#set_directory(directory)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>set_directory(directory)</code></h3>
+<p>This internal command will change the current directory for the following commands to <code>directory</code>.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> set_directory(&lt;directory<span class="token punctuation">&gt;</span>)
+  <span class="token punctuation">-</span> echo $PWD <span class="token comment"># will output &lt;directory&gt;</span></code></pre>
+<h3 id="confirm(message)" tabindex="-1"><a class="header-anchor" href="#confirm(message)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>confirm(message)</code></h3>
+<p>This internal command will ask the user for confirmation before continuing showing <code>message</code>.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> confirm(&lt;message<span class="token punctuation">&gt;</span>)</code></pre>
+<h3 id="scaffold(url%2C-rootfolder)" tabindex="-1"><a class="header-anchor" href="#scaffold(url%2C-rootfolder)">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>scaffold(url, rootFolder)</code></h3>
+<p>This internal command will run another scaffolder from the given <code>url</code> or filepath into the given <code>rootFolder</code>. Additional arguments in the form of <code>key=value</code> will be passed to the scaffolder.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">questions</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token key atrule">assets</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token key atrule">variables</span><span class="token punctuation">:</span>
+<span class="token key atrule">themeFolder</span><span class="token punctuation">:</span> <span class="token string">"%rootFolder%/web/themes/custom/some_frontend"</span>
+
+<span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> scaffold("http<span class="token punctuation">:</span>//foo.bar/d8.yml"<span class="token punctuation">,</span> "%rootFolder%")
+    <span class="token punctuation">-</span> scaffold("http<span class="token punctuation">:</span>//foo.bar/d8<span class="token punctuation">-</span>theme.yml"<span class="token punctuation">,</span> "%themeFolder%")
+    <span class="token punctuation">-</span> scaffold("http<span class="token punctuation">:</span>//foo.bar/d8<span class="token punctuation">-</span>module.yml"<span class="token punctuation">,</span> <span class="token string">"%rootFolder%/web/modules/custom/d8-module"</span><span class="token punctuation">,</span> <span class="token string">"key1=value1"</span><span class="token punctuation">,</span> "key2=value2")</code></pre>
+<h3 id="transform" tabindex="-1"><a class="header-anchor" href="#transform">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>transform</code></h3>
+<p>This internal command will transform a list of yml files to sth different with the help of plugins. THe plugins need to be declared in the <code>plugins</code>-section.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> transform(&lt;nameOfPlugin<span class="token punctuation">&gt;</span><span class="token punctuation">,</span> &lt;yamlKeyToGetListOfFilesFrom<span class="token punctuation">&gt;</span><span class="token punctuation">,</span> &lt;targetPath<span class="token punctuation">&gt;</span>)</code></pre>
+<ul>
+<li><code>&lt;nameOfPlugin&gt;</code> is the plugin-name to use for the trnasforming. Depends on the plugin implementation</li>
+<li><code>&lt;yamlKeyToGetListOfFilesFrom&gt;</code> Similar to <code>copy_assets</code>, its a reference in the yaml-file which contains a list of files/ directories where phabalicious will try to load yaml files from.</li>
+<li><code>&lt;targetPath&gt;</code> the target directory where the resulting files should be saved to.</li>
+</ul>
+<h2 id="encrypt_files" tabindex="-1"><a class="header-anchor" href="#encrypt_files">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>encrypt_files</code></h2>
+<p>This internal command will encrypt a given set of files, encrypt their contents and write it to a target folder.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> encrypt_files(path/to/files/or/folders/to/encrypt/<span class="token important">*.ext</span><span class="token punctuation">,</span> path/to/folder/to/store/encrypted/files<span class="token punctuation">,</span> name<span class="token punctuation">-</span>of<span class="token punctuation">-</span>secret)</code></pre>
+<p>It gets the password from the secret and use it for encryption. The encrypted files are stored in the target folder with the new extension <code>.enc</code>.</p>
+<h2 id="decrypt_files" tabindex="-1"><a class="header-anchor" href="#decrypt_files">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>decrypt_files</code></h2>
+<p>This internal command will decrypt a given set of files, decrypt their contents and write it to a target folder.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> decrypt_files(path/to/files/or/folders/to/decrypt/<span class="token important">*.enc</span><span class="token punctuation">,</span> path/to/folder/to/store/decrypted/files<span class="token punctuation">,</span> name<span class="token punctuation">-</span>of<span class="token punctuation">-</span>secret)</code></pre>
+<p>It gets the password from the secret and use it for descryption. The decrypted files are stored in the target folder, the extension <code>.enc</code> will be removed if necessary.</p>
+<h2 id="twig-extensions" tabindex="-1"><a class="header-anchor" href="#twig-extensions">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Twig extensions</h2>
+<p><code>copy_assets</code> will use twig to replace any configuration values inside the files with their values. You can use all functions and filters, available with twig.</p>
+<p>Additionally these filters are available:</p>
+<ul>
+<li><code>md5</code> e.g. <code>{{ "hello world" | md5 }}</code> will result in <code>f0ef7081e1539ac00ef5b761b4fb01b3</code></li>
+<li><code>slug</code> e.g. <code>{{ "a string with ümlauts" }}</code> will result in <code>a-string-with-umlauts</code></li>
+<li><code>decrypt</code> e.g. <code>{{ "def50200e2013402c4c4440412f94d68044078577b07d67d32d59e5befb2870335de767120081a3be2dc03ddc9781b1e61a7b8ba39f25f7dad88c5be653526a17b6c2dc35ed53397da12d84c327b0f05fb7ac66600fa057b72c5084684aeea" | decrypt('my-secret-name') }}</code> will result in a decrypted string.</li>
+<li><code>encrypt</code> e.g. <code>{{ "hello world" | encrypt('my-secret-name') }}</code> will result in an encrypted string.</li>
+</ul>
+
+  </div>
+        <nav aria-label="article" class="Pagination">
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--prev">
+      <a class="Pagination-link" rel="prev" href="/scripts.html"> Scripts</a>
+    </div>
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--next">
+      <a class="Pagination-link" rel="next" href="/app-scaffold.html"> Scaffolding a new app</a>
+    </div>
+  </nav>
+      </div>
+    </main>
+  </div>
+      
+<footer class="Footer">
+  <div class="Footer-wrapper">
+          <a href="https://docs.phab.io">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Footer-logo" src="/assets/logo-white.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+        <p class="Footer-credit">An open source project by <a href="https://www.factorial.io" rel="noopener" target="_blank">Factorial</a></p>
+  </div>
+  <div class="Footer-wrapper Footer-wrapper--links">
+    <h2 class="u-hiddenVisually">Additional information</h2>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-links">
+  <h3 class="u-hiddenVisually" id="footer-nav-links">links</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="https://www.factorial.io/en/imprint" class="FooterList-link FooterList-link--links">
+                  Imprint
+              </a>
+    </li>
+        <li>
+      <a href="https://www.factorial.io/en/privacy-policy" class="FooterList-link FooterList-link--links">
+                  Privacy
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-social">
+  <h3 class="u-hiddenVisually" id="footer-nav-social">follow us</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="mailto:hello@factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Email address</span>
+          <span class="Icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.57 21.43H3.43A3.44 3.44 0 0 1 0 18V6a3.44 3.44 0 0 1 3.43-3.43h17.14A3.44 3.44 0 0 1 24 6v12a3.44 3.44 0 0 1-3.43 3.43zM1.71 9.25V18c0 .95.77 1.71 1.72 1.71h17.14c.95 0 1.72-.76 1.72-1.71V9.25l-8.5 5.22a3.4 3.4 0 0 1-3.58 0zm0-2.98c0 .6.31 1.16.82 1.47l8.57 5.28a1.7 1.7 0 0 0 1.8 0l8.56-5.28c.5-.31.81-.87.81-1.47V6a1.7 1.7 0 0 0-1.71-1.71H3.43c-.95 0-1.72.76-1.72 1.71z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://github.com/factorial-io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">GitHub</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M12 0C5.37 0 0 5.506 0 12.303c0 5.445 3.435 10.043 8.205 11.674.6.107.825-.262.825-.585 0-.292-.015-1.261-.015-2.291C6 21.67 5.22 20.346 4.98 19.654c-.135-.354-.72-1.446-1.23-1.738-.42-.23-1.02-.8-.015-.815.945-.015 1.62.892 1.845 1.261 1.08 1.86 2.805 1.338 3.495 1.015.105-.8.42-1.338.765-1.645-2.67-.308-5.46-1.37-5.46-6.075 0-1.338.465-2.446 1.23-3.307-.12-.308-.54-1.569.12-3.26 0 0 1.005-.323 3.3 1.26.96-.276 1.98-.415 3-.415s2.04.139 3 .416c2.295-1.6 3.3-1.261 3.3-1.261.66 1.691.24 2.952.12 3.26.765.861 1.23 1.953 1.23 3.307 0 4.721-2.805 5.767-5.475 6.075.435.384.81 1.122.81 2.276 0 1.645-.015 2.968-.015 3.383 0 .323.225.707.825.585a12.046 12.046 0 0 0 5.919-4.489A12.534 12.534 0 0 0 24 12.304C24 5.505 18.63 0 12 0Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.drupal.org/factorial-gmbh" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Drupal community</span>
+          <span class="Icon"><svg width="22" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.625 3.578c.567.257 1.142.518 1.732.886l.023.014c.806.504 5.25 3.283 5.245 9.35C21.625 19.954 16.791 24 11.217 24S.625 19.608.625 13.643c0-5.965 4.65-8.738 5.507-9.179.25-.136.484-.256.71-.372.701-.359 1.34-.686 2.228-1.386.556-.463 1.045-1.11 1.207-2.706.829.993 1.824 2.148 2.542 2.634.596.396 1.196.668 1.806.944Zm-.605 19.06c1.251-.117 2.314-.854 2.43-.97.16-.16.119-.298.091-.392l-.001-.005c-.023-.095-.117-.234-.323-.073-.462.352-1.508.765-2.987.765-1.48 0-2.175-.301-2.637-.67a1.174 1.174 0 0 1-.023-.016.186.186 0 0 0-.03-.019c-.022-.01-.048-.01-.13-.01-.14 0-.229.068-.346.162-.116.095-.161.324 0 .486 1.018.926 2.704.86 3.956.742Zm-1.573-2.918c.256-.235.673-.603 1.068-.765.35-.143.552-.142.85-.14h.118c.367 0 .762.023 1.04.213.276.183.437.597.526.827l.002.004c.095.235 0 .369-.183.463-.16.09-.184.046-.341-.25l-.004-.006-.013-.024c-.156-.293-.309-.579-1.1-.579-.735 0-1.013.232-1.355.518l-.102.085-.013.01c-.385.316-.523.429-.66.247-.134-.185-.09-.369.167-.603Zm7.559-1.59c.556-.81.784-2.104.784-2.819 0-.714-.323-1.92-1.48-1.92-.54 0-1.36.559-2.19 1.123-.841.574-1.694 1.155-2.277 1.166-.568.009-1.224-.454-1.993-.996-1.076-.76-2.37-1.673-3.948-1.66-2.125.022-3.816 1.713-3.838 3.515-.023 1.016.322 1.758 1.018 2.243.461.302.873.508 2.264.508 1.283 0 2.762-.892 4.05-1.67 1.013-.61 1.907-1.15 2.497-1.131.57.024 1.312.779 2.006 1.485.602.612 1.167 1.188 1.554 1.221.651.045 1.002-.256 1.553-1.066Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://twitter.com/factorial_io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">X</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.317 7.274v.591c0 6.35-4.92 13.735-13.864 13.735-2.832 0-5.366-.738-7.453-2.215h1.193c2.236 0 4.472-.739 6.111-2.068-2.087 0-3.875-1.477-4.62-3.397.297 0 .595.148.894.148.447 0 .894 0 1.341-.148a4.779 4.779 0 0 1-3.876-4.726c.597.296 1.342.591 2.237.591-1.342-.886-2.237-2.363-2.237-3.988 0-.886.299-1.772.597-2.51C4.025 6.24 7.602 8.16 11.776 8.308c-.149-.295-.149-.738-.149-1.034 0-2.658 2.236-4.874 4.92-4.874 1.341 0 2.683.591 3.577 1.477a8.077 8.077 0 0 0 3.13-1.181c-.298 1.181-1.192 2.067-2.086 2.658 1.043-.147 1.938-.443 2.832-.738-.894 1.181-1.789 2.067-2.683 2.658Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.facebook.com/factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Facebook</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M24 12c0-6.627-5.373-12-12-12S0 5.373 0 12c0 5.628 3.875 10.35 9.101 11.647v-7.98H6.627V12H9.1v-1.58c0-4.084 1.849-5.978 5.859-5.978.76 0 2.072.15 2.608.298v3.324a15.38 15.38 0 0 0-1.386-.044c-1.967 0-2.728.745-2.728 2.683V12h3.92l-.673 3.667h-3.247v8.245C19.396 23.195 24 18.135 24 12Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.instagram.com/factorial.io/" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Instagram</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.982c2.937 0 3.285.011 4.445.064 1.073.05 1.655.228 2.043.379.477.176.91.457 1.264.823.366.355.647.787.823 1.265.15.387.33.97.379 2.042.053 1.16.064 1.508.064 4.445 0 2.937-.011 3.285-.064 4.445-.049 1.073-.228 1.655-.379 2.043a3.64 3.64 0 0 1-2.087 2.087c-.388.151-.97.33-2.043.38-1.16.052-1.508.063-4.445.063-2.937 0-3.285-.01-4.445-.064-1.073-.049-1.655-.228-2.043-.379a3.407 3.407 0 0 1-1.264-.822 3.408 3.408 0 0 1-.823-1.265c-.15-.388-.33-.97-.379-2.043-.053-1.16-.064-1.508-.064-4.445 0-2.937.011-3.285.064-4.445.049-1.072.228-1.655.379-2.042.176-.478.457-.91.823-1.265a3.408 3.408 0 0 1 1.265-.823c.387-.15.97-.33 2.042-.379 1.16-.053 1.508-.064 4.445-.064M12 1c-2.987 0-3.362.013-4.535.066-1.171.054-1.97.24-2.67.512a5.392 5.392 0 0 0-1.949 1.268 5.392 5.392 0 0 0-1.269 1.949c-.271.7-.457 1.499-.51 2.67C1.012 8.638 1 9.013 1 12c0 2.988.013 3.362.066 4.535.054 1.171.24 1.97.512 2.67.276.734.709 1.4 1.268 1.949.55.56 1.215.992 1.949 1.268.7.272 1.5.458 2.67.512C8.638 22.987 9.013 23 12 23c2.988 0 3.362-.013 4.535-.066 1.171-.054 1.97-.24 2.67-.512a5.625 5.625 0 0 0 3.218-3.217c.272-.7.458-1.499.511-2.67.053-1.173.066-1.548.066-4.535s-.012-3.362-.066-4.535c-.053-1.171-.24-1.97-.511-2.67a5.392 5.392 0 0 0-1.27-1.949 5.393 5.393 0 0 0-1.947-1.269c-.7-.271-1.5-.457-2.67-.51C15.361 1.012 14.986 1 12 1Z"></path><path d="M12 6.352a5.649 5.649 0 1 0 0 11.297 5.649 5.649 0 0 0 0-11.297Zm0 9.315a3.666 3.666 0 1 1 0-7.333 3.666 3.666 0 0 1 0 7.333Zm5.87-8.218a1.32 1.32 0 1 0 0-2.64 1.32 1.32 0 0 0 0 2.64Z"></path></svg>
+</span>
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+      </div>
+</footer>
+    
+
+</body></html>

@@ -1,0 +1,1245 @@
+<!DOCTYPE html><html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Structure of the configuration file</title>
+                  <link rel="preconnect" href="https://BH4D9OD16A-dsn.algolia.net" crossorigin="">
+          <script>
+            window.fdocs = {
+              algolia: {
+                appId: "BH4D9OD16A",
+                apiKey: "69abc87124806b56252e00022c94f392",
+                indexName: "phab"
+              }
+            };
+          </script>
+                <link rel="stylesheet" href="/fdocs/common.css">
+          <link rel="stylesheet" href="/fdocs/docs.css">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-Regular.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-SemiBold.woff2" as="font" crossorigin="">
+                <script src="/fdocs/search.js" defer=""></script>
+                <meta property="og:title" content=" Structure of the configuration file">
+        <meta name="twitter:title" content=" Structure of the configuration file">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://docs.phab.io/configuration.html">
+                <meta property="og:site_name" content="Phabalicious">
+        <meta property="twitter:card" content="summary_large_image">
+                <meta property="og:image" content="https://docs.phab.io/assets/hero.png">
+        <meta property="twitter:image" content="https://docs.phab.io/assets/hero.png">
+                        <meta property="twitter:site" content="@phabalicious">
+                <meta property="twitter:creator" content="@factorial_io">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    </head>
+    <body>
+        <header class="Header">
+  <a class="SkipToContentLink" href="#content">Jump to content</a>
+  <div class="Header-content u-container">
+          <a href="#nav" class="Header-navLink">
+      <svg class="Header-navLinkIcon" width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect y="12" width="17" height="2"></rect>
+          <rect y="6" width="17" height="2"></rect>
+          <rect width="17" height="2"></rect>
+        </svg>
+        <span class="u-hiddenVisually">Jump to navigation</span>
+      </a>
+              <a href="https://docs.phab.io" class="Header-logo">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Header-logoImage" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+              <div class="Header-meta">
+                  <div id="docsearch" class="Header-search Header-search--noscript">
+            <form action="https://duckduckgo.com/" method="get" role="search" class="Header-searchForm">
+              <input type="hidden" name="sites" value="https://docs.phab.io">
+              <label for="search-q" class="Header-searchLabel">
+                <svg class="Header-searchLabelIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 14.35L11.7094 10.0594C12.4219 9.025 12.8375 7.77187 12.8375 6.42188C12.8406 2.875 9.96562 0 6.41875 0C2.875 0 0 2.875 0 6.41875C0 9.96562 2.875 12.8375 6.41875 12.8375V12.8406C7.77187 12.8406 9.025 12.4219 10.0594 11.7094L14.35 16L16 14.35ZM6.41875 10.5063V10.5031C4.1625 10.5 2.3375 8.675 2.33437 6.41875C2.3375 4.1625 4.1625 2.3375 6.41875 2.33437C8.675 2.3375 10.5 4.1625 10.5031 6.41875C10.5 8.675 8.675 10.5 6.41875 10.5063Z"></path>
+                </svg>
+                <span class="u-hiddenVisually">Search</span>
+              </label>
+              <input type="text" class="Header-searchInput" name="q" id="search-q" value="">
+              <button type="submit" class="Header-searchSubmit">Search with DuckDuckGo</button>
+            </form>
+          </div>
+                          <div class="Header-githubLink">
+            <a href="https://github.com/factorial-io/phabalicious" rel="noopener" target="_blank">GitHub</a>
+          </div>
+              </div>
+      </div>
+</header>
+        <div class="Content">
+        <main class="Docs">
+      <div class="Docs-nav" id="nav">
+        
+<nav class="Nav">
+  <a href="#content" class="Nav-contentLink">
+    <svg class="Nav-contentLinkIcon" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2.19531" y="0.282471" width="17" height="2" transform="rotate(45 2.19531 0.282471)"></rect>
+      <rect x="0.78125" y="12.3033" width="17" height="2" transform="rotate(-45 0.78125 12.3033)"></rect>
+    </svg>
+    <span class="u-hiddenVisually">Jump to content</span>
+  </a>  <ul class="Nav-list">            <li class="Nav-listItem" style="--level: 0">
+            <a href="/documentation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel">Documentation</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/guide.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How does phabalicious work in two sentences</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/installation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Installation</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/usage.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a aria-current="page" href="/configuration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Structure of the configuration file</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#name" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> name</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#needs" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> needs</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#requires" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> requires</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#hosts" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> hosts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#dockerhosts" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> dockerHosts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#common" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> common</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#scripts" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#jira" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> jira</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#mattermost" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> mattermost</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#restic" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> restic</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#webhooks" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> webhooks</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#executables" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> executables</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#other" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> other</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/configuration.html#scotty" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> scotty</span>
+      </a></li>
+          </ul></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/commands.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/inheritance.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/docker-integration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Docker integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/workspace.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Setup a local dev environment (multibasebox)</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scripts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scaffolder.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding arbitrary files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-scaffold.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding a new app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-create-destroy.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating/ destroying an app from existing configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/deploying-artifacts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Deploying artifacts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scotty.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scotty mPaaS Integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/kubernetes.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Kubernetes integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/offsite-backups.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Offsite backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/local-overrides.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Local overrides</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/passwords.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Passwords and secrets</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/contribute.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Contributing to Phabalicious</span>
+      </a></li>
+          </ul></li>            <li class="Nav-listItem" style="--level: 0">
+            <a href="/blog.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blog</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/introduction.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A short introduction into phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/architecture.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Introduction and overall architecture</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-7.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.7?</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-secrets.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Handling secrets with phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-phab-beta-in-parallel.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How to test a beta version of phabalicious in parallel</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-8.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.8?</span>
+      </a></li>
+          </ul></li>  </ul>
+  <script>
+    const nav = document.querySelector("#nav");
+    const activeLink = document.querySelector('nav [aria-current="page"]');
+
+    if (nav && activeLink) {
+      if (activeLink.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom) {
+        activeLink.scrollIntoView();
+      }
+    }
+  </script>
+</nav>
+      </div>
+      <div class="Docs-content" id="content">
+          <div class="RichText">
+    <h1 id="structure-of-the-configuration-file" tabindex="-1"><a class="header-anchor" href="#structure-of-the-configuration-file">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Structure of the configuration file</h1>
+<p>The configuration is fetched from the file <code>fabfile.yaml</code> and should have the following structure:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">name</span><span class="token punctuation">:</span> &lt;the project name<span class="token punctuation">&gt;</span>
+
+<span class="token key atrule">needs</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> list of methods
+
+<span class="token key atrule">requires</span><span class="token punctuation">:</span> <span class="token number">2.0</span>
+
+<span class="token key atrule">dockerHosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">docker1</span><span class="token punctuation">:</span>
+    <span class="token punctuation">...</span>
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">host1</span><span class="token punctuation">:</span>
+    <span class="token punctuation">...</span></code></pre>
+<p>Here's the documentation of the supported and used keys:</p>
+<h2 id="name" tabindex="-1"><a class="header-anchor" href="#name">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> name</h2>
+<p>The name of the project, it's only used for output.</p>
+<h2 id="needs" tabindex="-1"><a class="header-anchor" href="#needs">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> needs</h2>
+<p>List here all needed methods for that type of project. Available methods are:</p>
+<ul>
+<li><code>local</code> runs all commands for that configuration locally.</li>
+<li><code>git</code> for deployments via git</li>
+<li><code>ssh</code></li>
+<li><code>drush</code> for support of drupal installations</li>
+<li><code>files</code></li>
+<li><code>mattermost</code> for slack-notifications</li>
+<li><code>webhook</code> to invoke webhooks when running specific tasks</li>
+<li><code>docker</code> for docker-support</li>
+<li><code>composer</code> for composer support</li>
+<li><code>drupalconsole</code> for drupal-concole support</li>
+<li><code>platform</code> for deploying to platform.sh</li>
+<li><code>artifacts--ftp</code> to deploy to a ftp-server</li>
+<li><code>artifacts--git</code> to deploy an artifact to a git repository</li>
+<li><code>yarn</code> to run yarn tasks when doing a deploy/reset</li>
+<li><code>npm</code> to run npm tasks when doing a deploy/reset</li>
+<li><code>mysql</code> to add support for a mysql database</li>
+<li><code>sqlite</code> to add support for a sqlite database</li>
+<li><code>laravel</code> for laravel-based applications</li>
+<li><code>k8s</code> to interact with an application hosted in a Kubernetes cluster</li>
+<li><code>scotty</code> for deploying to Scotty mPaaS</li>
+</ul>
+<p>Needs can be set also per <code>host</code>. You can also declare <code>additionalNeeds</code> per host. If you need to "remove" a need on a per host-bases you need to completely override <code>needs</code>.</p>
+<p><strong>Example for drupal 7</strong></p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">needs</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> ssh
+  <span class="token punctuation">-</span> git
+  <span class="token punctuation">-</span> drush
+  <span class="token punctuation">-</span> files</code></pre>
+<p><strong>Example for drupal 8/9 composer based and dockerized</strong></p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">needs</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> ssh
+  <span class="token punctuation">-</span> git
+  <span class="token punctuation">-</span> drush
+  <span class="token punctuation">-</span> composer
+  <span class="token punctuation">-</span> docker
+  <span class="token punctuation">-</span> files</code></pre>
+<p><strong>Example for a local installed laravel application with sqlite</strong></p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">needs</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> local
+  <span class="token punctuation">-</span> git
+  <span class="token punctuation">-</span> composer
+  <span class="token punctuation">-</span> sqlite
+  <span class="token punctuation">-</span> laravel
+  <span class="token punctuation">-</span> files</code></pre>
+<h2 id="requires" tabindex="-1"><a class="header-anchor" href="#requires">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> requires</h2>
+<p>The file-format of phabalicious changed over time. Set this to the lowest version of phabalicious which can handle the file. Should bei <code>2.0</code></p>
+<h2 id="hosts" tabindex="-1"><a class="header-anchor" href="#hosts">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> hosts</h2>
+<p>Hosts is a list of host-definitions which contain all needed data to connect to a remote host. Here's an example</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">exampleHost</span><span class="token punctuation">:</span>
+    <span class="token key atrule">host</span><span class="token punctuation">:</span> example.host.tld
+    <span class="token key atrule">user</span><span class="token punctuation">:</span> example_user
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">2233</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> dev
+    <span class="token key atrule">info</span><span class="token punctuation">:</span>
+      <span class="token key atrule">description</span><span class="token punctuation">:</span> An example of a configuration
+      <span class="token key atrule">publicUrl</span><span class="token punctuation">:</span> http<span class="token punctuation">:</span>//www.example.com
+      <span class="token key atrule">category</span><span class="token punctuation">:</span>
+        <span class="token key atrule">id</span><span class="token punctuation">:</span> 01<span class="token punctuation">-</span>example
+        <span class="token key atrule">label</span><span class="token punctuation">:</span> An example category
+    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> /var/www/public
+    <span class="token key atrule">gitRootFolder</span><span class="token punctuation">:</span> /var/www
+    <span class="token key atrule">siteFolder</span><span class="token punctuation">:</span> /sites/default
+    <span class="token key atrule">filesFolder</span><span class="token punctuation">:</span> /sites/default/files
+    <span class="token key atrule">backupFolder</span><span class="token punctuation">:</span> /var/www/backups
+    <span class="token key atrule">supportsInstalls</span><span class="token punctuation">:</span> true<span class="token punctuation">|</span>false
+    <span class="token key atrule">supportsCopyFrom</span><span class="token punctuation">:</span> true<span class="token punctuation">|</span>false
+    <span class="token key atrule">branch</span><span class="token punctuation">:</span> develop
+    <span class="token key atrule">docker</span><span class="token punctuation">:</span>
+      <span class="token punctuation">...</span>
+    <span class="token key atrule">database</span><span class="token punctuation">:</span>
+      <span class="token punctuation">...</span>
+    <span class="token key atrule">scripts</span><span class="token punctuation">:</span>
+      <span class="token punctuation">...</span>
+    <span class="token key atrule">sshTunnel</span><span class="token punctuation">:</span>
+      ..
+</code></pre>
+<p>You can get all host-information including the default values using the phabalicious command <code>about</code>:</p>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span>staging about</code></pre>
+<p>This will print all host configuration for the host <code>staging</code>.</p>
+<h3 id="general-keys" tabindex="-1"><a class="header-anchor" href="#general-keys">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> General keys</h3>
+<ul>
+<li><code>hidden</code> hide this configuration from <code>list:hosts</code>, but can still be used</li>
+<li><code>inheritOnly</code> this configuration is just for inheritance, it wont be validated, and hidden for <code>list:hosts</code></li>
+<li><code>info</code> additional human readable information for this config (supports replacemnt-patterns)
+<ul>
+<li><code>description</code>: a human readable description outputted by <code>list:hosts -v</code></li>
+<li><code>publicUrl</code>/<code>publicUrls</code>: One or many urls for this configuration, will be displayed to the user on certain occasions. Make sure, that the most important url is the first one</li>
+<li><code>category</code>: A category to group the output of <code>list:hosts</code> -- can be a string or:
+<ul>
+<li><code>id</code>: the id of the category, used for sorting</li>
+<li><code>label</code>: the label of the category</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>type</code> defines the type of installation. Currently there are four types available:
+<ul>
+<li><code>dev</code> for dev-installations, they won't backup the databases on deployment</li>
+<li><code>test</code> for test-installations, similar than <code>dev</code>, no backups on deployments</li>
+<li><code>stage</code> for staging-installations.</li>
+<li><code>prod</code> for live-installations. Some tasks can not be run on live-installations as <code>install</code> or as a target for <code>copyFrom</code>
+The main use-case is to run different scripts per type, see the <code>common</code>-section.</li>
+</ul>
+</li>
+<li><code>rootFolder</code>  the web-root-folder of the installation, typically exposed to the public.</li>
+<li><code>needs</code> a list of needed methods, if not set, the globally set <code>needs</code> gets used.</li>
+<li><code>additionalNeeds</code> a list of additional needs. The list will be appended to the global or per-host <code>needs</code>-declaration.</li>
+<li><code>configName</code> is set by phabalicious, it's the name of the configuration</li>
+<li><code>supportsInstalls</code>, default is true for <code>types</code> != <code>prod</code>. If sent to true you can run the <code>install</code>-task</li>
+<li><code>supportsCopyFrom</code>, default is true. If set to true, you can use that configuration as a source for the <code>copy-from</code>-task.</li>
+<li><code>backupBeforeDeploy</code> is set to true for <code>types</code> <code>stage</code> and <code>prod</code>, if set to true, a backup of the DB is made before a deployment.</li>
+<li><code>tmpFolder</code>, default is <code>/tmp</code>.</li>
+<li><code>environment</code> contains a list of environment variables to set before running any command</li>
+<li><code>shellProvider</code> defines how to run a shell, where commands are executed, current values are
+<ul>
+<li><code>local</code>: all commands are run locally</li>
+<li><code>ssh</code>: all commands are run via a ssh-shell</li>
+<li><code>docker-exec</code> all commands are run via docker-exec.</li>
+<li><code>docker-exec-over-ssh</code> all commands are run via docker-exec on a remote instance</li>
+<li><code>kubectl</code> all commands are handled via kubectl inside a dedicated pod</li>
+</ul>
+</li>
+<li><code>inheritFromBlueprint</code> this will apply the blueprint to the current configuration. This makes it easy to base the common configuration on a blueprint and just override some parts of it.
+<ul>
+<li><code>config</code> this is the blueprint-configuration used as a base.</li>
+<li><code>variant</code> this is the variant to pass to the blueprint</li>
+</ul>
+</li>
+<li><code>knownHosts</code> a list of hosts which should be added to the known-hosts file before running a ssh-/git-command. Here's an example:<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">knownHosts</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> github.com
+  <span class="token punctuation">-</span> source.factorial.io<span class="token punctuation">:</span><span class="token number">2222</span></code></pre>
+They can be overridden on a per host-basis.</li>
+<li><code>protectedProperties</code> a list of properties which wont be affected by a override.yaml file. See <a href="local-overrides.html">local overrides</a></li>
+</ul>
+<h3 id="configuration-for-the-local-method" tabindex="-1"><a class="header-anchor" href="#configuration-for-the-local-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration for the local-method</h3>
+<ul>
+<li><code>shellProvider</code> default is <code>local</code>, see above.</li>
+<li><code>shellExecutable</code> default is <code>/bin/bash</code> The executable for running a shell. Please note, that phabalicious requires a sh-compatible shell.</li>
+<li><code>shellProviderExecutable</code>, the command, which will create the process for a shell, here <code>/bin/bash</code></li>
+</ul>
+<h3 id="configuration-for-the-ssh-method" tabindex="-1"><a class="header-anchor" href="#configuration-for-the-ssh-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration for the ssh-method</h3>
+<ul>
+<li><code>host</code>, <code>user</code>, <code>port</code> are used to connect via SSH to the remote machine. Please make sure SSH key forwarding is enabled on your installation.</li>
+<li><code>disableKnownHosts</code>, default is false, set to true to ignore the known_hosts-file.</li>
+<li><code>sshTunnel</code> phabalicious supports SSH-Tunnels, that means it can log in into another machine and forward the access to the real host. This is handy for dockerized installations, where the ssh-port of the docker-instance is not public. <code>sshTunnel</code> needs the following informations
+<ul>
+<li><code>bridgeHost</code>: the host acting as a bridge.</li>
+<li><code>bridgeUser</code>: the ssh-user on the bridge-host</li>
+<li><code>bridgePort</code>: the port to connect to on the bridge-host</li>
+<li><code>localPort</code>: the local port which gets forwarded to the <code>destPort</code>. If <code>localPort</code> is omitted, the ssh-port of the host-configuration is used. If the host-configuration does not have a port-property a random port is used.</li>
+<li><code>destHost</code>: the destination host to forward to</li>
+<li><code>destHostFromDockerContainer</code>: if set, the docker's Ip address is used for destHost. This is automatically set when using a <code>docker</code>-configuration, see there.</li>
+<li><code>destPort</code>: the destination port to forward to</li>
+<li><code>shellProviderExecutable</code>, default is <code>/usr/bin/ssh</code>, the executable to establish the connection.</li>
+</ul>
+</li>
+</ul>
+<h3 id="configuration-for-the-git-method" tabindex="-1"><a class="header-anchor" href="#configuration-for-the-git-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration for the git-method</h3>
+<ul>
+<li><code>gitRootFolder</code>  the folder, where the git-repository is located. Defaults to <code>rootFolder</code></li>
+<li><code>branch</code> the name of the branch to use for deployments, they get usually checked out and pulled from origin.</li>
+<li><code>ignoreSubmodules</code> default is false, set to false, if you don't want to update a projects' submodule on deploy.</li>
+<li><code>gitOptions</code> a keyed list of options to apply to a git command. Currently only pull is supported. If your git-version does not support <code>--rebase</code> you can disable it via an empty array: <code>pull: []</code></li>
+</ul>
+<h3 id="configuration-for-the-composer-method" tabindex="-1"><a class="header-anchor" href="#configuration-for-the-composer-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration for the composer-method</h3>
+<ul>
+<li><code>composer.rootFolder</code> the folder where the composer.json for the project is stored, defaults to <code>git.rootFolder</code>.</li>
+</ul>
+<h3 id="configuration-for-the-drush-method" tabindex="-1"><a class="header-anchor" href="#configuration-for-the-drush-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration for the drush-method</h3>
+<ul>
+<li>
+<p><code>uuid</code> of the drupal 8 site (D8 only) Needed for proper config imports</p>
+</li>
+<li>
+<p><code>siteFolder</code> is a drupal-specific folder, where the settings.php resides for the given installation. This allows to interact with multisites etc.</p>
+</li>
+<li>
+<p><code>filesFolder</code> the path to the files-folder, where user-assets get stored and which should be backed up by the <code>files</code>-method</p>
+</li>
+<li>
+<p><code>revertFeatures</code>, defaults to <code>True</code>, when set all features will be reverted when running a reset (drush only)</p>
+</li>
+<li>
+<p><code>configurationManagement</code>, an array of configuration-labels to import on <code>reset</code>, defaults to <code>['staging']</code>. You can add command arguments for drush, e.g.</p>
+<p>configurationManagement:
+sync:
+- drush cim -y
+- echo "do sth else"</p>
+</li>
+<li>
+<p><code>configBaseFolder</code>, where all the configurations are stored, it defaults to <code>../config</code> -- the folder to the actual configuration gets computed, e.g. with the above example it would be <code>../config/sync</code></p>
+</li>
+<li>
+<p><code>forceConfigurationManagement</code> defaults to false. If set to true, phab will not try to autodetect if a config import is doable and force the config importsync</p>
+</li>
+<li>
+<p><code>adminUser</code>, default is <code>admin</code>, the name of the admin-user to set when running the reset-task on <code>dev</code>-instances</p>
+</li>
+<li>
+<p><code>adminPass</code>, default is empty, will be computed on request. You can get it via <code>phab -c&lt;config&gt; get:property adminPass</code> -- this can be overridden per host or globally.</p>
+</li>
+<li>
+<p><code>deploymentModule</code> name of the deployment-module the drush-method enables when doing a deploy</p>
+</li>
+<li>
+<p><code>replaceSettingsFile</code>, default is true. If set to false, the settings.php file will not be replaced when running an install.</p>
+</li>
+<li>
+<p><code>alterSettingsFile</code>, default is true. If set to false, the settings.php file wont be touched by phabalicious.</p>
+</li>
+<li>
+<p><code>installOptions</code> default is <code>distribution: minimal, locale: en, options: ''</code>. You can change the distribution to install and/ or the locale.</p>
+</li>
+<li>
+<p><code>drupalVersion</code> set the drupal-version to use. If not set phabalicious is trying to guess it from the <code>needs</code>-configuration.</p>
+</li>
+<li>
+<p><code>drushVersion</code> set the used crush-version, default is <code>8</code>. Drush is not 100% backwards-compatible, for phabalicious needs to know its version.</p>
+</li>
+<li>
+<p><code>drushErrorHandling</code> defaults to <code>lax</code>. If set to <code>strict</code> phab will terminate with an error if it detects a failed drush-execution.</p>
+</li>
+</ul>
+<h3 id="configuration-of-the-mysql-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-mysql-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the mysql-method</h3>
+<ul>
+<li><code>supportsZippedBackups</code> default is true, set to false, when zipped backups are not supported</li>
+<li><code>database</code> the database-credentials the <code>install</code>-tasks uses when installing a new installation.
+<ul>
+<li><code>name</code> the database name</li>
+<li><code>host</code> the database host</li>
+<li><code>user</code> the database user</li>
+<li><code>pass</code> the password for the database user</li>
+<li><code>prefix</code> the optional table-prefix to use</li>
+<li><code>skipCreateDatabase</code> do not create a database when running the install task.</li>
+<li><code>driver</code>, which method should handle the database-interactions, <code>mysql</code> when using the <code>mysql</code> as a need.</li>
+</ul>
+</li>
+<li><code>mysqlOptions</code>, <code>mysqlDumpOptions</code>, <code>mysqlAdminOptions</code>, arrays with cli-options for these commands to apply when running them.</li>
+</ul>
+<h3 id="configuration-of-the-sqlite-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-sqlite-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the sqlite-method</h3>
+<ul>
+<li><code>supportsZippedBackups</code> default is true, set to false, when zipped backups are not supported</li>
+<li><code>database</code> the database-credentials the <code>install</code>-tasks uses when installing a new installation.
+<ul>
+<li><code>prefix</code> the optional table-prefix to use</li>
+<li><code>skipCreateDatabase</code> do not create a database when running the install task.</li>
+<li><code>driver</code>, which method should handle the database-interactions, <code>sqlite</code> when using the <code>sqlite</code> as a need.</li>
+</ul>
+</li>
+</ul>
+<h3 id="configuration-of-the-laravel-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-laravel-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the laravel-method</h3>
+<ul>
+<li><code>laravel.rootFolder</code> folder where the package.json is located, defaults to the (git-) root-folder.</li>
+<li><code>artisanTasks</code>:
+<ul>
+<li><code>reset</code>: (array) A list of aritsan tasks to execute for the <code>reset</code>-command. Default is
+<ul>
+<li><code>config:cache</code></li>
+<li><code>migrate</code></li>
+<li><code>cache:clear</code></li>
+</ul>
+</li>
+<li><code>install</code>: (array) A list of aritsan tasks to execute for the <code>install</code>-command. Default is
+<ul>
+<li><code>db:wipe --force</code></li>
+<li><code>migrate</code></li>
+<li><code>db:seed</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="configuration-of-the-yarn-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-yarn-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the yarn-method</h3>
+<pre class="language-yaml"><code class="language-yaml">  <span class="token key atrule">yarn</span><span class="token punctuation">:</span>
+    <span class="token key atrule">buildCommand</span><span class="token punctuation">:</span> <span class="token punctuation">...</span>
+    <span class="token key atrule">context</span><span class="token punctuation">:</span> <span class="token punctuation">...</span>
+    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> <span class="token punctuation">...</span></code></pre>
+<ul>
+<li><code>yarn.rootFolder</code> folder where the package.json is located.</li>
+<li><code>yarn.buildCommand</code> build-command for yarn to execute when running the install- or reset-task. If the value is an
+array, then the value is handled as a script block, so please add the name of the executable</li>
+<li><code>yarn.context</code> in which context should the command be executed. Defaults to <code>host</code>. Possible values are:
+<ul>
+<li><code>host</code> yarn is executed on the host, where the app is also running</li>
+<li><code>docker-host</code> is executed on the parent host, which controls docker execution</li>
+<li><code>docker-image</code> is executed in a dedicated docker-image, see script execution context for possible config options</li>
+<li><code>docker-image-on-docker-host</code> a mixture of <code>docker-image</code> and <code>docker-host</code> (still experimental)</li>
+</ul>
+</li>
+</ul>
+<h3 id="configuration-of-the-npm-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-npm-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the npm-method</h3>
+<pre class="language-yaml"><code class="language-yaml">  <span class="token key atrule">npm</span><span class="token punctuation">:</span>
+    <span class="token key atrule">buildCommand</span><span class="token punctuation">:</span> <span class="token punctuation">...</span>
+    <span class="token key atrule">context</span><span class="token punctuation">:</span> <span class="token punctuation">...</span>
+    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> <span class="token punctuation">...</span></code></pre>
+<ul>
+<li><code>npm.rootFolder</code> folder where the package.json is located.</li>
+<li><code>npm.buildCommand</code> build-command for npm to execute when running the install- or reset-task.</li>
+<li><code>npm.context</code> in which context should the command be executed. See the configuration of the yarn-method for possible options</li>
+</ul>
+<h3 id="configuration-of-the-artifacts--ftp-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-artifacts--ftp-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the artifacts--ftp-method</h3>
+<ul>
+<li><code>target</code> keeps all configuration bundled:
+<ul>
+<li><code>user</code> the ftp-user</li>
+<li><code>password</code> the ftp password</li>
+<li><code>host</code> the ftp host</li>
+<li><code>port</code>, default is 21, the port to connect to</li>
+<li><code>rootFolder</code> the folder to copy the app into on the ftp-host.</li>
+<li><code>lftpOptions</code>, an array of options to pass when executing <code>lftp</code></li>
+<li><code>actions</code> a list of actions to perform. See detailed documentation for more info.</li>
+</ul>
+</li>
+</ul>
+<h3 id="configuration-of-the-artifacts--git-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-artifacts--git-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the artifacts--git method</h3>
+<ul>
+<li><code>target</code> contains the following options
+<ul>
+<li><code>repository</code> the url of the target repository</li>
+<li><code>branch</code> the branch to use for commits</li>
+<li><code>baseBranch</code> if phab needs to create a new branch on the target repository, which should be the branch to branch off from.</li>
+<li><code>useLocalRepository</code> if set to true, phab will use the current directory as a source for the artifact, if set to false, phab will create a new app in a temporary folder and use that as a artifact</li>
+<li><code>actions</code> a list of actions to perform. See detailed documentation for more info.</li>
+</ul>
+</li>
+</ul>
+<h3 id="configuration-of-the-artifacts--custom-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-artifacts--custom-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the artifacts--custom method</h3>
+<ul>
+<li><code>target</code> contains the following options
+<ul>
+<li>
+<p><code>actions</code> a list of actions to perform. See detailed documentation for more info.</p>
+</li>
+<li>
+<p><code>stages</code> a list of custom stages to perform. A combination of these values:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token punctuation">-</span> installCode
+<span class="token punctuation">-</span> installDependencies
+<span class="token punctuation">-</span> runActions
+<span class="token punctuation">-</span> runDeployScript</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="configuration-of-the-docker-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-docker-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the docker-method</h3>
+<ul>
+<li><code>docker</code> for all docker-relevant configuration. <code>configuration</code> and <code>name</code>/<code>service</code> are the only required keys, all other are optional and used by the docker-tasks.
+<ul>
+<li><code>configuration</code> should contain the key of the dockerHost-configuration in <code>dockerHosts</code></li>
+<li><code>name</code> contains the name of the docker-container. This is needed to get the IP-address of the particular docker-container when using ssh-tunnels (see above).</li>
+<li>for docker-compose-base setups you can provide the <code>service</code> instead the name, phabalicious will get the docker name automatically from the service.</li>
+</ul>
+</li>
+</ul>
+<h3 id="configuration-of-the-mattermost-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-mattermost-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the mattermost-method</h3>
+<ul>
+<li><code>notifyOn</code>: a list of all tasks where to send a message to a Mattermost channel. Have a look at the global Mattermost-configuration-example below.</li>
+</ul>
+<h3 id="configuration-of-the-k8s-method" tabindex="-1"><a class="header-anchor" href="#configuration-of-the-k8s-method">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration of the k8s-method</h3>
+<p>The Kubernetes integration is documented <a href="kubernetes.html">here</a>.</p>
+<h2 id="dockerhosts" tabindex="-1"><a class="header-anchor" href="#dockerhosts">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> dockerHosts</h2>
+<p><code>dockerHosts</code> is similar structured as the <code>hosts</code>-entry. It's a keyed lists of hosts containing all necessary information to create a ssh-connection to the host, controlling the docker-instances, and a list of tasks, the user might call via the <code>docker</code>-command. See the <code>docker</code>-entry for a more birds-eye-view of the concepts.</p>
+<p>Here's an example <code>dockerHosts</code>-entry:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">dockerHosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">mbb</span><span class="token punctuation">:</span>
+    <span class="token key atrule">runLocally</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+    <span class="token key atrule">host</span><span class="token punctuation">:</span> multibasebox.dev
+    <span class="token key atrule">user</span><span class="token punctuation">:</span> vagrant
+    <span class="token key atrule">password</span><span class="token punctuation">:</span> vagrant
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">22</span>
+    <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> /vagrant
+    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+      <span class="token key atrule">VHOST</span><span class="token punctuation">:</span> %host.host%
+      <span class="token key atrule">WEBROOT</span><span class="token punctuation">:</span> %host.rootFolder%
+    <span class="token key atrule">tasks</span><span class="token punctuation">:</span>
+      <span class="token key atrule">logs</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> docker logs %host.docker.name%</code></pre>
+<p>Here's a list of all possible entries of a dockerHosts-entry:</p>
+<ul>
+<li><code>shellProvider</code>, the shell-provider to use, currently <code>local</code> or <code>ssh</code>.</li>
+<li><code>runLocally</code>: if set to true, the <code>local</code>-shell-provider will be used.</li>
+<li><code>host</code>, <code>user</code> and <code>port</code>: when using the <code>ssh</code>-shell-provicer.</li>
+<li><code>environment</code> a keyed list of environment-variables to set, when running one of the tasks. The replacement-patterns of <code>scripts</code> are supported, see there for more information.</li>
+<li><code>tasks</code> a keyed list of commands to run for a given docker-subtask (similar to <code>scripts</code>). Note: these commands are running on the docker-host, not on the host. All replacement-patterns do work, and you can call even other tasks via <code>execute(&lt;task&gt;, &lt;subtask&gt;)</code> e.g. <code>execute(docker, stop)</code> See the <code>scripts</code>-section for more info.</li>
+</ul>
+<p>You can use <code>inheritsFrom</code> to base your configuration on an existing one. You can add any configuration you may need and reference to that information from within your tasks via the replacement-pattern <code>%dockerHost.keyName%</code> e.g. <code>%dockerHost.host%</code>.</p>
+<p>You can reference a specific docker-host-configuration from your host-configuration via</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">test</span><span class="token punctuation">:</span>
+    <span class="token key atrule">docker</span><span class="token punctuation">:</span>
+      <span class="token key atrule">configuration</span><span class="token punctuation">:</span> mbb</code></pre>
+<h2 id="common" tabindex="-1"><a class="header-anchor" href="#common">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> common</h2>
+<p>common contains a list of commands, keyed by task and type which gets executed when the task is executed.</p>
+<p>Example:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">common</span><span class="token punctuation">:</span>
+  <span class="token key atrule">reset</span><span class="token punctuation">:</span>
+    <span class="token key atrule">dev</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> echo "running reset on a dev<span class="token punctuation">-</span>instance"
+    <span class="token key atrule">stage</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> echo "running reset on a stage<span class="token punctuation">-</span>instance"
+    <span class="token key atrule">prod</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> echo "running reset on a prod<span class="token punctuation">-</span>instance"
+  <span class="token key atrule">deployPrepare</span><span class="token punctuation">:</span>
+    <span class="token key atrule">dev</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> echo "preparing deploy on a dev instance"
+  <span class="token key atrule">deploy</span><span class="token punctuation">:</span>
+    <span class="token key atrule">dev</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> echo "deploying on a dev instance"
+  <span class="token key atrule">deployFinished</span><span class="token punctuation">:</span>
+    <span class="token key atrule">dev</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> echo "finished deployment on a dev instance"</code></pre>
+<p>The first key is the task-name (<code>reset</code>, <code>deploy</code>, ...), the second key is the type of the installation (<code>dev</code>, <code>stage</code>, <code>prod</code>, <code>test</code>). Every task is prepended by a prepare-stage and appended by a finished-stage, so you can call scripts before and after an actual task. You can even run other scripts via the <code>execute</code>-command, see the <code>scripts</code>-section.</p>
+<h2 id="scripts" tabindex="-1"><a class="header-anchor" href="#scripts">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> scripts</h2>
+<p>A keyed list of available scripts. This scripts may be defined globally (on the root level) or on a per host-level. The key is the name of the script and can be executed via</p>
+<pre class="language-bash"><code class="language-bash">phab <span class="token parameter variable">--config</span><span class="token operator">=</span><span class="token operator">&lt;</span>configuration<span class="token operator">&gt;</span> script <span class="token operator">&lt;</span>key<span class="token operator">&gt;</span></code></pre>
+<p>A script consists of an array of commands which gets executed sequentially.</p>
+<p>An example:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scripts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">test</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> echo "Running script test"
+  <span class="token key atrule">test2</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> echo "Running script test2 on %host.config_name%
+    <span class="token punctuation">-</span> execute(script<span class="token punctuation">,</span> test)</code></pre>
+<p>Scripts can be defined on a global level, but also on a per host-level.</p>
+<p>You can declare default-values for arguments via a slightly modified syntax:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scripts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">defaultArgumentTest</span><span class="token punctuation">:</span>
+    <span class="token key atrule">defaults</span><span class="token punctuation">:</span>
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> Bob
+    <span class="token key atrule">script</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> echo "Hello %arguments.name%"</code></pre>
+<p>Running the script via <code>phab config:mbb script:defaultArgumentTest,name="Julia"</code> will show <code>Hello Julia</code>. Running <code>phab config:mbb script:defaultArgumentTest</code> will show <code>Hello Bob</code>.</p>
+<p>For more information see the main scripts section below.</p>
+<h2 id="jira" tabindex="-1"><a class="header-anchor" href="#jira">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> jira</h2>
+<p>The jira-command needs some configuration. It is advised to store this configuration in your user folder (<code>~/.fabfile.local.yaml</code>) or somewhere upstream of your project folder, as it might contain sensitive information.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">jira</span><span class="token punctuation">:</span>
+  <span class="token key atrule">host</span><span class="token punctuation">:</span> &lt;jira<span class="token punctuation">-</span>host<span class="token punctuation">&gt;</span>
+  <span class="token key atrule">user</span><span class="token punctuation">:</span> &lt;jira<span class="token punctuation">-</span>user<span class="token punctuation">&gt;</span>
+  <span class="token key atrule">pass</span><span class="token punctuation">:</span> &lt;jira<span class="token punctuation">-</span>password<span class="token punctuation">&gt;</span></code></pre>
+<p>The command will use the global <code>key</code> as project-key, you can override that via the following configuration:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">jira</span><span class="token punctuation">:</span>
+  <span class="token key atrule">projectKey</span><span class="token punctuation">:</span> &lt;jira project<span class="token punctuation">-</span>key<span class="token punctuation">&gt;</span></code></pre>
+<h2 id="mattermost" tabindex="-1"><a class="header-anchor" href="#mattermost">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> mattermost</h2>
+<p>Phabalicious can send notifications to a running Mattermost instance. You need to create an incoming webhook in your instance and pass this to your configuration. Here's an example</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">mattermost</span><span class="token punctuation">:</span>
+  <span class="token key atrule">username</span><span class="token punctuation">:</span> phabalicious
+  <span class="token key atrule">webhook</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//chat.your.server.tld/hooks/<span class="token punctuation">...</span>
+  <span class="token key atrule">Channel</span><span class="token punctuation">:</span> <span class="token string">"my-channel"</span>
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">test</span><span class="token punctuation">:</span>
+    <span class="token key atrule">needs</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> mattermost
+    <span class="token key atrule">notifyOn</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> deploy
+      <span class="token punctuation">-</span> reset</code></pre>
+<ul>
+<li><code>mattermost</code> contains all global mattermost config.
+<ul>
+<li><code>username</code> the username to post messages as</li>
+<li><code>webhook</code> the address of the web-hook</li>
+<li><code>channel</code> the channel to post the message to</li>
+</ul>
+</li>
+<li><code>notifyOn</code> is a list of tasks which should send a notification</li>
+</ul>
+<p>You can test the Mattermost config via</p>
+<pre class="language-bash"><code class="language-bash">phab notify <span class="token string">"hello world"</span> <span class="token parameter variable">--config</span> <span class="token operator">&lt;</span>your-config<span class="token operator">&gt;</span></code></pre>
+<h2 id="restic" tabindex="-1"><a class="header-anchor" href="#restic">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> restic</h2>
+<p>Provides integration with the restic command. Restic is used as a backup command if configured correctly and enabled via <code>needs</code>. Restic will be executed in the host-context, that means phab will create a shell for the given host-config and executes the restic-command there. It will try to install restic if it can't find an executable.</p>
+<p>You can configure how restic is executed by adding the following snippet either in the global scope, or in a host-configuration. Use a secret to prevent storing sensitive data in the fabfile.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">secrets</span><span class="token punctuation">:</span>
+  <span class="token key atrule">restic-password</span><span class="token punctuation">:</span>
+    <span class="token key atrule">question</span><span class="token punctuation">:</span> Password for offsite restic<span class="token punctuation">-</span>repository<span class="token punctuation">?</span>
+    <span class="token key atrule">onePasswordId</span><span class="token punctuation">:</span> xxx
+    <span class="token key atrule">onePasswordVaultId</span><span class="token punctuation">:</span> xxx
+    <span class="token key atrule">tokenId</span><span class="token punctuation">:</span> default
+
+<span class="token key atrule">restic</span><span class="token punctuation">:</span>
+  <span class="token comment"># defaults:</span>
+  <span class="token key atrule">allowInstallation</span><span class="token punctuation">:</span> <span class="token number">1</span>
+  <span class="token key atrule">downloadUrl</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//github.com/restic/restic/releases/download/v0.12.0/restic_0.12.0_linux_amd64.bz2
+  <span class="token key atrule">options</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token punctuation">-</span><span class="token punctuation">-</span>verbose
+  <span class="token comment"># required:</span>
+  <span class="token key atrule">repository</span><span class="token punctuation">:</span> &lt;url<span class="token punctuation">-</span>to<span class="token punctuation">-</span>your<span class="token punctuation">-</span>repo<span class="token punctuation">&gt;</span>
+  <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+    <span class="token key atrule">RESTIC_PASSWORD</span><span class="token punctuation">:</span> <span class="token string">"%secret.restic-password%"</span></code></pre>
+<p>Phab will include the repository, any options ir environment variables when executing restic, so no need to add them by yourself. All command line arguments will be passed to restic.</p>
+<h2 id="webhooks" tabindex="-1"><a class="header-anchor" href="#webhooks">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> webhooks</h2>
+<p>Phabalicious provides a command to invoke webhooks from the command line, but also integrates invoking webhooks when running a specific task or as a callback for scripts.</p>
+<p>Webhooks are declared in the global namespace:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">webhooks</span><span class="token punctuation">:</span>
+  <span class="token key atrule">nameOfWebhook</span><span class="token punctuation">:</span>
+    <span class="token key atrule">url</span><span class="token punctuation">:</span> &lt;url<span class="token punctuation">-</span>of<span class="token punctuation">-</span>webhook<span class="token punctuation">&gt;</span>
+    <span class="token key atrule">method</span><span class="token punctuation">:</span> &lt;get<span class="token punctuation">|</span>post<span class="token punctuation">|</span>delete<span class="token punctuation">&gt;</span>
+    <span class="token key atrule">format</span><span class="token punctuation">:</span> &lt;json<span class="token punctuation">|</span>form_params<span class="token punctuation">&gt;</span>
+    <span class="token key atrule">payload</span><span class="token punctuation">:</span>
+      <span class="token key atrule">prop1</span><span class="token punctuation">:</span> value1
+      <span class="token key atrule">prop2</span><span class="token punctuation">:</span> value2
+    <span class="token comment"># a list of options passed directly to guzzle.</span>
+    <span class="token key atrule">options</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+  <span class="token punctuation">...</span></code></pre>
+<p>The data in payload get submitted depending on the chosen format, e.g. as JSON or as form-values. You can use the replacement patterns for entries in the payload known similar to scripts, e.g.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">webhooks</span><span class="token punctuation">:</span>
+  <span class="token key atrule">demoWebhook</span><span class="token punctuation">:</span>
+    <span class="token key atrule">url</span><span class="token punctuation">:</span> &lt;url<span class="token punctuation">&gt;</span>
+    <span class="token key atrule">method</span><span class="token punctuation">:</span> get
+    <span class="token key atrule">payload</span><span class="token punctuation">:</span>
+      <span class="token key atrule">branch</span><span class="token punctuation">:</span> <span class="token string">"%host.branch%"</span>
+      <span class="token key atrule">token</span><span class="token punctuation">:</span> <span class="token string">"%settings.token%"</span>
+      <span class="token key atrule">someOtherValue</span><span class="token punctuation">:</span> <span class="token string">"%arguments.foo%"</span></code></pre>
+<p><code>webhooks</code> has a special entry called <code>defaults</code> where you can add common defaults for all webhook invokations like special headers, etc</p>
+<p>The current defaults are:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">webhooks</span><span class="token punctuation">:</span>
+  <span class="token key atrule">defaults</span><span class="token punctuation">:</span>
+    <span class="token key atrule">format</span><span class="token punctuation">:</span> json
+    <span class="token key atrule">options</span><span class="token punctuation">:</span>
+      <span class="token key atrule">headers</span><span class="token punctuation">:</span>
+        <span class="token key atrule">User-Agent</span><span class="token punctuation">:</span> phabalicous
+        <span class="token key atrule">Accept</span><span class="token punctuation">:</span> application/json
+</code></pre>
+<p>To invoke a webhook from a script-section, use the built-in function <code>webhook(name-of-webhook, arguments)</code>:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">host</span><span class="token punctuation">:</span>
+  <span class="token key atrule">demo</span><span class="token punctuation">:</span>
+    <span class="token key atrule">needs</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> git
+      <span class="token punctuation">-</span> artifacts<span class="token punctuation">-</span><span class="token punctuation">-</span>git
+      <span class="token punctuation">-</span> webhook
+    <span class="token key atrule">deployFinished</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> echo "Invoking webhook <span class="token punctuation">...</span>"
+      <span class="token punctuation">-</span> webhook(myWebhook<span class="token punctuation">,</span> foo=bar)</code></pre>
+<p>Alternatively you can use the <code>webhooks</code>-keyword to provide a mapping of task and webhook to invoke:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">host</span><span class="token punctuation">:</span>
+  <span class="token key atrule">demo</span><span class="token punctuation">:</span>
+    <span class="token key atrule">needs</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> git
+      <span class="token punctuation">-</span> artifacts<span class="token punctuation">-</span><span class="token punctuation">-</span>git
+      <span class="token punctuation">-</span> webhook
+    <span class="token key atrule">webhooks</span><span class="token punctuation">:</span>
+      <span class="token key atrule">deployPrepare</span><span class="token punctuation">:</span> myWebhook1
+      <span class="token key atrule">deployFinished</span><span class="token punctuation">:</span> myWebhook2</code></pre>
+<h2 id="executables" tabindex="-1"><a class="header-anchor" href="#executables">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> <code>executables</code></h2>
+<p>Phab supports that host-configurations can override the path to specific executables. These overrides can be done on a global level (e.g. the root level of the fabfile) and/ or on a per host-basis. Phab detects an executable name by the hash-bang notation (<code>#!</code>) or when <code>$$</code> prefixes the executable-name. Here are some examples:</p>
+<pre class="language-shell"><code class="language-shell"><span class="token variable">$$</span><span class="token builtin class-name">echo</span> <span class="token string">"hello world"</span>
+<span class="token comment">#!git pull origin main</span>
+<span class="token comment">#!tar -xzvf files.tgz</span>
+<span class="token comment">#!cat dump.sql | #!mysql -u root -p root db</span></code></pre>
+<p>Phab will lookup the actual executable from the global <code>executables</code>-setting or from the actual host-configuration, here's an example fabfile:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">executables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">echo</span><span class="token punctuation">:</span> echo
+  <span class="token key atrule">git</span><span class="token punctuation">:</span> /usr/local/bin/git <span class="token punctuation">-</span><span class="token punctuation">-</span>quiet
+  <span class="token key atrule">tar</span><span class="token punctuation">:</span> /usr/bin/tar
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">a</span><span class="token punctuation">:</span>
+    <span class="token key atrule">executables</span><span class="token punctuation">:</span>
+      <span class="token key atrule">mysql</span><span class="token punctuation">:</span> /usr/local/bin/mariadb</code></pre>
+<p>As you can see, this allows you to specify the exact path to the executable without relying on rc scripts, env-vars, etc. It allows you also to use completely different executables in certain scenarios, e.g. some hosting providers do have dedicated php executables per version, e.g. php74 php8, etc.</p>
+<p>You can use this mechanism also in your scripts, by using the above mentioned prefixes, e.g.</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">executables</span><span class="token punctuation">:</span>
+  <span class="token key atrule">git</span><span class="token punctuation">:</span> /usr/local/bin/git
+  <span class="token key atrule">chmod</span><span class="token punctuation">:</span> /bin/true
+  <span class="token key atrule">php</span><span class="token punctuation">:</span> /usr/local/bin/php74
+  <span class="token key atrule">drush</span><span class="token punctuation">:</span> /usr/local/bin/php80 /var/www/vendor/bin/drush
+<span class="token key atrule">script</span><span class="token punctuation">:</span>
+  <span class="token key atrule">git-pull</span><span class="token punctuation">:</span>
+    <span class="token comment"># Please note, that the next line is quoted, so yaml wont</span>
+    <span class="token comment"># interpret the hash as a comment. That's actually also</span>
+    <span class="token comment"># the reason, why there is the second prefix $$</span>
+    <span class="token punctuation">-</span> <span class="token string">"#!git pull origin main"</span>
+    <span class="token punctuation">-</span> $$chmod <span class="token punctuation">-</span>R 777 .</code></pre>
+<p>This mechanism allows you to solve some complicated setup stuff (e.g. like disabling the chmod in the above example by replacing it with <code>/bin/true</code> or by specifying a dedicated php executable for drush) by keeping your script code relatively sane, which allows that scripts can be reused more often.</p>
+<h2 id="other" tabindex="-1"><a class="header-anchor" href="#other">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> other</h2>
+<ul>
+<li><code>sqlSkipTables</code> a list of table-names drush should omit when doing a backup.</li>
+<li><code>configurationManagement</code> a list of configuration-labels to import on <code>reset</code>. This defaults to <code>['sync']</code> and may be overridden on a per-host basis. You can add command arguments to the the configuration label.</li>
+<li><code>rsyncOptions</code> additional options to pass to rsync when doing a copyFrom.</li>
+</ul>
+<p>Example:</p>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">deploymentModule</span><span class="token punctuation">:</span> my_deployment_module
+<span class="token key atrule">usePty</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+<span class="token key atrule">useShell</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+<span class="token key atrule">gitOptions</span><span class="token punctuation">:</span>
+  <span class="token key atrule">pull</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token punctuation">-</span><span class="token punctuation">-</span>rebase
+    <span class="token punctuation">-</span> <span class="token punctuation">-</span><span class="token punctuation">-</span>quiet
+<span class="token key atrule">sqlSkipTables</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> cache
+  <span class="token punctuation">-</span> watchdog
+  <span class="token punctuation">-</span> session
+<span class="token key atrule">configurationManagement</span><span class="token punctuation">:</span>
+   <span class="token key atrule">staging</span><span class="token punctuation">:</span>
+     <span class="token punctuation">-</span> drush config<span class="token punctuation">-</span>import <span class="token punctuation">-</span>y staging
+   <span class="token key atrule">dev</span><span class="token punctuation">:</span>
+     <span class="token punctuation">-</span> drush config<span class="token punctuation">-</span>import <span class="token punctuation">-</span>y dev <span class="token punctuation">-</span><span class="token punctuation">-</span>partial
+<span class="token key atrule">rsyncOptions</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token punctuation">-</span><span class="token punctuation">-</span>delete</code></pre>
+<h2 id="scotty" tabindex="-1"><a class="header-anchor" href="#scotty">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> scotty</h2>
+<p>Configuration options for deploying applications to Scotty mPaaS. Make sure to add <code>scotty</code> to your <code>needs</code> section.</p>
+<h3 id="required-configuration" tabindex="-1"><a class="header-anchor" href="#required-configuration">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Required Configuration</h3>
+<ul>
+<li><code>server</code>: The URL of your Scotty server</li>
+<li><code>access-token</code>: Authentication token for the Scotty server</li>
+</ul>
+<h3 id="optional-configuration" tabindex="-1"><a class="header-anchor" href="#optional-configuration">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Optional Configuration</h3>
+<ul>
+<li><code>app-name</code>: Name of the application in Scotty (defaults to the host configuration name)</li>
+<li><code>app-blueprint</code>: Blueprint to use for deployment (e.g., <code>nginx-lagoon</code>, <code>drupal-lagoon</code>)</li>
+<li><code>basic-auth</code>: HTTP basic authentication for the deployed application</li>
+<li><code>registry</code>: Docker registry name to use for images</li>
+<li><code>ttl</code>: Time-to-live for the application (<code>1h</code>, <code>7d</code>, <code>forever</code>)</li>
+<li><code>allow-robots</code>: Boolean flag to allow/disallow robot indexing</li>
+<li><code>services</code>: Mapping of service names to port numbers</li>
+<li><code>environment</code>: Environment variables for the application</li>
+<li><code>custom-domains</code>: Custom domain mappings to services</li>
+<li><code>scaffold</code>: Configuration for copying files and assets</li>
+</ul>
+<h3 id="basic-example" tabindex="-1"><a class="header-anchor" href="#basic-example">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Basic Example</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">needs</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> scotty
+
+<span class="token key atrule">scotty</span><span class="token punctuation">:</span>
+  <span class="token key atrule">server</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//scotty.example.com
+  <span class="token key atrule">access-token</span><span class="token punctuation">:</span> your<span class="token punctuation">-</span>access<span class="token punctuation">-</span>token
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">production</span><span class="token punctuation">:</span>
+    <span class="token key atrule">scotty</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app-name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>app<span class="token punctuation">-</span>prod
+      <span class="token key atrule">services</span><span class="token punctuation">:</span>
+        <span class="token key atrule">nginx</span><span class="token punctuation">:</span> <span class="token number">80</span>
+      <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+        <span class="token key atrule">APP_ENV</span><span class="token punctuation">:</span> production</code></pre>
+<h3 id="advanced-example" tabindex="-1"><a class="header-anchor" href="#advanced-example">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Advanced Example</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">scotty</span><span class="token punctuation">:</span>
+  <span class="token key atrule">server</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//scotty.example.com
+  <span class="token key atrule">access-token</span><span class="token punctuation">:</span> <span class="token string">"%secrets.SCOTTY_TOKEN%"</span>
+  <span class="token key atrule">app-blueprint</span><span class="token punctuation">:</span> nginx<span class="token punctuation">-</span>lagoon
+  <span class="token key atrule">registry</span><span class="token punctuation">:</span> myregistry
+  <span class="token key atrule">basic-auth</span><span class="token punctuation">:</span>
+    <span class="token key atrule">username</span><span class="token punctuation">:</span> admin
+    <span class="token key atrule">password</span><span class="token punctuation">:</span> <span class="token string">"%secrets.BASIC_AUTH_PASSWORD%"</span>
+
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">production</span><span class="token punctuation">:</span>
+    <span class="token key atrule">scotty</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app-name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>web<span class="token punctuation">-</span>app<span class="token punctuation">-</span>prod
+      <span class="token key atrule">ttl</span><span class="token punctuation">:</span> forever
+      <span class="token key atrule">allow-robots</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+      <span class="token key atrule">services</span><span class="token punctuation">:</span>
+        <span class="token key atrule">nginx</span><span class="token punctuation">:</span> <span class="token number">80</span>
+        <span class="token key atrule">api</span><span class="token punctuation">:</span> <span class="token number">3000</span>
+      <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+        <span class="token key atrule">APP_ENV</span><span class="token punctuation">:</span> production
+        <span class="token key atrule">DATABASE_URL</span><span class="token punctuation">:</span> <span class="token string">"%host.secrets.DATABASE_URL%"</span>
+        <span class="token key atrule">API_KEY</span><span class="token punctuation">:</span> <span class="token string">"%secrets.API_KEY%"</span>
+      <span class="token key atrule">custom-domains</span><span class="token punctuation">:</span>
+        <span class="token key atrule">www.example.com</span><span class="token punctuation">:</span> nginx
+        <span class="token key atrule">api.example.com</span><span class="token punctuation">:</span> api
+      <span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+        <span class="token key atrule">docker</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> ./docker<span class="token punctuation">-</span>compose.yml
+          <span class="token punctuation">-</span> ./Dockerfile
+        <span class="token key atrule">public</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> ./public/index.html
+          <span class="token punctuation">-</span> ./public/assets/*
+        <span class="token key atrule">scaffold</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> copy_assets(%rootFolder%)
+          <span class="token punctuation">-</span> copy_assets(%rootFolder%/public<span class="token punctuation">,</span> public)</code></pre>
+<h3 id="configuration-reference" tabindex="-1"><a class="header-anchor" href="#configuration-reference">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Configuration Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>server</code></td>
+<td>string</td>
+<td>Scotty server URL</td>
+<td><code>https://scotty.example.com</code></td>
+</tr>
+<tr>
+<td><code>access-token</code></td>
+<td>string</td>
+<td>Authentication token</td>
+<td><code>your-secret-token</code></td>
+</tr>
+<tr>
+<td><code>app-name</code></td>
+<td>string</td>
+<td>Application name</td>
+<td><code>my-app</code></td>
+</tr>
+<tr>
+<td><code>app-blueprint</code></td>
+<td>string</td>
+<td>Deployment blueprint</td>
+<td><code>nginx-lagoon</code></td>
+</tr>
+<tr>
+<td><code>basic-auth.username</code></td>
+<td>string</td>
+<td>Basic auth username</td>
+<td><code>admin</code></td>
+</tr>
+<tr>
+<td><code>basic-auth.password</code></td>
+<td>string</td>
+<td>Basic auth password</td>
+<td><code>secret</code></td>
+</tr>
+<tr>
+<td><code>registry</code></td>
+<td>string</td>
+<td>Docker registry</td>
+<td><code>factorial</code></td>
+</tr>
+<tr>
+<td><code>ttl</code></td>
+<td>string</td>
+<td>Time-to-live</td>
+<td><code>1h</code>, <code>7d</code>, <code>forever</code></td>
+</tr>
+<tr>
+<td><code>allow-robots</code></td>
+<td>boolean</td>
+<td>Allow robot indexing</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>services</code></td>
+<td>object</td>
+<td>Service port mappings</td>
+<td><code>nginx: 80</code></td>
+</tr>
+<tr>
+<td><code>environment</code></td>
+<td>object</td>
+<td>Environment variables</td>
+<td><code>APP_ENV: production</code></td>
+</tr>
+<tr>
+<td><code>custom-domains</code></td>
+<td>object</td>
+<td>Domain to service mapping</td>
+<td><code>www.example.com: nginx</code></td>
+</tr>
+<tr>
+<td><code>scaffold</code></td>
+<td>object</td>
+<td>File copying configuration</td>
+<td>See scaffold docs</td>
+</tr>
+</tbody>
+</table>
+<p>For complete documentation and examples, see the <a href="scotty.html">Scotty integration guide</a>.</p>
+
+  </div>
+        <nav aria-label="article" class="Pagination">
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--prev">
+      <a class="Pagination-link" rel="prev" href="/usage.html"> Running phabalicious</a>
+    </div>
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--next">
+      <a class="Pagination-link" rel="next" href="/commands.html"> Available commands</a>
+    </div>
+  </nav>
+      </div>
+    </main>
+  </div>
+      
+<footer class="Footer">
+  <div class="Footer-wrapper">
+          <a href="https://docs.phab.io">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Footer-logo" src="/assets/logo-white.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+        <p class="Footer-credit">An open source project by <a href="https://www.factorial.io" rel="noopener" target="_blank">Factorial</a></p>
+  </div>
+  <div class="Footer-wrapper Footer-wrapper--links">
+    <h2 class="u-hiddenVisually">Additional information</h2>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-links">
+  <h3 class="u-hiddenVisually" id="footer-nav-links">links</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="https://www.factorial.io/en/imprint" class="FooterList-link FooterList-link--links">
+                  Imprint
+              </a>
+    </li>
+        <li>
+      <a href="https://www.factorial.io/en/privacy-policy" class="FooterList-link FooterList-link--links">
+                  Privacy
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-social">
+  <h3 class="u-hiddenVisually" id="footer-nav-social">follow us</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="mailto:hello@factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Email address</span>
+          <span class="Icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.57 21.43H3.43A3.44 3.44 0 0 1 0 18V6a3.44 3.44 0 0 1 3.43-3.43h17.14A3.44 3.44 0 0 1 24 6v12a3.44 3.44 0 0 1-3.43 3.43zM1.71 9.25V18c0 .95.77 1.71 1.72 1.71h17.14c.95 0 1.72-.76 1.72-1.71V9.25l-8.5 5.22a3.4 3.4 0 0 1-3.58 0zm0-2.98c0 .6.31 1.16.82 1.47l8.57 5.28a1.7 1.7 0 0 0 1.8 0l8.56-5.28c.5-.31.81-.87.81-1.47V6a1.7 1.7 0 0 0-1.71-1.71H3.43c-.95 0-1.72.76-1.72 1.71z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://github.com/factorial-io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">GitHub</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M12 0C5.37 0 0 5.506 0 12.303c0 5.445 3.435 10.043 8.205 11.674.6.107.825-.262.825-.585 0-.292-.015-1.261-.015-2.291C6 21.67 5.22 20.346 4.98 19.654c-.135-.354-.72-1.446-1.23-1.738-.42-.23-1.02-.8-.015-.815.945-.015 1.62.892 1.845 1.261 1.08 1.86 2.805 1.338 3.495 1.015.105-.8.42-1.338.765-1.645-2.67-.308-5.46-1.37-5.46-6.075 0-1.338.465-2.446 1.23-3.307-.12-.308-.54-1.569.12-3.26 0 0 1.005-.323 3.3 1.26.96-.276 1.98-.415 3-.415s2.04.139 3 .416c2.295-1.6 3.3-1.261 3.3-1.261.66 1.691.24 2.952.12 3.26.765.861 1.23 1.953 1.23 3.307 0 4.721-2.805 5.767-5.475 6.075.435.384.81 1.122.81 2.276 0 1.645-.015 2.968-.015 3.383 0 .323.225.707.825.585a12.046 12.046 0 0 0 5.919-4.489A12.534 12.534 0 0 0 24 12.304C24 5.505 18.63 0 12 0Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.drupal.org/factorial-gmbh" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Drupal community</span>
+          <span class="Icon"><svg width="22" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.625 3.578c.567.257 1.142.518 1.732.886l.023.014c.806.504 5.25 3.283 5.245 9.35C21.625 19.954 16.791 24 11.217 24S.625 19.608.625 13.643c0-5.965 4.65-8.738 5.507-9.179.25-.136.484-.256.71-.372.701-.359 1.34-.686 2.228-1.386.556-.463 1.045-1.11 1.207-2.706.829.993 1.824 2.148 2.542 2.634.596.396 1.196.668 1.806.944Zm-.605 19.06c1.251-.117 2.314-.854 2.43-.97.16-.16.119-.298.091-.392l-.001-.005c-.023-.095-.117-.234-.323-.073-.462.352-1.508.765-2.987.765-1.48 0-2.175-.301-2.637-.67a1.174 1.174 0 0 1-.023-.016.186.186 0 0 0-.03-.019c-.022-.01-.048-.01-.13-.01-.14 0-.229.068-.346.162-.116.095-.161.324 0 .486 1.018.926 2.704.86 3.956.742Zm-1.573-2.918c.256-.235.673-.603 1.068-.765.35-.143.552-.142.85-.14h.118c.367 0 .762.023 1.04.213.276.183.437.597.526.827l.002.004c.095.235 0 .369-.183.463-.16.09-.184.046-.341-.25l-.004-.006-.013-.024c-.156-.293-.309-.579-1.1-.579-.735 0-1.013.232-1.355.518l-.102.085-.013.01c-.385.316-.523.429-.66.247-.134-.185-.09-.369.167-.603Zm7.559-1.59c.556-.81.784-2.104.784-2.819 0-.714-.323-1.92-1.48-1.92-.54 0-1.36.559-2.19 1.123-.841.574-1.694 1.155-2.277 1.166-.568.009-1.224-.454-1.993-.996-1.076-.76-2.37-1.673-3.948-1.66-2.125.022-3.816 1.713-3.838 3.515-.023 1.016.322 1.758 1.018 2.243.461.302.873.508 2.264.508 1.283 0 2.762-.892 4.05-1.67 1.013-.61 1.907-1.15 2.497-1.131.57.024 1.312.779 2.006 1.485.602.612 1.167 1.188 1.554 1.221.651.045 1.002-.256 1.553-1.066Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://twitter.com/factorial_io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">X</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.317 7.274v.591c0 6.35-4.92 13.735-13.864 13.735-2.832 0-5.366-.738-7.453-2.215h1.193c2.236 0 4.472-.739 6.111-2.068-2.087 0-3.875-1.477-4.62-3.397.297 0 .595.148.894.148.447 0 .894 0 1.341-.148a4.779 4.779 0 0 1-3.876-4.726c.597.296 1.342.591 2.237.591-1.342-.886-2.237-2.363-2.237-3.988 0-.886.299-1.772.597-2.51C4.025 6.24 7.602 8.16 11.776 8.308c-.149-.295-.149-.738-.149-1.034 0-2.658 2.236-4.874 4.92-4.874 1.341 0 2.683.591 3.577 1.477a8.077 8.077 0 0 0 3.13-1.181c-.298 1.181-1.192 2.067-2.086 2.658 1.043-.147 1.938-.443 2.832-.738-.894 1.181-1.789 2.067-2.683 2.658Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.facebook.com/factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Facebook</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M24 12c0-6.627-5.373-12-12-12S0 5.373 0 12c0 5.628 3.875 10.35 9.101 11.647v-7.98H6.627V12H9.1v-1.58c0-4.084 1.849-5.978 5.859-5.978.76 0 2.072.15 2.608.298v3.324a15.38 15.38 0 0 0-1.386-.044c-1.967 0-2.728.745-2.728 2.683V12h3.92l-.673 3.667h-3.247v8.245C19.396 23.195 24 18.135 24 12Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.instagram.com/factorial.io/" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Instagram</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.982c2.937 0 3.285.011 4.445.064 1.073.05 1.655.228 2.043.379.477.176.91.457 1.264.823.366.355.647.787.823 1.265.15.387.33.97.379 2.042.053 1.16.064 1.508.064 4.445 0 2.937-.011 3.285-.064 4.445-.049 1.073-.228 1.655-.379 2.043a3.64 3.64 0 0 1-2.087 2.087c-.388.151-.97.33-2.043.38-1.16.052-1.508.063-4.445.063-2.937 0-3.285-.01-4.445-.064-1.073-.049-1.655-.228-2.043-.379a3.407 3.407 0 0 1-1.264-.822 3.408 3.408 0 0 1-.823-1.265c-.15-.388-.33-.97-.379-2.043-.053-1.16-.064-1.508-.064-4.445 0-2.937.011-3.285.064-4.445.049-1.072.228-1.655.379-2.042.176-.478.457-.91.823-1.265a3.408 3.408 0 0 1 1.265-.823c.387-.15.97-.33 2.042-.379 1.16-.053 1.508-.064 4.445-.064M12 1c-2.987 0-3.362.013-4.535.066-1.171.054-1.97.24-2.67.512a5.392 5.392 0 0 0-1.949 1.268 5.392 5.392 0 0 0-1.269 1.949c-.271.7-.457 1.499-.51 2.67C1.012 8.638 1 9.013 1 12c0 2.988.013 3.362.066 4.535.054 1.171.24 1.97.512 2.67.276.734.709 1.4 1.268 1.949.55.56 1.215.992 1.949 1.268.7.272 1.5.458 2.67.512C8.638 22.987 9.013 23 12 23c2.988 0 3.362-.013 4.535-.066 1.171-.054 1.97-.24 2.67-.512a5.625 5.625 0 0 0 3.218-3.217c.272-.7.458-1.499.511-2.67.053-1.173.066-1.548.066-4.535s-.012-3.362-.066-4.535c-.053-1.171-.24-1.97-.511-2.67a5.392 5.392 0 0 0-1.27-1.949 5.393 5.393 0 0 0-1.947-1.269c-.7-.271-1.5-.457-2.67-.51C15.361 1.012 14.986 1 12 1Z"></path><path d="M12 6.352a5.649 5.649 0 1 0 0 11.297 5.649 5.649 0 0 0 0-11.297Zm0 9.315a3.666 3.666 0 1 1 0-7.333 3.666 3.666 0 0 1 0 7.333Zm5.87-8.218a1.32 1.32 0 1 0 0-2.64 1.32 1.32 0 0 0 0 2.64Z"></path></svg>
+</span>
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+      </div>
+</footer>
+    
+
+</body></html>
