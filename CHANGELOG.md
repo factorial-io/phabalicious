@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.1](https://github.com/factorial-io/phabalicious/compare/v4.1.0...v4.1.1) (2026-10-21)
+
+
+### Bug Fixes
+
+* **build:** disable box requirement checker ([950a478](https://github.com/factorial-io/phabalicious/commit/950a478c9b3cb61db29229e841a6d447bc57f0b3))
+
 ## [4.1.0](https://github.com/factorial-io/phabalicious/compare/v4.0.3...v4.1.0) (2026-10-21)
 
 
