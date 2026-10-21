@@ -198,7 +198,7 @@ class WebhookMethod extends BaseMethod implements MethodInterface
 
         $client = new Client();
         $response = $client->request(
-            $webhook['method'],
+            strtoupper($webhook['method']),
             $webhook['url'],
             $webhook['options']
         );
