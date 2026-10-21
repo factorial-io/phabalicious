@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/factorial-io/phabalicious/compare/v4.0.3...v4.1.0) (2026-10-21)
+
+
+### Features
+
+* add design for scotty shell provider ([46a392e](https://github.com/factorial-io/phabalicious/commit/46a392e582f9a4d69504e68de4b26430ef62943d))
+* add preflight authentication verification to scotty method ([edb2baa](https://github.com/factorial-io/phabalicious/commit/edb2baae17e46051910f8c857a6d1cf2d399a257))
+* implement ScottyShellProvider ([bf9963d](https://github.com/factorial-io/phabalicious/commit/bf9963d83b8fd212872ed2107722ab19984156e6))
+
+
+### Bug Fixes
+
+* correct scottyctl command structure and add CompletionCommand return type ([67f6412](https://github.com/factorial-io/phabalicious/commit/67f6412094c6c0a58aba27c65357b44373cba6bd))
+* **deps:** update packages with security advisories ([64866f7](https://github.com/factorial-io/phabalicious/commit/64866f72f9673b0ae9d4a160a0a6d2f64d3cb909))
+* merge global scotty settings with host-specific settings ([efc3319](https://github.com/factorial-io/phabalicious/commit/efc331914025e462749328549893a5297bd3434f))
+* pass uppercase HTTP method to guzzle in webhook method ([19d54c6](https://github.com/factorial-io/phabalicious/commit/19d54c6bcc89521e958f9c949d66052ebfa4a0ee))
+* quote -c argument in ScottyShellProvider wrapCommandInLoginShell ([c239881](https://github.com/factorial-io/phabalicious/commit/c239881cf1c26186d132e30f1d5924fcb6bc1443))
+* resolve secrets in scottyctl access-token parameter ([04e9121](https://github.com/factorial-io/phabalicious/commit/04e9121f5931ce9165042eac75fe548800d76ba4))
+* resolve secrets in ScottyShellProvider command array ([b2d0e0b](https://github.com/factorial-io/phabalicious/commit/b2d0e0b3eec24327bd5387e869d1f13c6b98e88b))
+
 ### [4.0.3](https://github.com/factorial-io/phabalicious/compare/v4.0.2...v4.0.3) (2026-01-07)
 
 
