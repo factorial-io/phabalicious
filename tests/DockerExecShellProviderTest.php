@@ -87,7 +87,7 @@ class DockerExecShellProviderTest extends PhabTestCase
     public function testSimpleCommand()
     {
         /** @var CommandResult $result */
-        $result = $this->shellProvider->run('whoami', true);
+        $result = $this->shellProvider->run('whoami', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
         $this->assertEquals(0, $result->getExitCode());
         $this->assertEquals('root', $result->getOutput()[0]);
     }
