@@ -333,7 +333,8 @@ class PasswordManager implements PasswordManagerInterface
     {
         return $this->exec1PasswordCli(
             sprintf('get document %s > "%s"', $item_id, $target_file_dir),
-            sprintf('document get %s --output="%s"', $item_id, $target_file_dir)
+            // --force: tempnam() pre-creates the target file, op refuses to overwrite it otherwise.
+            sprintf('document get %s --force --output="%s"', $item_id, $target_file_dir)
         );
     }
 
