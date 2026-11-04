@@ -27,7 +27,7 @@
         "twig/string-extra": "^3.20",
         "defuse/php-encryption": "^2.3",
         "consolidation/self-update": "^3.0",
-        "webmozart/assert": "^1.11",
+        "webmozart/assert": "^2.0",
         "verbb/parallel-process": "dev-master",
         "symfony/string": "^7.1",
         "symfony/error-handler": "^7.1",
