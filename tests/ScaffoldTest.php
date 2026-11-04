@@ -230,6 +230,9 @@ class ScaffoldTest extends PhabTestCase
         $this->runTestTwigExtensions($shell, $context, $this->getTmpDir());
     }
 
+    /**
+     * @group docker
+     */
     public function testRemoteScaffolding(): void
     {
         $shell = $this->getDockerizedSshShell($this->logger, $this->configuration);

@@ -12,16 +12,21 @@ on:
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy-docs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@v7
     - name: Build and Deploy
       uses: stmh/vuepress-github-actions-deploy@master
       env:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        # The action pushes to https://${ACCESS_TOKEN}@github.com/..., so use
+        # the built-in token instead of a PAT that can expire.
+        ACCESS_TOKEN: x-access-token:${{ secrets.GITHUB_TOKEN }}
         BUILD_DIR: docs/_site
         BUILD_SCRIPT: export FDOCS_HOST=https://docs.phab.io && yarn install --ignore-engines && yarn run docs:build
         PAGES_CNAME: docs.phab.io
