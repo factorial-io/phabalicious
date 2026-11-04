@@ -6,7 +6,13 @@
   "composer": {
     "rangeStrategy": "update-lockfile"
   },
+  "postUpdateOptions": ["composerWithAll"],
   "packageRules": [
+    {
+      "description": "Automerge patch updates once status checks pass",
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    },
     {
       "groupName": "symfony packages",
       "groupSlug": "symfony",
