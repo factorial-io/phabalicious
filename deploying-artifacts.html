@@ -1,0 +1,588 @@
+<!DOCTYPE html><html lang="en"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Deploying artifacts</title>
+                  <link rel="preconnect" href="https://BH4D9OD16A-dsn.algolia.net" crossorigin="">
+          <script>
+            window.fdocs = {
+              algolia: {
+                appId: "BH4D9OD16A",
+                apiKey: "69abc87124806b56252e00022c94f392",
+                indexName: "phab"
+              }
+            };
+          </script>
+                <link rel="stylesheet" href="/fdocs/common.css">
+          <link rel="stylesheet" href="/fdocs/docs.css">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-Regular.woff2" as="font" crossorigin="">
+        <link rel="preload" href="/fdocs/fonts/SuisseIntl-SemiBold.woff2" as="font" crossorigin="">
+                <script src="/fdocs/search.js" defer=""></script>
+                <meta property="og:title" content=" Deploying artifacts">
+        <meta name="twitter:title" content=" Deploying artifacts">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://docs.phab.io/deploying-artifacts.html">
+                <meta property="og:site_name" content="Phabalicious">
+        <meta property="twitter:card" content="summary_large_image">
+                <meta property="og:image" content="https://docs.phab.io/assets/hero.png">
+        <meta property="twitter:image" content="https://docs.phab.io/assets/hero.png">
+                        <meta property="twitter:site" content="@phabalicious">
+                <meta property="twitter:creator" content="@factorial_io">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    </head>
+    <body>
+        <header class="Header">
+  <a class="SkipToContentLink" href="#content">Jump to content</a>
+  <div class="Header-content u-container">
+          <a href="#nav" class="Header-navLink">
+      <svg class="Header-navLinkIcon" width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect y="12" width="17" height="2"></rect>
+          <rect y="6" width="17" height="2"></rect>
+          <rect width="17" height="2"></rect>
+        </svg>
+        <span class="u-hiddenVisually">Jump to navigation</span>
+      </a>
+              <a href="https://docs.phab.io" class="Header-logo">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Header-logoImage" src="/assets/logo.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+              <div class="Header-meta">
+                  <div id="docsearch" class="Header-search Header-search--noscript">
+            <form action="https://duckduckgo.com/" method="get" role="search" class="Header-searchForm">
+              <input type="hidden" name="sites" value="https://docs.phab.io">
+              <label for="search-q" class="Header-searchLabel">
+                <svg class="Header-searchLabelIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 14.35L11.7094 10.0594C12.4219 9.025 12.8375 7.77187 12.8375 6.42188C12.8406 2.875 9.96562 0 6.41875 0C2.875 0 0 2.875 0 6.41875C0 9.96562 2.875 12.8375 6.41875 12.8375V12.8406C7.77187 12.8406 9.025 12.4219 10.0594 11.7094L14.35 16L16 14.35ZM6.41875 10.5063V10.5031C4.1625 10.5 2.3375 8.675 2.33437 6.41875C2.3375 4.1625 4.1625 2.3375 6.41875 2.33437C8.675 2.3375 10.5 4.1625 10.5031 6.41875C10.5 8.675 8.675 10.5 6.41875 10.5063Z"></path>
+                </svg>
+                <span class="u-hiddenVisually">Search</span>
+              </label>
+              <input type="text" class="Header-searchInput" name="q" id="search-q" value="">
+              <button type="submit" class="Header-searchSubmit">Search with DuckDuckGo</button>
+            </form>
+          </div>
+                          <div class="Header-githubLink">
+            <a href="https://github.com/factorial-io/phabalicious" rel="noopener" target="_blank">GitHub</a>
+          </div>
+              </div>
+      </div>
+</header>
+        <div class="Content">
+        <main class="Docs">
+      <div class="Docs-nav" id="nav">
+        
+<nav class="Nav">
+  <a href="#content" class="Nav-contentLink">
+    <svg class="Nav-contentLinkIcon" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2.19531" y="0.282471" width="17" height="2" transform="rotate(45 2.19531 0.282471)"></rect>
+      <rect x="0.78125" y="12.3033" width="17" height="2" transform="rotate(-45 0.78125 12.3033)"></rect>
+    </svg>
+    <span class="u-hiddenVisually">Jump to content</span>
+  </a>  <ul class="Nav-list">            <li class="Nav-listItem" style="--level: 0">
+            <a href="/documentation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel">Documentation</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/guide.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How does phabalicious work in two sentences</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/installation.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Installation</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/usage.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Running phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/configuration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Structure of the configuration file</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/commands.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available commands</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/inheritance.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Inheritance</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/docker-integration.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Docker integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/workspace.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Setup a local dev environment (multibasebox)</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scripts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scripts</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scaffolder.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding arbitrary files</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-scaffold.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scaffolding a new app</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/app-create-destroy.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Creating/ destroying an app from existing configuration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a aria-current="page" href="/deploying-artifacts.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Deploying artifacts</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 2">
+            <a href="/deploying-artifacts.html#artifacts--ftp" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> artifacts--ftp</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/deploying-artifacts.html#artifacts--git" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> artifacts--git</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 2">
+            <a href="/deploying-artifacts.html#available-actions" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Available actions</span>
+      </a></li>
+          </ul></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/scotty.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Scotty mPaaS Integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/kubernetes.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Kubernetes integration</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/offsite-backups.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Offsite backups</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/local-overrides.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Local overrides</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/passwords.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Passwords and secrets</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/contribute.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Contributing to Phabalicious</span>
+      </a></li>
+          </ul></li>            <li class="Nav-listItem" style="--level: 0">
+            <a href="/blog.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Blog</span>
+      </a><ul class="Nav-subList">                            <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/introduction.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> A short introduction into phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/architecture.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Introduction and overall architecture</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-7.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.7?</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-secrets.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> Handling secrets with phabalicious</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/how-to-use-phab-beta-in-parallel.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> How to test a beta version of phabalicious in parallel</span>
+      </a></li>
+                                      <li class="Nav-listItem" style="--level: 1">
+            <a href="/blog/whats-new-in-phab-3-8.html" class="Nav-listItemLink">
+        <span class="Nav-listItemLinkLabel"> What's new in phabalicious 3.8?</span>
+      </a></li>
+          </ul></li>  </ul>
+  <script>
+    const nav = document.querySelector("#nav");
+    const activeLink = document.querySelector('nav [aria-current="page"]');
+
+    if (nav && activeLink) {
+      if (activeLink.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom) {
+        activeLink.scrollIntoView();
+      }
+    }
+  </script>
+</nav>
+      </div>
+      <div class="Docs-content" id="content">
+          <div class="RichText">
+    <h1 id="deploying-artifacts" tabindex="-1"><a class="header-anchor" href="#deploying-artifacts">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Deploying artifacts</h1>
+<p>If you want to deploy artifacts, phabalicious can help you here, currently there are two methods supported:</p>
+<ul>
+<li>artifacts--git</li>
+<li>artifacts--ftp</li>
+</ul>
+<p>Both methods create a new application from scratch and deploy all or parts of it to a ftp server or store the artifacts in a git repository. Both methods are using the same stage mechanisms as in <code>app:create</code>.</p>
+<p>Both methods needs the global <code>repository</code>-config, so they can pull the app into a new temporary folder.</p>
+<h2 id="artifacts--ftp" tabindex="-1"><a class="header-anchor" href="#artifacts--ftp">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> artifacts--ftp</h2>
+<p>ftp will create a new application in a temporary folder, install all needed dependencies, copies the data into a new temporary folder and run the deploy script of the host-config. After that is finished, phab will mirror all changed files via <code>lftp</code> to the server. <code>lftp</code> supports multiple protocols, not only ftp, but it needs to be installed on the machine running phab.</p>
+<p>ftp-sync use the following stages:</p>
+<ul>
+<li><code>installCode</code> will most of the time clone the source repository</li>
+<li><code>installDependencies</code> will install all needed dependencies</li>
+<li><code>runActions</code> will run all defined actions (see below)</li>
+<li><code>runDeployScript</code> run the deploy-script of the host to apply some custom changes</li>
+<li><code>syncToFtp</code> sync all changed files with the remote ftp server.</li>
+</ul>
+<h3 id="example-config" tabindex="-1"><a class="header-anchor" href="#example-config">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Example config</h3>
+<pre class="language-yaml"><code class="language-yaml">
+<span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">ftp-artifacts</span><span class="token punctuation">:</span>
+    <span class="token key atrule">needs</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> git
+      <span class="token punctuation">-</span> composer
+      <span class="token punctuation">-</span> artifacts<span class="token punctuation">-</span><span class="token punctuation">-</span>ftp
+      <span class="token punctuation">-</span> script
+    <span class="token key atrule">artifact</span><span class="token punctuation">:</span>
+      <span class="token key atrule">user</span><span class="token punctuation">:</span> stephan
+      <span class="token key atrule">host</span><span class="token punctuation">:</span> sftp<span class="token punctuation">:</span>//localhost
+      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">22</span>
+      <span class="token key atrule">password</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>secret
+      <span class="token key atrule">rootFolder</span><span class="token punctuation">:</span> /home/stephan/somewhere
+      <span class="token key atrule">actions</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> copy
+          <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+            <span class="token key atrule">from</span><span class="token punctuation">:</span> <span class="token string">"*"</span>
+            <span class="token key atrule">to</span><span class="token punctuation">:</span> .
+        <span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> script
+          <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> cp .env.example .env
+        <span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> delete
+          <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> .git/
+            <span class="token punctuation">-</span> .fabfile
+            <span class="token punctuation">-</span> .editorconfig
+            <span class="token punctuation">-</span> .env.example
+            <span class="token punctuation">-</span> .gitattributes
+            <span class="token punctuation">-</span> .gitignore
+            <span class="token punctuation">-</span> composer.lock
+            <span class="token punctuation">-</span> composer.json
+            <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose.yml
+        <span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> script
+          <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> ls <span class="token punctuation">-</span>la
+        <span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> confirm
+          <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+            <span class="token key atrule">question</span><span class="token punctuation">:</span> Do you want to continue<span class="token punctuation">?</span>
+</code></pre>
+<p>The default actions for the ftp-artifact-method will copy all files to the target repo and remove the <code>.git</code>-folder and the fabfile.</p>
+<h2 id="artifacts--git" tabindex="-1"><a class="header-anchor" href="#artifacts--git">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> artifacts--git</h2>
+<p>This method will create the artifact, pull the target repository, copy all necessary files over to the target repository, commit any changes to the target repository and push the changes again. A CI listening to commits can do the actual deployment</p>
+<p>It is using the following stages:</p>
+<ul>
+<li><code>installCode</code>, creates a temporary folder and pulls the source repository. (only when <code>useLocalRepository</code> is set to false)</li>
+<li><code>installDependencies</code> to install the dependencies</li>
+<li><code>getSourceCommitInfo</code> get the commit hash from the source repo.</li>
+<li><code>runActions</code> will run all defined actions (see below)</li>
+<li><code>copyFilesToTargetDirectory</code>, copy specified <code>files</code> to the target directory, removes all files listed in <code>excludeFiles.gitSync</code></li>
+<li><code>runDeployScript</code> run the deploy script of the host-config.</li>
+<li><code>pushToTargetRepository</code> commit and push all changes, using the changelog as a commit-message</li>
+</ul>
+<p>If you run phabalicious as part of a CI-setup, it might make sense to set <code>useLocalRepository</code> to true, as this will instruct phab to use the current folder as a base for the artifact and won't create a new application in another temporary folder.</p>
+<h3 id="example-config-1" tabindex="-1"><a class="header-anchor" href="#example-config-1">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Example config</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">hosts</span><span class="token punctuation">:</span>
+  <span class="token key atrule">git-artifact</span><span class="token punctuation">:</span>
+    <span class="token key atrule">branch</span><span class="token punctuation">:</span> develop
+    <span class="token key atrule">needs</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> git
+      <span class="token punctuation">-</span> composer
+      <span class="token punctuation">-</span> artifacts<span class="token punctuation">-</span><span class="token punctuation">-</span>git
+      <span class="token punctuation">-</span> script
+    <span class="token key atrule">artifact</span><span class="token punctuation">:</span>
+      <span class="token key atrule">gitOptions</span><span class="token punctuation">:</span>
+        <span class="token key atrule">clone</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> <span class="token punctuation">-</span><span class="token punctuation">-</span>depth 10
+      <span class="token key atrule">branch</span><span class="token punctuation">:</span> develop
+      <span class="token key atrule">baseBranch</span><span class="token punctuation">:</span> master
+      <span class="token key atrule">repository</span><span class="token punctuation">:</span> ssh<span class="token punctuation">:</span>//somewhere/repository.git
+      <span class="token key atrule">useLocalRepository</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+      <span class="token key atrule">actions</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> copy
+          <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+            <span class="token key atrule">from</span><span class="token punctuation">:</span> <span class="token string">'*'</span>
+            <span class="token key atrule">to</span><span class="token punctuation">:</span> .
+        <span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> script
+          <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> cp .env.example .env
+        <span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> delete
+          <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> .env.example
+            <span class="token punctuation">-</span> composer.json
+            <span class="token punctuation">-</span> composer.lock
+            <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose.yml
+            <span class="token punctuation">-</span> docker<span class="token punctuation">-</span>compose<span class="token punctuation">-</span>mbb.yml
+            <span class="token punctuation">-</span> .projectCreated</code></pre>
+<p>the default actions for the git-artifact-method will copy all files to the target repo and remove the fabfile.</p>
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>default value</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>artifact.branch</code></td>
+<td><code>false</code></td>
+<td>if set to false, the name of the source-branch is used, otherwise the value</td>
+</tr>
+<tr>
+<td><code>artifact.baseBranch</code></td>
+<td><code>master</code></td>
+<td>If phabalicious needs to create a new branch, because it is missing from the target-repository, then start the branch from <code>masterBranch</code></td>
+</tr>
+<tr>
+<td><code>artifact.repository</code></td>
+<td></td>
+<td>The url to the target-repository</td>
+</tr>
+<tr>
+<td><code>artifact.actions</code></td>
+<td></td>
+<td>Actions to perform</td>
+</tr>
+</tbody>
+</table>
+<p>Phab will use a shallow clone for the target repository to keep resources low. If you need to use a deep copy for the target repository, you can adapt the gitOptions like:</p>
+<pre><code>hosts:
+  git-artifacts:
+    artifact:
+      gitOptions:
+        clone: []
+</code></pre>
+<p>If the target repository contains commits not added by the artifact deployment, a warning will be shown to the user, with a list of commits and changed files. The user can confirm that he wants to continue, or stop the execution.</p>
+<p>You can force the artifact based deployment by adding the <code>--force</code>-option, or by setting the <code>PHABALICIOUS_FORCE_GIT_ARTIFACT_DEPLOYMENT</code> environment variable to 1.</p>
+<h3 id="artifacts--custom" tabindex="-1"><a class="header-anchor" href="#artifacts--custom">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> artifacts--custom</h3>
+<p>@TODO</p>
+<h2 id="available-actions" tabindex="-1"><a class="header-anchor" href="#available-actions">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> Available actions</h2>
+<p>You can customize the list of actions be run when deploying an artifact. Here's a list of available actions</p>
+<h3 id="docker-copy" tabindex="-1"><a class="header-anchor" href="#docker-copy">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> docker-copy</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> docker<span class="token punctuation">-</span>copy
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> <span class="token string">"%settings.gitlab.imageBaseTag%/builder:%host.branch%"</span>
+    <span class="token key atrule">imageRootPath</span><span class="token punctuation">:</span> /app
+    <span class="token key atrule">from</span><span class="token punctuation">:</span> <span class="token string">"*"</span>
+    <span class="token key atrule">to</span><span class="token punctuation">:</span> .</code></pre>
+<p>This action will copy the listed files from <code>from</code> inside the docker image <code>image</code> to <code>to</code>. If <code>from</code> is '*' phabalicious will get the contents of the directory. As the copy is initiated from the container, make sure that the <code>imageRootPath</code> points to a valid directory inside the container. The <code>image</code>-property supports replacement patterns, in the example case it will get the image name from the gitlab settings and the branch from the host-config. Phab will try to pull the latest image before running the action. The action supports the <code>excludeFiles.gitSync</code> settings to skip certain files and folders (it defaults to <code>.git</code>).</p>
+<h3 id="copy" tabindex="-1"><a class="header-anchor" href="#copy">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> copy</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> copy
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token key atrule">from</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> file1
+      <span class="token punctuation">-</span> folder2
+      <span class="token punctuation">-</span> subfolder/file3
+    <span class="token key atrule">to</span><span class="token punctuation">:</span> targetsubfolder</code></pre>
+<p>This will copy the three mentioned files and folders into the subfolder <code>targetsubfolder</code> of the target folder. Please be aware, that you might need to create subdirectories beforehand manually via the <code>script</code>-method. Also be aware that copy action deletes existing files and folders from target before doing the copy, if you want to combine files from multiple sources it is better to also use the <code>script</code>-method for that.</p>
+<p>The action supports the <code>excludeFiles.gitSync</code> settings to skip certain files and folders (it defaults to <code>.git</code>). If <code>from</code> is <code>*</code> phabalicious will get the contents of the directory.</p>
+<h3 id="delete" tabindex="-1"><a class="header-anchor" href="#delete">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> delete</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> delete
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> file1
+    <span class="token punctuation">-</span> folder2
+    <span class="token punctuation">-</span> subfolder/file3</code></pre>
+<p>This action will delete the list of files and folders in the target folder. Here you can clean up the target and get rid of unneeded files.</p>
+<h3 id="exclude" tabindex="-1"><a class="header-anchor" href="#exclude">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> exclude</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> exclude
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> file1
+    <span class="token punctuation">-</span> folder2
+    <span class="token punctuation">-</span> subfolder/file3</code></pre>
+<p>Similar to <code>delete</code> this will exclude the list of file and folders from be transferred to the target. For <code>ftp</code> the list of files get excluded from transferring, for <code>git</code> they will get resetted from the target repository.</p>
+<h3 id="confirm" tabindex="-1"><a class="header-anchor" href="#confirm">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> confirm</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> confirm
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token key atrule">question</span><span class="token punctuation">:</span> Do you want to continue<span class="token punctuation">?</span></code></pre>
+<p>This action comes handy when degugging the build process, as it will stop the execution and asks the user the questions and wait for <code>yes</code> before continuing. Answering sth different will cancel the further execution.</p>
+<h3 id="script" tabindex="-1"><a class="header-anchor" href="#script">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> script</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> script
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> echo "Hello world"
+    <span class="token punctuation">-</span> cp .env.production .env
+<span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> script
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token key atrule">name</span><span class="token punctuation">:</span> compile<span class="token punctuation">:</span>vue
+<span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> script
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token key atrule">context</span><span class="token punctuation">:</span> docker<span class="token punctuation">-</span>image
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> node<span class="token punctuation">:</span><span class="token number">12</span>
+    <span class="token key atrule">script</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> npm install
+        <span class="token punctuation">-</span> npm run build</code></pre>
+<p>The <code>script</code>-action will run the script from the arguments section line by line. You can use the usual replacement patterns as for other scripts. Most helpful are:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>%context.data.installDir%</code></td>
+<td>The installation dir, where the app got installed into</td>
+</tr>
+<tr>
+<td><code>%context.data.targetDir%</code></td>
+<td>The targetdir, where the app got copied to, which gets committed or synced</td>
+</tr>
+</tbody>
+</table>
+<p>If <code>arguments</code> contains a name, then this named script will be executed. It should be available under the global <code>scripts</code>-section or on the hosts' scripts section.</p>
+<p>Since 3.7 phab supports executing a script in a different context. If you set <code>arguments.context</code> to <code>docker-image</code> the lines in <code>script</code> will be executed in a docker-container started from the named docker-image provided via the <code>image</code>-argument.</p>
+<p>Note, that the container will be removed after the script finishes. Also the current user and group will be used inside the container to reduce issues with permissions. The current host-directory is available at <code>/app</code> inside the container. If you want to keep files after the script finishes, make sure they are inside <code>/app</code>.</p>
+<h3 id="message" tabindex="-1"><a class="header-anchor" href="#message">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> message</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> message
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token key atrule">message</span><span class="token punctuation">:</span> Hello world<span class="token tag">!</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> (comment<span class="token punctuation">|</span>note<span class="token punctuation">|</span>warning<span class="token punctuation">|</span>error<span class="token punctuation">|</span>success)</code></pre>
+<p>Prints out a message regardless of the log-level using symfony styles.</p>
+<h3 id="log" tabindex="-1"><a class="header-anchor" href="#log">
+        <span class="u-hiddenVisually">Jump to heading</span>
+        <span aria-hidden="true">#</span>
+      </a> log</h3>
+<pre class="language-yaml"><code class="language-yaml"><span class="token punctuation">-</span> <span class="token key atrule">action</span><span class="token punctuation">:</span> log
+  <span class="token key atrule">arguments</span><span class="token punctuation">:</span>
+    <span class="token key atrule">message</span><span class="token punctuation">:</span> Hello world<span class="token tag">!</span>
+    <span class="token key atrule">severity</span><span class="token punctuation">:</span> (debug<span class="token punctuation">|</span>info<span class="token punctuation">|</span>notice<span class="token punctuation">|</span>warning<span class="token punctuation">|</span>error)</code></pre>
+<p>Logs a message, will be visible according to the verbosity-level and the used severity.</p>
+
+  </div>
+        <nav aria-label="article" class="Pagination">
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--prev">
+      <a class="Pagination-link" rel="prev" href="/app-create-destroy.html"> Creating/ destroying an app from existing configuration</a>
+    </div>
+        <div class="Pagination-linkWrapper Pagination-linkWrapper--next">
+      <a class="Pagination-link" rel="next" href="/scotty.html"> Scotty mPaaS Integration</a>
+    </div>
+  </nav>
+      </div>
+    </main>
+  </div>
+      
+<footer class="Footer">
+  <div class="Footer-wrapper">
+          <a href="https://docs.phab.io">
+        <span class="u-hiddenVisually">Go to homepage</span>
+        <img class="Footer-logo" src="/assets/logo-white.svg" width="115" height="30" alt="" aria-hidden="true" fetchpriority="high" style="--inline-size: 115; --block-size: 30;">
+      </a>
+        <p class="Footer-credit">An open source project by <a href="https://www.factorial.io" rel="noopener" target="_blank">Factorial</a></p>
+  </div>
+  <div class="Footer-wrapper Footer-wrapper--links">
+    <h2 class="u-hiddenVisually">Additional information</h2>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-links">
+  <h3 class="u-hiddenVisually" id="footer-nav-links">links</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="https://www.factorial.io/en/imprint" class="FooterList-link FooterList-link--links">
+                  Imprint
+              </a>
+    </li>
+        <li>
+      <a href="https://www.factorial.io/en/privacy-policy" class="FooterList-link FooterList-link--links">
+                  Privacy
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+          <div class="Footer-list">
+        <nav aria-labelledby="footer-nav-social">
+  <h3 class="u-hiddenVisually" id="footer-nav-social">follow us</h3>
+  <ul class="FooterList">
+        <li>
+      <a href="mailto:hello@factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Email address</span>
+          <span class="Icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.57 21.43H3.43A3.44 3.44 0 0 1 0 18V6a3.44 3.44 0 0 1 3.43-3.43h17.14A3.44 3.44 0 0 1 24 6v12a3.44 3.44 0 0 1-3.43 3.43zM1.71 9.25V18c0 .95.77 1.71 1.72 1.71h17.14c.95 0 1.72-.76 1.72-1.71V9.25l-8.5 5.22a3.4 3.4 0 0 1-3.58 0zm0-2.98c0 .6.31 1.16.82 1.47l8.57 5.28a1.7 1.7 0 0 0 1.8 0l8.56-5.28c.5-.31.81-.87.81-1.47V6a1.7 1.7 0 0 0-1.71-1.71H3.43c-.95 0-1.72.76-1.72 1.71z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://github.com/factorial-io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">GitHub</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M12 0C5.37 0 0 5.506 0 12.303c0 5.445 3.435 10.043 8.205 11.674.6.107.825-.262.825-.585 0-.292-.015-1.261-.015-2.291C6 21.67 5.22 20.346 4.98 19.654c-.135-.354-.72-1.446-1.23-1.738-.42-.23-1.02-.8-.015-.815.945-.015 1.62.892 1.845 1.261 1.08 1.86 2.805 1.338 3.495 1.015.105-.8.42-1.338.765-1.645-2.67-.308-5.46-1.37-5.46-6.075 0-1.338.465-2.446 1.23-3.307-.12-.308-.54-1.569.12-3.26 0 0 1.005-.323 3.3 1.26.96-.276 1.98-.415 3-.415s2.04.139 3 .416c2.295-1.6 3.3-1.261 3.3-1.261.66 1.691.24 2.952.12 3.26.765.861 1.23 1.953 1.23 3.307 0 4.721-2.805 5.767-5.475 6.075.435.384.81 1.122.81 2.276 0 1.645-.015 2.968-.015 3.383 0 .323.225.707.825.585a12.046 12.046 0 0 0 5.919-4.489A12.534 12.534 0 0 0 24 12.304C24 5.505 18.63 0 12 0Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.drupal.org/factorial-gmbh" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Drupal community</span>
+          <span class="Icon"><svg width="22" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.625 3.578c.567.257 1.142.518 1.732.886l.023.014c.806.504 5.25 3.283 5.245 9.35C21.625 19.954 16.791 24 11.217 24S.625 19.608.625 13.643c0-5.965 4.65-8.738 5.507-9.179.25-.136.484-.256.71-.372.701-.359 1.34-.686 2.228-1.386.556-.463 1.045-1.11 1.207-2.706.829.993 1.824 2.148 2.542 2.634.596.396 1.196.668 1.806.944Zm-.605 19.06c1.251-.117 2.314-.854 2.43-.97.16-.16.119-.298.091-.392l-.001-.005c-.023-.095-.117-.234-.323-.073-.462.352-1.508.765-2.987.765-1.48 0-2.175-.301-2.637-.67a1.174 1.174 0 0 1-.023-.016.186.186 0 0 0-.03-.019c-.022-.01-.048-.01-.13-.01-.14 0-.229.068-.346.162-.116.095-.161.324 0 .486 1.018.926 2.704.86 3.956.742Zm-1.573-2.918c.256-.235.673-.603 1.068-.765.35-.143.552-.142.85-.14h.118c.367 0 .762.023 1.04.213.276.183.437.597.526.827l.002.004c.095.235 0 .369-.183.463-.16.09-.184.046-.341-.25l-.004-.006-.013-.024c-.156-.293-.309-.579-1.1-.579-.735 0-1.013.232-1.355.518l-.102.085-.013.01c-.385.316-.523.429-.66.247-.134-.185-.09-.369.167-.603Zm7.559-1.59c.556-.81.784-2.104.784-2.819 0-.714-.323-1.92-1.48-1.92-.54 0-1.36.559-2.19 1.123-.841.574-1.694 1.155-2.277 1.166-.568.009-1.224-.454-1.993-.996-1.076-.76-2.37-1.673-3.948-1.66-2.125.022-3.816 1.713-3.838 3.515-.023 1.016.322 1.758 1.018 2.243.461.302.873.508 2.264.508 1.283 0 2.762-.892 4.05-1.67 1.013-.61 1.907-1.15 2.497-1.131.57.024 1.312.779 2.006 1.485.602.612 1.167 1.188 1.554 1.221.651.045 1.002-.256 1.553-1.066Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://twitter.com/factorial_io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">X</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.317 7.274v.591c0 6.35-4.92 13.735-13.864 13.735-2.832 0-5.366-.738-7.453-2.215h1.193c2.236 0 4.472-.739 6.111-2.068-2.087 0-3.875-1.477-4.62-3.397.297 0 .595.148.894.148.447 0 .894 0 1.341-.148a4.779 4.779 0 0 1-3.876-4.726c.597.296 1.342.591 2.237.591-1.342-.886-2.237-2.363-2.237-3.988 0-.886.299-1.772.597-2.51C4.025 6.24 7.602 8.16 11.776 8.308c-.149-.295-.149-.738-.149-1.034 0-2.658 2.236-4.874 4.92-4.874 1.341 0 2.683.591 3.577 1.477a8.077 8.077 0 0 0 3.13-1.181c-.298 1.181-1.192 2.067-2.086 2.658 1.043-.147 1.938-.443 2.832-.738-.894 1.181-1.789 2.067-2.683 2.658Z"></path></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.facebook.com/factorial.io" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Facebook</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path clip-path="url(#a)" d="M24 12c0-6.627-5.373-12-12-12S0 5.373 0 12c0 5.628 3.875 10.35 9.101 11.647v-7.98H6.627V12H9.1v-1.58c0-4.084 1.849-5.978 5.859-5.978.76 0 2.072.15 2.608.298v3.324a15.38 15.38 0 0 0-1.386-.044c-1.967 0-2.728.745-2.728 2.683V12h3.92l-.673 3.667h-3.247v8.245C19.396 23.195 24 18.135 24 12Z"></path><defs><clipPath id="a"><path d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+</span>
+              </a>
+    </li>
+        <li>
+      <a href="https://www.instagram.com/factorial.io/" class="FooterList-link FooterList-link--social">
+                  <span class="u-hiddenVisually">Instagram</span>
+          <span class="Icon"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.982c2.937 0 3.285.011 4.445.064 1.073.05 1.655.228 2.043.379.477.176.91.457 1.264.823.366.355.647.787.823 1.265.15.387.33.97.379 2.042.053 1.16.064 1.508.064 4.445 0 2.937-.011 3.285-.064 4.445-.049 1.073-.228 1.655-.379 2.043a3.64 3.64 0 0 1-2.087 2.087c-.388.151-.97.33-2.043.38-1.16.052-1.508.063-4.445.063-2.937 0-3.285-.01-4.445-.064-1.073-.049-1.655-.228-2.043-.379a3.407 3.407 0 0 1-1.264-.822 3.408 3.408 0 0 1-.823-1.265c-.15-.388-.33-.97-.379-2.043-.053-1.16-.064-1.508-.064-4.445 0-2.937.011-3.285.064-4.445.049-1.072.228-1.655.379-2.042.176-.478.457-.91.823-1.265a3.408 3.408 0 0 1 1.265-.823c.387-.15.97-.33 2.042-.379 1.16-.053 1.508-.064 4.445-.064M12 1c-2.987 0-3.362.013-4.535.066-1.171.054-1.97.24-2.67.512a5.392 5.392 0 0 0-1.949 1.268 5.392 5.392 0 0 0-1.269 1.949c-.271.7-.457 1.499-.51 2.67C1.012 8.638 1 9.013 1 12c0 2.988.013 3.362.066 4.535.054 1.171.24 1.97.512 2.67.276.734.709 1.4 1.268 1.949.55.56 1.215.992 1.949 1.268.7.272 1.5.458 2.67.512C8.638 22.987 9.013 23 12 23c2.988 0 3.362-.013 4.535-.066 1.171-.054 1.97-.24 2.67-.512a5.625 5.625 0 0 0 3.218-3.217c.272-.7.458-1.499.511-2.67.053-1.173.066-1.548.066-4.535s-.012-3.362-.066-4.535c-.053-1.171-.24-1.97-.511-2.67a5.392 5.392 0 0 0-1.27-1.949 5.393 5.393 0 0 0-1.947-1.269c-.7-.271-1.5-.457-2.67-.51C15.361 1.012 14.986 1 12 1Z"></path><path d="M12 6.352a5.649 5.649 0 1 0 0 11.297 5.649 5.649 0 0 0 0-11.297Zm0 9.315a3.666 3.666 0 1 1 0-7.333 3.666 3.666 0 0 1 0 7.333Zm5.87-8.218a1.32 1.32 0 1 0 0-2.64 1.32 1.32 0 0 0 0 2.64Z"></path></svg>
+</span>
+              </a>
+    </li>
+      </ul>
+</nav>
+      </div>
+      </div>
+</footer>
+    
+
+</body></html>
