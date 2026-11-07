@@ -14,17 +14,64 @@
       "automerge": true
     },
     {
+      "description": "Symfony plus every direct dependency that constrains the symfony major, so a symfony major bump can resolve in one PR. Note: verbb/parallel-process (dev-master) also caps symfony at ^7 and cannot be updated by renovate.",
       "groupName": "symfony packages",
       "groupSlug": "symfony",
+      "matchManagers": ["composer"],
       "matchPackageNames": [
-        "symfony/{/,}**"
+        "symfony/**",
+        "twig/twig",
+        "twig/string-extra",
+        "stecman/symfony-console-completion",
+        "consolidation/self-update",
+        "friendsofphp/php-cs-fixer"
       ]
     },
     {
+      "description": "PHPStan core and its extensions",
       "groupName": "phpstan packages",
       "groupSlug": "phpstan",
+      "matchManagers": ["composer"],
       "matchPackageNames": [
-        "phpstan/{/,}**"
+        "phpstan/**",
+        "jangregor/phpstan-prophecy"
+      ]
+    },
+    {
+      "description": "PHPUnit and packages bound to its major",
+      "groupName": "phpunit packages",
+      "groupSlug": "phpunit",
+      "matchManagers": ["composer"],
+      "matchPackageNames": [
+        "phpunit/phpunit",
+        "phpspec/prophecy-phpunit"
+      ]
+    },
+    {
+      "description": "PHP_CodeSniffer and its composer installer plugin",
+      "groupName": "phpcs packages",
+      "groupSlug": "phpcs",
+      "matchManagers": ["composer"],
+      "matchPackageNames": [
+        "squizlabs/php_codesniffer",
+        "dealerdirect/phpcodesniffer-composer-installer"
+      ]
+    },
+    {
+      "description": "commitlint CLI and config share one version line",
+      "groupName": "commitlint packages",
+      "groupSlug": "commitlint",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@commitlint/**"]
+    },
+    {
+      "description": "commitizen and its cz-* adapters",
+      "groupName": "commitizen packages",
+      "groupSlug": "commitizen",
+      "matchManagers": ["npm"],
+      "matchPackageNames": [
+        "commitizen",
+        "cz-*"
       ]
     }
   ]
