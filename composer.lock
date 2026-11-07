@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a820b9481a97405d61e2f01b7e876b6e",
+    "content-hash": "2df050b383f490e86991dffa7a3e49d7",
     "packages": [
         {
             "name": "composer/semver",
@@ -1224,7 +1224,8 @@
                 "issues": "https://github.com/php-fig/container/issues",
                 "source": "https://github.com/php-fig/container/tree/2.0.2"
             },
-            "time": "2021-11-05T16:47:00+00:00"
+            "time": "2021-11-05T16:47:00+00:00",
+            "published-time": "2021-11-05T16:53:27+00:00"
         },
         {
             "name": "psr/event-dispatcher",
@@ -1532,16 +1533,16 @@
         },
         {
             "name": "stecman/symfony-console-completion",
-            "version": "v0.15.0",
+            "version": "v0.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stecman/symfony-console-completion.git",
-                "reference": "f66c1a90f802ebe779e9f1255e938b44074a40d5"
+                "reference": "84c3adb6c7b75a74779e6bbb77dadc904d812679"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/f66c1a90f802ebe779e9f1255e938b44074a40d5",
-                "reference": "f66c1a90f802ebe779e9f1255e938b44074a40d5",
+                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/84c3adb6c7b75a74779e6bbb77dadc904d812679",
+                "reference": "84c3adb6c7b75a74779e6bbb77dadc904d812679",
                 "shasum": ""
             },
             "require": {
@@ -1576,9 +1577,10 @@
             "description": "Automatic BASH completion for Symfony Console Component based applications.",
             "support": {
                 "issues": "https://github.com/stecman/symfony-console-completion/issues",
-                "source": "https://github.com/stecman/symfony-console-completion/tree/v0.15.0"
+                "source": "https://github.com/stecman/symfony-console-completion/tree/v0.16.0"
             },
-            "time": "2025-11-30T08:20:15+00:00"
+            "time": "2026-09-14T09:53:20+00:00",
+            "published-time": "2026-09-14T10:18:03+00:00"
         },
         {
             "name": "symfony/cache",
@@ -1931,7 +1933,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-27T19:55:54+00:00"
+            "time": "2025-06-27T19:55:54+00:00",
+            "published-time": "2025-06-28T08:29:03+00:00"
         },
         {
             "name": "symfony/dependency-injection",
@@ -2082,7 +2085,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-05T06:23:12+00:00"
+            "time": "2026-06-05T06:23:12+00:00",
+            "published-time": "2026-06-27T21:46:34+00:00"
         },
         {
             "name": "symfony/dotenv",
@@ -2866,7 +2870,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-10T16:19:22+00:00"
+            "time": "2026-04-10T16:19:22+00:00",
+            "published-time": "2026-04-26T14:44:50+00:00"
         },
         {
             "name": "symfony/polyfill-intl-grapheme",
@@ -2944,7 +2949,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-09T11:45:10+00:00"
+            "time": "2024-09-09T11:45:10+00:00",
+            "published-time": "2025-05-02T09:41:30+00:00"
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
@@ -3029,7 +3035,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-23T22:02:09+00:00"
+            "time": "2026-09-23T22:02:09+00:00",
+            "published-time": "2026-09-30T10:23:47+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -3114,7 +3121,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-24T15:19:04+00:00"
+            "time": "2026-09-24T15:19:04+00:00",
+            "published-time": "2026-09-30T10:23:35+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
@@ -3350,7 +3358,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-28T09:44:51+00:00"
+            "time": "2026-03-28T09:44:51+00:00",
+            "published-time": "2026-05-06T16:27:50+00:00"
         },
         {
             "name": "symfony/string",
@@ -3437,7 +3446,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-04-20T20:19:01+00:00"
+            "time": "2025-04-20T20:19:01+00:00",
+            "published-time": "2025-05-29T07:49:51+00:00"
         },
         {
             "name": "symfony/translation-contracts",
@@ -9052,5 +9062,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }
