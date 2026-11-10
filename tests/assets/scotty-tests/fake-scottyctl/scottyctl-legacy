@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Fake scottyctl without `--interactive` support (scottyctl <= 0.4).
+FAKE_SCOTTYCTL_LEGACY=1 exec "$(dirname "$0")/scottyctl" "$@"

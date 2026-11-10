@@ -77,7 +77,9 @@ phab --config=production deploy
 phab --config=production backup
 ```
 
-Every command is executed with its own `scottyctl app:shell --command` call, so no terminal is needed and it works in CI pipelines. The host's `rootFolder` points to your local checkout and is not used inside the container; commands run in the container's working directory, or in `scotty.rootFolder` if set.
+Commands are streamed into a shell started with `scottyctl app:shell --interactive`, which forwards stdin without allocating a terminal (like `docker exec -i`), so it also works in CI pipelines. This needs a scottyctl version supporting `--interactive`; older versions fail with an "unexpected argument" error.
+
+The host's `rootFolder` points to your local checkout and is not used inside the container; commands run in the container's working directory, or in `scotty.rootFolder` if set.
 
 **Note:** File operations (`getFile`, `putFile`) are not yet supported by scottyctl. For file transfers, temporarily use `shellProvider: local` or access files through volume mounts.
 

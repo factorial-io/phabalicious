@@ -339,7 +339,10 @@ class LocalShellProvider extends BaseShellProvider
             $command = $password_manager->resolveSecrets($command);
         }
 
-        $command = sprintf('cd %s && %s', $this->getWorkingDir(), $this->expandCommand($command));
+        $command = $this->expandCommand($command);
+        if ('' !== $this->getWorkingDir()) {
+            $command = sprintf('cd %s && %s', $this->getWorkingDir(), $command);
+        }
         if (str_ends_with($command, ';')) {
             $command = substr($command, 0, -1);
         }
