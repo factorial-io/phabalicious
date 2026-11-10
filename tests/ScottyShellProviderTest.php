@@ -25,10 +25,11 @@ class ScottyShellProviderTest extends PhabTestCase
     public function setUp(): void
     {
         $config = $this->getMockBuilder(ConfigurationService::class)
-            ->onlyMethods(['getPasswordManager'])
+            ->onlyMethods(['getPasswordManager', 'getAllSettings'])
             ->disableOriginalConstructor()
             ->getMock();
         $config->method('getPasswordManager')->willReturn(null);
+        $config->method('getAllSettings')->willReturn([]);
 
         $logger = $this->getMockBuilder(AbstractLogger::class)->getMock();
         $this->shellProvider = new ScottyShellProvider($logger);
