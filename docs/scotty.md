@@ -77,6 +77,8 @@ phab --config=production deploy
 phab --config=production backup
 ```
 
+Every command is executed with its own `scottyctl app:shell --command` call, so no terminal is needed and it works in CI pipelines. The host's `rootFolder` points to your local checkout and is not used inside the container; commands run in the container's working directory, or in `scotty.rootFolder` if set.
+
 **Note:** File operations (`getFile`, `putFile`) are not yet supported by scottyctl. For file transfers, temporarily use `shellProvider: local` or access files through volume mounts.
 
 ## Authentication
@@ -159,6 +161,7 @@ scotty:
 | `destroy-on-ttl` | Auto-destroy after TTL | `false` | `true` |
 | `env-file` | Environment variables file | - | `.env.scotty` |
 | `verifyAuth` | Verify authentication before operations | `true` | `false` |
+| `rootFolder` | Working directory inside the shell service for commands | working dir of the container | `/app` |
 | `services` | Service port mappings | - | See below |
 | `environment` | Environment variables | - | See below |
 | `custom-domains` | Custom domain mappings | - | See below |

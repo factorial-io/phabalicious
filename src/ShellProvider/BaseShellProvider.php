@@ -94,6 +94,14 @@ abstract class BaseShellProvider implements ShellProviderInterface
         $this->output = $output;
     }
 
+    /**
+     * Set the working dir without validating or resolving it.
+     */
+    protected function setWorkingDir(string $dir): void
+    {
+        $this->workingDir = $dir;
+    }
+
     public function cd(string $dir): ShellProviderInterface
     {
         if (empty($dir) || '.' === $dir[0]) {

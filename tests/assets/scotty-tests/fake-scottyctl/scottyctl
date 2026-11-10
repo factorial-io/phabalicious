@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Minimal stand-in for `scottyctl app:shell` used by ScottyShellProviderTest.
+#
+# Mimics the behaviour of the real scottyctl in `--command` mode:
+#  - status lines are written to stderr,
+#  - stdin is NOT forwarded to the remote command,
+#  - the remote side runs in a TTY, so output lines end with CRLF,
+#  - the exit code of the remote command is propagated.
+set -o pipefail
+
+command=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --server|--access-token|--shell) shift 2 ;;
+    --command|-c) command="$2"; shift 2 ;;
+    app:shell) shift 3 ;;
+    *) shift ;;
+  esac
+done
+
+echo "🚀 Found service in app" >&2
+echo "🚀 🔐 WebSocket authenticated" >&2
+echo "🚀 Shell session created: 00000000-0000-0000-0000-000000000000" >&2
+
+if [ -z "$command" ]; then
+  echo "interactive mode needs a tty" >&2
+  exit 1
+fi
+
+sh -c "$command" < /dev/null 2>&1 | sed 's/$/\r/'
