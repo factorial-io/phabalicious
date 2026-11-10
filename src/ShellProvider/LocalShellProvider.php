@@ -341,7 +341,7 @@ class LocalShellProvider extends BaseShellProvider
 
         $command = $this->expandCommand($command);
         if ('' !== $this->getWorkingDir()) {
-            $command = sprintf('cd %s && %s', $this->getWorkingDir(), $command);
+            $command = sprintf('cd %s && %s', $this->getQuotedWorkingDir(), $command);
         }
         if (str_ends_with($command, ';')) {
             $command = substr($command, 0, -1);

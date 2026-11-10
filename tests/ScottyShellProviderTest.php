@@ -132,6 +132,24 @@ class ScottyShellProviderTest extends PhabTestCase
         $this->assertEquals([realpath($this->workDir.'/sub')], $result->getOutput());
     }
 
+    public function testScottyRootFolderWithSpaces(): void
+    {
+        $dir = $this->workDir.'/folder with spaces';
+        mkdir($dir);
+        $this->setHostConfig(['rootFolder' => $dir]);
+
+        $result = $this->shellProvider->run('pwd', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
+        $this->assertEquals([realpath($dir)], $result->getOutput());
+    }
+
+    public function testStatusLinesOfScottyctlAreNotPartOfTheOutput(): void
+    {
+        // The fake scottyctl prints its status lines to stderr like the
+        // real one, only stdout is parsed for the output and the result.
+        $result = $this->shellProvider->run('printf "a\\nb\\n"', RunOptions::CAPTURE_AND_HIDE_OUTPUT);
+        $this->assertEquals(['a', 'b'], $result->getOutput());
+    }
+
     public function testEnvironmentIsApplied(): void
     {
         $this->setHostConfig([], ['environment' => ['PHAB_SCOTTY_TEST' => 'it works']]);

@@ -102,6 +102,22 @@ abstract class BaseShellProvider implements ShellProviderInterface
         $this->workingDir = $dir;
     }
 
+    /**
+     * Get the working dir, quoted for the shell if necessary.
+     *
+     * Plain paths (and `~`) are returned unchanged, so they still get expanded
+     * by the shell; paths with spaces or other special chars are quoted.
+     */
+    protected function getQuotedWorkingDir(): string
+    {
+        $dir = $this->getWorkingDir();
+        if (preg_match('/^[\w\-.\/~:@%+,=]*$/', $dir)) {
+            return $dir;
+        }
+
+        return escapeshellarg($dir);
+    }
+
     public function cd(string $dir): ShellProviderInterface
     {
         if (empty($dir) || '.' === $dir[0]) {
