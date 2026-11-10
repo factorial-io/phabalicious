@@ -41,7 +41,7 @@ class DryRunShellProvider extends BaseShellProvider
      */
     public function run(string $command, RunOptions $run_options = RunOptions::NONE, $throw_exception_on_error = true): CommandResult
     {
-        $command = sprintf('cd %s && %s', $this->getWorkingDir(), $this->expandCommand($command));
+        $command = sprintf('cd %s && %s', $this->getQuotedWorkingDir(), $this->expandCommand($command));
         if (str_ends_with($command, ';')) {
             $command = substr($command, 0, -1);
         }

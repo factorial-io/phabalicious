@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Minimal stand-in for `scottyctl app:shell` used by ScottyShellProviderTest.
+#
+# - Status lines are written to stderr, like the real scottyctl.
+# - `--interactive` (no tty): stdin is streamed to the remote command, output
+#   and exit code are passed through unchanged (like `docker exec -i`).
+# - `--command` without `--interactive` mimics scottyctl <= 0.4: stdin is NOT
+#   forwarded and the remote side runs in a tty (CRLF line endings).
+# - FAKE_SCOTTYCTL_LEGACY=1 (see scottyctl-legacy) mimics a scottyctl without `--interactive` support.
+set -o pipefail
+
+command=""
+interactive=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --server|--access-token|--shell) shift 2 ;;
+    --command|-c) command="$2"; shift 2 ;;
+    --interactive|-i)
+      if [ -n "$FAKE_SCOTTYCTL_LEGACY" ]; then
+        echo "error: unexpected argument '$1' found" >&2
+        exit 2
+      fi
+      interactive=1; shift ;;
+    app:shell) shift 3 ;;
+    *) shift ;;
+  esac
+done
+
+echo "🚀 Found service in app" >&2
+echo "🚀 🔐 WebSocket authenticated" >&2
+echo "🚀 Shell session created: 00000000-0000-0000-0000-000000000000" >&2
+
+if [ -z "$command" ]; then
+  echo "interactive mode needs a tty" >&2
+  exit 1
+fi
+
+if [ "$interactive" = "1" ]; then
+  exec sh -c "$command"
+fi
+
+sh -c "$command" < /dev/null 2>&1 | sed 's/$/\r/'

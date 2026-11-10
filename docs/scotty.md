@@ -77,6 +77,10 @@ phab --config=production deploy
 phab --config=production backup
 ```
 
+Commands are streamed into a shell started with `scottyctl app:shell --interactive`, which forwards stdin without allocating a terminal (like `docker exec -i`), so it also works in CI pipelines. This needs a scottyctl version supporting `--interactive`; older versions fail with an "unexpected argument" error.
+
+The host's `rootFolder` points to your local checkout and is not used inside the container; commands run in the container's working directory, or in `scotty.rootFolder` if set.
+
 **Note:** File operations (`getFile`, `putFile`) are not yet supported by scottyctl. For file transfers, temporarily use `shellProvider: local` or access files through volume mounts.
 
 ## Authentication
@@ -159,6 +163,7 @@ scotty:
 | `destroy-on-ttl` | Auto-destroy after TTL | `false` | `true` |
 | `env-file` | Environment variables file | - | `.env.scotty` |
 | `verifyAuth` | Verify authentication before operations | `true` | `false` |
+| `rootFolder` | Working directory inside the shell service for commands | working dir of the container | `/app` |
 | `services` | Service port mappings | - | See below |
 | `environment` | Environment variables | - | See below |
 | `custom-domains` | Custom domain mappings | - | See below |

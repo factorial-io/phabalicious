@@ -780,6 +780,7 @@ hosts:
 | `environment` | object | Environment variables | `APP_ENV: production` |
 | `custom-domains` | object | Domain to service mapping | `www.example.com: nginx` |
 | `scaffold` | object | File copying configuration | See scaffold docs |
+| `rootFolder` | string | Working directory inside the shell service | `/app` |
 
 For complete documentation and examples, see the [Scotty integration guide](scotty.md).
 

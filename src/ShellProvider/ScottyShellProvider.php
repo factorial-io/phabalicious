@@ -3,6 +3,7 @@
 namespace Phabalicious\ShellProvider;
 
 use Phabalicious\Configuration\ConfigurationService;
+use Phabalicious\Configuration\HostConfig;
 use Phabalicious\Configuration\Storage\Node;
 use Phabalicious\Method\TaskContextInterface;
 use Phabalicious\Validation\ValidationErrorBagInterface;
@@ -49,6 +50,17 @@ class ScottyShellProvider extends LocalShellProvider
         }
     }
 
+    public function setHostConfig(HostConfig $config): void
+    {
+        parent::setHostConfig($config);
+
+        // The host's rootFolder points to the local checkout (it defaults to
+        // the folder of the fabfile), which does not exist in the container.
+        // Use scotty.rootFolder if set, otherwise keep the working dir of the
+        // container.
+        $this->setWorkingDir($config['scotty']['rootFolder'] ?? '');
+    }
+
     public function getShellCommand(array $program_to_call, ShellOptions $options): array
     {
         $args = [
@@ -56,10 +68,16 @@ class ScottyShellProvider extends LocalShellProvider
             $this->hostConfig['scotty']['shellService'],
         ];
 
-        // For interactive shells with TTY
-        if ($options->useTty() && !$options->isShellExecutableProvided()) {
-            $args[] = '--shell';
-            $args[] = $this->hostConfig['shellExecutable'];
+        if ($options->useTty()) {
+            // Interactive shell with a tty.
+            if (!$options->isShellExecutableProvided()) {
+                $args[] = '--shell';
+                $args[] = $this->hostConfig['shellExecutable'];
+            }
+        } else {
+            // No tty: keep stdin open and stream commands into the remote
+            // shell, like `docker exec -i` or `kubectl exec -i`.
+            $args[] = '--interactive';
         }
 
         // Add any program to call
