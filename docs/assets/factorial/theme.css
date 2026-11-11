@@ -1,0 +1,222 @@
+/*
+ * Phabalicious docs: Factorial design layer on top of @factorial/docs.
+ * Docs pages follow the Scotty docs (factorial-io/scotty, docs/content/assets/theme.css);
+ * the homepage uses the web module's dark hero and Benefits pattern.
+ * Values come from ./styles/tokens.css (copied from the factorial-design skill).
+ * Loaded after the fdocs stylesheets (see .fdocs.js), so equal specificity wins.
+ */
+@import url("./styles/tokens.css");
+
+/* ---------- map the fdocs variables to Factorial tokens ---------- */
+html {
+  --color-orange: var(--color-primary);
+  --color-grey-900: var(--color-blue-dark);
+  --color-grey-100: var(--color-bg-light);
+  --color-background: var(--color-bg);   /* white page, always */
+  --color-footer: var(--color-bg-dark);
+  --border-radius: 2px;
+  --fac-transition: 250ms var(--transition-ease);
+  --typo-h1-font-size: 3.375rem;          /* 54px */
+  --typo-h2-font-size: 2.5rem;            /* 40px */
+  --typo-h3-font-size: 1.875rem;          /* 30px */
+  --typo-h4-font-size: 1.5rem;            /* 24px */
+  --typo-h1-font-weight: 400;
+  --typo-h2-font-weight: 400;
+  --typo-h3-font-weight: 400;
+  --typo-h4-font-weight: 400;
+  background-color: var(--color-bg);
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-bg);
+}
+
+/* ---------- header: white, sticky, 1px divider ---------- */
+.Header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  border-block-end: var(--divider-width) solid
+    color-mix(in srgb, var(--color-copy-primary) 12%, transparent);
+}
+
+/* ---------- focus: 3px primary, always visible (BITV) ---------- */
+:where(.Header, main, .Footer) :where(a, button, input):focus-visible {
+  outline: var(--outline-width) solid var(--color-primary);
+  outline-offset: var(--outline-offset);
+}
+
+/* ---------- links: animated underline (u-linkHover) ---------- */
+.RichText a:not([class]) {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 0.09375em;
+  padding-block-end: 0.15em;
+  transition: background-size var(--fac-transition), color var(--fac-transition);
+}
+.RichText a:not([class]):hover {
+  color: var(--color-primary);
+  background-size: 0 0.09375em;
+}
+
+/* ---------- homepage hero: dark band, copy column bottom-aligned ---------- */
+.Hero {
+  background: var(--color-bg-dark);
+  color: var(--color-copy-primary-dark);
+}
+.Hero-container {
+  display: grid;
+  grid-template-columns: var(--layout-grid);
+  max-width: none;
+}
+.Hero-contentContainer {
+  grid-column: span var(--span-hero-copy);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-16) var(--layout-gutter);
+}
+.Hero-imageContainer {
+  grid-column: span var(--span-hero-media);
+  background: var(--color-bg-dark);
+}
+.Hero-image {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  max-block-size: 600px;
+  object-fit: contain;
+}
+.Hero-title {
+  font: var(--text-h2);
+  letter-spacing: 0;
+  max-inline-size: var(--measure-hero-title);
+}
+.Hero-titleProject {
+  font: var(--text-eyebrow);              /* top-label */
+  color: var(--color-primary-light);
+  margin-block-end: var(--space-4);
+}
+.Hero-titleTagline {
+  font: inherit;
+}
+/* ghost button on dark */
+.Hero-link {
+  align-self: flex-start;
+  margin-block-start: var(--space-10);
+  font: var(--text-copy-small);
+  color: var(--color-copy-primary-dark);
+  background: transparent;
+  border: var(--border-width) solid currentColor;
+  border-radius: var(--border-radius);
+  padding: calc(0.75em - var(--border-width)) calc(1.5em - var(--border-width));
+  text-decoration: none;
+  transition: filter var(--fac-transition);
+}
+.Hero-link:hover {
+  background: transparent;
+  color: var(--color-copy-primary-dark);
+  filter: brightness(0.7);
+}
+@media (max-width: 1023px) {
+  .Hero-contentContainer,
+  .Hero-imageContainer { grid-column: 1 / -1; }
+}
+
+/* ---------- features as "Benefits": index number + column dividers ---------- */
+.Features {
+  counter-reset: feature;
+  max-width: none;                        /* full width, so columns line up with the hero copy */
+  padding: var(--space-24) var(--layout-gutter);
+  gap: var(--layout-gap-y) 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.Features-entry {
+  counter-increment: feature;
+  padding-inline: var(--space-8);
+  border-inline-start: var(--divider-width) solid currentColor;
+}
+.Features-entry:nth-child(3n + 1) {
+  border-inline-start: 0;
+  padding-inline-start: 0;
+}
+/* Benefits carry an index number, not icons (factorial-design web §4). */
+.Features-icon { display: none; }
+.Features-entry::before {
+  content: counter(feature, decimal-leading-zero);
+  display: block;
+  font: var(--text-mono-small);
+  letter-spacing: var(--tracking-mono-small);
+  color: var(--color-primary);
+  margin-block-end: var(--space-4);
+}
+.Features-title,
+.Features-icon + .Features-title {
+  font: var(--text-h4);
+  margin-block-start: 0;
+}
+.Features-details {
+  font: var(--text-copy-small);
+  color: var(--color-copy-secondary);
+  margin-block-start: var(--space-4);
+}
+@media (max-width: 1023px) {
+  .Features { grid-template-columns: minmax(0, 1fr); padding-block: var(--space-16); }
+  .Features-entry,
+  .Features-entry:nth-child(3n + 1) { border: 0; padding-inline: 0; }
+}
+
+/* ---------- docs nav ---------- */
+.Nav-listItemLink {
+  transition: color var(--fac-transition);
+}
+.Nav-listItemLink:hover {
+  color: var(--color-primary);
+}
+
+/* ---------- code ---------- */
+:not(pre) > code,
+pre {
+  background: var(--color-bg-light);
+  border-radius: var(--border-radius);
+}
+pre {
+  padding: var(--space-5);
+}
+code,
+pre {
+  text-shadow: none;
+}
+
+/* ---------- tables ---------- */
+.RichText table {
+  border-collapse: collapse;
+  inline-size: 100%;
+}
+.RichText :is(th, td) {
+  border-block-end: var(--divider-width) solid var(--color-grey-200);
+  padding: 0.625rem 0.75rem;
+  text-align: start;
+  vertical-align: top;
+}
+.RichText th {
+  font-weight: 600;
+}
+
+/* ---------- blockquote: orange rule ---------- */
+.RichText blockquote {
+  border-inline-start: 3px solid var(--color-primary);
+  padding-inline-start: var(--space-5);
+}
+
+/* ---------- pagination: ghost buttons ---------- */
+.Pagination-link {
+  transition: filter var(--fac-transition);
+}
+.Pagination-link:hover {
+  filter: brightness(0.7);
+}

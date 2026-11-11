@@ -1,6 +1,17 @@
 import config from "@factorial/docs/config.js";
 
 export default function (defaultConfig) {
+    // Factorial design system on top of the fdocs theme (docs/assets/factorial).
+    defaultConfig.addPassthroughCopy("docs/assets/factorial/**/*.css");
+    defaultConfig.addTransform("factorial_theme", (content, outputPath) =>
+        outputPath?.endsWith(".html")
+            ? content.replace(
+                  "</head>",
+                  '<link rel="stylesheet" href="/assets/factorial/theme.css"></head>',
+              )
+            : content,
+    );
+
     return config(defaultConfig, {
         projectName: "Phabalicious",
         input: "docs",

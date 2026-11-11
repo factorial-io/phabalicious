@@ -1,0 +1,597 @@
+/* Factorial Design System — generated from tokens.json */
+:root, [data-theme="light"] {
+  --color-white: hsl(0, 0%, 100%);
+  --color-black: #0d121c;
+  /* brand palette = factorial.io live (read from :root, 2026-10-08) */
+  --color-grey-100: #f5f7fa;
+  --color-grey-400: #939aa9;
+  --color-grey-450: #7d8597;
+  --color-grey-500: #687182;
+  --color-orange: #bd502b;
+  --color-orange-light: #ff7142;
+  --color-blue: #005fa3;
+  --color-blue-light: #0096db;
+  --color-blue-dark: #111827;
+  --color-green: #008561;
+  --color-green-light: #00c78f;
+  --color-green-dark: #00463a;
+  --color-bg-light-darkmode: #0f293e;
+  --color-primary: var(--color-orange);
+  --color-primary-light: var(--color-orange-light);
+  --color-secondary: var(--color-blue);
+  --color-secondary-dark: var(--color-blue-dark);
+  --color-secondary-light: var(--color-blue-light);
+  --color-tertiary: var(--color-green);
+  --color-tertiary-light: var(--color-green-light);
+  --color-copy-primary: var(--color-blue-dark);
+  --color-copy-on-cta: var(--color-black); /* text on the bright-blue CTA tile: 5.7:1 (white was 3.29:1), 2026-10-02 */
+  --color-copy-secondary: var(--color-grey-500);
+  --color-copy-primary-dark: var(--color-white);
+  --color-copy-secondary-dark: var(--color-grey-400);
+  --color-bg: var(--color-white);
+  --color-bg-light: var(--color-grey-100);
+  --color-bg-dark: var(--color-blue-dark);
+  --color-box-shadow: rgba(202, 213, 224, 0.5);
+  --box-shadow-small: 2px 4px 12px rgba(202, 213, 224, 0.5);
+  --box-shadow-medium: 4px 10px 24px rgba(202, 213, 224, 0.5);
+  --box-shadow-large: 10px 24px 56px rgba(202, 213, 224, 0.5);
+  --box-shadow: 0 10px 60px 0 rgba(202, 213, 224, 0.4);
+  /* App (modules/app.md, approved 2026-10-07 from docs/proposals/app-specimen) */
+  --color-red: hsl(356, 72%, 46%); /* derived: Factorial orange's saturation/lightness on a red hue; errors (app.md A-D2) */
+  --color-red-light: hsl(356, 100%, 68%); /* red on dark grounds */
+  --color-app-border: hsl(220, 14%, 88%); /* app outlines: cards, panels, rows (A-D5) */
+  --color-app-border-strong: hsl(220, 11%, 70%); /* app outlines that must read: tags, unselected toggles, the neutral decision band */
+  --color-status-success: var(--color-green); /* status: positive */
+  --color-status-info: var(--color-blue); /* status: neutral notice */
+  --color-status-warning: var(--color-orange); /* status: needs attention */
+  --color-status-error: var(--color-red); /* status: error, overdue, blocked */
+  --color-agent: var(--color-secondary); /* agent activity: writing cursor, '· writing', citations, AI mark, machine-text line */
+  --app-shadow-lift: var(--box-shadow-small); /* approved app shadow (2026-10-07): a card lifted while dragging */
+  --color-app-scrim: rgba(13, 18, 28, 0.48); /* scrim behind dialogs (approved transparency, 2026-10-07) */
+  --app-shadow-dialog: 0 24px 64px rgba(13, 18, 28, 0.4); /* form dialogs only; a dark shadow in both themes (2026-10-07) */
+  /* Opportunity status tones by phase (11 statuses -> 7 tones), app.md §4 */
+  --color-phase-new: var(--color-grey-400); /* opportunity phase: Draft */
+  --color-phase-deciding: var(--color-blue-light); /* phase: Evaluating, Go, No-go */
+  --color-phase-working: var(--color-blue); /* phase: Writing */
+  --color-phase-client: var(--color-blue-dark); /* phase: Submitted, Awaiting response */
+  --color-phase-won: var(--color-status-success); /* phase: Won */
+  --color-phase-lost: var(--color-status-error); /* phase: Lost (their decision) */
+  --color-phase-ended: var(--color-grey-500); /* phase: Rejected, Withdrew (our decision) */
+  /* Editor block standing and collaborator colours (app.md §4) */
+  --color-block-machine: var(--color-agent); /* editor margin line: machine text not accepted yet (dashed) */
+  --color-block-request: var(--color-status-warning); /* editor margin line: open request / question */
+  --color-block-approved: var(--color-status-success); /* editor margin line: approved */
+  --color-block-refused: var(--color-status-error); /* editor margin line: refused */
+  --color-collab-1: var(--color-blue-light); /* collaborator 1 (label text: --color-blue-dark) */
+  --color-collab-2: var(--color-green); /* collaborator 2 (label text: white; dark mode blue-dark) */
+  --color-collab-3: var(--color-orange); /* collaborator 3 (label text: white; dark mode blue-dark) */
+  --color-collab-4: var(--color-blue); /* collaborator 4 (label text: white; dark mode blue-dark) */
+  --color-collab-5: hsl(199, 100%, 72%); /* collaborator 5: tint of 1 (label text: blue-dark) */
+  --color-collab-6: hsl(163, 70%, 55%); /* collaborator 6: tint of 2 (label text: blue-dark) */
+  --color-collab-7: hsl(15, 100%, 76%); /* collaborator 7: tint of 3 (label text: blue-dark) */
+  --color-collab-8: hsl(205, 100%, 20%); /* collaborator 8: shade of 4, dark mode grey (label text: white; dark mode blue-dark) */
+  /* Charts (app.md §4) */
+  --color-series-1: #0062A3; /* chart category 1 (blue); validated with the dataviz validator, all pairs, 2026-10-07 */
+  --color-series-2: #BD502B; /* chart category 2 (orange) */
+  --color-series-3: #008562; /* chart category 3 (green) */
+  --color-series-other: var(--color-grey-400); /* chart: 'Other' (series 4+ fold into it) */
+  --color-seq-1: hsl(205, 60%, 92%); /* sequential blue, step 1 (least) */
+  --color-seq-2: hsl(205, 70%, 76%); /* sequential step 2 */
+  --color-seq-3: hsl(205, 85%, 56%); /* sequential step 3 */
+  --color-seq-4: hsl(205, 100%, 38%); /* sequential step 4 */
+  --color-seq-5: hsl(205, 100%, 24%); /* sequential step 5 (most) */
+  --color-chart-grid: var(--color-app-border); /* chart gridlines (1px, solid) */
+  --color-chart-axis: var(--color-app-border-strong); /* chart baseline / axis, hover crosshair */
+}
+[data-theme="dark"] {
+  --box-shadow: none; --box-shadow-small: none; --box-shadow-medium: none; --box-shadow-large: none; /* no shadows in dark mode */
+  --color-primary: var(--color-orange);
+  --color-primary-light: var(--color-orange-light);
+  --color-secondary: var(--color-blue);
+  --color-secondary-dark: var(--color-blue-dark);
+  --color-secondary-light: var(--color-blue-light);
+  --color-tertiary: var(--color-green);
+  --color-tertiary-light: var(--color-green-light);
+  --color-copy-primary: var(--color-white);
+  --color-copy-secondary: var(--color-grey-400);
+  --color-copy-primary-dark: var(--color-white);
+  --color-copy-secondary-dark: var(--color-grey-400);
+  --color-bg: var(--color-black);
+  --color-bg-light: var(--color-bg-light-darkmode);
+  --color-bg-dark: var(--color-blue-dark);
+  --color-box-shadow: hsl(221, 39%, 11%);
+  /* App, dark */
+  --color-app-border: hsl(221, 20%, 24%);
+  --color-app-border-strong: hsl(221, 14%, 40%);
+  --color-status-success: var(--color-green-light);
+  --color-status-info: var(--color-blue-light);
+  --color-status-warning: var(--color-orange-light);
+  --color-status-error: var(--color-red-light);
+  --color-agent: var(--color-secondary-light);
+  --color-collab-2: var(--color-green-light);
+  --color-collab-3: var(--color-orange-light);
+  --color-collab-4: var(--color-white);
+  --color-collab-5: hsl(199, 100%, 75%);
+  --color-collab-6: hsl(163, 80%, 72%);
+  --color-collab-7: hsl(15, 100%, 82%);
+  --color-collab-8: var(--color-grey-400);
+  --app-shadow-lift: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --color-series-1: #0096DB;
+  --color-series-2: #E25B2B;
+  --color-series-3: #00A877;
+  --color-series-other: var(--color-grey-500);
+  --color-seq-1: hsl(205, 45%, 18%);
+  --color-seq-2: hsl(205, 60%, 30%);
+  --color-seq-3: hsl(205, 80%, 42%);
+  --color-seq-4: hsl(199, 100%, 52%);
+  --color-seq-5: hsl(199, 100%, 72%);
+  --color-app-scrim: rgba(0, 0, 0, 0.64);
+  --app-shadow-dialog: 0 24px 64px rgba(0, 0, 0, 0.6);
+  --color-phase-client: var(--color-white);
+  --color-phase-ended: var(--color-grey-450);
+}
+:root {
+  /* Print reports, A4 only (modules/report.md). pt because the sheet only renders to paper; light theme only. */
+  --report-page-margin: 20mm 18mm 18mm; /* top, sides, bottom; running header/footer sit in the margin boxes */
+  --report-measure: 155mm; /* max line length of running text */
+  --report-logo-width: 46mm; /* wordmark on page 1 */
+  --report-text-title: 400 21pt/1.2 var(--font-title);
+  --report-text-subtitle: 400 11pt/1.3 var(--font-title);
+  --report-text-h2: 400 15pt/1.25 var(--font-title);
+  --report-text-h3: 400 11pt/1.3 var(--font-title);
+  --report-text-copy: 400 9.5pt/1.55 var(--font-copy);
+  --report-text-small: 400 7.75pt/1.55 var(--font-copy); /* tables, notes, captions, key-fact text */
+  --report-text-fact: 400 15pt/1.3 var(--font-copy); /* key-figure number */
+  --report-text-mono: 400 7.5pt/1.6 var(--font-mono);
+  --report-text-label: 600 5.75pt/1.4 var(--font-copy); /* title-block labels, uppercase, tracking 0.1em */
+  --report-text-running: 400 6.5pt/1 var(--font-copy); /* running header/footer and badges */
+  --report-space-1: 4pt;
+  --report-space-2: 8pt;
+  --report-space-3: 12pt;
+  --report-space-4: 18pt;
+  --report-space-5: 26pt; /* before a section */
+  --report-rule: var(--color-app-border); /* hairlines in tables and the title block, 0.5pt */
+  --report-watermark: color-mix(in srgb, var(--color-primary) 7%, transparent); /* DRAFT watermark */
+  --report-code-highlight: color-mix(in srgb, var(--color-primary-light) 14%, transparent); /* highlighted code lines */
+}
+:root {
+  /* Spacing scale (Meik 2026-10-08): one scale for web and app, 4px base; 8px steps are the rule, 12 and 20 are fine steps for dense parts */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-30: 120px;
+  /* former web names, kept as aliases (components.css uses them) */
+  --space-tiny: var(--space-2); /* was 10px */
+  --space-small: var(--space-5); /* 20px */
+  --space-large: var(--space-8); /* was 30px */
+  --space-xlarge: var(--space-10); /* 40px */
+  --space-xxlarge: var(--space-16); /* was 65px */
+  --border-width: 1.5px;
+  --outline-width: 3px;
+  --outline-offset: 3px;
+  --divider-width: 1px;
+  --header-height: 100px;
+  --border-radius: 2px; /* live 1.875px, CircleDot sm 2px (Meik 2026-10-08) */
+  --transition-timing: 200ms;
+  --transition-ease: ease-out;
+  --font-copy: SuisseIntl, Inter, system-ui, sans-serif;
+  --font-title: SuisseIntl, Inter, system-ui, sans-serif;
+  --font-mono: SuisseIntlMono, "JetBrains Mono", "Lucida Console", "Courier New", monospace;
+  --font-mono-bold: SuisseIntlMono, "JetBrains Mono", "Lucida Console", "Courier New", monospace;
+  /* Web heading leading = factorial.io live (measured 2026-10-07); video/social keep their own +12.5 % frame scale */
+  --text-font-size-h1: 400 54px/64px var(--font-title);
+  --text-font-size-h1-mobile: 400 40px/48px var(--font-title);
+  --text-font-size-h2: 400 40px/48px var(--font-title);
+  --text-font-size-h2-mobile: 400 32px/40px var(--font-title);
+  --text-font-size-h3: 400 30px/40px var(--font-title);
+  --text-font-size-h3-mobile: 400 28px/1.58 var(--font-title);
+  --text-font-size-h4: 400 24px/32px var(--font-title);
+  --text-font-size-copy: 400 20px/32px var(--font-copy);
+  --text-font-size-copy-small: 400 16px/28px var(--font-copy);
+  --text-font-size-copy-mono: 400 16px/30px var(--font-mono);
+  --text-font-size-top-label: 400 16px/28px var(--font-copy);
+  --text-constrain-text: 400 1080px/1.4 var(--font-copy);
+  --text-body: 400 16px/28px var(--font-copy); /* From `body` in ui_kits/website/kit.css. */
+  --text-eyebrow: 600 16px/28px var(--font-copy); /* From `.eyebrow` in ui_kits/website/kit.css. */
+  --text-h1: 400 54px/64px var(--font-title); /* From `.h1` in ui_kits/website/kit.css. */
+  --text-h2: 400 40px/48px var(--font-title); /* From `.h2` in ui_kits/website/kit.css. */
+  --text-h3: 400 30px/40px var(--font-title); /* From `.h3` in ui_kits/website/kit.css. */
+  --text-h4: 400 24px/32px var(--font-copy); /* From `.h4` in ui_kits/website/kit.css. */
+  --text-copy: 400 20px/32px var(--font-copy); /* From `.copy` in ui_kits/website/kit.css. */
+  --text-copy-small: 400 16px/28px var(--font-copy); /* From `.copy-small` in ui_kits/website/kit.css. */
+  /* Web layout — distilled from the UI kit (docs/sources/ui-kit), unverified against factorial-frontend (G-19). */
+  --layout-columns: 12; /* content grid, from CircleDot 2026 (Meik 2026-10-08) */
+  --layout-content-max: 1252px; /* content width (CircleDot grid; live 1250) */
+  --layout-gutter: var(--space-8); /* inline page padding, 32px (live 30, on the scale since 2026-10-08) */
+  --layout-container-max: calc(var(--layout-content-max) + 2 * var(--layout-gutter)); /* .container incl. gutters */
+  --layout-gap-x: var(--space-16); /* column gap, 64px (live 60, on the scale since 2026-10-08) */
+  --layout-gap-y: var(--space-16); /* row gap, 64px (live) */
+  --section-padding: var(--space-30); /* surfaced sections, top and bottom, 120px (live) */
+  --section-padding-sm: var(--space-20); /* smaller step, 80px (live) */
+  --layout-grid: repeat(var(--layout-columns), minmax(0, 1fr)); /* every multi-column layout sits on this 12-column grid; children span columns */
+  --span-hero-copy: 4; --span-hero-media: 8; /* homepage / service hero (D1 2026-10-08, was 32 / 68 %) */
+  --span-hero-partner-copy: 7; --span-hero-partner-media: 5; /* partner hero (provisional) */
+  --span-split-a: 5; --span-split-b: 7; /* section head, partner profile, CTA block */
+  --span-services-title: 3; --span-services-body: 7; --span-services-link: 2; /* services list row */
+  --layout-hero: minmax(0, 32%) minmax(0, 68%); /* deprecated: use --layout-grid + --span-hero-* */
+  --layout-hero-partner: minmax(0, 7fr) minmax(0, 5fr); /* partner hero: copy | media (provisional) */
+  --layout-split: minmax(0, 5fr) minmax(0, 7fr); /* section head, partner profile, CTA block */
+  --layout-services: minmax(0, 2fr) minmax(0, 6fr) auto; /* services list row: title | body | link */
+  --measure-hero-title: 16ch; /* hero headline */
+  --measure-hero-copy: 34ch; /* hero copy */
+  --measure-title: 18ch; /* section H2 */
+  --measure-body: 900px; /* running text and section intros (Meik 2026-10-08; live 950px) */
+  --aspect-hero: 1080 / 460; /* hero media */
+  --aspect-teaser: 1080 / 760; /* teaser / case image */
+  --aspect-portrait: 4 / 5; /* portrait image slot (partner profile) */
+  --header-height-mobile: 61px; /* sticky header ≤ 767px */
+  --logo-height-header: 18px; /* wordmark height in the header (CircleDot, Meik 2026-10-08; live 14px) */
+  --avatar-size: 64px; /* testimonial / person avatar on the web (Meik 2026-10-08) */
+  --text-stat: 400 clamp(56px, 6vw, 88px)/1 var(--font-title); /* big numbers in stats sections */
+  --tracking-stat: -0.02em;
+  --text-meta: 400 14px/20px var(--font-copy); /* meta lines, nav sub-labels, footer links (from UI kit: 13–14px) */
+  --tracking-meta: 0.01em;
+  --text-mono-small: 400 12px/18px var(--font-mono); /* index numbers, tags, breadcrumbs (from UI kit: 11–12px) */
+  --tracking-mono-small: 0.03em;
+  /* Explainer diagrams on blue-dark (G-22) — opaque, pre-blended (white 20 % / 32 % over #111827) so overlapping strokes never add up. */
+  --color-diagram-line: #414652;
+  --color-diagram-line-strong: #5D626C;
+  /* App type and density (modules/app.md A-D3, approved 2026-10-07) */
+  --text-app-display: 400 30px/40px var(--font-title); /* app page title = web H3 (v2.1, 2026-10-07) */
+  --text-app-title: 400 24px/32px var(--font-title); /* app section / card title = web H4 (24/32 since 2026-10-07) */
+  --text-app-heading: 600 16px/28px var(--font-copy); /* app item / sub-heading = web top-label size */
+  --text-app-body: 400 16px/28px var(--font-copy); /* app base text = web copy-small (tracking --tracking-app) */
+  --text-app-body-sm: 400 14px/22px var(--font-copy); /* app secondary text, nav sub-items, table cells */
+  --text-app-label: 600 14px/20px var(--font-copy); /* app labels, field captions, group labels (sentence case) */
+  --text-app-meta: 400 13px/20px var(--font-copy); /* app meta lines, help text, hints */
+  --app-control-height: 44px; /* buttons, inputs, selects (web buttons ~51px) */
+  --app-space-1: var(--space-1); /* app spacing raster */
+  --app-space-2: var(--space-2);
+  --app-space-3: var(--space-3);
+  --app-space-4: var(--space-4);
+  --app-space-5: var(--space-5);
+  --app-space-6: var(--space-6);
+  --app-sidebar-width: 288px; /* app shell: sidebar (blue-dark) */
+  --app-sidebar-width-collapsed: 56px; /* app shell: sidebar collapsed to icons */
+  --app-sidebar-breakpoint: 1570px; /* collapse the sidebar below this width WHILE an assistant or inspector column is open (sidebar + page + column fit side by side) */
+  --app-sidebar-breakpoint-plain: 1280px; /* collapse below this width when no extra column is open (D1, 2026-10-07); reference values, media queries cannot read variables */
+  --app-topbar-height: 72px; /* app shell: top bar and the sidebar's org-menu row */
+  --app-nav-item-height: 40px;
+  --app-footer-height: 72px; /* sidebar user row and page footer bars share this height and a --color-app-border rule */
+  --logo-height-app: 16px; /* wordmark in the sidebar */
+  --tracking-app: 0.03em; /* app base text tracking, as the web copy (0.48px at 16px) */
+  --text-app-compact: 400 14px/20px var(--font-copy); /* dense surfaces: board lanes and cards, tables (titles 600) */
+  --text-app-compact-meta: 400 12px/16px var(--font-copy); /* meta lines on cards and in tables */
+  --app-page-padding: var(--space-12); /* page padding */
+  --app-space-8: var(--space-8); --app-space-10: var(--space-10); /* app names alias the shared scale */
+  --radius-pill: 999px; /* fully rounded: interactive pills in apps (A-D4), social event pill */
+  --app-icon: 16px; /* app icon */
+  --app-icon-sm: 14px; /* icon in meta lines, chips and status rows */
+  --app-icon-button: 32px; /* icon-only button */
+  --app-icon-button-sm: 28px; /* icon-only button in dense rows, message actions */
+  --app-avatar: 28px; /* avatar (rectangular) */
+  --app-avatar-sm: 20px; /* avatar in table rows and chips */
+  --app-empty-mark: 48px; /* the outlined square of empty and error states (icon 24px) */
+  --app-pill-height: 36px; /* interactive pill: filters, toggles, suggestions */
+  --app-board-column-width: 264px; /* board lane width; the board scrolls horizontally when the lanes do not fit */
+  --app-row-height: 40px; /* table / list row */
+  --app-swatch: 8px; /* status colour square in front of a status word */
+  --app-dialog-width: 512px; /* dialog */
+  --app-dialog-width-wide: 720px; /* dialog with a wide form or a table */
+  --app-toast-width: 380px; /* toast */
+  --app-chat-measure: 720px; /* chat transcript and composer column */
+  --app-chat-user-max: 75%; /* max width of the user's own message */
+  --app-cursor-width: 8px; /* streaming block cursor */
+  --app-cursor-height: 16px; /* streaming block cursor (= one line of body-sm minus leading) */
+  --app-sheet-width: 880px; /* page editor sheet (fits beside sidebar + inspector at 1440px) */
+  --app-inspector-width: 320px; /* editor inspector column */
+  --app-form-label-column: 280px; /* settings / long forms: section title + description column */
+  --app-field-width: 480px; /* max width of a form field column */
+  --app-switch-width: 36px; /* switch track */
+  --app-switch-height: 20px; /* switch track */
+  --app-tab-height: 40px; /* tab row */
+  /* 3D shots (modules/3d.md) — camera distance in cqh of the frame (= CSS perspective; Three.js camera z = value × frame height),
+     wall angles as from → to over the move. CSS sign convention (Three.js: rotateX and rotateZ negated). */
+  --frame-3d-screen-width: 390px;   /* one mobile page per screen */
+  --frame-3d-screen-height: 844px;
+  --frame-3d-screen-radius: 55px;      /* like an iPhone display (≈ 55pt on iPhone 15/16 Pro); 3D screens only (G-25) */
+  --frame-3d-screen-safe-top: 59px;    /* content inset so the corners clip nothing (iPhone safe area) */
+  --frame-3d-screen-safe-bottom: 34px;
+  --frame-3d-dof-max-calm: 1.5cqh;     /* depth of field, max blur radius; only on the user's opt-in (G-24); tested 16px at 1080 */
+  --frame-3d-dof-max-deep: 1.7cqh;     /* 18px at 1080; the deep test used 26px and was too strong */
+  --frame-3d-wall-columns: 6;          /* screen wall (3D-1), tested 2026-10-02 */
+  --frame-3d-wall-rows: 4;
+  --frame-3d-wall-gap: 56px;
+  --frame-3d-wall-drift: 760px;        /* 0.9 × screen height, per column over the whole move */
+  --frame-3d-camera-calm: 204cqh;   /* tested 2026-10-02 (2200px at 1080) */
+  --frame-3d-tilt-x-calm-from: 26deg;  --frame-3d-tilt-x-calm-to: 14deg;
+  --frame-3d-tilt-z-calm-from: -14deg; --frame-3d-tilt-z-calm-to: -7deg;
+  --frame-3d-tilt-y-calm-from: 4deg;   --frame-3d-tilt-y-calm-to: 0deg;
+  --frame-3d-scale-calm-from: 0.92;    --frame-3d-scale-calm-to: 0.8;     /* wall scale over the move */
+  --frame-3d-depth-calm-from: -120px;  --frame-3d-depth-calm-to: 0px;     /* wall translateZ over the move */
+  --frame-3d-camera-deep: 130cqh;   /* set 2026-10-02 between the calm test and the too-strong deep test; not rendered yet */
+  --frame-3d-tilt-x-deep-from: 48deg;  --frame-3d-tilt-x-deep-to: 38deg;
+  --frame-3d-tilt-z-deep-from: -22deg; --frame-3d-tilt-z-deep-to: -12deg;
+  --frame-3d-tilt-y-deep-from: 6deg;   --frame-3d-tilt-y-deep-to: -3deg;
+  --frame-3d-dolly-deep: 18cqh;     /* camera travel along the wall, ± from centre */
+  /* Social frames (1:1, 4:5, 9:16) — sizes in cqmin of a container-type: size frame. Social only; video keeps the frame-core ramp. */
+  --text-social-claim-xl: 400 10cqmin/1.1 var(--font-title); /* claims ≤ 25 characters */
+  --tracking-social-claim-xl: -0.01em;
+  --text-social-claim-l: 400 8cqmin/1.15 var(--font-title); /* claims 26–50 characters */
+  --tracking-social-claim-l: 0;
+  --text-social-claim-m: 400 6.4cqmin/1.22 var(--font-title); /* claims 51–80 characters */
+  --tracking-social-claim-m: 0;
+  --text-social-claim-s: 400 5.2cqmin/1.26 var(--font-title); /* claims 81–120 characters */
+  --tracking-social-claim-s: 0.005em;
+  --text-social-quote-l: 400 6.4cqmin/1.24 var(--font-title); /* quotes ≤ 60 characters */
+  --tracking-social-quote-l: 0;
+  --text-social-quote-m: 400 5.2cqmin/1.28 var(--font-title); /* quotes 61–120 characters */
+  --tracking-social-quote-m: 0;
+  --text-social-quote-s: 400 4.4cqmin/1.35 var(--font-title); /* quotes 121–200 characters */
+  --tracking-social-quote-s: 0;
+  --text-social-label: 600 3cqmin/1.4 var(--font-copy); /* top label; legibility floor */
+  --tracking-social-label: 0.02em;
+  --text-social-caption: 400 3cqmin/1.4 var(--font-copy); /* attribution, meta; legibility floor (name 600) */
+  --tracking-social-caption: 0.02em;
+  --text-social-step-title: 400 6.4cqmin/1.22 var(--font-title); /* step heading ≤ 40 characters */
+  --tracking-social-step-title: 0;
+  --text-social-step-body: 400 3.6cqmin/1.35 var(--font-copy); /* step text ≤ 140 characters */
+  --tracking-social-step-body: 0.01em;
+  --text-social-stat-xl: 400 20cqmin/0.92 var(--font-title); /* single big number ≤ 6 characters */
+  --tracking-social-stat-xl: -0.01em;
+  --text-social-stat-m: 400 10cqmin/0.96 var(--font-title); /* ledger / several numbers ≤ 6 characters each */
+  --tracking-social-stat-m: -0.005em;
+  --text-social-cta: 600 4cqmin/1.4 var(--font-copy); /* CTA label; button geometry = .btn in em of this size */
+  --tracking-social-cta: 0.01em;
+  --social-quote-mark-height: 6cqmin;
+  --social-logo-width: 20cqmin;
+  --social-safe-area: 5cqmin;
+  --social-safe-area-story: 6cqmin;
+  --social-measure: 78cqmin;
+  --social-measure-body: 64cqmin; /* running text (step body): ~35 characters per line */
+  --social-gap: 3.2cqmin;
+  /* Social post types (modules/social.md, rebuilt 2026-10-02 from posted LinkedIn images, docs/sources/social-references). */
+  --social-ground-gradient: radial-gradient(120% 120% at 0% 100%, #0B3051 0%, #111827 70%);          /* soft, general + event posts (measured on refs 01, 10) */
+  --social-ground-gradient-strong: radial-gradient(120% 120% at 0% 100%, #054C80 0%, #0E1E37 55%, #111827 85%); /* job posts (refs 07, 09) */
+  --social-rule-width: 10cqmin;        /* short orange rule under a headline (refs 02, 10, 11) */
+  --social-rule-weight: 0.35cqmin;
+  --social-screen-radius-desktop: 1.9cqmin; /* screenshots in achievement/case posts, no device frame (Figma: 19.6–21.4px at 1080) */
+  --social-screen-radius-mobile: 3cqmin;
+  --social-portrait-size: 34cqmin;     /* one speaker, round */
+  --social-portrait-size-group: 20cqmin; /* 2–4 speakers in a cluster */
+  --social-portrait-cluster-step-x: calc(var(--social-portrait-size-group) * 0.93); /* cluster: horizontal step (overlap), Figma 914:8467 */
+  --social-portrait-cluster-step-y: calc(var(--social-portrait-size-group) * 0.83); /* cluster: vertical step */
+  --social-portrait-cluster-stagger: calc(var(--social-portrait-size-group) * 0.08); /* cluster: vertical offset between neighbours */
+  --social-badge-size: 34cqmin;        /* event badge, square formats (own colours allowed, G-27) */
+  --social-badge-size-landscape: 44cqmin; /* event badge in landscape, top of the text column (Figma: 474px at 1080) */
+  --social-screen-shadow: 0 0 1.9cqmin rgba(0, 0, 0, 0.05), 0 -0.4cqmin 3.8cqmin -0.4cqmin rgba(8, 21, 33, 0.2); /* type C screens only (Figma, decided 2026-10-05) */
+  --social-gap-achievement: 3cqmin;    /* title → category line (Figma: 32px at 1080) */
+  --social-measure-achievement: 40%;      /* text column, type C landscape */
+  --social-screen-desktop-width: 62%;     /* of frame width, type C (Figma: 1065–1395px at 1920) */
+  --social-screen-desktop-width-solo: 52%;
+  --social-screen-desktop-top: 9%;        /* of frame height */
+  --social-screen-desktop-left: 52%;      /* of frame width (Figma: 45–55 %) */
+  --social-screen-mobile-width: 17%;      /* of frame width (Figma: 315–458px at 1920) */
+  --social-screen-mobile-left: 44%;
+  --social-screen-mobile-top: 27%;
+  --color-social-achievement: var(--color-green-light); /* category set on type C project frames (Figma #00CD97 ≈ token green-light) */
+  --social-ground-gradient-achievement: radial-gradient(140% 140% at 0% 100%, #0A3357 0%, #0D243F 45%, #0F192D 80%); /* type C, measured on the posted Splash Awards frames */
+  --social-measure-split: 52%;
+  /* Post images 16:9, measured on the posted LinkedIn images (refs 02, 03, 05; Meik 2026-10-06) */
+  --social-margin-x: 6cqw;            /* left/right edge to text and wordmark (ref 02: 72px at 1200) */
+  --social-margin-bottom: 6.7cqh;     /* frame bottom to wordmark bottom (ref 02: 42px at 627) */
+  --text-social-headline: 400 10.7cqmin/1.1 var(--font-title); /* post headline, "7 Nominierungen" (67px at 627) */
+  --tracking-social-headline: -0.01em;
+  --text-social-subline: 400 3.4cqmin/1.53 var(--font-copy);   /* sub line (21px/33px at 627); white, copy-primary-dark (Meik 2026-10-06) */
+  --tracking-social-subline: 0;
+  --social-gap-label: 4.5cqmin;       /* label bottom to headline top (28px at 627) */
+  --social-gap-rule: 5.4cqmin;        /* headline bottom to rule (34px at 627) */
+  --social-gap-subline: 6cqmin;
+  --social-portrait-tint: rgba(75, 173, 255, 0.6); /* event portraits: greyscale photo + this colour in soft-light blend (Figma UXRoundtable banner 1048:3901) */
+  --social-gap-event-title: 2.2cqmin;
+  --social-gap-info-rows: 8.1cqmin;  /* event: speaker row to date row, baseline pitch (88px at 1080, Figma 914:8467) */
+  /* Partnership lockup and quote cards (Figma Social Media file 1081:28669, 23:17299, 23:17776; Meik 2026-10-06) */
+  --social-lockup-logo-width: 30cqw;   /* Factorial.io wordmark in a partnership lockup (posted: 33 % of the width) */
+  --social-lockup-gap: 3.5cqw;         /* wordmark – × – partner logo */
+  /* Partnership photo split, 4:5 social variant (Figma Social Media file 1081:28193 posted, 1334:3020; Meik 2026-10-21). Values measured at 1080 × 1350 */
+  --social-partner-split: 50%;           /* blue-dark panel left, photo right */
+  --social-partner-lockup-left: 9cqw;    /* frame left edge to wordmark (97px) */
+  --social-partner-lockup-bottom: 8.2cqh; /* frame bottom to wordmark bottom (110px) */
+  --social-partner-wordmark-width: 32cqw; /* Factorial.io wordmark (345px) */
+  --social-partner-x-size: 4cqw;         /* white ×, centred on the split line (42–44px) */
+  --social-partner-logo-max-width: 37cqw; /* partner logo, centred in the photo half (Siemens Stiftung: 397px) */
+  --social-partner-logo-stacked-height: 11.1cqh; /* stacked logos, several text lines (Heinrich-Böll-Stiftung: 150px, Figma 1499:331) */
+  --social-partner-logo-max-height: 22cqh; /* marks with a symbol, rising from the lockup line (C.H.Beck: 300px) */
+  --social-partner-scrim: linear-gradient(to bottom, rgba(17, 24, 39, 0) 0%, #111827 100%); /* over the photo, behind the white partner logo */
+  --social-partner-scrim-height: 51.4%;  /* lower part of the photo half (694px) */
+  --text-social-quote-short: 400 11.1cqmin/1.1 var(--font-title); /* quote ≤ 60 characters (120px at 1080) */
+  --text-social-quote-long: 400 5.4cqmin/1.24 var(--font-title);  /* quote 61–200 characters (58px/72px at 1080) */
+  --text-social-attribution: 400 3.7cqmin/1.3 var(--font-copy);   /* "Name | Position" (40px at 1080) */
+  --text-social-event-talk: 400 4.4cqmin/1.25 var(--font-copy); /* event talk title (600) + topic (300), 48px at 1080 as in the posted banner */ /* event title line (600) to topic line (400) (24px at 1080) */       /* rule to sub line (38px at 627) */         /* text column width in landscape formats (1.91:1, 16:9, 4:3) */
+  /* LinkedIn ads (modules/ads.md; Hannes 2026-10-27, from his canvas "LinkedIn Ads und Thought Leader · Vorlagen"). Measured at 1080 px width; units of the frame (container-type: size). */
+  --ad-ground-white: var(--color-white);          /* text blue-dark, accents --color-primary, dark wordmark */
+  --ad-ground-green: var(--color-green-dark);     /* flat, no gradient; all text white (label too), graphic accents (rule, quote mark, icons) --color-primary-light */
+  --ad-ground-light: var(--color-grey-100);       /* thought leader (personal) posts */
+  --ad-story-safe: 15cqh;                         /* 9:16: top and bottom kept free for app controls (288px at 1920) */
+  --ad-measure-landscape: 46cqw;                  /* 1.91:1 text column (552px at 1200) */
+  /* 4:5, 1:1, 9:16: screen and portrait sit in the flow below the text, left at the margin (Meik 2026-10-27, review) */
+  --ad-logo-height: calc(var(--social-logo-width) * 18 / 158); /* wordmark height (no descenders: its bottom is the baseline) */
+  --ad-proof-size: calc(var(--ad-logo-height) / 0.725);  /* proof line: cap height = wordmark height (SuisseIntl cap height 0.725em) */
+  --ad-proof-baseline: 0.165em;                          /* line-height 1: box bottom to baseline, so the proof stands on the wordmark's baseline */
+  --ad-measure-portrait-1x1: 70cqw;                      /* 1:1 with portrait right: claim column; the sub line stops before the portrait */
+  --ad-screen-left-191: 56.7cqw;  --ad-screen-top-191: 11.5cqh;  --ad-screen-height-191: 63.8cqh;  /* 680 / 72 / 400 px at 1200 × 627 */
+  --ad-screen-bleed: 4.6cqw;                      /* the screen runs past the right edge (50px at 1080) */
+  --ad-portrait-top-1x1: 51.9cqh;                 /* 1:1: sender portrait right, --social-portrait-size */
+  --ad-portrait-right-191: 10cqw;                 /* 1.91:1: right edge to portrait, vertically centred */
+  --ad-proof-gap: 1.5cqmin;                       /* "Top 25 …" – hairline – "Certified …" */
+  --ad-proof-left-191: 60cqw;                     /* 1.91:1: proof column, vertically centred */
+  --ad-avatar-size: 8cqmin;                       /* round sender photo in a footer row (86px) */
+  --ad-avatar-gap: 2.6cqmin;                      /* avatar to name (28px) */
+  --ad-footer-gap: 3cqmin;                        /* items in a footer row (32px) */
+  --ad-client-logo-height: 8cqmin;                /* customer logo in a proof quote footer (86px), white file */
+  --ad-client-logo-max-width: 20cqmin;
+  --ad-photo-scrim: linear-gradient(to top, rgba(17, 24, 39, 0.92) 0%, rgba(17, 24, 39, 0.7) 38%, rgba(17, 24, 39, 0) 68%); /* quote on a full-bleed photo (blue-dark) */
+  --ad-photo-split-height: 51.9cqh;               /* photo split: photo above, grey panel below (700px at 1350) */
+  --ad-photo-split-position: center 33%; /* split photo crop: slightly above centre */
+  --ad-photo-split-pad-top: 5.2cqmin;             /* panel top to quote mark (56px) */
+  --ad-quote-mark-small: 4.8cqmin;                /* quote mark in the photo split panel (52px) */
+  --ad-cta-padding: 0.75em 1.5em;                 /* CTA on the last page of a document */
+  --ad-cta-padding-compact: 0.5em 1.1em;          /* CTA that shares the frame (webinar) */
+  --ad-pill-padding: 0.35em 1em;                  /* webinar pill */
+  --ad-webinar-measure: 52cqmin;                  /* talk + topic column (560px) */
+  --ad-webinar-cta-gap: 4.8cqmin;                 /* CTA bottom to info row (52px) */
+  --ad-webinar-portrait-top-4x5: 56.3cqh;         /* 760px */
+  --ad-webinar-portrait-top-1x1: 50cqh;           /* 540px */
+  --ad-webinar-portrait-size-1x1: 27.8cqmin;      /* 300px, smaller than --social-portrait-size so the CTA stays clear */
+  --ad-cover-portrait-size: calc(2 * var(--social-portrait-size)); /* event cover 4:1: speaker portrait, twice the single portrait (Meik 2026-10-27) */
+  --ad-info-row-gap: 0.4cqmin;                    /* webinar info row: gap between its two lines (Meik 2026-10-27) */
+  --ad-cover-name-gap: calc(2 * var(--social-gap)); /* event cover: name block to portrait (Meik 2026-10-27) */
+  --ad-cover-portrait-right: 16.9cqw;             /* LinkedIn event cover 4:1: right edge to portrait (300px at 1776) */
+  --ad-endcard-mark: 30cqmin;                     /* video end card: animated mark (324px) */
+  --ad-endcard-wordmark: 40cqmin;                 /* video end card: wordmark (432px) */
+  --ad-lower-third-padding: 2.2cqmin 3cqmin;      /* name/role box on a speaker video (24px 32px) */
+  --text-ad-lower-third-name: 600 4cqmin/1.3 var(--font-copy);
+  --text-ad-subtitle: 600 4.4cqmin/1.5 var(--font-copy); /* burned-in subtitles, white on blue-dark, max two lines */
+  --ad-subtitle-padding: 0.6cqmin 1.5cqmin;
+  --ad-subtitle-bottom: 14.8cqh;                  /* 4:5 (200px); 9:16 uses --ad-subtitle-bottom-9x16 */
+  --ad-subtitle-bottom-9x16: 21.9cqh;             /* 420px at 1920, above the app controls */
+}
+.font-size-h1 {
+  font-size: 54px;
+  line-height: 64px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.font-size-h1-mobile {
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.font-size-h2 {
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.font-size-h2-mobile {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.font-size-h3 {
+  font-size: 30px;
+  line-height: 40px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.font-size-h3-mobile {
+  font-size: 28px;
+  line-height: 1.58;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.font-size-h4 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.font-size-copy {
+  font-family: var(--font-copy);
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.font-size-copy-small {
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+.font-size-copy-mono {
+  font-size: 16px;
+  line-height: 30px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.font-size-top-label {
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.constrain-text {
+  font-size: 1080px;
+  line-height: 1.4;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.body {
+  font-family: var(--font-copy);
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+.eyebrow {
+  font-family: var(--font-copy);
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.h1 {
+  font-family: var(--font-title);
+  font-size: 54px;
+  line-height: 64px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.h2 {
+  font-family: var(--font-title);
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.h3 {
+  font-family: var(--font-title);
+  font-size: 30px;
+  line-height: 40px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.h4 {
+  font-family: var(--font-copy);
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.copy {
+  font-family: var(--font-copy);
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.copy-small {
+  font-family: var(--font-copy);
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 400;
+  letter-spacing: 0.03em; /* as factorial.io (0.48px) */
+}
+/* @font-face removed: @factorial/docs already serves SuisseIntl and SuisseIntlMono from /fdocs/fonts. */
